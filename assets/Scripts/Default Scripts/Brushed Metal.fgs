@@ -1,0 +1,4 @@
+NewLayer
+FillFG
+AddNoise 15
+MotionBlur 20

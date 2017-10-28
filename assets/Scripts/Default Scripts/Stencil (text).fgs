@@ -1,0 +1,9 @@
+HideLayer
+SelectTransparency
+SelectInverse
+NewLayer
+AddLayerMask
+SelectInverse
+SelectFeather 5
+FillFG
+Deselect
