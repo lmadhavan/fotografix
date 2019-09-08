@@ -50,5 +50,14 @@ namespace Fotografix.Editor
         {
             image.Draw(args.DrawingSession);
         }
+
+        private void BlackAndWhite_Click(object sender, RoutedEventArgs e)
+        {
+            if (image != null)
+            {
+                image.ApplyBlackAndWhiteAdjustment();
+                canvas.Invalidate();
+            }
+        }
     }
 }

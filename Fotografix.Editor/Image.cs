@@ -1,4 +1,5 @@
 ﻿using Microsoft.Graphics.Canvas;
+using Microsoft.Graphics.Canvas.Effects;
 using System;
 using System.Threading.Tasks;
 using Windows.Storage;
@@ -8,6 +9,7 @@ namespace Fotografix.Editor
     public sealed class Image : IDisposable
     {
         private readonly CanvasBitmap bitmap;
+        private GrayscaleEffect effect;
 
         public Image(CanvasBitmap bitmap)
         {
@@ -16,6 +18,7 @@ namespace Fotografix.Editor
 
         public void Dispose()
         {
+            effect?.Dispose();
             bitmap.Dispose();
         }
 
@@ -33,7 +36,15 @@ namespace Fotografix.Editor
 
         public void Draw(CanvasDrawingSession drawingSession)
         {
-            drawingSession.DrawImage(bitmap);
+            drawingSession.DrawImage((ICanvasImage)effect ?? bitmap);
+        }
+
+        public void ApplyBlackAndWhiteAdjustment()
+        {
+            if (effect == null)
+            {
+                this.effect = new GrayscaleEffect() { Source = bitmap };
+            }
         }
     }
 }

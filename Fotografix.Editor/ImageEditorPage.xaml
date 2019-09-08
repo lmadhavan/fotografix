@@ -10,6 +10,15 @@
     Unloaded="Page_Unloaded">
 
     <Grid>
-        <canvas:CanvasControl x:Name="canvas" CreateResources="Canvas_CreateResources" Draw="Canvas_Draw" />
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="300" />
+        </Grid.ColumnDefinitions>
+        
+        <canvas:CanvasControl x:Name="canvas" Grid.Column="0" CreateResources="Canvas_CreateResources" Draw="Canvas_Draw" />
+
+        <StackPanel Grid.Column="1" Orientation="Vertical" Background="{ThemeResource AppBarBackgroundThemeBrush}" Padding="8">
+            <Button Content="Black &amp; White" Click="BlackAndWhite_Click" />
+        </StackPanel>
     </Grid>
 </Page>
