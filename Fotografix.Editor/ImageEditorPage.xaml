@@ -7,7 +7,8 @@
     xmlns:canvas="using:Microsoft.Graphics.Canvas.UI.Xaml"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-    Unloaded="Page_Unloaded">
+    Unloaded="Page_Unloaded"
+    AllowDrop="True">
 
     <Grid>
         <Grid.ColumnDefinitions>

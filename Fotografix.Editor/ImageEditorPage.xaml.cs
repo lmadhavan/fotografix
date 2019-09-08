@@ -2,6 +2,7 @@
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using System;
 using System.Threading.Tasks;
+using Windows.ApplicationModel.DataTransfer;
 using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -46,17 +47,52 @@ namespace Fotografix.Editor
 
         private async Task LoadImageAsync()
         {
+            viewModel?.Dispose();
+
             this.viewModel = new ImageEditorViewModel(await Image.LoadAsync(file));
             viewModel.Invalidated += ViewModel_Invalidated;
+
             Bindings.Update();
 
             canvas.Width = viewModel.Width;
             canvas.Height = viewModel.Height;
+            canvas.Invalidate();
         }
 
         private void ViewModel_Invalidated(object sender, EventArgs e)
         {
             canvas.Invalidate();
+        }
+
+        protected override void OnDragEnter(DragEventArgs e)
+        {
+            base.OnDragEnter(e);
+
+            if (e.DataView.Contains(StandardDataFormats.StorageItems))
+            {
+                e.AcceptedOperation = DataPackageOperation.Link;
+                e.DragUIOverride.Caption = "Open";
+            }
+            else
+            {
+                e.AcceptedOperation = DataPackageOperation.None;
+            }
+        }
+
+        protected async override void OnDrop(DragEventArgs e)
+        {
+            base.OnDrop(e);
+
+            if (e.DataView.Contains(StandardDataFormats.StorageItems))
+            {
+                var items = await e.DataView.GetStorageItemsAsync();
+                
+                if (items[0] is StorageFile file)
+                {
+                    this.file = file;
+                    await LoadImageAsync();
+                }
+            }
         }
     }
 }
