@@ -12,7 +12,7 @@ namespace Fotografix.Editor
     public sealed partial class ImageEditorPage : Page
     {
         private StorageFile file;
-        private Image image;
+        private ImageEditorViewModel viewModel;
 
         public ImageEditorPage()
         {
@@ -28,7 +28,7 @@ namespace Fotografix.Editor
         private void Page_Unloaded(object sender, RoutedEventArgs e)
         {
             canvas.RemoveFromVisualTree();
-            image?.Dispose();
+            viewModel?.Dispose();
         }
 
         private void Canvas_CreateResources(CanvasControl sender, CanvasCreateResourcesEventArgs args)
@@ -39,25 +39,24 @@ namespace Fotografix.Editor
             }
         }
 
-        private async Task LoadImageAsync()
-        {
-            this.image = await Image.LoadAsync(file);
-            canvas.Width = image.Width;
-            canvas.Height = image.Height;
-        }
-
         private void Canvas_Draw(CanvasControl sender, CanvasDrawEventArgs args)
         {
-            image.Draw(args.DrawingSession);
+            viewModel.Draw(args.DrawingSession);
         }
 
-        private void BlackAndWhite_Click(object sender, RoutedEventArgs e)
+        private async Task LoadImageAsync()
         {
-            if (image != null)
-            {
-                image.ApplyBlackAndWhiteAdjustment();
-                canvas.Invalidate();
-            }
+            this.viewModel = new ImageEditorViewModel(await Image.LoadAsync(file));
+            viewModel.Invalidated += ViewModel_Invalidated;
+            Bindings.Update();
+
+            canvas.Width = viewModel.Width;
+            canvas.Height = viewModel.Height;
+        }
+
+        private void ViewModel_Invalidated(object sender, EventArgs e)
+        {
+            canvas.Invalidate();
         }
     }
 }

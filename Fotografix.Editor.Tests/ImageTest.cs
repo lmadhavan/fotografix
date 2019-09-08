@@ -1,25 +1,18 @@
 ﻿using Microsoft.Graphics.Canvas;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
 using System.Threading.Tasks;
-using Windows.ApplicationModel;
-using Windows.Storage;
 
 namespace Fotografix.Editor.Tests
 {
     [TestClass]
-    public class ImageTest
+    public class ImageTest : EditorTestBase
     {
-        private StorageFolder imagesFolder;
         private Image image;
 
         [TestInitialize]
         public async Task Initialize()
         {
-            this.imagesFolder = await Package.Current.InstalledLocation.GetFolderAsync("Images");
-            var flowers = await imagesFolder.GetFileAsync("flowers.jpg");
-
-            this.image = await Image.LoadAsync(flowers);
+            this.image = await LoadImageAsync("flowers.jpg");
         }
 
         [TestCleanup]
@@ -39,24 +32,24 @@ namespace Fotografix.Editor.Tests
         public async Task AppliesBlackAndWhiteAdjustment()
         {
             image.ApplyBlackAndWhiteAdjustment();
+            await AssertImageAsync("flowers_bw.png", image);
+        }
 
-            using (CanvasBitmap expected = await LoadImageAsync("flowers_bw.png"))
-            using (CanvasBitmap actual = image.Render())
+        [TestMethod]
+        public async Task AppliesBlackAndWhiteAdjustmentWithBlendMode()
+        {
+            image.ApplyBlackAndWhiteAdjustment(BlendMode.Multiply);
+            await AssertImageAsync("flowers_bw_multiply.png", image);
+        }
+
+        private async Task AssertImageAsync(string fileWithExpectedOutput, Image actualImage)
+        {
+            using (CanvasBitmap expected = await LoadBitmapAsync(fileWithExpectedOutput))
+            using (CanvasBitmap actual = actualImage.Render())
             {
                 AssertBytesAreEqual(expected.GetPixelBytes(), actual.GetPixelBytes());
             }
         }
-
-        private async Task<CanvasBitmap> LoadImageAsync(string filename)
-        {
-            var file = await imagesFolder.GetFileAsync(filename);
-
-            using (var stream = await file.OpenReadAsync())
-            {
-                return await CanvasBitmap.LoadAsync(CanvasDevice.GetSharedDevice(), stream);
-            }
-        }
-
         private void AssertBytesAreEqual(byte[] expected, byte[] actual)
         {
             if (expected.Length != actual.Length)

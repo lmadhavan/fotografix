@@ -18,7 +18,11 @@
         <canvas:CanvasControl x:Name="canvas" Grid.Column="0" CreateResources="Canvas_CreateResources" Draw="Canvas_Draw" />
 
         <StackPanel Grid.Column="1" Orientation="Vertical" Background="{ThemeResource AppBarBackgroundThemeBrush}" Padding="8">
-            <Button Content="Black &amp; White" Click="BlackAndWhite_Click" />
+            <TextBlock Style="{StaticResource SubtitleTextBlockStyle}" Text="Black &amp; White" Margin="0,0,0,8" />
+            <StackPanel Orientation="Horizontal">
+                <ComboBox Margin="0,0,8,0" MinWidth="125" ItemsSource="{x:Bind viewModel.BlendModes}" SelectedIndex="{x:Bind viewModel.SelectedBlendModeIndex, Mode=TwoWay}" />
+                <Button Content="Apply" Click="{x:Bind viewModel.ApplyBlackAndWhiteAdjustment}" />
+            </StackPanel>
         </StackPanel>
     </Grid>
 </Page>

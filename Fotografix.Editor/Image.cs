@@ -9,16 +9,18 @@ namespace Fotografix.Editor
     public sealed class Image : IDisposable
     {
         private readonly CanvasBitmap bitmap;
-        private GrayscaleEffect effect;
+        private BlackAndWhiteAdjustment adjustment;
+        private ICanvasImage output;
 
         public Image(CanvasBitmap bitmap)
         {
             this.bitmap = bitmap;
+            this.output = bitmap;
         }
 
         public void Dispose()
         {
-            effect?.Dispose();
+            adjustment?.Dispose();
             bitmap.Dispose();
         }
 
@@ -36,15 +38,14 @@ namespace Fotografix.Editor
 
         public void Draw(CanvasDrawingSession drawingSession)
         {
-            drawingSession.DrawImage((ICanvasImage)effect ?? bitmap);
+            drawingSession.DrawImage(output);
         }
 
-        public void ApplyBlackAndWhiteAdjustment()
+        public void ApplyBlackAndWhiteAdjustment(BlendMode blendMode = BlendMode.Normal)
         {
-            if (effect == null)
-            {
-                this.effect = new GrayscaleEffect() { Source = bitmap };
-            }
+            adjustment?.Dispose();
+            this.adjustment = new BlackAndWhiteAdjustment(bitmap, blendMode);
+            this.output = adjustment.Output;
         }
     }
 }
