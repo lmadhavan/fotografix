@@ -1,5 +1,6 @@
 ﻿using Microsoft.Graphics.Canvas;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using System.Threading.Tasks;
 
 namespace Fotografix.Editor.Tests
@@ -47,10 +48,11 @@ namespace Fotografix.Editor.Tests
             using (CanvasBitmap expected = await LoadBitmapAsync(fileWithExpectedOutput))
             using (CanvasBitmap actual = actualImage.Render())
             {
-                AssertBytesAreEqual(expected.GetPixelBytes(), actual.GetPixelBytes());
+                AssertBytesAreEqual(expected.GetPixelBytes(), actual.GetPixelBytes(), 1);
             }
         }
-        private void AssertBytesAreEqual(byte[] expected, byte[] actual)
+
+        private void AssertBytesAreEqual(byte[] expected, byte[] actual, byte tolerance)
         {
             if (expected.Length != actual.Length)
             {
@@ -59,11 +61,12 @@ namespace Fotografix.Editor.Tests
 
             for (int i = 0; i < expected.Length; i++)
             {
-                if (expected[i] != actual[i])
+                if (Math.Abs(expected[i] - actual[i]) > tolerance)
                 {
-                    Assert.Fail("Content differs at index {0}: expected = {1}, actual = {2}", i, expected[i], actual[i]);
+                    Assert.Fail($"Content differs at index {i}: expected = {expected[i]} ± {tolerance}, actual = {actual[i]}");
                 }
             }
         }
+
     }
 }
