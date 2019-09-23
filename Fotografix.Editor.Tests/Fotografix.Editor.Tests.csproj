@@ -120,6 +120,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="EditorTestBase.cs" />
+    <Compile Include="ImageAdjustmentTest.cs" />
     <Compile Include="ImageCaptureExtensions.cs" />
     <Compile Include="ImageEditorViewModelTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -143,6 +144,7 @@
     <Content Include="Images\flowers_bw_multiply.png" />
     <Content Include="Images\flowers.jpg" />
     <Content Include="Images\flowers_bw.png" />
+    <Content Include="Images\flowers_sh.png" />
     <Content Include="Properties\Default.rd.xml" />
     <Content Include="Assets\LockScreenLogo.scale-200.png" />
     <Content Include="Assets\SplashScreen.scale-200.png" />

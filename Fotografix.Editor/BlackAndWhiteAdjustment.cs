@@ -1,17 +1,18 @@
 ﻿using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Effects;
 using System;
+using Windows.Graphics.Effects;
 
 namespace Fotografix.Editor
 {
-    internal sealed class BlackAndWhiteAdjustment : IDisposable
+    public sealed class BlackAndWhiteAdjustment : Adjustment, IDisposable
     {
         private readonly GrayscaleEffect grayscaleEffect;
         private readonly BlendEffect blendEffect;
 
-        internal BlackAndWhiteAdjustment(ICanvasImage input, BlendMode blendMode)
+        public BlackAndWhiteAdjustment(BlendMode blendMode = BlendMode.Normal)
         {
-            this.grayscaleEffect = new GrayscaleEffect() { Source = input };
+            this.grayscaleEffect = new GrayscaleEffect();
 
             if (blendMode == BlendMode.Normal)
             {
@@ -24,7 +25,6 @@ namespace Fotografix.Editor
                 this.blendEffect = new BlendEffect()
                 {
                     Foreground = grayscaleEffect,
-                    Background = input,
                     Mode = blendEffectMode
                 };
 
@@ -32,12 +32,30 @@ namespace Fotografix.Editor
             }
         }
 
-        public void Dispose()
+        public override void Dispose()
         {
             blendEffect?.Dispose();
             grayscaleEffect?.Dispose();
         }
 
-        internal ICanvasImage Output { get; }
+        internal override IGraphicsEffectSource Input
+        {
+            get
+            {
+                return grayscaleEffect.Source;
+            }
+
+            set
+            {
+                grayscaleEffect.Source = value;
+
+                if (blendEffect != null)
+                {
+                    blendEffect.Background = value;
+                }
+            }
+        }
+
+        internal override ICanvasImage Output { get; }
     }
 }

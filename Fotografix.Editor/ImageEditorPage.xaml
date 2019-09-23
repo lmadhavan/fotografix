@@ -22,7 +22,18 @@
             <TextBlock Style="{StaticResource SubtitleTextBlockStyle}" Text="Black &amp; White" Margin="0,0,0,8" />
             <StackPanel Orientation="Horizontal">
                 <ComboBox Margin="0,0,8,0" MinWidth="125" ItemsSource="{x:Bind viewModel.BlendModes}" SelectedIndex="{x:Bind viewModel.SelectedBlendModeIndex, Mode=TwoWay}" />
-                <Button Content="Apply" Click="{x:Bind viewModel.ApplyBlackAndWhiteAdjustment}" />
+                <Button Content="Add" Click="{x:Bind viewModel.AddBlackAndWhiteAdjustment}" />
+            </StackPanel>
+
+            <TextBlock Style="{StaticResource SubtitleTextBlockStyle}" Text="Shadows / Highlights" Margin="0,16,0,8" />
+            <StackPanel Orientation="Vertical">
+                <TextBlock Text="Shadows:" />
+                <Slider Minimum="-1" Maximum="1" StepFrequency="0.01" Value="{x:Bind viewModel.Shadows, Mode=TwoWay}" />
+                <TextBlock Text="Highlights:" />
+                <Slider Minimum="-1" Maximum="1" StepFrequency="0.01" Value="{x:Bind viewModel.Highlights, Mode=TwoWay}" />
+                <TextBlock Text="Clarity:" />
+                <Slider Minimum="-1" Maximum="1" StepFrequency="0.01" Value="{x:Bind viewModel.Clarity, Mode=TwoWay}" />
+                <Button Content="Add" Click="{x:Bind viewModel.AddShadowsHighlightsAdjustment}" />
             </StackPanel>
         </StackPanel>
     </Grid>

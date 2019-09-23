@@ -16,6 +16,11 @@ namespace Fotografix.Editor
 
         public void Dispose()
         {
+            foreach (Adjustment adjustment in image.Adjustments)
+            {
+                adjustment.Dispose();
+            }
+
             image.Dispose();
         }
 
@@ -28,14 +33,24 @@ namespace Fotografix.Editor
         public int SelectedBlendModeIndex { get; set; }
         public BlendMode SelectedBlendMode => (BlendMode)SelectedBlendModeIndex;
 
+        public float Shadows { get; set; } = 0;
+        public float Highlights { get; set; } = 0;
+        public float Clarity { get; set; } = 0;
+
         public void Draw(CanvasDrawingSession drawingSession)
         {
             image.Draw(drawingSession);
         }
 
-        public void ApplyBlackAndWhiteAdjustment()
+        public void AddBlackAndWhiteAdjustment()
         {
-            image.ApplyBlackAndWhiteAdjustment(SelectedBlendMode);
+            image.AddAdjustment(new BlackAndWhiteAdjustment(SelectedBlendMode));
+            Invalidated?.Invoke(this, EventArgs.Empty);
+        }
+
+        public void AddShadowsHighlightsAdjustment()
+        {
+            image.AddAdjustment(new ShadowsHighlightsAdjustment(Shadows, Highlights, Clarity));
             Invalidated?.Invoke(this, EventArgs.Empty);
         }
     }
