@@ -1,4 +1,5 @@
-﻿using Microsoft.Graphics.Canvas;
+﻿using Fotografix.Editor.Adjustments;
+using Microsoft.Graphics.Canvas;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Threading.Tasks;
@@ -6,7 +7,7 @@ using System.Threading.Tasks;
 namespace Fotografix.Editor.Tests
 {
     [TestClass]
-    public class ImageAdjustmentTest : EditorTestBase
+    public class ImageAdjustmentsTest : EditorTestBase
     {
         private Image image;
 
@@ -45,7 +46,12 @@ namespace Fotografix.Editor.Tests
         [TestMethod]
         public async Task ShadowsHighlightsAdjustment()
         {
-            using (ShadowsHighlightsAdjustment adjustment = new ShadowsHighlightsAdjustment(0.25f, -0.25f, 0.5f))
+            using (ShadowsHighlightsAdjustment adjustment = new ShadowsHighlightsAdjustment()
+            {
+                Shadows = 0.25f,
+                Highlights = -0.25f,
+                Clarity = 0.5f
+            })
             {
                 image.AddAdjustment(adjustment);
                 await AssertImageAsync("flowers_sh.png", image);

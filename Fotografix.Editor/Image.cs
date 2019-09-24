@@ -1,6 +1,8 @@
-﻿using Microsoft.Graphics.Canvas;
+﻿using Fotografix.Editor.Adjustments;
+using Microsoft.Graphics.Canvas;
 using System;
-using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Threading.Tasks;
 using Windows.Storage;
 
@@ -9,13 +11,14 @@ namespace Fotografix.Editor
     public sealed class Image : IDisposable
     {
         private readonly CanvasBitmap bitmap;
-        private readonly List<Adjustment> adjustments;
+        private readonly ObservableCollection<Adjustment> adjustments;
         private ICanvasImage output;
 
         public Image(CanvasBitmap bitmap)
         {
             this.bitmap = bitmap;
-            this.adjustments = new List<Adjustment>();
+            this.adjustments = new ObservableCollection<Adjustment>();
+            this.Adjustments = new ReadOnlyObservableCollection<Adjustment>(adjustments);
             this.output = bitmap;
         }
 
@@ -23,16 +26,18 @@ namespace Fotografix.Editor
         {
             foreach (Adjustment adjustment in adjustments)
             {
-                adjustment.Dispose();
+                adjustment.PropertyChanged -= OnAdjustmentPropertyChanged;
             }
 
             bitmap.Dispose();
         }
 
+        public event EventHandler Invalidated;
+
         public int Width => (int)bitmap.SizeInPixels.Width;
         public int Height => (int)bitmap.SizeInPixels.Height;
 
-        public IReadOnlyList<Adjustment> Adjustments => adjustments;
+        public ReadOnlyObservableCollection<Adjustment> Adjustments { get; }
 
         public static async Task<Image> LoadAsync(StorageFile file)
         {
@@ -58,6 +63,19 @@ namespace Fotografix.Editor
             adjustment.Input = output;
             adjustments.Add(adjustment);
             this.output = adjustment.Output;
+
+            Invalidate();
+            adjustment.PropertyChanged += OnAdjustmentPropertyChanged;
+        }
+
+        private void OnAdjustmentPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            Invalidate();
+        }
+
+        private void Invalidate()
+        {
+            Invalidated?.Invoke(this, EventArgs.Empty);
         }
     }
 }

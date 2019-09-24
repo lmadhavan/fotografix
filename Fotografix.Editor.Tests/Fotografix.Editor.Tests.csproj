@@ -120,7 +120,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="EditorTestBase.cs" />
-    <Compile Include="ImageAdjustmentTest.cs" />
+    <Compile Include="ImageAdjustmentsTest.cs" />
     <Compile Include="ImageCaptureExtensions.cs" />
     <Compile Include="ImageEditorViewModelTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

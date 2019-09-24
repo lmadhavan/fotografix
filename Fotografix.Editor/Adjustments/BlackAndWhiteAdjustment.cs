@@ -3,7 +3,7 @@ using Microsoft.Graphics.Canvas.Effects;
 using System;
 using Windows.Graphics.Effects;
 
-namespace Fotografix.Editor
+namespace Fotografix.Editor.Adjustments
 {
     public sealed class BlackAndWhiteAdjustment : Adjustment, IDisposable
     {
@@ -12,6 +12,7 @@ namespace Fotografix.Editor
 
         public BlackAndWhiteAdjustment(BlendMode blendMode = BlendMode.Normal)
         {
+            this.Name = "Black & White";
             this.grayscaleEffect = new GrayscaleEffect();
 
             if (blendMode == BlendMode.Normal)

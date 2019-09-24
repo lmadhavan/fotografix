@@ -1,0 +1,25 @@
+﻿<ResourceDictionary
+    x:Class="Fotografix.Editor.Adjustments.UI.AdjustmentTemplatesResourceDictionary"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:a="using:Fotografix.Editor.Adjustments"
+    xmlns:aui="using:Fotografix.Editor.Adjustments.UI">
+
+    <DataTemplate x:Key="BlackAndWhiteTemplate">
+    </DataTemplate>
+
+    <DataTemplate x:Key="ShadowsHighlightsTemplate" x:DataType="a:ShadowsHighlightsAdjustment">
+        <StackPanel Orientation="Vertical">
+            <TextBlock Text="Shadows:" />
+            <Slider Minimum="-1" Maximum="1" StepFrequency="0.01" Value="{x:Bind Shadows, Mode=TwoWay}" />
+            <TextBlock Text="Highlights:" />
+            <Slider Minimum="-1" Maximum="1" StepFrequency="0.01" Value="{x:Bind Highlights, Mode=TwoWay}" />
+            <TextBlock Text="Clarity:" />
+            <Slider Minimum="-1" Maximum="1" StepFrequency="0.01" Value="{x:Bind Clarity, Mode=TwoWay}" />
+        </StackPanel>
+    </DataTemplate>
+
+    <aui:AdjustmentTemplateSelector x:Key="AdjustmentTemplateSelector"
+                                    BlackAndWhiteTemplate="{StaticResource BlackAndWhiteTemplate}"
+                                    ShadowsHighlightsTemplate="{StaticResource ShadowsHighlightsTemplate}" />
+</ResourceDictionary>

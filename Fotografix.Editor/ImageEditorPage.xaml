@@ -5,6 +5,8 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:canvas="using:Microsoft.Graphics.Canvas.UI.Xaml"
+    xmlns:a="using:Fotografix.Editor.Adjustments"
+    xmlns:aui="using:Fotografix.Editor.Adjustments.UI"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
     Unloaded="Page_Unloaded"
@@ -27,13 +29,25 @@
 
             <TextBlock Style="{StaticResource SubtitleTextBlockStyle}" Text="Shadows / Highlights" Margin="0,16,0,8" />
             <StackPanel Orientation="Vertical">
-                <TextBlock Text="Shadows:" />
-                <Slider Minimum="-1" Maximum="1" StepFrequency="0.01" Value="{x:Bind viewModel.Shadows, Mode=TwoWay}" />
-                <TextBlock Text="Highlights:" />
-                <Slider Minimum="-1" Maximum="1" StepFrequency="0.01" Value="{x:Bind viewModel.Highlights, Mode=TwoWay}" />
-                <TextBlock Text="Clarity:" />
-                <Slider Minimum="-1" Maximum="1" StepFrequency="0.01" Value="{x:Bind viewModel.Clarity, Mode=TwoWay}" />
                 <Button Content="Add" Click="{x:Bind viewModel.AddShadowsHighlightsAdjustment}" />
+            </StackPanel>
+
+            <TextBlock Style="{StaticResource SubtitleTextBlockStyle}" Text="Adjustments" Margin="0,16,0,8" />
+            <ListView ItemsSource="{x:Bind viewModel.Adjustments}" SelectedItem="{x:Bind viewModel.SelectedAdjustment, Mode=TwoWay}">
+                <ListView.ItemTemplate>
+                    <DataTemplate x:DataType="a:Adjustment">
+                        <TextBlock Text="{x:Bind Name, Mode=OneWay}" />
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+
+            <StackPanel Orientation="Vertical" Margin="0,16,0,0" Padding="6" Background="{ThemeResource NavigationViewExpandedPaneBackground}">
+                <StackPanel.Resources>
+                    <aui:AdjustmentTemplatesResourceDictionary />
+                </StackPanel.Resources>
+                
+                <TextBox Text="{x:Bind viewModel.SelectedAdjustment.Name, Mode=TwoWay}" />
+                <ContentControl Margin="0,8,0,0" HorizontalContentAlignment="Stretch" ContentTemplateSelector="{StaticResource AdjustmentTemplateSelector}" Content="{x:Bind viewModel.SelectedAdjustment, Mode=OneWay}" />
             </StackPanel>
         </StackPanel>
     </Grid>

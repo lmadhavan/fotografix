@@ -1,13 +1,16 @@
-﻿using Microsoft.Graphics.Canvas;
+﻿using Fotografix.Editor.Adjustments;
+using Microsoft.Graphics.Canvas;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 
 namespace Fotografix.Editor
 {
-    public sealed class ImageEditorViewModel : IDisposable
+    public sealed class ImageEditorViewModel : NotifyPropertyChangedBase, IDisposable
     {
         private readonly Image image;
+        private Adjustment selectedAdjustment;
 
         public ImageEditorViewModel(Image image)
         {
@@ -24,18 +27,33 @@ namespace Fotografix.Editor
             image.Dispose();
         }
 
-        public event EventHandler Invalidated;
+        public event EventHandler Invalidated
+        {
+            add { image.Invalidated += value; }
+            remove { image.Invalidated -= value; }
+        }
 
         public int Width => image.Width;
         public int Height => image.Height;
 
+        public ReadOnlyObservableCollection<Adjustment> Adjustments => image.Adjustments;
+
+        public Adjustment SelectedAdjustment
+        {
+            get
+            {
+                return selectedAdjustment;
+            }
+
+            set
+            {
+                SetValue(ref selectedAdjustment, value);
+            }
+        }
+
         public IList<string> BlendModes { get; } = Enum.GetNames(typeof(BlendMode)).ToList();
         public int SelectedBlendModeIndex { get; set; }
         public BlendMode SelectedBlendMode => (BlendMode)SelectedBlendModeIndex;
-
-        public float Shadows { get; set; } = 0;
-        public float Highlights { get; set; } = 0;
-        public float Clarity { get; set; } = 0;
 
         public void Draw(CanvasDrawingSession drawingSession)
         {
@@ -45,13 +63,11 @@ namespace Fotografix.Editor
         public void AddBlackAndWhiteAdjustment()
         {
             image.AddAdjustment(new BlackAndWhiteAdjustment(SelectedBlendMode));
-            Invalidated?.Invoke(this, EventArgs.Empty);
         }
 
         public void AddShadowsHighlightsAdjustment()
         {
-            image.AddAdjustment(new ShadowsHighlightsAdjustment(Shadows, Highlights, Clarity));
-            Invalidated?.Invoke(this, EventArgs.Empty);
+            image.AddAdjustment(new ShadowsHighlightsAdjustment());
         }
     }
 }
