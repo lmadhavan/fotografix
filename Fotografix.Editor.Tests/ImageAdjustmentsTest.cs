@@ -3,6 +3,7 @@ using Microsoft.Graphics.Canvas;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Threading.Tasks;
+using Windows.UI;
 
 namespace Fotografix.Editor.Tests
 {
@@ -70,6 +71,20 @@ namespace Fotografix.Editor.Tests
             {
                 image.AddAdjustment(adjustment);
                 await AssertImageAsync("flowers_hsl.png", image);
+            }
+        }
+
+        [TestMethod]
+        public async Task GradientMapAdjustment()
+        {
+            using (GradientMapAdjustment adjustment = new GradientMapAdjustment()
+            {
+                Shadows = Color.FromArgb(255, 12, 16, 68),
+                Highlights = Color.FromArgb(255, 233, 88, 228)
+            })
+            {
+                image.AddAdjustment(adjustment);
+                await AssertImageAsync("flowers_gm.png", image);
             }
         }
 

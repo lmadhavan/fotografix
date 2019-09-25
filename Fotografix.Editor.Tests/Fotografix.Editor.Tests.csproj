@@ -141,6 +141,7 @@
     </AppxManifest>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Images\flowers_gm.png" />
     <Content Include="Images\flowers_hsl.png" />
     <Content Include="Images\flowers_bw_multiply.png" />
     <Content Include="Images\flowers.jpg" />

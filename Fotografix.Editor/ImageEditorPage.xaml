@@ -31,6 +31,7 @@
                 </StackPanel>
                 <Button Content="Shadows/Highlights" Click="{x:Bind viewModel.AddShadowsHighlightsAdjustment}" />
                 <Button Content="Hue/Saturation" Click="{x:Bind viewModel.AddHueSaturationAdjustment}" />
+                <Button Content="Gradient Map" Click="{x:Bind viewModel.AddGradientMapAdjustment}" />
             </StackPanel>
 
             <TextBlock Style="{StaticResource SubtitleTextBlockStyle}" Text="Adjustments" Margin="0,16,0,8" />

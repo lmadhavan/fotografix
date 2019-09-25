@@ -74,5 +74,10 @@ namespace Fotografix.Editor
         {
             image.AddAdjustment(new HueSaturationAdjustment());
         }
+
+        public void AddGradientMapAdjustment()
+        {
+            image.AddAdjustment(new GradientMapAdjustment());
+        }
     }
 }

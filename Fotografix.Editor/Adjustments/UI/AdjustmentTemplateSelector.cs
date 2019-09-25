@@ -48,6 +48,19 @@ namespace Fotografix.Editor.Adjustments.UI
             }
         }
 
+        public DataTemplate GradientMapTemplate
+        {
+            get
+            {
+                return GetTemplate<GradientMapAdjustment>();
+            }
+
+            set
+            {
+                SetTemplate<GradientMapAdjustment>(value);
+            }
+        }
+
         protected override DataTemplate SelectTemplateCore(object item)
         {
             return item == null ? null : templates[item.GetType()];
