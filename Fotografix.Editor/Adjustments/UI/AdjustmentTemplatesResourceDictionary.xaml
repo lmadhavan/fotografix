@@ -5,21 +5,42 @@
     xmlns:a="using:Fotografix.Editor.Adjustments"
     xmlns:aui="using:Fotografix.Editor.Adjustments.UI">
 
+    <Style x:Key="AdjustmentSliderStyle" TargetType="Slider">
+        <Setter Property="Minimum" Value="-1" />
+        <Setter Property="Maximum" Value="1" />
+        <Setter Property="StepFrequency" Value="0.01" />
+        <Setter Property="SmallChange" Value="0.01" />
+        <Setter Property="LargeChange" Value="0.1" />
+    </Style>
+
     <DataTemplate x:Key="BlackAndWhiteTemplate">
     </DataTemplate>
 
     <DataTemplate x:Key="ShadowsHighlightsTemplate" x:DataType="a:ShadowsHighlightsAdjustment">
         <StackPanel Orientation="Vertical">
             <TextBlock Text="Shadows:" />
-            <Slider Minimum="-1" Maximum="1" StepFrequency="0.01" Value="{x:Bind Shadows, Mode=TwoWay}" />
+            <Slider Style="{StaticResource AdjustmentSliderStyle}" Value="{x:Bind Shadows, Mode=TwoWay}" />
             <TextBlock Text="Highlights:" />
-            <Slider Minimum="-1" Maximum="1" StepFrequency="0.01" Value="{x:Bind Highlights, Mode=TwoWay}" />
+            <Slider Style="{StaticResource AdjustmentSliderStyle}" Value="{x:Bind Highlights, Mode=TwoWay}" />
             <TextBlock Text="Clarity:" />
-            <Slider Minimum="-1" Maximum="1" StepFrequency="0.01" Value="{x:Bind Clarity, Mode=TwoWay}" />
+            <Slider Style="{StaticResource AdjustmentSliderStyle}" Value="{x:Bind Clarity, Mode=TwoWay}" />
+        </StackPanel>
+    </DataTemplate>
+
+    <DataTemplate x:Key="HueSaturationTemplate" x:DataType="a:HueSaturationAdjustment">
+        <StackPanel Orientation="Vertical">
+            <TextBlock Text="Hue:" />
+            <Slider Style="{StaticResource AdjustmentSliderStyle}" Value="{x:Bind Hue, Mode=TwoWay}" />
+            <TextBlock Text="Saturation:" />
+            <Slider Style="{StaticResource AdjustmentSliderStyle}" Value="{x:Bind Saturation, Mode=TwoWay}" />
+            <TextBlock Text="Lightness:" />
+            <Slider Style="{StaticResource AdjustmentSliderStyle}" Value="{x:Bind Lightness, Mode=TwoWay}" />
         </StackPanel>
     </DataTemplate>
 
     <aui:AdjustmentTemplateSelector x:Key="AdjustmentTemplateSelector"
                                     BlackAndWhiteTemplate="{StaticResource BlackAndWhiteTemplate}"
-                                    ShadowsHighlightsTemplate="{StaticResource ShadowsHighlightsTemplate}" />
+                                    ShadowsHighlightsTemplate="{StaticResource ShadowsHighlightsTemplate}"
+                                    HueSaturationTemplate="{StaticResource HueSaturationTemplate}"
+                                    />
 </ResourceDictionary>

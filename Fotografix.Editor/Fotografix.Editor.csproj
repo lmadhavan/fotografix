@@ -121,6 +121,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Adjustments\Adjustment.cs" />
+    <Compile Include="Adjustments\HueSaturationAdjustment.cs" />
     <Compile Include="Adjustments\UI\AdjustmentTemplatesResourceDictionary.xaml.cs">
       <DependentUpon>AdjustmentTemplatesResourceDictionary.xaml</DependentUpon>
     </Compile>

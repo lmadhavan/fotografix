@@ -58,6 +58,21 @@ namespace Fotografix.Editor.Tests
             }
         }
 
+        [TestMethod]
+        public async Task HueSaturationAdjustment()
+        {
+            using (HueSaturationAdjustment adjustment = new HueSaturationAdjustment()
+            {
+                Hue = 0.5f,
+                Saturation = 0.25f,
+                Lightness = 0.25f
+            })
+            {
+                image.AddAdjustment(adjustment);
+                await AssertImageAsync("flowers_hsl.png", image);
+            }
+        }
+
         private async Task AssertImageAsync(string fileWithExpectedOutput, Image actualImage)
         {
             using (CanvasBitmap expected = await LoadBitmapAsync(fileWithExpectedOutput))

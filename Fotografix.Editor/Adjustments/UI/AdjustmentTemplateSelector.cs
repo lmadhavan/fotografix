@@ -35,6 +35,19 @@ namespace Fotografix.Editor.Adjustments.UI
             }
         }
 
+        public DataTemplate HueSaturationTemplate
+        {
+            get
+            {
+                return GetTemplate<HueSaturationAdjustment>();
+            }
+
+            set
+            {
+                SetTemplate<HueSaturationAdjustment>(value);
+            }
+        }
+
         protected override DataTemplate SelectTemplateCore(object item)
         {
             return item == null ? null : templates[item.GetType()];

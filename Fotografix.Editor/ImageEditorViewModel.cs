@@ -69,5 +69,10 @@ namespace Fotografix.Editor
         {
             image.AddAdjustment(new ShadowsHighlightsAdjustment());
         }
+
+        public void AddHueSaturationAdjustment()
+        {
+            image.AddAdjustment(new HueSaturationAdjustment());
+        }
     }
 }
