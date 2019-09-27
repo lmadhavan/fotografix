@@ -47,13 +47,30 @@ namespace Fotografix.Editor
 
             set
             {
-                SetValue(ref selectedAdjustment, value);
+                if (SetValue(ref selectedAdjustment, value))
+                {
+                    RaisePropertyChanged(nameof(SelectedBlendModeIndex));
+                }
             }
         }
 
         public IList<string> BlendModes { get; } = Enum.GetNames(typeof(BlendMode)).ToList();
-        public int SelectedBlendModeIndex { get; set; }
-        public BlendMode SelectedBlendMode => (BlendMode)SelectedBlendModeIndex;
+
+        public int SelectedBlendModeIndex
+        {
+            get
+            {
+                return selectedAdjustment == null ? 0 : (int)selectedAdjustment.BlendMode;
+            }
+
+            set
+            {
+                if (selectedAdjustment != null)
+                {
+                    selectedAdjustment.BlendMode = (BlendMode)value;
+                }
+            }
+        }
 
         public void Draw(CanvasDrawingSession drawingSession)
         {
@@ -62,22 +79,28 @@ namespace Fotografix.Editor
 
         public void AddBlackAndWhiteAdjustment()
         {
-            image.AddAdjustment(new BlackAndWhiteAdjustment(SelectedBlendMode));
+            AddAdjustment(new BlackAndWhiteAdjustment());
         }
 
         public void AddShadowsHighlightsAdjustment()
         {
-            image.AddAdjustment(new ShadowsHighlightsAdjustment());
+            AddAdjustment(new ShadowsHighlightsAdjustment());
         }
 
         public void AddHueSaturationAdjustment()
         {
-            image.AddAdjustment(new HueSaturationAdjustment());
+            AddAdjustment(new HueSaturationAdjustment());
         }
 
         public void AddGradientMapAdjustment()
         {
-            image.AddAdjustment(new GradientMapAdjustment());
+            AddAdjustment(new GradientMapAdjustment());
+        }
+
+        private void AddAdjustment(Adjustment adjustment)
+        {
+            image.AddAdjustment(adjustment);
+            this.SelectedAdjustment = image.Adjustments.Last();
         }
     }
 }

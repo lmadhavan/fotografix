@@ -26,6 +26,7 @@ namespace Fotografix.Editor
         {
             foreach (Adjustment adjustment in adjustments)
             {
+                adjustment.OutputChanged -= OnAdjustmentOutputChanged;
                 adjustment.PropertyChanged -= OnAdjustmentPropertyChanged;
             }
 
@@ -66,11 +67,27 @@ namespace Fotografix.Editor
 
             Invalidate();
             adjustment.PropertyChanged += OnAdjustmentPropertyChanged;
+            adjustment.OutputChanged += OnAdjustmentOutputChanged;
         }
 
         private void OnAdjustmentPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             Invalidate();
+        }
+
+        private void OnAdjustmentOutputChanged(object sender, EventArgs e)
+        {
+            Adjustment adjustment = (Adjustment)sender;
+
+            int i = adjustments.IndexOf(adjustment);
+            if (i == adjustments.Count - 1)
+            {
+                this.output = adjustment.Output;
+            }
+            else
+            {
+                adjustments[i + 1].Input = adjustment.Output;
+            }
         }
 
         private void Invalidate()

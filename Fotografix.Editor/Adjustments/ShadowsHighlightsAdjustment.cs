@@ -1,6 +1,4 @@
-﻿using Microsoft.Graphics.Canvas;
-using Microsoft.Graphics.Canvas.Effects;
-using Windows.Graphics.Effects;
+﻿using Microsoft.Graphics.Canvas.Effects;
 
 namespace Fotografix.Editor.Adjustments
 {
@@ -12,10 +10,12 @@ namespace Fotografix.Editor.Adjustments
         {
             this.Name = "Shadows/Highlights";
             this.effect = new HighlightsAndShadowsEffect();
+            this.RawOutput = effect;
         }
 
         public override void Dispose()
         {
+            base.Dispose();
             effect.Dispose();
         }
 
@@ -61,19 +61,9 @@ namespace Fotografix.Editor.Adjustments
             }
         }
 
-        internal override IGraphicsEffectSource Input
+        protected override void OnInputChanged()
         {
-            get
-            {
-                return effect.Source;
-            }
-
-            set
-            {
-                effect.Source = value;
-            }
+            effect.Source = Input;
         }
-
-        internal override ICanvasImage Output => effect;
     }
 }

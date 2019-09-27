@@ -21,13 +21,23 @@ namespace Fotografix.Editor.Tests
         }
 
         [TestMethod]
+        public void AddsAdjustment()
+        {
+            viewModel.AddBlackAndWhiteAdjustment();
+
+            Assert.AreEqual(1, viewModel.Adjustments.Count);
+            Assert.AreEqual(viewModel.Adjustments[0], viewModel.SelectedAdjustment);
+        }
+
+        [TestMethod]
         public void ConvertsBlendModeIndexToEnumValue()
         {
             int index = viewModel.BlendModes.IndexOf("Multiply");
             Assert.AreNotEqual(-1, index);
 
+            viewModel.AddBlackAndWhiteAdjustment();
             viewModel.SelectedBlendModeIndex = index;
-            Assert.AreEqual(BlendMode.Multiply, viewModel.SelectedBlendMode);
+            Assert.AreEqual(BlendMode.Multiply, viewModel.SelectedAdjustment.BlendMode);
         }
     }
 }

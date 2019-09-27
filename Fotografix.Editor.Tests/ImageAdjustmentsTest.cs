@@ -35,16 +35,6 @@ namespace Fotografix.Editor.Tests
         }
 
         [TestMethod]
-        public async Task BlackAndWhiteAdjustmentWithBlendMode()
-        {
-            using (BlackAndWhiteAdjustment adjustment = new BlackAndWhiteAdjustment(BlendMode.Multiply))
-            {
-                image.AddAdjustment(adjustment);
-                await AssertImageAsync("flowers_bw_multiply.png", image);
-            }
-        }
-
-        [TestMethod]
         public async Task ShadowsHighlightsAdjustment()
         {
             using (ShadowsHighlightsAdjustment adjustment = new ShadowsHighlightsAdjustment()
@@ -85,6 +75,18 @@ namespace Fotografix.Editor.Tests
             {
                 image.AddAdjustment(adjustment);
                 await AssertImageAsync("flowers_gm.png", image);
+            }
+        }
+
+        [TestMethod]
+        public async Task AdjustmentBlendMode()
+        {
+            using (Adjustment adjustment = new BlackAndWhiteAdjustment())
+            {
+                image.AddAdjustment(adjustment);
+                adjustment.BlendMode = BlendMode.Multiply;
+
+                await AssertImageAsync("flowers_bw_multiply.png", image);
             }
         }
 

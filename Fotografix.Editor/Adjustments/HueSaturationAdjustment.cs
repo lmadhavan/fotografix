@@ -106,17 +106,9 @@ namespace Fotografix.Editor.Adjustments
             colorMatrixEffect.ColorMatrix = colorMatrix;
         }
 
-        internal override IGraphicsEffectSource Input
+        protected override void OnInputChanged()
         {
-            get
-            {
-                return hueEffect.Source;
-            }
-
-            set
-            {
-                hueEffect.Source = value;
-            }
+            hueEffect.Source = Input;
         }
     }
 }
