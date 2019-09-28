@@ -119,6 +119,7 @@
     <SDKReference Include="TestPlatform.Universal, Version=$(UnitTestPlatformVersion)" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AdjustmentTest.cs" />
     <Compile Include="EditorTestBase.cs" />
     <Compile Include="ImageAdjustmentsTest.cs" />
     <Compile Include="ImageCaptureExtensions.cs" />
@@ -141,6 +142,8 @@
     </AppxManifest>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Images\flowers_bw_multiply_opacity50.png" />
+    <Content Include="Images\flowers_bw_opacity50.png" />
     <Content Include="Images\flowers_gm.png" />
     <Content Include="Images\flowers_hsl.png" />
     <Content Include="Images\flowers_bw_multiply.png" />

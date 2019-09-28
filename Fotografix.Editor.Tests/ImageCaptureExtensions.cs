@@ -1,5 +1,6 @@
 ﻿using Microsoft.Graphics.Canvas;
 using System;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Core;
 using Windows.Storage;
@@ -14,12 +15,12 @@ namespace Fotografix.Editor.Tests
         /// Captures a snapshot of the image in a temporary folder and launches File Explorer to view the contents of the folder.
         /// This is useful for generating the expected output for regression tests.
         /// </summary>
-        public static async Task CaptureToTempFolderAsync(this Image image)
+        public static async Task CaptureToTempFolderAsync(this Image image, string filename)
         {
             using (var renderTarget = image.Render())
             {
                 var folder = ApplicationData.Current.TemporaryFolder;
-                var file = await folder.CreateFileAsync("Capture.png", CreationCollisionOption.GenerateUniqueName);
+                var file = await folder.CreateFileAsync(filename, CreationCollisionOption.GenerateUniqueName);
 
                 using (var stream = await file.OpenAsync(FileAccessMode.ReadWrite))
                 {

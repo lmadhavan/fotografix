@@ -1,25 +1,40 @@
 ﻿using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Effects;
 using System;
-using Windows.Graphics.Effects;
 
 namespace Fotografix.Editor.Adjustments
 {
     public abstract class Adjustment : NotifyPropertyChangedBase, IDisposable
     {
         private readonly BlendEffect blendEffect;
+        private readonly OpacityEffect opacityEffect;
+        private readonly CompositeEffect compositeEffect;
 
         private string name;
         private BlendMode blendMode;
+        private float opacity;
+
+        private ICanvasImage input;
+        private ICanvasImage rawOutput;
         private ICanvasImage output;
 
         protected Adjustment()
         {
             this.blendEffect = new BlendEffect();
+            this.opacityEffect = new OpacityEffect();
+
+            this.compositeEffect = new CompositeEffect();
+            compositeEffect.Sources.Add(null); // index 0 is set via Input property
+            compositeEffect.Sources.Add(opacityEffect);
+
+            this.blendMode = BlendMode.Normal;
+            this.opacity = 1;
         }
 
         public virtual void Dispose()
         {
+            compositeEffect.Dispose();
+            opacityEffect.Dispose();
             blendEffect.Dispose();
         }
 
@@ -57,17 +72,39 @@ namespace Fotografix.Editor.Adjustments
             }
         }
 
-        internal IGraphicsEffectSource Input
+        public float Opacity
         {
             get
             {
-                return blendEffect.Background;
+                return opacity;
+            }
+            
+            set
+            {
+                if (SetValue(ref opacity, value))
+                {
+                    opacityEffect.Opacity = opacity;
+                    UpdateOutput();
+                }
+            }
+        }
+
+        internal ICanvasImage Input
+        {
+            get
+            {
+                return input;
             }
 
             set
             {
-                blendEffect.Background = value;
-                OnInputChanged();
+                if (input != value)
+                {
+                    this.input = value;
+                    blendEffect.Background = value;
+                    compositeEffect.Sources[0] = value;
+                    OnInputChanged();
+                }
             }
         }
 
@@ -75,13 +112,17 @@ namespace Fotografix.Editor.Adjustments
         {
             get
             {
-                return (ICanvasImage)blendEffect.Foreground;
+                return rawOutput;
             }
 
             set
             {
-                blendEffect.Foreground = value;
-                UpdateOutput();
+                if (rawOutput != value)
+                {
+                    this.rawOutput = value;
+                    opacityEffect.Source = value;
+                    UpdateOutput();
+                }
             }
         }
 
@@ -110,12 +151,26 @@ namespace Fotografix.Editor.Adjustments
 
         private void UpdateOutput()
         {
-            if (blendMode == BlendMode.Normal)
+            if (opacity == 0)
+            {
+                this.Output = Input;
+            }
+            else if (blendMode == BlendMode.Normal && opacity == 1)
             {
                 this.Output = RawOutput;
             }
-            else
+            else if (blendMode == BlendMode.Normal /* && opacity != 1 */)
             {
+                this.Output = compositeEffect;
+            }
+            else if (opacity == 1 /* && blendMode != BlendMode.Normal */)
+            {
+                blendEffect.Foreground = RawOutput;
+                this.Output = blendEffect;
+            }
+            else /* blendMode != BlendMode.Normal && opacity != 1 */
+            {
+                blendEffect.Foreground = opacityEffect;
                 this.Output = blendEffect;
             }
         }

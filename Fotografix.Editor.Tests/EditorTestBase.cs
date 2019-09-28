@@ -17,7 +17,22 @@ namespace Fotografix.Editor.Tests
             this.imagesFolder = await Package.Current.InstalledLocation.GetFolderAsync("Images");
         }
 
-        protected async Task<CanvasBitmap> LoadBitmapAsync(string filename)
+        protected async Task<Image> LoadImageAsync(string filename)
+        {
+            var file = await imagesFolder.GetFileAsync(filename);
+            return await Image.LoadAsync(file);
+        }
+
+        protected async Task AssertImageAsync(string fileWithExpectedOutput, Image actualImage)
+        {
+            using (CanvasBitmap expected = await LoadBitmapAsync(fileWithExpectedOutput))
+            using (CanvasBitmap actual = actualImage.Render())
+            {
+                AssertBytesAreEqual(expected.GetPixelBytes(), actual.GetPixelBytes(), 1);
+            }
+        }
+
+        private async Task<CanvasBitmap> LoadBitmapAsync(string filename)
         {
             var file = await imagesFolder.GetFileAsync(filename);
 
@@ -27,10 +42,20 @@ namespace Fotografix.Editor.Tests
             }
         }
 
-        protected async Task<Image> LoadImageAsync(string filename)
+        private void AssertBytesAreEqual(byte[] expected, byte[] actual, byte tolerance)
         {
-            var file = await imagesFolder.GetFileAsync(filename);
-            return await Image.LoadAsync(file);
+            if (expected.Length != actual.Length)
+            {
+                Assert.Fail("Content length differs: expected = {0}, actual = {1}", expected.Length, actual.Length);
+            }
+
+            for (int i = 0; i < expected.Length; i++)
+            {
+                if (Math.Abs(expected[i] - actual[i]) > tolerance)
+                {
+                    Assert.Fail($"Content differs at index {i}: expected = {expected[i]} ± {tolerance}, actual = {actual[i]}");
+                }
+            }
         }
     }
 }

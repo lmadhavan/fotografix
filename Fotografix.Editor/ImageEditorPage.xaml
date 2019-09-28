@@ -46,7 +46,19 @@
                 </StackPanel.Resources>
 
                 <TextBox Text="{x:Bind viewModel.SelectedAdjustment.Name, Mode=TwoWay}" />
-                <ComboBox Margin="0,4,0,0" MinWidth="125" ItemsSource="{x:Bind viewModel.BlendModes}" SelectedIndex="{x:Bind viewModel.SelectedBlendModeIndex, Mode=TwoWay}" />
+                
+                <Grid Margin="0,4">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1*" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="1*" />
+                    </Grid.ColumnDefinitions>
+                    
+                    <ComboBox Grid.Column="0" ItemsSource="{x:Bind viewModel.BlendModes}" SelectedIndex="{x:Bind viewModel.SelectedBlendModeIndex, Mode=TwoWay}" />
+                    <TextBlock Grid.Column="1" Margin="12,4" Text="Opacity:" />
+                    <Slider Grid.Column="2" Style="{StaticResource AdjustmentSliderStyle}" Minimum="0" Value="{x:Bind viewModel.SelectedAdjustment.Opacity, Mode=TwoWay}" />
+                </Grid>
+                
                 <ContentControl Margin="0,8,0,0" HorizontalContentAlignment="Stretch" ContentTemplateSelector="{StaticResource AdjustmentTemplateSelector}" Content="{x:Bind viewModel.SelectedAdjustment, Mode=OneWay}" />
             </StackPanel>
         </StackPanel>
