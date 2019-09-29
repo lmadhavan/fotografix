@@ -23,15 +23,31 @@
         </Viewbox>
 
         <StackPanel Grid.Column="1" Orientation="Vertical" Background="{ThemeResource AppBarBackgroundThemeBrush}" Padding="8">
-            <TextBlock Style="{StaticResource SubtitleTextBlockStyle}" Text="New Adjustment" Margin="0,0,0,8" />
-            <StackPanel Orientation="Vertical">
-                <Button Content="Black &amp; White" Click="{x:Bind viewModel.AddBlackAndWhiteAdjustment}" />
-                <Button Content="Shadows/Highlights" Click="{x:Bind viewModel.AddShadowsHighlightsAdjustment}" />
-                <Button Content="Hue/Saturation" Click="{x:Bind viewModel.AddHueSaturationAdjustment}" />
-                <Button Content="Gradient Map" Click="{x:Bind viewModel.AddGradientMapAdjustment}" />
-            </StackPanel>
+            <Grid Margin="0,16,0,8">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                
+                <TextBlock Grid.Column="0" Style="{StaticResource SubtitleTextBlockStyle}" Text="Adjustments" />
 
-            <TextBlock Style="{StaticResource SubtitleTextBlockStyle}" Text="Adjustments" Margin="0,16,0,8" />
+                <Button Grid.Column="1">
+                    <Button.Content>
+                        <SymbolIcon Symbol="Add" />
+                    </Button.Content>
+
+                    <Button.Flyout>
+                        <MenuFlyout>
+                            <MenuFlyoutItem Text="Black &amp; White" Click="{x:Bind viewModel.AddBlackAndWhiteAdjustment}" />
+                            <MenuFlyoutItem Text="Shadows/Highlights" Click="{x:Bind viewModel.AddShadowsHighlightsAdjustment}" />
+                            <MenuFlyoutItem Text="Hue/Saturation" Click="{x:Bind viewModel.AddHueSaturationAdjustment}" />
+                            <MenuFlyoutItem Text="Gradient Map" Click="{x:Bind viewModel.AddGradientMapAdjustment}" />
+                        </MenuFlyout>
+                    </Button.Flyout>
+                </Button>
+            </Grid>
+            
+            
             <ListView ItemsSource="{x:Bind viewModel.Adjustments}" SelectedItem="{x:Bind viewModel.SelectedAdjustment, Mode=TwoWay}">
                 <ListView.ItemTemplate>
                     <DataTemplate x:DataType="a:Adjustment">
