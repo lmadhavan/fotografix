@@ -5,6 +5,7 @@ using System;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Storage;
+using Windows.Storage.Pickers;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
@@ -110,6 +111,23 @@ namespace Fotografix.Editor
                     this.file = file;
                     await LoadImageAsync();
                 }
+            }
+        }
+
+        private async void OpenImage_Click(object sender, RoutedEventArgs e)
+        {
+            FileOpenPicker picker = new FileOpenPicker()
+            {
+                SuggestedStartLocation = PickerLocationId.PicturesLibrary,
+                ViewMode = PickerViewMode.Thumbnail
+            };
+            picker.FileTypeFilter.Add(".jpg");
+            picker.FileTypeFilter.Add(".png");
+
+            this.file = await picker.PickSingleFileAsync();
+            if (file != null)
+            {
+                await LoadImageAsync();
             }
         }
     }

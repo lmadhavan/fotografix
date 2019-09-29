@@ -27,6 +27,13 @@
                 <aui:AdjustmentTemplatesResourceDictionary />
             </StackPanel.Resources>
 
+            <Button Click="OpenImage_Click">
+                <StackPanel Orientation="Horizontal">
+                    <SymbolIcon Symbol="OpenFile" />
+                    <TextBlock Margin="8,0,0,0" Text="Open image" />
+                </StackPanel>
+            </Button>
+
             <Grid Margin="0,16,0,8">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
@@ -41,7 +48,6 @@
                     </Button.Content>
                 </Button>
             </Grid>
-            
             
             <ListView ItemsSource="{x:Bind viewModel.Adjustments}" SelectedItem="{x:Bind viewModel.SelectedAdjustment, Mode=TwoWay}">
                 <ListView.ItemTemplate>
