@@ -120,6 +120,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AdjustmentTest.cs" />
+    <Compile Include="BlendModeTest.cs" />
     <Compile Include="EditorTestBase.cs" />
     <Compile Include="ImageAdjustmentsTest.cs" />
     <Compile Include="ImageCaptureExtensions.cs" />

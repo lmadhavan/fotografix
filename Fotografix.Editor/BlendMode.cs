@@ -28,7 +28,7 @@
         Difference,
         Exclusion,
         Subtract,
-        Divide,
+        Division,
 
         Hue,
         Saturation,
