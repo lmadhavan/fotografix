@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Fotografix.Editor.Adjustments;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Threading.Tasks;
 
 namespace Fotografix.Editor.Tests
@@ -23,7 +24,7 @@ namespace Fotografix.Editor.Tests
         [TestMethod]
         public void AddsAdjustment()
         {
-            viewModel.AddBlackAndWhiteAdjustment();
+            viewModel.AddAdjustment(new BlackAndWhiteAdjustment());
 
             Assert.AreEqual(1, viewModel.Adjustments.Count);
             Assert.AreEqual(viewModel.Adjustments[0], viewModel.SelectedAdjustment);
@@ -35,7 +36,7 @@ namespace Fotografix.Editor.Tests
             int index = viewModel.BlendModes.IndexOf("Multiply");
             Assert.AreNotEqual(-1, index);
 
-            viewModel.AddBlackAndWhiteAdjustment();
+            viewModel.AddAdjustment(new BlackAndWhiteAdjustment());
             viewModel.SelectedBlendModeIndex = index;
             Assert.AreEqual(BlendMode.Multiply, viewModel.SelectedAdjustment.BlendMode);
         }

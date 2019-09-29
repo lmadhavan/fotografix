@@ -1,4 +1,5 @@
-﻿using Microsoft.Graphics.Canvas.UI;
+﻿using Fotografix.Editor.Adjustments;
+using Microsoft.Graphics.Canvas.UI;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using System;
 using System.Threading.Tasks;
@@ -18,6 +19,23 @@ namespace Fotografix.Editor
         public ImageEditorPage()
         {
             this.InitializeComponent();
+            BindNewAdjustmentMenuFlyout();
+        }
+
+        private void BindNewAdjustmentMenuFlyout()
+        {
+            var menuFlyout = (MenuFlyout)newAdjustmentButton.Flyout;
+            foreach (MenuFlyoutItem item in menuFlyout.Items)
+            {
+                item.Click += NewAdjustmentMenuItem_Click;
+            }
+        }
+
+        private void NewAdjustmentMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            var item = (MenuFlyoutItem)sender;
+            var adjustmentFactory = (IAdjustmentFactory)item.Tag;
+            viewModel?.AddAdjustment(adjustmentFactory.CreateAdjustment());
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)

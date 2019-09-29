@@ -124,6 +124,7 @@
     <Compile Include="Adjustments\ColorMatrixAdjustment.cs" />
     <Compile Include="Adjustments\GradientMapAdjustment.cs" />
     <Compile Include="Adjustments\HueSaturationAdjustment.cs" />
+    <Compile Include="Adjustments\IAdjustmentFactory.cs" />
     <Compile Include="Adjustments\UI\AdjustmentTemplatesResourceDictionary.xaml.cs">
       <DependentUpon>AdjustmentTemplatesResourceDictionary.xaml</DependentUpon>
     </Compile>

@@ -23,6 +23,10 @@
         </Viewbox>
 
         <StackPanel Grid.Column="1" Orientation="Vertical" Background="{ThemeResource AppBarBackgroundThemeBrush}" Padding="8">
+            <StackPanel.Resources>
+                <aui:AdjustmentTemplatesResourceDictionary />
+            </StackPanel.Resources>
+
             <Grid Margin="0,16,0,8">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
@@ -31,19 +35,10 @@
                 
                 <TextBlock Grid.Column="0" Style="{StaticResource SubtitleTextBlockStyle}" Text="Adjustments" />
 
-                <Button Grid.Column="1">
+                <Button Grid.Column="1" x:Name="newAdjustmentButton" Flyout="{StaticResource NewAdjustmentMenuFlyout}">
                     <Button.Content>
                         <SymbolIcon Symbol="Add" />
                     </Button.Content>
-
-                    <Button.Flyout>
-                        <MenuFlyout>
-                            <MenuFlyoutItem Text="Black &amp; White" Click="{x:Bind viewModel.AddBlackAndWhiteAdjustment}" />
-                            <MenuFlyoutItem Text="Shadows/Highlights" Click="{x:Bind viewModel.AddShadowsHighlightsAdjustment}" />
-                            <MenuFlyoutItem Text="Hue/Saturation" Click="{x:Bind viewModel.AddHueSaturationAdjustment}" />
-                            <MenuFlyoutItem Text="Gradient Map" Click="{x:Bind viewModel.AddGradientMapAdjustment}" />
-                        </MenuFlyout>
-                    </Button.Flyout>
                 </Button>
             </Grid>
             
@@ -57,10 +52,6 @@
             </ListView>
 
             <StackPanel Orientation="Vertical" Margin="0,16,0,0" Padding="6" Background="{ThemeResource NavigationViewExpandedPaneBackground}">
-                <StackPanel.Resources>
-                    <aui:AdjustmentTemplatesResourceDictionary />
-                </StackPanel.Resources>
-
                 <TextBox Text="{x:Bind viewModel.SelectedAdjustment.Name, Mode=TwoWay}" />
                 
                 <Grid Margin="0,4">

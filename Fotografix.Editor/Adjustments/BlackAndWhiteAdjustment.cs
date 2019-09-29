@@ -9,7 +9,6 @@ namespace Fotografix.Editor.Adjustments
 
         public BlackAndWhiteAdjustment()
         {
-            this.Name = "Black & White";
             this.grayscaleEffect = new GrayscaleEffect();
             this.RawOutput = grayscaleEffect;
         }

@@ -9,8 +9,6 @@ namespace Fotografix.Editor.Adjustments
 
         public GradientMapAdjustment()
         {
-            this.Name = "Gradient Map";
-
             this.shadows = Colors.Black;
             this.highlights = Colors.White;
             UpdateColorMatrix();

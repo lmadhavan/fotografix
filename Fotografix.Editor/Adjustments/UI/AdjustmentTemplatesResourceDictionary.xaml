@@ -26,10 +26,10 @@
         <Setter Property="IsColorPreviewVisible" Value="False" />
     </Style>
 
-    <DataTemplate x:Key="BlackAndWhiteTemplate">
+    <DataTemplate x:Name="blackAndWhiteTemplate">
     </DataTemplate>
 
-    <DataTemplate x:Key="ShadowsHighlightsTemplate" x:DataType="a:ShadowsHighlightsAdjustment">
+    <DataTemplate x:Name="shadowsHighlightsTemplate" x:DataType="a:ShadowsHighlightsAdjustment">
         <StackPanel Orientation="Vertical">
             <TextBlock Text="Shadows:" />
             <Slider Style="{StaticResource AdjustmentSliderStyle}" Value="{x:Bind Shadows, Mode=TwoWay}" />
@@ -40,7 +40,7 @@
         </StackPanel>
     </DataTemplate>
 
-    <DataTemplate x:Key="HueSaturationTemplate" x:DataType="a:HueSaturationAdjustment">
+    <DataTemplate x:Name="hueSaturationTemplate" x:DataType="a:HueSaturationAdjustment">
         <StackPanel Orientation="Vertical">
             <TextBlock Text="Hue:" />
             <Slider Style="{StaticResource AdjustmentSliderStyle}" Value="{x:Bind Hue, Mode=TwoWay}" />
@@ -51,7 +51,7 @@
         </StackPanel>
     </DataTemplate>
 
-    <DataTemplate x:Key="GradientMapTemplate" x:DataType="a:GradientMapAdjustment">
+    <DataTemplate x:Name="gradientMapTemplate" x:DataType="a:GradientMapAdjustment">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />
@@ -91,10 +91,6 @@
         </Grid>
     </DataTemplate>
 
-    <aui:AdjustmentTemplateSelector x:Key="AdjustmentTemplateSelector"
-                                    BlackAndWhiteTemplate="{StaticResource BlackAndWhiteTemplate}"
-                                    ShadowsHighlightsTemplate="{StaticResource ShadowsHighlightsTemplate}"
-                                    HueSaturationTemplate="{StaticResource HueSaturationTemplate}"
-                                    GradientMapTemplate="{StaticResource GradientMapTemplate}"
-                                    />
+    <aui:AdjustmentTemplateSelector x:Key="AdjustmentTemplateSelector" x:Name="adjustmentTemplateSelector" />
+    <MenuFlyout x:Key="NewAdjustmentMenuFlyout" x:Name="newAdjustmentMenuFlyout" />
 </ResourceDictionary>

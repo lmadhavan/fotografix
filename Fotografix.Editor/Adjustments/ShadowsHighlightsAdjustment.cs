@@ -8,7 +8,6 @@ namespace Fotografix.Editor.Adjustments
 
         public ShadowsHighlightsAdjustment()
         {
-            this.Name = "Shadows/Highlights";
             this.effect = new HighlightsAndShadowsEffect();
             this.RawOutput = effect;
         }

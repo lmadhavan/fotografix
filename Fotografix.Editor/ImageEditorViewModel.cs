@@ -77,27 +77,7 @@ namespace Fotografix.Editor
             image.Draw(drawingSession);
         }
 
-        public void AddBlackAndWhiteAdjustment()
-        {
-            AddAdjustment(new BlackAndWhiteAdjustment());
-        }
-
-        public void AddShadowsHighlightsAdjustment()
-        {
-            AddAdjustment(new ShadowsHighlightsAdjustment());
-        }
-
-        public void AddHueSaturationAdjustment()
-        {
-            AddAdjustment(new HueSaturationAdjustment());
-        }
-
-        public void AddGradientMapAdjustment()
-        {
-            AddAdjustment(new GradientMapAdjustment());
-        }
-
-        private void AddAdjustment(Adjustment adjustment)
+        public void AddAdjustment(Adjustment adjustment)
         {
             image.AddAdjustment(adjustment);
             this.SelectedAdjustment = image.Adjustments.Last();

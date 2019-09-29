@@ -1,6 +1,5 @@
 ﻿using Microsoft.Graphics.Canvas.Effects;
 using System;
-using Windows.Graphics.Effects;
 
 namespace Fotografix.Editor.Adjustments
 {
@@ -14,8 +13,6 @@ namespace Fotografix.Editor.Adjustments
 
         public HueSaturationAdjustment()
         {
-            this.Name = "Hue/Saturation";
-
             this.hueEffect = new HueRotationEffect();
             colorMatrixEffect.Source = hueEffect;
         }

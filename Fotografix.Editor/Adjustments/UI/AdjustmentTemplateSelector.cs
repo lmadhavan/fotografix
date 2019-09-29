@@ -9,58 +9,6 @@ namespace Fotografix.Editor.Adjustments.UI
     {
         private readonly Dictionary<Type, DataTemplate> templates = new Dictionary<Type, DataTemplate>();
 
-        public DataTemplate BlackAndWhiteTemplate
-        {
-            get
-            {
-                return GetTemplate<BlackAndWhiteAdjustment>();
-            }
-
-            set
-            {
-                SetTemplate<BlackAndWhiteAdjustment>(value);
-            }
-        }
-
-        public DataTemplate ShadowsHighlightsTemplate
-        {
-            get
-            {
-                return GetTemplate<ShadowsHighlightsAdjustment>();
-            }
-
-            set
-            {
-                SetTemplate<ShadowsHighlightsAdjustment>(value);
-            }
-        }
-
-        public DataTemplate HueSaturationTemplate
-        {
-            get
-            {
-                return GetTemplate<HueSaturationAdjustment>();
-            }
-
-            set
-            {
-                SetTemplate<HueSaturationAdjustment>(value);
-            }
-        }
-
-        public DataTemplate GradientMapTemplate
-        {
-            get
-            {
-                return GetTemplate<GradientMapAdjustment>();
-            }
-
-            set
-            {
-                SetTemplate<GradientMapAdjustment>(value);
-            }
-        }
-
         protected override DataTemplate SelectTemplateCore(object item)
         {
             return item == null ? null : templates[item.GetType()];
@@ -71,12 +19,7 @@ namespace Fotografix.Editor.Adjustments.UI
             return SelectTemplateCore(item);
         }
 
-        private DataTemplate GetTemplate<T>()
-        {
-            return templates.GetValueOrDefault(typeof(T));
-        }
-
-        private void SetTemplate<T>(DataTemplate template)
+        public void SetTemplate<T>(DataTemplate template)
         {
             templates[typeof(T)] = template;
         }
