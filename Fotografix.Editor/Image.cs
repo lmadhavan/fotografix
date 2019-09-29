@@ -14,6 +14,11 @@ namespace Fotografix.Editor
         private readonly ObservableCollection<Adjustment> adjustments;
         private ICanvasImage output;
 
+        public Image(ICanvasResourceCreator resourceCreator, int width, int height)
+            : this(new CanvasRenderTarget(resourceCreator, width, height, 96))
+        {
+        }
+
         public Image(CanvasBitmap bitmap)
         {
             this.bitmap = bitmap;

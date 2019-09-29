@@ -51,7 +51,8 @@
                 </ListView.ItemTemplate>
             </ListView>
 
-            <StackPanel Orientation="Vertical" Margin="0,16,0,0" Padding="6" Background="{ThemeResource NavigationViewExpandedPaneBackground}">
+            <StackPanel Orientation="Vertical" Margin="0,16,0,0" Padding="6" Background="{ThemeResource NavigationViewExpandedPaneBackground}"
+                        Visibility="{x:Bind viewModel.AdjustmentPropertiesVisible, Mode=OneWay}">
                 <TextBox Text="{x:Bind viewModel.SelectedAdjustment.Name, Mode=TwoWay}" />
                 
                 <Grid Margin="0,4">

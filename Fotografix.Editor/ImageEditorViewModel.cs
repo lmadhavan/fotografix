@@ -38,6 +38,8 @@ namespace Fotografix.Editor
 
         public ReadOnlyObservableCollection<Adjustment> Adjustments => image.Adjustments;
 
+        public bool AdjustmentPropertiesVisible => selectedAdjustment != null;
+
         public Adjustment SelectedAdjustment
         {
             get
@@ -50,6 +52,7 @@ namespace Fotografix.Editor
                 if (SetValue(ref selectedAdjustment, value))
                 {
                     RaisePropertyChanged(nameof(SelectedBlendModeIndex));
+                    RaisePropertyChanged(nameof(AdjustmentPropertiesVisible));
                 }
             }
         }
