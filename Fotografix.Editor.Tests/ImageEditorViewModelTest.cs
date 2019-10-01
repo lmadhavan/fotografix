@@ -38,14 +38,14 @@ namespace Fotografix.Editor.Tests
         }
 
         [TestMethod]
-        public void ConvertsBlendModeIndexToEnumValue()
+        public void MapsBlendModeEnumValueToDisplayString()
         {
-            int index = viewModel.BlendModes.IndexOf("Multiply");
+            int index = viewModel.BlendModes.IndexOf("Soft Light");
             Assert.AreNotEqual(-1, index);
 
             viewModel.AddAdjustment(new BlackAndWhiteAdjustment());
             viewModel.SelectedBlendModeIndex = index;
-            Assert.AreEqual(BlendMode.Multiply, viewModel.SelectedAdjustment.BlendMode);
+            Assert.AreEqual(BlendMode.SoftLight, viewModel.SelectedAdjustment.BlendMode);
         }
     }
 }

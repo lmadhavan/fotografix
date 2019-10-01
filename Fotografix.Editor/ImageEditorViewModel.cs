@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using Windows.ApplicationModel.Resources;
 
 namespace Fotografix.Editor
 {
@@ -15,6 +16,7 @@ namespace Fotografix.Editor
         public ImageEditorViewModel(Image image)
         {
             this.image = image;
+            this.BlendModes = GetBlendModeNames();
         }
 
         public void Dispose()
@@ -57,7 +59,7 @@ namespace Fotografix.Editor
             }
         }
 
-        public IList<string> BlendModes { get; } = Enum.GetNames(typeof(BlendMode)).ToList();
+        public IList<string> BlendModes { get; }
 
         public int SelectedBlendModeIndex
         {
@@ -84,6 +86,13 @@ namespace Fotografix.Editor
         {
             image.AddAdjustment(adjustment);
             this.SelectedAdjustment = image.Adjustments.Last();
+        }
+
+        private IList<string> GetBlendModeNames()
+        {
+            var resourceLoader = ResourceLoader.GetForViewIndependentUse("Fotografix.Editor/Resources/BlendMode");
+            var enumNames = Enum.GetNames(typeof(BlendMode));
+            return enumNames.Select(resourceLoader.GetString).ToList();
         }
     }
 }
