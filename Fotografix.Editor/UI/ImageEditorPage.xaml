@@ -1,5 +1,5 @@
 ﻿<Page
-    x:Class="Fotografix.Editor.ImageEditorPage"
+    x:Class="Fotografix.Editor.UI.ImageEditorPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -7,6 +7,7 @@
     xmlns:canvas="using:Microsoft.Graphics.Canvas.UI.Xaml"
     xmlns:a="using:Fotografix.Editor.Adjustments"
     xmlns:aui="using:Fotografix.Editor.Adjustments.UI"
+    xmlns:eui="using:Fotografix.Editor.UI"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
     Unloaded="Page_Unloaded"
@@ -63,12 +64,22 @@
                 
                 <Grid Margin="0,4">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="1*" />
+                        <ColumnDefinition Width="100" />
                         <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="1*" />
+                        <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
-                    
-                    <ComboBox Grid.Column="0" ItemsSource="{x:Bind viewModel.BlendModes}" SelectedIndex="{x:Bind viewModel.SelectedBlendModeIndex, Mode=TwoWay}" />
+
+                    <Grid.Resources>
+                        <eui:BlendModeListResourceDictionary />
+                    </Grid.Resources>
+
+                    <ComboBox Grid.Column="0"
+                              HorizontalAlignment="Stretch"
+                              ItemsSource="{x:Bind viewModel.BlendModes}"
+                              SelectedItem="{x:Bind viewModel.SelectedBlendMode, Mode=TwoWay}"
+                              ItemTemplateSelector="{StaticResource BlendModeListItemTemplateSelector}"
+                              ItemContainerStyleSelector="{StaticResource BlendModeListItemStyleSelector}">
+                    </ComboBox>
                     <TextBlock Grid.Column="1" Margin="12,4" Text="Opacity:" />
                     <Slider Grid.Column="2" Style="{StaticResource AdjustmentSliderStyle}" Minimum="0" Value="{x:Bind viewModel.SelectedAdjustment.Opacity, Mode=TwoWay}" />
                 </Grid>

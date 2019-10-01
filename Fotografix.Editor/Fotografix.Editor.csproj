@@ -131,11 +131,18 @@
     <Compile Include="Adjustments\UI\AdjustmentTemplateSelector.cs" />
     <Compile Include="Adjustments\BlackAndWhiteAdjustment.cs" />
     <Compile Include="BlendMode.cs" />
-    <Compile Include="ImageEditorPage.xaml.cs">
+    <Compile Include="UI\BlendModeListItemStyleSelector.cs" />
+    <Compile Include="UI\BlendModeListItemTemplateSelector.cs" />
+    <Compile Include="UI\BlendModeList.cs" />
+    <Compile Include="UI\BlendModeListItem.cs" />
+    <Compile Include="UI\BlendModeListResourceDictionary.xaml.cs">
+      <DependentUpon>BlendModeListResourceDictionary.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\ImageEditorPage.xaml.cs">
       <DependentUpon>ImageEditorPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Image.cs" />
-    <Compile Include="ImageEditorViewModel.cs" />
+    <Compile Include="UI\ImageEditorViewModel.cs" />
     <Compile Include="NotifyPropertyChangedBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Adjustments\ShadowsHighlightsAdjustment.cs" />
@@ -154,7 +161,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="ImageEditorPage.xaml">
+    <Page Include="UI\BlendModeListResourceDictionary.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UI\ImageEditorPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

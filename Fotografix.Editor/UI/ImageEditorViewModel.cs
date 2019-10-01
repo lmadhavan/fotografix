@@ -1,22 +1,20 @@
 ﻿using Fotografix.Editor.Adjustments;
 using Microsoft.Graphics.Canvas;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using Windows.ApplicationModel.Resources;
 
-namespace Fotografix.Editor
+namespace Fotografix.Editor.UI
 {
     public sealed class ImageEditorViewModel : NotifyPropertyChangedBase, IDisposable
     {
         private readonly Image image;
         private Adjustment selectedAdjustment;
+        private BlendModeListItem selectedBlendMode;
 
         public ImageEditorViewModel(Image image)
         {
             this.image = image;
-            this.BlendModes = GetBlendModeNames();
         }
 
         public void Dispose()
@@ -53,13 +51,32 @@ namespace Fotografix.Editor
             {
                 if (SetValue(ref selectedAdjustment, value))
                 {
-                    RaisePropertyChanged(nameof(SelectedBlendModeIndex));
+                    SelectedBlendMode = BlendModes[selectedAdjustment.BlendMode];
                     RaisePropertyChanged(nameof(AdjustmentPropertiesVisible));
                 }
             }
         }
 
-        public IList<string> BlendModes { get; }
+        public BlendModeList BlendModes { get; } = BlendModeList.Create();
+
+        public BlendModeListItem SelectedBlendMode
+        {
+            get
+            {
+                return selectedBlendMode;
+            }
+
+            set
+            {
+                if (SetValue(ref selectedBlendMode, value))
+                {
+                    if (selectedAdjustment != null)
+                    {
+                        selectedAdjustment.BlendMode = selectedBlendMode.BlendMode;
+                    }
+                }
+            }
+        }
 
         public int SelectedBlendModeIndex
         {
@@ -86,13 +103,6 @@ namespace Fotografix.Editor
         {
             image.AddAdjustment(adjustment);
             this.SelectedAdjustment = image.Adjustments.Last();
-        }
-
-        private IList<string> GetBlendModeNames()
-        {
-            var resourceLoader = ResourceLoader.GetForViewIndependentUse("Fotografix.Editor/Resources/BlendMode");
-            var enumNames = Enum.GetNames(typeof(BlendMode));
-            return enumNames.Select(resourceLoader.GetString).ToList();
         }
     }
 }

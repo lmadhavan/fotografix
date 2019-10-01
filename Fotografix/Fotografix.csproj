@@ -156,16 +156,16 @@
     <None Include="Fotografix_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Fotografix.Editor\Fotografix.Editor.csproj">
-      <Project>{319fa943-25c3-405e-97fc-02307cc817f0}</Project>
-      <Name>Fotografix.Editor</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Page Include="DummyPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Fotografix.Editor\Fotografix.Editor.csproj">
+      <Project>{319fa943-25c3-405e-97fc-02307cc817f0}</Project>
+      <Name>Fotografix.Editor</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>

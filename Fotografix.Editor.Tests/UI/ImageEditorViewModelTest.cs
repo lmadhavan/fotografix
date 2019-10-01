@@ -2,7 +2,7 @@
 using Microsoft.Graphics.Canvas;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Fotografix.Editor.Tests
+namespace Fotografix.Editor.UI.Tests
 {
     [TestClass]
     public class ImageEditorViewModelTest
@@ -35,17 +35,6 @@ namespace Fotografix.Editor.Tests
             Assert.AreEqual(adjustment, viewModel.SelectedAdjustment);
             Assert.AreEqual(adjustment, viewModel.Adjustments[0]);
             Assert.IsTrue(viewModel.AdjustmentPropertiesVisible);
-        }
-
-        [TestMethod]
-        public void MapsBlendModeEnumValueToDisplayString()
-        {
-            int index = viewModel.BlendModes.IndexOf("Soft Light");
-            Assert.AreNotEqual(-1, index);
-
-            viewModel.AddAdjustment(new BlackAndWhiteAdjustment());
-            viewModel.SelectedBlendModeIndex = index;
-            Assert.AreEqual(BlendMode.SoftLight, viewModel.SelectedAdjustment.BlendMode);
         }
     }
 }

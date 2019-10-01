@@ -10,7 +10,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
-namespace Fotografix.Editor
+namespace Fotografix.Editor.UI
 {
     public sealed partial class ImageEditorPage : Page
     {
