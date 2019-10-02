@@ -36,5 +36,22 @@ namespace Fotografix.Editor.UI.Tests
             Assert.AreEqual(adjustment, viewModel.Adjustments[0]);
             Assert.IsTrue(viewModel.AdjustmentPropertiesVisible);
         }
+
+        [TestMethod]
+        public void DeletesAdjustment()
+        {
+            Assert.IsFalse(viewModel.DeleteAdjustmentCommand.CanExecute(null), "Command should be initially disabled");
+
+            viewModel.AddAdjustment(adjustment);
+
+            Assert.IsTrue(viewModel.DeleteAdjustmentCommand.CanExecute(null), "Command should be enabled after adding adjustment");
+
+            viewModel.DeleteAdjustmentCommand.Execute(null);
+
+            Assert.AreEqual(0, viewModel.Adjustments.Count);
+            Assert.IsNull(viewModel.SelectedAdjustment);
+
+            Assert.IsFalse(viewModel.DeleteAdjustmentCommand.CanExecute(null), "Command should be disabled after deleting adjustment");
+        }
     }
 }

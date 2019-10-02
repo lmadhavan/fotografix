@@ -66,13 +66,22 @@ namespace Fotografix.Editor
                 throw new ArgumentException("Adjustment is already attached to another object");
             }
 
-            adjustment.Input = output;
-            adjustments.Add(adjustment);
-            this.output = adjustment.Output;
-
-            Invalidate();
             adjustment.PropertyChanged += OnAdjustmentPropertyChanged;
             adjustment.OutputChanged += OnAdjustmentOutputChanged;
+
+            adjustments.Add(adjustment);
+            RelinkAdjustments();
+        }
+
+        public void DeleteAdjustment(Adjustment adjustment)
+        {
+            if (adjustments.Remove(adjustment))
+            {
+                adjustment.PropertyChanged -= OnAdjustmentPropertyChanged;
+                adjustment.OutputChanged -= OnAdjustmentOutputChanged;
+
+                RelinkAdjustments();
+            }
         }
 
         private void OnAdjustmentPropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -82,17 +91,40 @@ namespace Fotografix.Editor
 
         private void OnAdjustmentOutputChanged(object sender, EventArgs e)
         {
-            Adjustment adjustment = (Adjustment)sender;
+            RelinkAdjustments();
+        }
 
-            int i = adjustments.IndexOf(adjustment);
-            if (i == adjustments.Count - 1)
+        private bool relinking;
+
+        private void RelinkAdjustments()
+        {
+            if (relinking)
             {
-                this.output = adjustment.Output;
+                return;
+            }
+
+            this.relinking = true;
+
+            int n = adjustments.Count;
+
+            if (n == 0)
+            {
+                this.output = bitmap;
             }
             else
             {
-                adjustments[i + 1].Input = adjustment.Output;
+                adjustments[0].Input = bitmap;
+
+                for (int i = 1; i < n; i++)
+                {
+                    adjustments[i].Input = adjustments[i - 1].Output;
+                }
+
+                this.output = adjustments[n - 1].Output;
             }
+
+            Invalidate();
+            this.relinking = false;
         }
 
         private void Invalidate()

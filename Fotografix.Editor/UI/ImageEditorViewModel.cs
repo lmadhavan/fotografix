@@ -3,6 +3,7 @@ using Microsoft.Graphics.Canvas;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Windows.Input;
 
 namespace Fotografix.Editor.UI
 {
@@ -11,10 +12,12 @@ namespace Fotografix.Editor.UI
         private readonly Image image;
         private Adjustment selectedAdjustment;
         private BlendModeListItem selectedBlendMode;
+        private DelegateCommand deleteAdjustmentCommand;
 
         public ImageEditorViewModel(Image image)
         {
             this.image = image;
+            this.deleteAdjustmentCommand = new DelegateCommand(DeleteAdjustment, () => CanDeleteAdjustment);
         }
 
         public void Dispose()
@@ -51,8 +54,13 @@ namespace Fotografix.Editor.UI
             {
                 if (SetValue(ref selectedAdjustment, value))
                 {
-                    SelectedBlendMode = BlendModes[selectedAdjustment.BlendMode];
+                    if (selectedAdjustment != null)
+                    {
+                        SelectedBlendMode = BlendModes[selectedAdjustment.BlendMode];
+                    }
+
                     RaisePropertyChanged(nameof(AdjustmentPropertiesVisible));
+                    deleteAdjustmentCommand.RaiseCanExecuteChanged();
                 }
             }
         }
@@ -103,6 +111,16 @@ namespace Fotografix.Editor.UI
         {
             image.AddAdjustment(adjustment);
             this.SelectedAdjustment = image.Adjustments.Last();
+        }
+
+        public ICommand DeleteAdjustmentCommand => deleteAdjustmentCommand;
+
+        private bool CanDeleteAdjustment => selectedAdjustment != null;
+
+        private void DeleteAdjustment()
+        {
+            image.DeleteAdjustment(selectedAdjustment);
+            this.SelectedAdjustment = image.Adjustments.LastOrDefault();
         }
     }
 }

@@ -43,11 +43,19 @@
                 
                 <TextBlock Grid.Column="0" Style="{StaticResource SubtitleTextBlockStyle}" Text="Adjustments" />
 
-                <Button Grid.Column="1" x:Name="newAdjustmentButton" Flyout="{StaticResource NewAdjustmentMenuFlyout}">
-                    <Button.Content>
-                        <SymbolIcon Symbol="Add" />
-                    </Button.Content>
-                </Button>
+                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                    <Button x:Name="newAdjustmentButton" Flyout="{StaticResource NewAdjustmentMenuFlyout}">
+                        <Button.Content>
+                            <SymbolIcon Symbol="Add" />
+                        </Button.Content>
+                    </Button>
+
+                    <Button Margin="4,0,0,0" Command="{x:Bind viewModel.DeleteAdjustmentCommand, Mode=OneWay}">
+                        <Button.Content>
+                            <SymbolIcon Symbol="Delete" />
+                        </Button.Content>
+                    </Button>
+                </StackPanel>
             </Grid>
             
             <ListView ItemsSource="{x:Bind viewModel.Adjustments}" SelectedItem="{x:Bind viewModel.SelectedAdjustment, Mode=TwoWay}">
