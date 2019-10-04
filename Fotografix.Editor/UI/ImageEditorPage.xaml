@@ -61,7 +61,15 @@
             <ListView ItemsSource="{x:Bind viewModel.Adjustments}" SelectedItem="{x:Bind viewModel.SelectedAdjustment, Mode=TwoWay}">
                 <ListView.ItemTemplate>
                     <DataTemplate x:DataType="a:Adjustment">
-                        <TextBlock Text="{x:Bind Name, Mode=OneWay}" />
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+
+                            <CheckBox Grid.Column="0" MinWidth="0" IsChecked="{x:Bind Visible, Mode=TwoWay}" />
+                            <TextBlock Grid.Column="1" VerticalAlignment="Center" Text="{x:Bind Name, Mode=OneWay}" />
+                        </Grid>
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>

@@ -11,6 +11,7 @@ namespace Fotografix.Editor.Adjustments
         private readonly CompositeEffect compositeEffect;
 
         private string name;
+        private bool visible;
         private BlendMode blendMode;
         private float opacity;
 
@@ -27,6 +28,7 @@ namespace Fotografix.Editor.Adjustments
             compositeEffect.Sources.Add(null); // index 0 is set via Input property
             compositeEffect.Sources.Add(opacityEffect);
 
+            this.visible = true;
             this.blendMode = BlendMode.Normal;
             this.opacity = 1;
         }
@@ -48,6 +50,22 @@ namespace Fotografix.Editor.Adjustments
             set
             {
                 SetValue(ref name, value);
+            }
+        }
+
+        public bool Visible
+        {
+            get
+            {
+                return visible;
+            }
+
+            set
+            {
+                if (SetValue(ref visible, value))
+                {
+                    UpdateOutput();
+                }
             }
         }
 
@@ -151,7 +169,7 @@ namespace Fotografix.Editor.Adjustments
 
         private void UpdateOutput()
         {
-            if (opacity == 0)
+            if (opacity == 0 || visible == false)
             {
                 this.Output = Input;
             }

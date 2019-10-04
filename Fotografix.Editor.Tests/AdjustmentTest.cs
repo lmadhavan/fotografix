@@ -26,7 +26,7 @@ namespace Fotografix.Editor.Tests
         }
 
         [TestMethod]
-        public async Task BlendMode_Normal_Opacity_100()
+        public async Task DefaultProperties()
         {
             adjustment.BlendMode = BlendMode.Normal;
             adjustment.Opacity = 1;
@@ -35,7 +35,15 @@ namespace Fotografix.Editor.Tests
         }
 
         [TestMethod]
-        public async Task BlendMode_DoesNotMatter_Opacity_0()
+        public async Task Visible_False()
+        {
+            adjustment.Visible = false;
+
+            await AssertImageAsync("flowers.jpg", image);
+        }
+
+        [TestMethod]
+        public async Task Opacity_0()
         {
             adjustment.Opacity = 0;
 
@@ -43,7 +51,7 @@ namespace Fotografix.Editor.Tests
         }
 
         [TestMethod]
-        public async Task BlendMode_Normal_Opacity_50()
+        public async Task Opacity_50()
         {
             adjustment.BlendMode = BlendMode.Normal;
             adjustment.Opacity = 0.5f;
@@ -52,7 +60,7 @@ namespace Fotografix.Editor.Tests
         }
 
         [TestMethod]
-        public async Task BlendMode_Multiply_Opacity_100()
+        public async Task BlendMode_Multiply()
         {
             adjustment.BlendMode = BlendMode.Multiply;
             adjustment.Opacity = 1;
