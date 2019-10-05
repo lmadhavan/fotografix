@@ -8,10 +8,23 @@
     xmlns:a="using:Fotografix.Editor.Adjustments"
     xmlns:aui="using:Fotografix.Editor.Adjustments.UI"
     xmlns:eui="using:Fotografix.Editor.UI"
+    xmlns:sys="using:System"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
     Unloaded="Page_Unloaded"
     AllowDrop="True">
+
+    <Page.TopAppBar>
+        <CommandBar DefaultLabelPosition="Right">
+            <CommandBar.Content>
+                <CommandBar DefaultLabelPosition="Right">
+                    <AppBarButton Icon="Zoom" Label="{x:Bind sys:String.Format('{0:P0}', scrollViewer.ZoomFactor), Mode=OneWay}" ToolTipService.ToolTip="Zoom" />
+                </CommandBar>
+            </CommandBar.Content>
+
+            <AppBarButton Icon="OpenFile" Label="Open" Click="OpenImage_Click" />
+        </CommandBar>
+    </Page.TopAppBar>
 
     <Grid>
         <Grid.ColumnDefinitions>
@@ -19,23 +32,16 @@
             <ColumnDefinition Width="300" />
         </Grid.ColumnDefinitions>
 
-        <Viewbox Grid.Column="0" Stretch="Uniform" StretchDirection="DownOnly">
+        <ScrollViewer x:Name="scrollViewer" Grid.Column="0" HorizontalScrollBarVisibility="Auto" ZoomMode="Enabled">
             <canvas:CanvasControl x:Name="canvas" CreateResources="Canvas_CreateResources" Draw="Canvas_Draw" />
-        </Viewbox>
+        </ScrollViewer>
 
         <StackPanel Grid.Column="1" Orientation="Vertical" Background="{ThemeResource AppBarBackgroundThemeBrush}" Padding="8">
             <StackPanel.Resources>
                 <aui:AdjustmentTemplatesResourceDictionary />
             </StackPanel.Resources>
 
-            <Button Click="OpenImage_Click">
-                <StackPanel Orientation="Horizontal">
-                    <SymbolIcon Symbol="OpenFile" />
-                    <TextBlock Margin="8,0,0,0" Text="Open image" />
-                </StackPanel>
-            </Button>
-
-            <Grid Margin="0,16,0,8">
+            <Grid Margin="0,0,0,8">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
