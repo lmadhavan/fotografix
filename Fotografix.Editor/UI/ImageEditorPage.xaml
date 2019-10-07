@@ -10,33 +10,128 @@
     xmlns:eui="using:Fotografix.Editor.UI"
     xmlns:sys="using:System"
     mc:Ignorable="d"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+    Background="{ThemeResource AppBarBackgroundThemeBrush}"
     Unloaded="Page_Unloaded"
     AllowDrop="True">
 
-    <Page.TopAppBar>
-        <CommandBar DefaultLabelPosition="Right">
-            <CommandBar.Content>
-                <CommandBar DefaultLabelPosition="Right">
-                    <AppBarButton Icon="Zoom" Label="{x:Bind sys:String.Format('{0:P0}', scrollViewer.ZoomFactor), Mode=OneWay}" ToolTipService.ToolTip="Zoom" />
-                </CommandBar>
-            </CommandBar.Content>
+    <Page.Resources>
+        <Style x:Key="AppBarButtonStyle" TargetType="Button">
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Padding" Value="10" />
+            <Setter Property="FontWeight" Value="SemiLight" />
+            <Setter Property="Background" Value="Transparent" />
 
-            <AppBarButton Icon="OpenFile" Label="Open" Click="OpenImage_Click" />
-        </CommandBar>
-    </Page.TopAppBar>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <ContentPresenter x:Name="ContentPresenter"
+                                          Background="{TemplateBinding Background}"
+                                          BorderBrush="{TemplateBinding BorderBrush}"
+                                          BorderThickness="{TemplateBinding BorderThickness}"
+                                          Content="{TemplateBinding Content}"
+                                          ContentTemplate="{TemplateBinding ContentTemplate}"
+                                          ContentTransitions="{TemplateBinding ContentTransitions}"
+                                          CornerRadius="{TemplateBinding CornerRadius}"
+                                          Padding="{TemplateBinding Padding}"
+                                          HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                          VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                          AutomationProperties.AccessibilityView="Raw">
+
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal">
+                                        <Storyboard>
+                                            <PointerUpThemeAnimation Storyboard.TargetName="ContentPresenter" />
+                                        </Storyboard>
+                                    </VisualState>
+
+                                    <VisualState x:Name="PointerOver">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Background">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListLowBrush}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ButtonForegroundPointerOver}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <PointerUpThemeAnimation Storyboard.TargetName="ContentPresenter" />
+                                        </Storyboard>
+                                    </VisualState>
+
+                                    <VisualState x:Name="Pressed">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Background">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListMediumBrush}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ButtonForegroundPressed}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <PointerDownThemeAnimation Storyboard.TargetName="ContentPresenter" />
+                                        </Storyboard>
+                                    </VisualState>
+
+                                    <VisualState x:Name="Disabled">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ButtonForegroundDisabled}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                        </ContentPresenter>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="PanelTitleTextBlockStyle" TargetType="TextBlock">
+            <Setter Property="FontWeight" Value="SemiLight" />
+            <Setter Property="FontSize" Value="20" />
+        </Style>
+    </Page.Resources>
 
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="300" />
         </Grid.ColumnDefinitions>
 
-        <ScrollViewer x:Name="scrollViewer" Grid.Column="0" HorizontalScrollBarVisibility="Auto" ZoomMode="Enabled">
+        <Grid Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" BorderThickness="0,1" BorderBrush="{ThemeResource ButtonBorderThemeBrush}" Background="{ThemeResource AppBarBackgroundThemeBrush}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Grid.Column="0" Orientation="Horizontal">
+                <Button Click="OpenImage_Click" Style="{StaticResource AppBarButtonStyle}">
+                    <StackPanel Orientation="Horizontal">
+                        <SymbolIcon Symbol="OpenFile" />
+                        <TextBlock Margin="6,0,0,0" Text="Open" />
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+
+            <StackPanel Grid.Column="2" Orientation="Horizontal">
+                <Button Style="{StaticResource AppBarButtonStyle}">
+                    <StackPanel Orientation="Horizontal">
+                        <SymbolIcon Symbol="Zoom" />
+                        <TextBlock Margin="4,0,0,0" HorizontalTextAlignment="Center" MinWidth="40" Text="{x:Bind sys:String.Format('{0:P0}', scrollViewer.ZoomFactor), Mode=OneWay}" />
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+        </Grid>
+
+        <ScrollViewer x:Name="scrollViewer" Grid.Row="1" Grid.Column="0" HorizontalScrollBarVisibility="Auto" ZoomMode="Enabled">
             <canvas:CanvasControl x:Name="canvas" CreateResources="Canvas_CreateResources" Draw="Canvas_Draw" />
         </ScrollViewer>
 
-        <StackPanel Grid.Column="1" Orientation="Vertical" Background="{ThemeResource AppBarBackgroundThemeBrush}" Padding="8">
+        <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Vertical" Background="{ThemeResource AppBarBackgroundThemeBrush}" Padding="8" BorderThickness="1,0,0,0" BorderBrush="{ThemeResource ButtonBorderThemeBrush}">
             <StackPanel.Resources>
                 <aui:AdjustmentTemplatesResourceDictionary />
             </StackPanel.Resources>
@@ -47,16 +142,16 @@
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
                 
-                <TextBlock Grid.Column="0" Style="{StaticResource SubtitleTextBlockStyle}" Text="Adjustments" />
+                <TextBlock Grid.Column="0" Margin="0,4,0,0" Style="{StaticResource PanelTitleTextBlockStyle}" Text="Adjustments" />
 
                 <StackPanel Grid.Column="1" Orientation="Horizontal">
-                    <Button x:Name="newAdjustmentButton" Flyout="{StaticResource NewAdjustmentMenuFlyout}">
+                    <Button x:Name="newAdjustmentButton" Flyout="{StaticResource NewAdjustmentMenuFlyout}" Style="{StaticResource AppBarButtonStyle}">
                         <Button.Content>
                             <SymbolIcon Symbol="Add" />
                         </Button.Content>
                     </Button>
 
-                    <Button Margin="4,0,0,0" Command="{x:Bind viewModel.DeleteAdjustmentCommand, Mode=OneWay}">
+                    <Button Margin="4,0,0,0" Command="{x:Bind viewModel.DeleteAdjustmentCommand, Mode=OneWay}" Style="{StaticResource AppBarButtonStyle}">
                         <Button.Content>
                             <SymbolIcon Symbol="Delete" />
                         </Button.Content>
