@@ -22,22 +22,22 @@ namespace Fotografix.Editor.Adjustments.UI
             newAdjustmentMenuFlyout.Items.Add(new MenuFlyoutItem()
             {
                 Text = name,
-                Tag = new AdjustmentFactory<T>(name)
+                Tag = new AdjustmentLayerFactory<T>(name)
             });
         }
 
-        private sealed class AdjustmentFactory<T> : IAdjustmentFactory where T : Adjustment, new()
+        private sealed class AdjustmentLayerFactory<T> : IAdjustmentLayerFactory where T : Adjustment, new()
         {
             private readonly string name;
 
-            public AdjustmentFactory(string name)
+            public AdjustmentLayerFactory(string name)
             {
                 this.name = name;
             }
 
-            public Adjustment CreateAdjustment()
+            public AdjustmentLayer CreateAdjustmentLayer()
             {
-                return new T() { Name = name };
+                return new AdjustmentLayer(new T()) { Name = name };
             }
         }
     }

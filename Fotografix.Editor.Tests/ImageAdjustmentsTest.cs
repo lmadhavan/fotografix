@@ -25,55 +25,65 @@ namespace Fotografix.Editor.Tests
         [TestMethod]
         public async Task BlackAndWhiteAdjustment()
         {
-            using (BlackAndWhiteAdjustment adjustment = new BlackAndWhiteAdjustment())
-            {
-                image.AddAdjustment(adjustment);
-                await AssertImageAsync("flowers_bw.png", image);
-            }
+            AddAdjustment(new BlackAndWhiteAdjustment());
+
+            await AssertImageAsync("flowers_bw.png", image);
         }
 
         [TestMethod]
         public async Task ShadowsHighlightsAdjustment()
         {
-            using (ShadowsHighlightsAdjustment adjustment = new ShadowsHighlightsAdjustment()
+            AddAdjustment(new ShadowsHighlightsAdjustment()
             {
                 Shadows = 0.25f,
                 Highlights = -0.25f,
                 Clarity = 0.5f
-            })
-            {
-                image.AddAdjustment(adjustment);
-                await AssertImageAsync("flowers_sh.png", image);
-            }
+            });
+
+            await AssertImageAsync("flowers_sh.png", image);
         }
 
         [TestMethod]
         public async Task HueSaturationAdjustment()
         {
-            using (HueSaturationAdjustment adjustment = new HueSaturationAdjustment()
+            AddAdjustment(new HueSaturationAdjustment()
             {
                 Hue = 0.5f,
                 Saturation = 0.25f,
                 Lightness = 0.25f
-            })
-            {
-                image.AddAdjustment(adjustment);
-                await AssertImageAsync("flowers_hsl.png", image);
-            }
+            });
+
+            await AssertImageAsync("flowers_hsl.png", image);
         }
 
         [TestMethod]
         public async Task GradientMapAdjustment()
         {
-            using (GradientMapAdjustment adjustment = new GradientMapAdjustment()
+            AddAdjustment(new GradientMapAdjustment()
             {
                 Shadows = Color.FromArgb(255, 12, 16, 68),
                 Highlights = Color.FromArgb(255, 233, 88, 228)
-            })
-            {
-                image.AddAdjustment(adjustment);
-                await AssertImageAsync("flowers_gm.png", image);
-            }
+            });
+
+            await AssertImageAsync("flowers_gm.png", image);
+        }
+
+        [TestMethod]
+        public void InvalidateOnPropertyChange()
+        {
+            HueSaturationAdjustment adjustment = new HueSaturationAdjustment();
+            AddAdjustment(adjustment);
+
+            bool invalidated = false;
+            image.Invalidated += (s, e) => invalidated = true;
+
+            adjustment.Hue = 0.5f;
+            Assert.IsTrue(invalidated);
+        }
+
+        private void AddAdjustment(Adjustment adjustment)
+        {
+            image.AddLayer(new AdjustmentLayer(adjustment));
         }
     }
 }

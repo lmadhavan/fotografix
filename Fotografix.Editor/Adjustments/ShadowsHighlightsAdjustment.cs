@@ -1,4 +1,5 @@
-﻿using Microsoft.Graphics.Canvas.Effects;
+﻿using Microsoft.Graphics.Canvas;
+using Microsoft.Graphics.Canvas.Effects;
 
 namespace Fotografix.Editor.Adjustments
 {
@@ -9,12 +10,10 @@ namespace Fotografix.Editor.Adjustments
         public ShadowsHighlightsAdjustment()
         {
             this.effect = new HighlightsAndShadowsEffect();
-            this.RawOutput = effect;
         }
 
         public override void Dispose()
         {
-            base.Dispose();
             effect.Dispose();
         }
 
@@ -59,6 +58,8 @@ namespace Fotografix.Editor.Adjustments
                 RaisePropertyChanged();
             }
         }
+
+        internal override ICanvasImage Output => effect;
 
         protected override void OnInputChanged()
         {

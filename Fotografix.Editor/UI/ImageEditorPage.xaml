@@ -6,6 +6,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:canvas="using:Microsoft.Graphics.Canvas.UI.Xaml"
     xmlns:a="using:Fotografix.Editor.Adjustments"
+    xmlns:e="using:Fotografix.Editor"
     xmlns:aui="using:Fotografix.Editor.Adjustments.UI"
     xmlns:eui="using:Fotografix.Editor.UI"
     xmlns:sys="using:System"
@@ -133,7 +134,21 @@
 
         <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Vertical" Background="{ThemeResource AppBarBackgroundThemeBrush}" Padding="8" BorderThickness="1,0,0,0" BorderBrush="{ThemeResource ButtonBorderThemeBrush}">
             <StackPanel.Resources>
-                <aui:AdjustmentTemplatesResourceDictionary />
+                <ResourceDictionary>
+                    <ResourceDictionary.MergedDictionaries>
+                        <aui:AdjustmentTemplatesResourceDictionary />
+                    </ResourceDictionary.MergedDictionaries>
+
+                    <DataTemplate x:Key="AdjustmentLayerTemplate" x:DataType="e:AdjustmentLayer">
+                        <ContentControl Margin="0,8,0,0" HorizontalContentAlignment="Stretch" ContentTemplateSelector="{StaticResource AdjustmentTemplateSelector}" Content="{x:Bind Adjustment}" />
+                    </DataTemplate>
+
+                    <DataTemplate x:Key="DefaultLayerTemplate" />
+
+                    <eui:LayerTemplateSelector x:Key="LayerTemplateSelector"
+                                               AdjustmentLayerTemplate="{StaticResource AdjustmentLayerTemplate}"
+                                               DefaultLayerTemplate="{StaticResource DefaultLayerTemplate}" />
+                </ResourceDictionary>
             </StackPanel.Resources>
 
             <Grid Margin="0,0,0,8">
@@ -142,7 +157,7 @@
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
                 
-                <TextBlock Grid.Column="0" Margin="0,4,0,0" Style="{StaticResource PanelTitleTextBlockStyle}" Text="Adjustments" />
+                <TextBlock Grid.Column="0" Margin="0,4,0,0" Style="{StaticResource PanelTitleTextBlockStyle}" Text="Layers" />
 
                 <StackPanel Grid.Column="1" Orientation="Horizontal">
                     <Button x:Name="newAdjustmentButton" Flyout="{StaticResource NewAdjustmentMenuFlyout}" Style="{StaticResource AppBarButtonStyle}">
@@ -151,7 +166,7 @@
                         </Button.Content>
                     </Button>
 
-                    <Button Margin="4,0,0,0" Command="{x:Bind viewModel.DeleteAdjustmentCommand, Mode=OneWay}" Style="{StaticResource AppBarButtonStyle}">
+                    <Button Margin="4,0,0,0" Command="{x:Bind viewModel.DeleteLayerCommand, Mode=OneWay}" Style="{StaticResource AppBarButtonStyle}">
                         <Button.Content>
                             <SymbolIcon Symbol="Delete" />
                         </Button.Content>
@@ -159,9 +174,9 @@
                 </StackPanel>
             </Grid>
             
-            <ListView ItemsSource="{x:Bind viewModel.Adjustments}" SelectedItem="{x:Bind viewModel.SelectedAdjustment, Mode=TwoWay}">
+            <ListView ItemsSource="{x:Bind viewModel.Layers}" SelectedItem="{x:Bind viewModel.SelectedLayer, Mode=TwoWay}">
                 <ListView.ItemTemplate>
-                    <DataTemplate x:DataType="a:Adjustment">
+                    <DataTemplate x:DataType="e:Layer">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto" />
@@ -175,9 +190,8 @@
                 </ListView.ItemTemplate>
             </ListView>
 
-            <StackPanel Orientation="Vertical" Margin="0,16,0,0" Padding="6" Background="{ThemeResource NavigationViewExpandedPaneBackground}"
-                        Visibility="{x:Bind viewModel.AdjustmentPropertiesVisible, Mode=OneWay}">
-                <TextBox Text="{x:Bind viewModel.SelectedAdjustment.Name, Mode=TwoWay}" />
+            <StackPanel Orientation="Vertical" Margin="0,16,0,0" Padding="6" Background="{ThemeResource NavigationViewExpandedPaneBackground}">
+                <TextBox Text="{x:Bind viewModel.SelectedLayer.Name, Mode=TwoWay}" />
                 
                 <Grid Margin="0,4">
                     <Grid.ColumnDefinitions>
@@ -195,13 +209,14 @@
                               ItemsSource="{x:Bind viewModel.BlendModes}"
                               SelectedItem="{x:Bind viewModel.SelectedBlendMode, Mode=TwoWay}"
                               ItemTemplateSelector="{StaticResource BlendModeListItemTemplateSelector}"
-                              ItemContainerStyleSelector="{StaticResource BlendModeListItemStyleSelector}">
+                              ItemContainerStyleSelector="{StaticResource BlendModeListItemStyleSelector}"
+                              IsEnabled="{x:Bind viewModel.IsBlendModeEnabled, Mode=OneWay}">
                     </ComboBox>
                     <TextBlock Grid.Column="1" Margin="12,4" Text="Opacity:" />
-                    <Slider Grid.Column="2" Style="{StaticResource AdjustmentSliderStyle}" Minimum="0" Value="{x:Bind viewModel.SelectedAdjustment.Opacity, Mode=TwoWay}" />
+                    <Slider Grid.Column="2" Style="{StaticResource AdjustmentSliderStyle}" Minimum="0" Value="{x:Bind viewModel.SelectedLayer.Opacity, Mode=TwoWay}" />
                 </Grid>
-                
-                <ContentControl Margin="0,8,0,0" HorizontalContentAlignment="Stretch" ContentTemplateSelector="{StaticResource AdjustmentTemplateSelector}" Content="{x:Bind viewModel.SelectedAdjustment, Mode=OneWay}" />
+
+                <ContentControl HorizontalContentAlignment="Stretch" ContentTemplateSelector="{StaticResource LayerTemplateSelector}" Content="{x:Bind viewModel.SelectedLayer, Mode=OneWay}" />
             </StackPanel>
         </StackPanel>
     </Grid>

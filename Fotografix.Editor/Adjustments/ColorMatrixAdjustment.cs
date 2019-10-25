@@ -1,4 +1,5 @@
-﻿using Microsoft.Graphics.Canvas.Effects;
+﻿using Microsoft.Graphics.Canvas;
+using Microsoft.Graphics.Canvas.Effects;
 
 namespace Fotografix.Editor.Adjustments
 {
@@ -10,7 +11,6 @@ namespace Fotografix.Editor.Adjustments
         protected ColorMatrixAdjustment()
         {
             this.colorMatrixEffect = new ColorMatrixEffect();
-            this.RawOutput = colorMatrixEffect;
 
             this.colorMatrix = new Matrix5x4
             { 
@@ -24,9 +24,10 @@ namespace Fotografix.Editor.Adjustments
 
         public override void Dispose()
         {
-            base.Dispose();
             colorMatrixEffect.Dispose();
         }
+
+        internal override ICanvasImage Output => colorMatrixEffect;
 
         protected override void OnInputChanged()
         {

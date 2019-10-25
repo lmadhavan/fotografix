@@ -120,17 +120,20 @@
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="AdjustmentLayer.cs" />
     <Compile Include="Adjustments\Adjustment.cs" />
     <Compile Include="Adjustments\ColorMatrixAdjustment.cs" />
     <Compile Include="Adjustments\GradientMapAdjustment.cs" />
     <Compile Include="Adjustments\HueSaturationAdjustment.cs" />
-    <Compile Include="Adjustments\IAdjustmentFactory.cs" />
+    <Compile Include="IAdjustmentLayerFactory.cs" />
     <Compile Include="Adjustments\UI\AdjustmentTemplatesResourceDictionary.xaml.cs">
       <DependentUpon>AdjustmentTemplatesResourceDictionary.xaml</DependentUpon>
     </Compile>
     <Compile Include="Adjustments\UI\AdjustmentTemplateSelector.cs" />
     <Compile Include="Adjustments\BlackAndWhiteAdjustment.cs" />
+    <Compile Include="BitmapLayer.cs" />
     <Compile Include="BlendMode.cs" />
+    <Compile Include="Layer.cs" />
     <Compile Include="UI\BlendModeListItemStyleSelector.cs" />
     <Compile Include="UI\BlendModeListItemTemplateSelector.cs" />
     <Compile Include="UI\BlendModeList.cs" />
@@ -147,6 +150,7 @@
     <Compile Include="NotifyPropertyChangedBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Adjustments\ShadowsHighlightsAdjustment.cs" />
+    <Compile Include="UI\LayerTemplateSelector.cs" />
     <EmbeddedResource Include="Properties\Fotografix.Editor.rd.xml" />
   </ItemGroup>
   <ItemGroup>

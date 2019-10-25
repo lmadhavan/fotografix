@@ -119,7 +119,7 @@
     <SDKReference Include="TestPlatform.Universal, Version=$(UnitTestPlatformVersion)" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AdjustmentTest.cs" />
+    <Compile Include="LayerBlendingTest.cs" />
     <Compile Include="BlendModeTest.cs" />
     <Compile Include="UI\BlendModeListTest.cs" />
     <Compile Include="EditorTestBase.cs" />
@@ -151,6 +151,8 @@
     <Content Include="Images\flowers_bw_multiply.png" />
     <Content Include="Images\flowers.jpg" />
     <Content Include="Images\flowers_bw.png" />
+    <Content Include="Images\flowers_opacity0.png" />
+    <Content Include="Images\flowers_opacity50.png" />
     <Content Include="Images\flowers_sh.png" />
     <Content Include="Properties\Default.rd.xml" />
     <Content Include="Assets\LockScreenLogo.scale-200.png" />

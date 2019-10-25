@@ -28,7 +28,7 @@ namespace Fotografix.Editor.Tests
             using (CanvasBitmap expected = await LoadBitmapAsync(fileWithExpectedOutput))
             using (CanvasBitmap actual = actualImage.Render())
             {
-                AssertBytesAreEqual(expected.GetPixelBytes(), actual.GetPixelBytes(), 1);
+                AssertBytesAreEqual(expected.GetPixelBytes(), actual.GetPixelBytes(), 2);
             }
         }
 

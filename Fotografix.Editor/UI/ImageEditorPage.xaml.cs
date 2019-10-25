@@ -35,8 +35,8 @@ namespace Fotografix.Editor.UI
         private void NewAdjustmentMenuItem_Click(object sender, RoutedEventArgs e)
         {
             var item = (MenuFlyoutItem)sender;
-            var adjustmentFactory = (IAdjustmentFactory)item.Tag;
-            viewModel?.AddAdjustment(adjustmentFactory.CreateAdjustment());
+            var adjustmentLayerFactory = (IAdjustmentLayerFactory)item.Tag;
+            viewModel?.AddLayer(adjustmentLayerFactory.CreateAdjustmentLayer());
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)

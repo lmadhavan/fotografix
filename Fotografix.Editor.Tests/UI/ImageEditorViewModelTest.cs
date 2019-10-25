@@ -8,50 +8,59 @@ namespace Fotografix.Editor.UI.Tests
     public class ImageEditorViewModelTest
     {
         private ImageEditorViewModel viewModel;
-        private Adjustment adjustment;
+        private Layer layer;
 
         [TestInitialize]
         public void Initialize()
         {
             this.viewModel = new ImageEditorViewModel(new Image(CanvasDevice.GetSharedDevice(), 1, 1));
-            this.adjustment = new BlackAndWhiteAdjustment();
+            this.layer = new AdjustmentLayer(new BlackAndWhiteAdjustment());
         }
 
         [TestCleanup]
         public void Cleanup()
         {
             viewModel.Dispose();
-            adjustment.Dispose();
+            layer.Dispose();
         }
 
         [TestMethod]
-        public void AddsAdjustment()
+        public void AddsLayer()
         {
-            Assert.IsFalse(viewModel.AdjustmentPropertiesVisible);
+            viewModel.AddLayer(layer);
 
-            viewModel.AddAdjustment(adjustment);
-
-            Assert.AreEqual(1, viewModel.Adjustments.Count);
-            Assert.AreEqual(adjustment, viewModel.SelectedAdjustment);
-            Assert.AreEqual(adjustment, viewModel.Adjustments[0]);
-            Assert.IsTrue(viewModel.AdjustmentPropertiesVisible);
+            Assert.AreEqual(2, viewModel.Layers.Count);
+            Assert.AreEqual(layer, viewModel.Layers[1]);
+            Assert.AreEqual(layer, viewModel.SelectedLayer);
         }
 
         [TestMethod]
         public void DeletesAdjustment()
         {
-            Assert.IsFalse(viewModel.DeleteAdjustmentCommand.CanExecute(null), "Command should be initially disabled");
+            Assert.IsFalse(viewModel.DeleteLayerCommand.CanExecute(null), "Command should be initially disabled");
 
-            viewModel.AddAdjustment(adjustment);
+            viewModel.AddLayer(layer);
 
-            Assert.IsTrue(viewModel.DeleteAdjustmentCommand.CanExecute(null), "Command should be enabled after adding adjustment");
+            Assert.IsTrue(viewModel.DeleteLayerCommand.CanExecute(null), "Command should be enabled after adding layer");
 
-            viewModel.DeleteAdjustmentCommand.Execute(null);
+            viewModel.DeleteLayerCommand.Execute(null);
 
-            Assert.AreEqual(0, viewModel.Adjustments.Count);
-            Assert.IsNull(viewModel.SelectedAdjustment);
+            Assert.AreEqual(1, viewModel.Layers.Count);
+            Assert.AreEqual(viewModel.Layers[0], viewModel.SelectedLayer);
 
-            Assert.IsFalse(viewModel.DeleteAdjustmentCommand.CanExecute(null), "Command should be disabled after deleting adjustment");
+            Assert.IsFalse(viewModel.DeleteLayerCommand.CanExecute(null), "Command should be disabled after deleting layer");
+        }
+
+        [TestMethod]
+        public void BlendModeNotEnabledOnBottomLayer()
+        {
+            viewModel.AddLayer(layer);
+
+            viewModel.SelectedLayer = viewModel.Layers[0];
+            Assert.IsFalse(viewModel.IsBlendModeEnabled);
+
+            viewModel.SelectedLayer = viewModel.Layers[1];
+            Assert.IsTrue(viewModel.IsBlendModeEnabled);
         }
     }
 }

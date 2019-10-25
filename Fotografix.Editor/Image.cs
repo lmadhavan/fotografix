@@ -1,17 +1,17 @@
-﻿using Fotografix.Editor.Adjustments;
-using Microsoft.Graphics.Canvas;
+﻿using Microsoft.Graphics.Canvas;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Threading.Tasks;
+using Windows.Graphics.Imaging;
 using Windows.Storage;
 
 namespace Fotografix.Editor
 {
     public sealed class Image : IDisposable
     {
-        private readonly CanvasBitmap bitmap;
-        private readonly ObservableCollection<Adjustment> adjustments;
+        private readonly BitmapSize size;
+        private readonly ObservableCollection<Layer> layers;
         private ICanvasImage output;
 
         public Image(ICanvasResourceCreator resourceCreator, int width, int height)
@@ -21,36 +21,35 @@ namespace Fotografix.Editor
 
         public Image(CanvasBitmap bitmap)
         {
-            this.bitmap = bitmap;
-            this.adjustments = new ObservableCollection<Adjustment>();
-            this.Adjustments = new ReadOnlyObservableCollection<Adjustment>(adjustments);
-            this.output = bitmap;
+            this.size = bitmap.SizeInPixels;
+            this.layers = new ObservableCollection<Layer>();
+            this.Layers = new ReadOnlyObservableCollection<Layer>(layers);
+            AddLayer(new BitmapLayer(bitmap));
         }
 
         public void Dispose()
         {
-            foreach (Adjustment adjustment in adjustments)
+            foreach (Layer layer in layers)
             {
-                adjustment.OutputChanged -= OnAdjustmentOutputChanged;
-                adjustment.PropertyChanged -= OnAdjustmentPropertyChanged;
+                layer.Dispose();
             }
-
-            bitmap.Dispose();
         }
 
         public event EventHandler Invalidated;
 
-        public int Width => (int)bitmap.SizeInPixels.Width;
-        public int Height => (int)bitmap.SizeInPixels.Height;
+        public int Width => (int)size.Width;
+        public int Height => (int)size.Height;
 
-        public ReadOnlyObservableCollection<Adjustment> Adjustments { get; }
+        public ReadOnlyObservableCollection<Layer> Layers { get; }
 
         public static async Task<Image> LoadAsync(StorageFile file)
         {
             using (var stream = await file.OpenReadAsync())
             {
                 var bitmap = await CanvasBitmap.LoadAsync(CanvasDevice.GetSharedDevice(), stream);
-                return new Image(bitmap);
+                var image = new Image(bitmap);
+                image.layers[0].Name = file.DisplayName;
+                return image;
             }
         }
 
@@ -59,44 +58,44 @@ namespace Fotografix.Editor
             drawingSession.DrawImage(output);
         }
 
-        public void AddAdjustment(Adjustment adjustment)
+        public void AddLayer(Layer layer)
         {
-            if (adjustment.Input != null)
-            {
-                throw new ArgumentException("Adjustment is already attached to another object");
-            }
+            layer.Invalidated += OnLayerInvalidated;
+            layer.OutputChanged += OnLayerOutputChanged;
 
-            adjustment.PropertyChanged += OnAdjustmentPropertyChanged;
-            adjustment.OutputChanged += OnAdjustmentOutputChanged;
-
-            adjustments.Add(adjustment);
-            RelinkAdjustments();
+            layers.Add(layer);
+            RelinkLayers();
         }
 
-        public void DeleteAdjustment(Adjustment adjustment)
+        public void DeleteLayer(Layer layer)
         {
-            if (adjustments.Remove(adjustment))
+            if (layers.Count == 1)
             {
-                adjustment.PropertyChanged -= OnAdjustmentPropertyChanged;
-                adjustment.OutputChanged -= OnAdjustmentOutputChanged;
+                throw new InvalidOperationException("Image must contain at least one layer");
+            }
 
-                RelinkAdjustments();
+            if (layers.Remove(layer))
+            {
+                layer.Invalidated -= OnLayerInvalidated;
+                layer.OutputChanged -= OnLayerOutputChanged;
+
+                RelinkLayers();
             }
         }
 
-        private void OnAdjustmentPropertyChanged(object sender, PropertyChangedEventArgs e)
+        private void OnLayerInvalidated(object sender, EventArgs e)
         {
             Invalidate();
         }
 
-        private void OnAdjustmentOutputChanged(object sender, EventArgs e)
+        private void OnLayerOutputChanged(object sender, EventArgs e)
         {
-            RelinkAdjustments();
+            RelinkLayers();
         }
 
         private bool relinking;
 
-        private void RelinkAdjustments()
+        private void RelinkLayers()
         {
             if (relinking)
             {
@@ -105,30 +104,28 @@ namespace Fotografix.Editor
 
             this.relinking = true;
 
-            int n = adjustments.Count;
+            int n = layers.Count;
 
-            if (n == 0)
+            layers[0].Background = null;
+
+            for (int i = 1; i < n; i++)
             {
-                this.output = bitmap;
-            }
-            else
-            {
-                adjustments[0].Input = bitmap;
-
-                for (int i = 1; i < n; i++)
-                {
-                    adjustments[i].Input = adjustments[i - 1].Output;
-                }
-
-                this.output = adjustments[n - 1].Output;
+                layers[i].Background = layers[i - 1].Output;
             }
 
-            Invalidate();
+            this.output = layers[n - 1].Output;
+
             this.relinking = false;
+            Invalidate();
         }
 
         private void Invalidate()
         {
+            if (relinking)
+            {
+                return;
+            }
+
             Invalidated?.Invoke(this, EventArgs.Empty);
         }
     }

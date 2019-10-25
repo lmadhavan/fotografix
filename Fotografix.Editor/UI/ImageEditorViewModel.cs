@@ -10,23 +10,19 @@ namespace Fotografix.Editor.UI
     public sealed class ImageEditorViewModel : NotifyPropertyChangedBase, IDisposable
     {
         private readonly Image image;
-        private Adjustment selectedAdjustment;
+        private Layer selectedLayer;
         private BlendModeListItem selectedBlendMode;
-        private DelegateCommand deleteAdjustmentCommand;
+        private DelegateCommand deleteLayerCommand;
 
         public ImageEditorViewModel(Image image)
         {
             this.image = image;
-            this.deleteAdjustmentCommand = new DelegateCommand(DeleteAdjustment, () => CanDeleteAdjustment);
+            this.selectedLayer = image.Layers[0];
+            this.deleteLayerCommand = new DelegateCommand(DeleteLayer, () => CanDeleteLayer);
         }
 
         public void Dispose()
         {
-            foreach (Adjustment adjustment in image.Adjustments)
-            {
-                adjustment.Dispose();
-            }
-
             image.Dispose();
         }
 
@@ -39,31 +35,31 @@ namespace Fotografix.Editor.UI
         public int Width => image.Width;
         public int Height => image.Height;
 
-        public ReadOnlyObservableCollection<Adjustment> Adjustments => image.Adjustments;
+        public ReadOnlyObservableCollection<Layer> Layers => image.Layers;
 
-        public bool AdjustmentPropertiesVisible => selectedAdjustment != null;
-
-        public Adjustment SelectedAdjustment
+        public Layer SelectedLayer
         {
             get
             {
-                return selectedAdjustment;
+                return selectedLayer;
             }
 
             set
             {
-                if (SetValue(ref selectedAdjustment, value))
+                if (SetValue(ref selectedLayer, value))
                 {
-                    if (selectedAdjustment != null)
+                    if (selectedLayer != null)
                     {
-                        SelectedBlendMode = BlendModes[selectedAdjustment.BlendMode];
+                        SelectedBlendMode = BlendModes[selectedLayer.BlendMode];
                     }
 
-                    RaisePropertyChanged(nameof(AdjustmentPropertiesVisible));
-                    deleteAdjustmentCommand.RaiseCanExecuteChanged();
+                    deleteLayerCommand.RaiseCanExecuteChanged();
+                    RaisePropertyChanged(nameof(IsBlendModeEnabled));
                 }
             }
         }
+
+        public bool IsBlendModeEnabled => selectedLayer != image.Layers[0];
 
         public BlendModeList BlendModes { get; } = BlendModeList.Create();
 
@@ -78,9 +74,9 @@ namespace Fotografix.Editor.UI
             {
                 if (SetValue(ref selectedBlendMode, value))
                 {
-                    if (selectedAdjustment != null)
+                    if (selectedLayer != null)
                     {
-                        selectedAdjustment.BlendMode = selectedBlendMode.BlendMode;
+                        selectedLayer.BlendMode = selectedBlendMode.BlendMode;
                     }
                 }
             }
@@ -90,14 +86,14 @@ namespace Fotografix.Editor.UI
         {
             get
             {
-                return selectedAdjustment == null ? 0 : (int)selectedAdjustment.BlendMode;
+                return selectedLayer == null ? 0 : (int)selectedLayer.BlendMode;
             }
 
             set
             {
-                if (selectedAdjustment != null)
+                if (selectedLayer != null)
                 {
-                    selectedAdjustment.BlendMode = (BlendMode)value;
+                    selectedLayer.BlendMode = (BlendMode)value;
                 }
             }
         }
@@ -107,20 +103,22 @@ namespace Fotografix.Editor.UI
             image.Draw(drawingSession);
         }
 
-        public void AddAdjustment(Adjustment adjustment)
+        public void AddLayer(Layer layer)
         {
-            image.AddAdjustment(adjustment);
-            this.SelectedAdjustment = image.Adjustments.Last();
+            image.AddLayer(layer);
+            this.SelectedLayer = layer;
         }
 
-        public ICommand DeleteAdjustmentCommand => deleteAdjustmentCommand;
+        public ICommand DeleteLayerCommand => deleteLayerCommand;
 
-        private bool CanDeleteAdjustment => selectedAdjustment != null;
+        private bool CanDeleteLayer => selectedLayer != image.Layers[0];
 
-        private void DeleteAdjustment()
+        private void DeleteLayer()
         {
-            image.DeleteAdjustment(selectedAdjustment);
-            this.SelectedAdjustment = image.Adjustments.LastOrDefault();
+            Layer layer = selectedLayer;
+            image.DeleteLayer(layer);
+            layer.Dispose();
+            this.SelectedLayer = image.Layers.Last();
         }
     }
 }
