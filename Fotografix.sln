@@ -5,9 +5,11 @@ VisualStudioVersion = 16.0.29209.62
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fotografix", "Fotografix\Fotografix.csproj", "{0FBE6CAA-DFDE-4765-8219-BCC9557CB0EC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fotografix.Editor", "Fotografix.Editor\Fotografix.Editor.csproj", "{319FA943-25C3-405E-97FC-02307CC817F0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fotografix.UI", "Fotografix.UI\Fotografix.UI.csproj", "{319FA943-25C3-405E-97FC-02307CC817F0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fotografix.Editor.Tests", "Fotografix.Editor.Tests\Fotografix.Editor.Tests.csproj", "{19AB42B2-9F06-4E27-8988-8BBB4F1D85E8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fotografix.Tests", "Fotografix.Tests\Fotografix.Tests.csproj", "{19AB42B2-9F06-4E27-8988-8BBB4F1D85E8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fotografix.Core", "Fotografix.Core\Fotografix.Core.csproj", "{995AB9FD-A276-4B5F-8F37-7952E38A7F24}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -95,6 +97,26 @@ Global
 		{19AB42B2-9F06-4E27-8988-8BBB4F1D85E8}.Release|x86.ActiveCfg = Release|x86
 		{19AB42B2-9F06-4E27-8988-8BBB4F1D85E8}.Release|x86.Build.0 = Release|x86
 		{19AB42B2-9F06-4E27-8988-8BBB4F1D85E8}.Release|x86.Deploy.0 = Release|x86
+		{995AB9FD-A276-4B5F-8F37-7952E38A7F24}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{995AB9FD-A276-4B5F-8F37-7952E38A7F24}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{995AB9FD-A276-4B5F-8F37-7952E38A7F24}.Debug|ARM.ActiveCfg = Debug|ARM
+		{995AB9FD-A276-4B5F-8F37-7952E38A7F24}.Debug|ARM.Build.0 = Debug|ARM
+		{995AB9FD-A276-4B5F-8F37-7952E38A7F24}.Debug|ARM64.ActiveCfg = Debug|ARM64
+		{995AB9FD-A276-4B5F-8F37-7952E38A7F24}.Debug|ARM64.Build.0 = Debug|ARM64
+		{995AB9FD-A276-4B5F-8F37-7952E38A7F24}.Debug|x64.ActiveCfg = Debug|x64
+		{995AB9FD-A276-4B5F-8F37-7952E38A7F24}.Debug|x64.Build.0 = Debug|x64
+		{995AB9FD-A276-4B5F-8F37-7952E38A7F24}.Debug|x86.ActiveCfg = Debug|x86
+		{995AB9FD-A276-4B5F-8F37-7952E38A7F24}.Debug|x86.Build.0 = Debug|x86
+		{995AB9FD-A276-4B5F-8F37-7952E38A7F24}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{995AB9FD-A276-4B5F-8F37-7952E38A7F24}.Release|Any CPU.Build.0 = Release|Any CPU
+		{995AB9FD-A276-4B5F-8F37-7952E38A7F24}.Release|ARM.ActiveCfg = Release|ARM
+		{995AB9FD-A276-4B5F-8F37-7952E38A7F24}.Release|ARM.Build.0 = Release|ARM
+		{995AB9FD-A276-4B5F-8F37-7952E38A7F24}.Release|ARM64.ActiveCfg = Release|ARM64
+		{995AB9FD-A276-4B5F-8F37-7952E38A7F24}.Release|ARM64.Build.0 = Release|ARM64
+		{995AB9FD-A276-4B5F-8F37-7952E38A7F24}.Release|x64.ActiveCfg = Release|x64
+		{995AB9FD-A276-4B5F-8F37-7952E38A7F24}.Release|x64.Build.0 = Release|x64
+		{995AB9FD-A276-4B5F-8F37-7952E38A7F24}.Release|x86.ActiveCfg = Release|x86
+		{995AB9FD-A276-4B5F-8F37-7952E38A7F24}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
