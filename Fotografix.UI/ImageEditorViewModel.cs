@@ -1,7 +1,7 @@
 ﻿using Fotografix.Composition;
 using Microsoft.Graphics.Canvas;
 using System;
-using System.Collections.ObjectModel;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Input;
 
@@ -10,19 +10,23 @@ namespace Fotografix.UI
     public sealed class ImageEditorViewModel : NotifyPropertyChangedBase, IDisposable
     {
         private readonly Image image;
+        private readonly ReversedCollectionView<Layer> layers;
+        private readonly DelegateCommand deleteLayerCommand;
+
         private Layer selectedLayer;
         private BlendModeListItem selectedBlendMode;
-        private DelegateCommand deleteLayerCommand;
 
         public ImageEditorViewModel(Image image)
         {
             this.image = image;
+            this.layers = new ReversedCollectionView<Layer>(image.Layers);
             this.selectedLayer = image.Layers[0];
             this.deleteLayerCommand = new DelegateCommand(DeleteLayer, () => CanDeleteLayer);
         }
 
         public void Dispose()
         {
+            layers.Dispose();
             image.Dispose();
         }
 
@@ -35,7 +39,7 @@ namespace Fotografix.UI
         public int Width => image.Width;
         public int Height => image.Height;
 
-        public ReadOnlyObservableCollection<Layer> Layers => image.Layers;
+        public IReadOnlyList<Layer> Layers => layers;
 
         public Layer SelectedLayer
         {
