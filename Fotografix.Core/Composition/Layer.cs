@@ -110,7 +110,7 @@ namespace Fotografix.Composition
             }
         }
 
-        internal event EventHandler Invalidated;
+        public event EventHandler Invalidated;
 
         protected void Invalidate()
         {

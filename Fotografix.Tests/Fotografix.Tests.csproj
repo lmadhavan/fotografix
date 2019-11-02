@@ -119,6 +119,7 @@
     <SDKReference Include="TestPlatform.Universal, Version=$(UnitTestPlatformVersion)" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Composition\AdjustmentLayerTest.cs" />
     <Compile Include="Composition\LayerBlendingTest.cs" />
     <Compile Include="Composition\BlendModeTest.cs" />
     <Compile Include="UI\BlendModeListTest.cs" />

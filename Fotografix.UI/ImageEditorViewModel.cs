@@ -39,7 +39,7 @@ namespace Fotografix.UI
         public int Width => image.Width;
         public int Height => image.Height;
 
-        public IReadOnlyList<Layer> Layers => layers;
+        public IList<Layer> Layers => layers;
 
         public Layer SelectedLayer
         {
@@ -109,7 +109,7 @@ namespace Fotografix.UI
 
         public void AddLayer(Layer layer)
         {
-            image.AddLayer(layer);
+            image.Layers.Add(layer);
             this.SelectedLayer = layer;
         }
 
@@ -120,7 +120,7 @@ namespace Fotografix.UI
         private void DeleteLayer()
         {
             Layer layer = selectedLayer;
-            image.DeleteLayer(layer);
+            image.Layers.Remove(layer);
             layer.Dispose();
             this.SelectedLayer = image.Layers.Last();
         }

@@ -10,7 +10,6 @@ namespace Fotografix.Composition
     public sealed class Image : IDisposable
     {
         private readonly BitmapSize size;
-        private readonly ObservableCollection<Layer> layers;
         private ICanvasImage output;
 
         public Image(ICanvasResourceCreator resourceCreator, int width, int height)
@@ -21,14 +20,13 @@ namespace Fotografix.Composition
         public Image(CanvasBitmap bitmap)
         {
             this.size = bitmap.SizeInPixels;
-            this.layers = new ObservableCollection<Layer>();
-            this.Layers = new ReadOnlyObservableCollection<Layer>(layers);
-            AddLayer(new BitmapLayer(bitmap));
+            this.Layers = new LayerList(this);
+            Layers.Add(new BitmapLayer(bitmap));
         }
 
         public void Dispose()
         {
-            foreach (Layer layer in layers)
+            foreach (Layer layer in Layers)
             {
                 layer.Dispose();
             }
@@ -39,7 +37,7 @@ namespace Fotografix.Composition
         public int Width => (int)size.Width;
         public int Height => (int)size.Height;
 
-        public ReadOnlyObservableCollection<Layer> Layers { get; }
+        public ObservableCollection<Layer> Layers { get; }
 
         public static async Task<Image> LoadAsync(StorageFile file)
         {
@@ -47,7 +45,7 @@ namespace Fotografix.Composition
             {
                 var bitmap = await CanvasBitmap.LoadAsync(CanvasDevice.GetSharedDevice(), stream);
                 var image = new Image(bitmap);
-                image.layers[0].Name = file.DisplayName;
+                image.Layers[0].Name = file.DisplayName;
                 return image;
             }
         }
@@ -55,31 +53,6 @@ namespace Fotografix.Composition
         public void Draw(CanvasDrawingSession drawingSession)
         {
             drawingSession.DrawImage(output);
-        }
-
-        public void AddLayer(Layer layer)
-        {
-            layer.Invalidated += OnLayerInvalidated;
-            layer.OutputChanged += OnLayerOutputChanged;
-
-            layers.Add(layer);
-            RelinkLayers();
-        }
-
-        public void DeleteLayer(Layer layer)
-        {
-            if (layers.Count == 1)
-            {
-                throw new InvalidOperationException("Image must contain at least one layer");
-            }
-
-            if (layers.Remove(layer))
-            {
-                layer.Invalidated -= OnLayerInvalidated;
-                layer.OutputChanged -= OnLayerOutputChanged;
-
-                RelinkLayers();
-            }
         }
 
         private void OnLayerInvalidated(object sender, EventArgs e)
@@ -103,16 +76,16 @@ namespace Fotografix.Composition
 
             this.relinking = true;
 
-            int n = layers.Count;
+            int n = Layers.Count;
 
-            layers[0].Background = null;
+            Layers[0].Background = null;
 
             for (int i = 1; i < n; i++)
             {
-                layers[i].Background = layers[i - 1].Output;
+                Layers[i].Background = Layers[i - 1].Output;
             }
 
-            this.output = layers[n - 1].Output;
+            this.output = Layers[n - 1].Output;
 
             this.relinking = false;
             Invalidate();
@@ -126,6 +99,72 @@ namespace Fotografix.Composition
             }
 
             Invalidated?.Invoke(this, EventArgs.Empty);
+        }
+
+        private void Register(Layer layer)
+        {
+            layer.Invalidated += OnLayerInvalidated;
+            layer.OutputChanged += OnLayerOutputChanged;
+            
+            RelinkLayers();
+        }
+
+        private void Unregister(Layer layer, bool relink = true)
+        {
+            layer.Invalidated -= OnLayerInvalidated;
+            layer.OutputChanged -= OnLayerOutputChanged;
+            
+            if (relink)
+            {
+                RelinkLayers();
+            }
+        }
+
+        private class LayerList : ObservableCollection<Layer>
+        {
+            private readonly Image image;
+
+            internal LayerList(Image image)
+            {
+                this.image = image;
+            }
+
+            protected override void ClearItems()
+            {
+                foreach (Layer layer in this)
+                {
+                    image.Unregister(layer, false);
+                }
+
+                base.ClearItems();
+                image.RelinkLayers();
+            }
+
+            protected override void InsertItem(int index, Layer layer)
+            {
+                base.InsertItem(index, layer);
+                image.Register(layer);
+            }
+
+            protected override void MoveItem(int oldIndex, int newIndex)
+            {
+                base.MoveItem(oldIndex, newIndex);
+                image.RelinkLayers();
+            }
+
+            protected override void RemoveItem(int index)
+            {
+                Layer layer = this[index];
+                base.RemoveItem(index);
+                image.Unregister(layer);
+            }
+
+            protected override void SetItem(int index, Layer layer)
+            {
+                image.Unregister(this[index], false);
+                base.SetItem(index, layer);
+                image.Register(layer);
+            }
         }
     }
 }

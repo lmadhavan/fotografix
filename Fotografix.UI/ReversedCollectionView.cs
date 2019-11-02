@@ -6,24 +6,28 @@ using System.Collections.Specialized;
 
 namespace Fotografix.UI
 {
-    public sealed class ReversedCollectionView<T> : IReadOnlyList<T>, IList, INotifyCollectionChanged, IDisposable
+    public sealed class ReversedCollectionView<T> : IList<T>, IList, INotifyCollectionChanged, IDisposable
     {
-        private ReadOnlyObservableCollection<T> collection;
+        private readonly ObservableCollection<T> collection;
 
-        public ReversedCollectionView(ReadOnlyObservableCollection<T> collection)
+        public ReversedCollectionView(ObservableCollection<T> collection)
         {
             this.collection = collection;
-            ((INotifyCollectionChanged)collection).CollectionChanged += OnCollectionChanged;
+            collection.CollectionChanged += OnCollectionChanged;
         }
 
         public void Dispose()
         {
-            ((INotifyCollectionChanged)collection).CollectionChanged -= OnCollectionChanged;
+            collection.CollectionChanged -= OnCollectionChanged;
         }
 
         public int Count => collection.Count;
 
-        public T this[int index] => collection[Reverse(index)];
+        public T this[int index]
+        {
+            get => collection[Reverse(index)];
+            set => collection[Reverse(index)] = value;
+        }
 
         public event NotifyCollectionChangedEventHandler CollectionChanged;
 
@@ -33,6 +37,51 @@ namespace Fotografix.UI
             {
                 yield return this[i];
             }
+        }
+
+        public int IndexOf(T item)
+        {
+            int index = collection.IndexOf(item);
+            return index == -1 ? -1 : Reverse(index);
+        }
+
+        public void Insert(int index, T item)
+        {
+            // Insert normally inserts before index, since the collection is reversed, we need to insert after index
+            collection.Insert(Reverse(index) + 1, item);
+        }
+
+        public void RemoveAt(int index)
+        {
+            collection.RemoveAt(Reverse(index));
+        }
+
+        public void Add(T item)
+        {
+            collection.Insert(0, item);
+        }
+
+        public void Clear()
+        {
+            collection.Clear();
+        }
+
+        public bool Contains(T item)
+        {
+            return collection.Contains(item);
+        }
+
+        public void CopyTo(T[] array, int arrayIndex)
+        {
+            for (int i = 0; i < Count; i++)
+            {
+                array[arrayIndex + i] = this[i];
+            }
+        }
+
+        public bool Remove(T item)
+        {
+            return collection.Remove(item);
         }
 
         private void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -71,59 +120,48 @@ namespace Fotografix.UI
             return GetEnumerator();
         }
 
-        int ICollection.Count => Count;
-
         bool ICollection.IsSynchronized => false;
+        bool ICollection<T>.IsReadOnly => false;
 
         object ICollection.SyncRoot => ((IList)collection).SyncRoot;
 
         bool IList.IsFixedSize => false;
-
-        bool IList.IsReadOnly => true;
+        bool IList.IsReadOnly => false;
 
         object IList.this[int index] {
             get => this[index];
-            set => throw new NotSupportedException();
+            set => this[index] = (T)value;
         }
 
         int IList.Add(object value)
         {
-            throw new NotSupportedException();
-        }
-
-        void IList.Clear()
-        {
-            throw new NotSupportedException();
+            Add((T)value);
+            return Count - 1;
         }
 
         bool IList.Contains(object value)
         {
-            return ((IList)collection).Contains(value);
+            return Contains((T)value);
         }
 
         int IList.IndexOf(object value)
         {
-            return Reverse(((IList)collection).IndexOf(value));
+            return IndexOf((T)value);
         }
 
         void IList.Insert(int index, object value)
         {
-            throw new NotSupportedException();
+            Insert(index, (T)value);
         }
 
         void IList.Remove(object value)
         {
-            throw new NotSupportedException();
-        }
-
-        void IList.RemoveAt(int index)
-        {
-            throw new NotSupportedException();
+            Remove((T)value);
         }
 
         void ICollection.CopyTo(Array array, int index)
         {
-            ((IList)collection).CopyTo(array, index);
+            CopyTo((T[])array, index);
         }
     }
 }

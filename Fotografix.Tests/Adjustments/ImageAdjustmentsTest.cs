@@ -69,22 +69,9 @@ namespace Fotografix.Tests.Adjustments
             await AssertImageAsync("flowers_gm.png", image);
         }
 
-        [TestMethod]
-        public void InvalidateOnPropertyChange()
-        {
-            HueSaturationAdjustment adjustment = new HueSaturationAdjustment();
-            AddAdjustment(adjustment);
-
-            bool invalidated = false;
-            image.Invalidated += (s, e) => invalidated = true;
-
-            adjustment.Hue = 0.5f;
-            Assert.IsTrue(invalidated);
-        }
-
         private void AddAdjustment(Adjustment adjustment)
         {
-            image.AddLayer(new AdjustmentLayer(adjustment));
+            image.Layers.Add(new AdjustmentLayer(adjustment));
         }
     }
 }

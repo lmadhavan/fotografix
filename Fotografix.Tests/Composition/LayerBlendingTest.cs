@@ -18,7 +18,7 @@ namespace Fotografix.Tests.Composition
             this.image = await LoadImageAsync("flowers.jpg");
             this.background = image.Layers[0];
             this.foreground = new AdjustmentLayer(new BlackAndWhiteAdjustment());
-            image.AddLayer(foreground);
+            image.Layers.Add(foreground);
         }
 
         [TestCleanup]
