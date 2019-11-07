@@ -30,36 +30,42 @@ namespace Fotografix.Tests.UI
         }
 
         [TestMethod]
-        public void AddsLayer()
+        public void ActiveLayerFollowsUpdatesToLayerList()
         {
-            editor.AddLayer(layer);
+            image.Layers.Add(layer);
 
-            Assert.AreEqual(2, editor.Layers.Count);
-            Assert.AreEqual(layer, editor.SelectedLayer);
+            Assert.AreEqual(layer, editor.ActiveLayer);
+
+            Layer anotherLayer = new AdjustmentLayer(new HueSaturationAdjustment());
+            image.Layers[1] = anotherLayer;
+
+            Assert.AreEqual(anotherLayer, editor.ActiveLayer);
+
+            editor.Layers.Remove(anotherLayer);
+
+            Assert.AreEqual(image.Layers[0], editor.ActiveLayer);
         }
 
         [TestMethod]
-        public void DeletesLayer()
+        public void DeletesActiveLayer()
         {
-            Assert.IsFalse(editor.CanDeleteLayer, "Should not be able to delete bottom layer");
+            Assert.IsFalse(editor.CanDeleteActiveLayer, "Should not be able to delete bottom layer");
 
             editor.AddLayer(layer);
 
-            Assert.IsTrue(editor.CanDeleteLayer, "Should be able to delete newly added layer");
+            Assert.IsTrue(editor.CanDeleteActiveLayer, "Should be able to delete newly added layer");
 
-            editor.DeleteLayer();
+            editor.DeleteActiveLayer();
 
-            Assert.AreEqual(1, editor.Layers.Count);
-            Assert.AreNotEqual(layer, editor.SelectedLayer);
-
-            Assert.IsFalse(editor.CanDeleteLayer, "Should not be able to delete after deleting added layer");
+            Assert.AreEqual(image.Layers[0], editor.ActiveLayer);
+            Assert.IsFalse(editor.CanDeleteActiveLayer, "Should not be able to delete bottom layer");
         }
 
         [TestMethod]
         public void ExposesLayersInReverseOrder()
         {
             Assert.AreEqual(image.Layers[0], editor.Layers[0]);
-         
+
             editor.AddLayer(layer);
 
             Assert.AreEqual(image.Layers[1], editor.Layers[0]);
@@ -71,10 +77,10 @@ namespace Fotografix.Tests.UI
         {
             editor.AddLayer(layer);
 
-            editor.SelectedLayer = editor.Layers.Last();
+            editor.ActiveLayer = editor.Layers.Last();
             Assert.IsFalse(editor.IsBlendModeEnabled);
 
-            editor.SelectedLayer = editor.Layers.First();
+            editor.ActiveLayer = editor.Layers.First();
             Assert.IsTrue(editor.IsBlendModeEnabled);
         }
     }

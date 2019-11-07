@@ -2,6 +2,7 @@
 using Microsoft.Graphics.Canvas;
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 
 namespace Fotografix.UI
@@ -11,14 +12,16 @@ namespace Fotografix.UI
         private readonly Image image;
         private readonly ReversedCollectionView<Layer> layers;
 
-        private Layer selectedLayer;
+        private Layer activeLayer;
         private BlendModeListItem selectedBlendMode;
 
         public ImageEditor(Image image)
         {
             this.image = image;
             this.layers = new ReversedCollectionView<Layer>(image.Layers);
-            this.selectedLayer = image.Layers[0];
+            this.activeLayer = image.Layers[0];
+
+            image.Layers.CollectionChanged += OnLayerCollectionChanged;
         }
 
         public void Dispose()
@@ -38,29 +41,29 @@ namespace Fotografix.UI
 
         public IList<Layer> Layers => layers;
 
-        public Layer SelectedLayer
+        public Layer ActiveLayer
         {
             get
             {
-                return selectedLayer;
+                return activeLayer;
             }
 
             set
             {
-                if (SetValue(ref selectedLayer, value))
+                if (SetValue(ref activeLayer, value))
                 {
-                    if (selectedLayer != null)
+                    if (activeLayer != null)
                     {
-                        SelectedBlendMode = BlendModes[selectedLayer.BlendMode];
+                        SelectedBlendMode = BlendModes[activeLayer.BlendMode];
                     }
 
-                    RaisePropertyChanged(nameof(CanDeleteLayer));
+                    RaisePropertyChanged(nameof(CanDeleteActiveLayer));
                     RaisePropertyChanged(nameof(IsBlendModeEnabled));
                 }
             }
         }
 
-        public bool IsBlendModeEnabled => selectedLayer != image.Layers[0];
+        public bool IsBlendModeEnabled => activeLayer != image.Layers[0];
 
         public BlendModeList BlendModes { get; } = BlendModeList.Create();
 
@@ -75,9 +78,9 @@ namespace Fotografix.UI
             {
                 if (SetValue(ref selectedBlendMode, value))
                 {
-                    if (selectedLayer != null)
+                    if (activeLayer != null)
                     {
-                        selectedLayer.BlendMode = selectedBlendMode.BlendMode;
+                        activeLayer.BlendMode = selectedBlendMode.BlendMode;
                     }
                 }
             }
@@ -87,14 +90,14 @@ namespace Fotografix.UI
         {
             get
             {
-                return selectedLayer == null ? 0 : (int)selectedLayer.BlendMode;
+                return activeLayer == null ? 0 : (int)activeLayer.BlendMode;
             }
 
             set
             {
-                if (selectedLayer != null)
+                if (activeLayer != null)
                 {
-                    selectedLayer.BlendMode = (BlendMode)value;
+                    activeLayer.BlendMode = (BlendMode)value;
                 }
             }
         }
@@ -107,17 +110,46 @@ namespace Fotografix.UI
         public void AddLayer(Layer layer)
         {
             image.Layers.Add(layer);
-            this.SelectedLayer = layer;
         }
 
-        public bool CanDeleteLayer => selectedLayer != image.Layers[0];
+        public bool CanDeleteActiveLayer => activeLayer != image.Layers[0];
 
-        public void DeleteLayer()
+        public void DeleteActiveLayer()
         {
-            Layer layer = selectedLayer;
+            Layer layer = activeLayer;
             image.Layers.Remove(layer);
             layer.Dispose();
-            this.SelectedLayer = image.Layers.Last();
+            this.ActiveLayer = image.Layers.Last();
+        }
+
+        private void OnLayerCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            switch (e.Action)
+            {
+                case NotifyCollectionChangedAction.Add:
+                case NotifyCollectionChangedAction.Move:
+                    this.ActiveLayer = image.Layers[e.NewStartingIndex];
+                    break;
+
+                case NotifyCollectionChangedAction.Remove:
+                    if (ActiveLayer == e.OldItems[0])
+                    {
+                        int previousIndex = Math.Max(0, e.OldStartingIndex - 1);
+                        this.ActiveLayer = image.Layers[previousIndex];
+                    }
+                    break;
+
+                case NotifyCollectionChangedAction.Replace:
+                    if (ActiveLayer == e.OldItems[0])
+                    {
+                        this.ActiveLayer = (Layer)e.NewItems[0];
+                    }
+                    break;
+
+                case NotifyCollectionChangedAction.Reset:
+                    this.ActiveLayer = null;
+                    break;
+            }
         }
     }
 }
