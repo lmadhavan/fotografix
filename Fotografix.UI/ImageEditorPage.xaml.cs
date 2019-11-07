@@ -15,7 +15,7 @@ namespace Fotografix.UI
     public sealed partial class ImageEditorPage : Page
     {
         private StorageFile file;
-        private ImageEditorViewModel viewModel;
+        private ImageEditor editor;
 
         public ImageEditorPage()
         {
@@ -36,7 +36,7 @@ namespace Fotografix.UI
         {
             var item = (MenuFlyoutItem)sender;
             var adjustmentLayerFactory = (IAdjustmentLayerFactory)item.Tag;
-            viewModel?.AddLayer(adjustmentLayerFactory.CreateAdjustmentLayer());
+            editor?.AddLayer(adjustmentLayerFactory.CreateAdjustmentLayer());
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -48,7 +48,7 @@ namespace Fotografix.UI
         private void Page_Unloaded(object sender, RoutedEventArgs e)
         {
             canvas.RemoveFromVisualTree();
-            viewModel?.Dispose();
+            editor?.Dispose();
         }
 
         private void Canvas_CreateResources(CanvasControl sender, CanvasCreateResourcesEventArgs args)
@@ -61,20 +61,20 @@ namespace Fotografix.UI
 
         private void Canvas_Draw(CanvasControl sender, CanvasDrawEventArgs args)
         {
-            viewModel.Draw(args.DrawingSession);
+            editor.Draw(args.DrawingSession);
         }
 
         private async Task LoadImageAsync()
         {
-            viewModel?.Dispose();
+            editor?.Dispose();
 
-            this.viewModel = new ImageEditorViewModel(await Composition.Image.LoadAsync(file));
-            viewModel.Invalidated += ViewModel_Invalidated;
+            this.editor = new ImageEditor(await Composition.Image.LoadAsync(file));
+            editor.Invalidated += ViewModel_Invalidated;
 
             Bindings.Update();
 
-            canvas.Width = viewModel.Width;
-            canvas.Height = viewModel.Height;
+            canvas.Width = editor.Width;
+            canvas.Height = editor.Height;
             canvas.Invalidate();
         }
 

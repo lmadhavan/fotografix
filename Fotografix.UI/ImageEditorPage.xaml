@@ -164,15 +164,17 @@
                         </Button.Content>
                     </Button>
 
-                    <Button Margin="4,0,0,0" Command="{x:Bind viewModel.DeleteLayerCommand, Mode=OneWay}" Style="{StaticResource AppBarButtonStyle}">
+                    <Button Style="{StaticResource AppBarButtonStyle}" Margin="4,0,0,0"
+                            IsEnabled="{x:Bind editor.CanDeleteLayer, Mode=OneWay}"
+                            Click="{x:Bind editor.DeleteLayer}">
                         <Button.Content>
                             <SymbolIcon Symbol="Delete" />
                         </Button.Content>
                     </Button>
                 </StackPanel>
             </Grid>
-            
-            <ListView ItemsSource="{x:Bind viewModel.Layers}" SelectedItem="{x:Bind viewModel.SelectedLayer, Mode=TwoWay}"
+
+            <ListView ItemsSource="{x:Bind editor.Layers}" SelectedItem="{x:Bind editor.SelectedLayer, Mode=TwoWay}"
                       CanReorderItems="True" AllowDrop="True">
                 <ListView.ItemTemplate>
                     <DataTemplate x:DataType="c:Layer">
@@ -190,7 +192,7 @@
             </ListView>
 
             <StackPanel Orientation="Vertical" Margin="0,16,0,0" Padding="6" Background="{ThemeResource NavigationViewExpandedPaneBackground}">
-                <TextBox Text="{x:Bind viewModel.SelectedLayer.Name, Mode=TwoWay}" />
+                <TextBox Text="{x:Bind editor.SelectedLayer.Name, Mode=TwoWay}" />
                 
                 <Grid Margin="0,4">
                     <Grid.ColumnDefinitions>
@@ -205,17 +207,17 @@
 
                     <ComboBox Grid.Column="0"
                               HorizontalAlignment="Stretch"
-                              ItemsSource="{x:Bind viewModel.BlendModes}"
-                              SelectedItem="{x:Bind viewModel.SelectedBlendMode, Mode=TwoWay}"
+                              ItemsSource="{x:Bind editor.BlendModes}"
+                              SelectedItem="{x:Bind editor.SelectedBlendMode, Mode=TwoWay}"
                               ItemTemplateSelector="{StaticResource BlendModeListItemTemplateSelector}"
                               ItemContainerStyleSelector="{StaticResource BlendModeListItemStyleSelector}"
-                              IsEnabled="{x:Bind viewModel.IsBlendModeEnabled, Mode=OneWay}">
+                              IsEnabled="{x:Bind editor.IsBlendModeEnabled, Mode=OneWay}">
                     </ComboBox>
                     <TextBlock Grid.Column="1" Margin="12,4" Text="Opacity:" />
-                    <Slider Grid.Column="2" Style="{StaticResource AdjustmentSliderStyle}" Minimum="0" Value="{x:Bind viewModel.SelectedLayer.Opacity, Mode=TwoWay}" />
+                    <Slider Grid.Column="2" Style="{StaticResource AdjustmentSliderStyle}" Minimum="0" Value="{x:Bind editor.SelectedLayer.Opacity, Mode=TwoWay}" />
                 </Grid>
 
-                <ContentControl HorizontalContentAlignment="Stretch" ContentTemplateSelector="{StaticResource LayerTemplateSelector}" Content="{x:Bind viewModel.SelectedLayer, Mode=OneWay}" />
+                <ContentControl HorizontalContentAlignment="Stretch" ContentTemplateSelector="{StaticResource LayerTemplateSelector}" Content="{x:Bind editor.SelectedLayer, Mode=OneWay}" />
             </StackPanel>
         </StackPanel>
     </Grid>

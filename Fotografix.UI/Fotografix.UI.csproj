@@ -131,11 +131,10 @@
     <Compile Include="BlendModeListResourceDictionary.xaml.cs">
       <DependentUpon>BlendModeListResourceDictionary.xaml</DependentUpon>
     </Compile>
-    <Compile Include="DelegateCommand.cs" />
     <Compile Include="ImageEditorPage.xaml.cs">
       <DependentUpon>ImageEditorPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ImageEditorViewModel.cs" />
+    <Compile Include="ImageEditor.cs" />
     <Compile Include="ReversedCollectionView.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="LayerTemplateSelector.cs" />

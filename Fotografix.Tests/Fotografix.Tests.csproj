@@ -126,7 +126,7 @@
     <Compile Include="ImageTestBase.cs" />
     <Compile Include="Adjustments\ImageAdjustmentsTest.cs" />
     <Compile Include="ImageCaptureExtensions.cs" />
-    <Compile Include="UI\ImageEditorViewModelTest.cs" />
+    <Compile Include="UI\ImageEditorTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UI\ReversedCollectionViewTest.cs" />
     <Compile Include="UnitTestApp.xaml.cs">
