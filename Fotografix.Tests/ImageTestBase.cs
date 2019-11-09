@@ -10,18 +10,26 @@ namespace Fotografix.Tests
 {
     public abstract class ImageTestBase
     {
-        private StorageFolder imagesFolder;
-
-        [TestInitialize]
-        public async Task InitializeImagesFolder()
+        protected async Task<StorageFile> GetFileAsync(string filename)
         {
-            this.imagesFolder = await Package.Current.InstalledLocation.GetFolderAsync("Images");
+            var imagesFolder = await Package.Current.InstalledLocation.GetFolderAsync("Images");
+            return await imagesFolder.GetFileAsync(filename);
+        }
+
+        protected async Task<CanvasBitmap> LoadBitmapAsync(string filename)
+        {
+            var file = await GetFileAsync(filename);
+
+            using (var stream = await file.OpenReadAsync())
+            {
+                return await CanvasBitmap.LoadAsync(CanvasDevice.GetSharedDevice(), stream);
+            }
         }
 
         protected async Task<Image> LoadImageAsync(string filename)
         {
-            var file = await imagesFolder.GetFileAsync(filename);
-            return await Image.LoadAsync(file);
+            var bitmap = await LoadBitmapAsync(filename);
+            return new Image(new BitmapLayer(bitmap));
         }
 
         protected async Task AssertImageAsync(string fileWithExpectedOutput, Image actualImage)
@@ -30,16 +38,6 @@ namespace Fotografix.Tests
             using (CanvasBitmap actual = actualImage.Render())
             {
                 AssertBytesAreEqual(expected.GetPixelBytes(), actual.GetPixelBytes(), 2);
-            }
-        }
-
-        private async Task<CanvasBitmap> LoadBitmapAsync(string filename)
-        {
-            var file = await imagesFolder.GetFileAsync(filename);
-
-            using (var stream = await file.OpenReadAsync())
-            {
-                return await CanvasBitmap.LoadAsync(CanvasDevice.GetSharedDevice(), stream);
             }
         }
 

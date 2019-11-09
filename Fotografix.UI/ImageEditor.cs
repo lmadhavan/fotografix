@@ -3,25 +3,39 @@ using Microsoft.Graphics.Canvas;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.Linq;
+using System.Threading.Tasks;
+using Windows.Storage;
 
 namespace Fotografix.UI
 {
     public sealed class ImageEditor : NotifyPropertyChangedBase, IDisposable
     {
+        private readonly ICanvasResourceCreator resourceCreator;
         private readonly Image image;
         private readonly ReversedCollectionView<Layer> layers;
 
         private Layer activeLayer;
         private BlendModeListItem selectedBlendMode;
 
-        public ImageEditor(Image image)
+        public ImageEditor(ICanvasResourceCreator resourceCreator, int width, int height)
+            : this(resourceCreator, new BitmapLayer(resourceCreator, width, height))
         {
-            this.image = image;
+        }
+
+        private ImageEditor(ICanvasResourceCreator resourceCreator, BitmapLayer layer)
+        {
+            this.resourceCreator = resourceCreator;
+            this.image = new Image(layer);
             this.layers = new ReversedCollectionView<Layer>(image.Layers);
-            this.activeLayer = image.Layers[0];
+            this.activeLayer = layer;
 
             image.Layers.CollectionChanged += OnLayerCollectionChanged;
+        }
+
+        public static async Task<ImageEditor> CreateAsync(ICanvasResourceCreator resourceCreator, StorageFile file)
+        {
+            BitmapLayer layer = await BitmapLayer.LoadAsync(resourceCreator, file);
+            return new ImageEditor(resourceCreator, layer);
         }
 
         public void Dispose()
@@ -86,22 +100,6 @@ namespace Fotografix.UI
             }
         }
 
-        public int SelectedBlendModeIndex
-        {
-            get
-            {
-                return activeLayer == null ? 0 : (int)activeLayer.BlendMode;
-            }
-
-            set
-            {
-                if (activeLayer != null)
-                {
-                    activeLayer.BlendMode = (BlendMode)value;
-                }
-            }
-        }
-
         public void Draw(CanvasDrawingSession drawingSession)
         {
             image.Draw(drawingSession);
@@ -119,7 +117,15 @@ namespace Fotografix.UI
             Layer layer = activeLayer;
             image.Layers.Remove(layer);
             layer.Dispose();
-            this.ActiveLayer = image.Layers.Last();
+        }
+
+        public async Task ImportAsync(IReadOnlyList<StorageFile> files)
+        {
+            foreach (var file in files)
+            {
+                BitmapLayer layer = await BitmapLayer.LoadAsync(resourceCreator, file);
+                image.Layers.Add(layer);
+            }
         }
 
         private void OnLayerCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)

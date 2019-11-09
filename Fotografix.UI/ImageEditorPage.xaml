@@ -158,18 +158,19 @@
                 <TextBlock Grid.Column="0" Margin="0,4,0,0" Style="{StaticResource PanelTitleTextBlockStyle}" Text="Layers" />
 
                 <StackPanel Grid.Column="1" Orientation="Horizontal">
-                    <Button x:Name="newAdjustmentButton" Flyout="{StaticResource NewAdjustmentMenuFlyout}" Style="{StaticResource AppBarButtonStyle}">
-                        <Button.Content>
-                            <SymbolIcon Symbol="Add" />
-                        </Button.Content>
+                    <Button x:Name="newAdjustmentButton" Style="{StaticResource AppBarButtonStyle}"
+                            Flyout="{StaticResource NewAdjustmentMenuFlyout}">
+                        <SymbolIcon Symbol="Add" />
                     </Button>
 
+                    <Button Style="{StaticResource AppBarButtonStyle}" Click="Import_Click" ToolTipService.ToolTip="Import">
+                        <SymbolIcon Symbol="Import" />
+                    </Button>
+                    
                     <Button Style="{StaticResource AppBarButtonStyle}" Margin="4,0,0,0"
                             IsEnabled="{x:Bind editor.CanDeleteActiveLayer, Mode=OneWay}"
                             Click="{x:Bind editor.DeleteActiveLayer}">
-                        <Button.Content>
-                            <SymbolIcon Symbol="Delete" />
-                        </Button.Content>
+                        <SymbolIcon Symbol="Delete" />
                     </Button>
                 </StackPanel>
             </Grid>

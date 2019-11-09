@@ -2,6 +2,7 @@
 using Microsoft.Graphics.Canvas.UI;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Storage;
@@ -36,7 +37,7 @@ namespace Fotografix.UI
         {
             var item = (MenuFlyoutItem)sender;
             var adjustmentLayerFactory = (IAdjustmentLayerFactory)item.Tag;
-            editor?.AddLayer(adjustmentLayerFactory.CreateAdjustmentLayer());
+            editor.AddLayer(adjustmentLayerFactory.CreateAdjustmentLayer());
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -68,8 +69,8 @@ namespace Fotografix.UI
         {
             editor?.Dispose();
 
-            this.editor = new ImageEditor(await Composition.Image.LoadAsync(file));
-            editor.Invalidated += ViewModel_Invalidated;
+            this.editor = await ImageEditor.CreateAsync(canvas, file);
+            editor.Invalidated += OnEditorInvalidated;
 
             Bindings.Update();
 
@@ -78,7 +79,7 @@ namespace Fotografix.UI
             canvas.Invalidate();
         }
 
-        private void ViewModel_Invalidated(object sender, EventArgs e)
+        private void OnEditorInvalidated(object sender, EventArgs e)
         {
             canvas.Invalidate();
         }
@@ -89,8 +90,8 @@ namespace Fotografix.UI
 
             if (e.DataView.Contains(StandardDataFormats.StorageItems))
             {
-                e.AcceptedOperation = DataPackageOperation.Link;
-                e.DragUIOverride.Caption = "Open";
+                e.AcceptedOperation = DataPackageOperation.Copy;
+                e.DragUIOverride.Caption = "Import";
             }
             else
             {
@@ -105,16 +106,39 @@ namespace Fotografix.UI
             if (e.DataView.Contains(StandardDataFormats.StorageItems))
             {
                 var items = await e.DataView.GetStorageItemsAsync();
-                
-                if (items[0] is StorageFile file)
+                var files = items.OfType<StorageFile>().ToList();
+
+                if (files.Count > 0)
                 {
-                    this.file = file;
-                    await LoadImageAsync();
+                    await editor.ImportAsync(files);
                 }
             }
         }
 
         private async void OpenImage_Click(object sender, RoutedEventArgs e)
+        {
+            FileOpenPicker picker = CreateFilePicker();
+
+            this.file = await picker.PickSingleFileAsync();
+            if (file != null)
+            {
+                await LoadImageAsync();
+            }
+        }
+
+        private async void Import_Click(object sender, RoutedEventArgs e)
+        {
+            FileOpenPicker picker = CreateFilePicker();
+            picker.CommitButtonText = "Import";
+
+            var files = await picker.PickMultipleFilesAsync();
+            if (files.Count > 0)
+            {
+                await editor.ImportAsync(files);
+            }
+        }
+
+        private static FileOpenPicker CreateFilePicker()
         {
             FileOpenPicker picker = new FileOpenPicker()
             {
@@ -123,12 +147,7 @@ namespace Fotografix.UI
             };
             picker.FileTypeFilter.Add(".jpg");
             picker.FileTypeFilter.Add(".png");
-
-            this.file = await picker.PickSingleFileAsync();
-            if (file != null)
-            {
-                await LoadImageAsync();
-            }
+            return picker;
         }
     }
 }

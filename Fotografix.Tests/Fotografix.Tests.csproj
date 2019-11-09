@@ -120,6 +120,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Composition\AdjustmentLayerTest.cs" />
+    <Compile Include="Composition\BitmapLayerTest.cs" />
     <Compile Include="Composition\LayerBlendingTest.cs" />
     <Compile Include="Composition\BlendModeTest.cs" />
     <Compile Include="UI\BlendModeListTest.cs" />

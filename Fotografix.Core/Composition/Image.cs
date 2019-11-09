@@ -1,27 +1,19 @@
 ﻿using Microsoft.Graphics.Canvas;
 using System;
 using System.Collections.ObjectModel;
-using System.Threading.Tasks;
-using Windows.Graphics.Imaging;
-using Windows.Storage;
 
 namespace Fotografix.Composition
 {
     public sealed class Image : IDisposable
     {
-        private readonly BitmapSize size;
         private ICanvasImage output;
 
-        public Image(ICanvasResourceCreator resourceCreator, int width, int height)
-            : this(new CanvasRenderTarget(resourceCreator, width, height, 96))
+        public Image(BitmapLayer layer)
         {
-        }
-
-        public Image(CanvasBitmap bitmap)
-        {
-            this.size = bitmap.SizeInPixels;
+            this.Width = layer.Width;
+            this.Height = layer.Height;
             this.Layers = new LayerList(this);
-            Layers.Add(new BitmapLayer(bitmap));
+            Layers.Add(layer);
         }
 
         public void Dispose()
@@ -34,21 +26,10 @@ namespace Fotografix.Composition
 
         public event EventHandler Invalidated;
 
-        public int Width => (int)size.Width;
-        public int Height => (int)size.Height;
+        public int Width { get; }
+        public int Height { get; }
 
         public ObservableCollection<Layer> Layers { get; }
-
-        public static async Task<Image> LoadAsync(StorageFile file)
-        {
-            using (var stream = await file.OpenReadAsync())
-            {
-                var bitmap = await CanvasBitmap.LoadAsync(CanvasDevice.GetSharedDevice(), stream);
-                var image = new Image(bitmap);
-                image.Layers[0].Name = file.DisplayName;
-                return image;
-            }
-        }
 
         public void Draw(CanvasDrawingSession drawingSession)
         {
