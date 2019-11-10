@@ -33,7 +33,10 @@ namespace Fotografix.Composition
 
         public void Draw(CanvasDrawingSession drawingSession)
         {
-            drawingSession.DrawImage(output);
+            if (output != null)
+            {
+                drawingSession.DrawImage(output);
+            }
         }
 
         private void OnLayerInvalidated(object sender, EventArgs e)

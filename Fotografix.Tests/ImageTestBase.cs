@@ -26,10 +26,16 @@ namespace Fotografix.Tests
             }
         }
 
-        protected async Task<Image> LoadImageAsync(string filename)
+        protected async Task<BitmapLayer> LoadLayerAsync(string filename)
         {
             var bitmap = await LoadBitmapAsync(filename);
-            return new Image(new BitmapLayer(bitmap));
+            return new BitmapLayer(bitmap);
+        }
+
+        protected async Task<Image> LoadImageAsync(string filename)
+        {
+            var layer = await LoadLayerAsync(filename);
+            return new Image(layer);
         }
 
         protected async Task AssertImageAsync(string fileWithExpectedOutput, Image actualImage)

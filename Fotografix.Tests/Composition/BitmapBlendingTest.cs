@@ -1,12 +1,11 @@
-﻿using Fotografix.Adjustments;
-using Fotografix.Composition;
+﻿using Fotografix.Composition;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Threading.Tasks;
 
 namespace Fotografix.Tests.Composition
 {
     [TestClass]
-    public class LayerBlendingTest : ImageTestBase
+    public class BitmapBlendingTest : ImageTestBase
     {
         private Image image;
         private Layer background;
@@ -17,7 +16,7 @@ namespace Fotografix.Tests.Composition
         {
             this.image = await LoadImageAsync("flowers.jpg");
             this.background = image.Layers[0];
-            this.foreground = new AdjustmentLayer(new BlackAndWhiteAdjustment());
+            this.foreground = await LoadLayerAsync("stars.jpg");
             image.Layers.Add(foreground);
         }
 
@@ -25,12 +24,21 @@ namespace Fotografix.Tests.Composition
         public void Cleanup()
         {
             image.Dispose();
+            foreground.Dispose();
         }
 
         [TestMethod]
         public async Task DefaultProperties()
         {
-            await AssertImageAsync("flowers_bw.png", image);
+            await AssertImageAsync("stars.jpg", image);
+        }
+
+        [TestMethod]
+        public async Task ForegroundSmallerThanBackground()
+        {
+            image.Layers[1] = await LoadLayerAsync("stars_small.jpg");
+
+            await AssertImageAsync("flowers_stars_small.png", image);
         }
 
         [TestMethod]
@@ -52,28 +60,26 @@ namespace Fotografix.Tests.Composition
         [TestMethod]
         public async Task Foreground_Opacity_50()
         {
-            foreground.BlendMode = BlendMode.Normal;
             foreground.Opacity = 0.5f;
 
-            await AssertImageAsync("flowers_bw_opacity50.png", image);
+            await AssertImageAsync("flowers_stars_opacity50.png", image);
         }
 
         [TestMethod]
-        public async Task Foreground_BlendMode_Multiply()
+        public async Task Foreground_BlendMode_Screen()
         {
-            foreground.BlendMode = BlendMode.Multiply;
-            foreground.Opacity = 1;
+            foreground.BlendMode = BlendMode.Screen;
 
-            await AssertImageAsync("flowers_bw_multiply.png", image);
+            await AssertImageAsync("flowers_stars_screen.png", image);
         }
 
         [TestMethod]
-        public async Task Foreground_BlendMode_Multiply_Opacity_50()
+        public async Task Foreground_BlendMode_Screen_Opacity_50()
         {
-            foreground.BlendMode = BlendMode.Multiply;
+            foreground.BlendMode = BlendMode.Screen;
             foreground.Opacity = 0.5f;
 
-            await AssertImageAsync("flowers_bw_multiply_opacity50.png", image);
+            await AssertImageAsync("flowers_stars_screen_opacity50.png", image);
         }
 
         [TestMethod]
@@ -81,7 +87,7 @@ namespace Fotografix.Tests.Composition
         {
             background.Visible = false;
 
-            await AssertImageAsync("flowers_opacity0.png", image);
+            await AssertImageAsync("stars.jpg", image);
         }
 
         [TestMethod]
@@ -89,7 +95,7 @@ namespace Fotografix.Tests.Composition
         {
             background.Opacity = 0;
 
-            await AssertImageAsync("flowers_opacity0.png", image);
+            await AssertImageAsync("stars.jpg", image);
         }
 
         [TestMethod]
@@ -97,7 +103,7 @@ namespace Fotografix.Tests.Composition
         {
             background.Opacity = 0.5f;
 
-            await AssertImageAsync("flowers_opacity50.png", image);
+            await AssertImageAsync("stars.jpg", image);
         }
 
         [TestMethod]
@@ -106,7 +112,7 @@ namespace Fotografix.Tests.Composition
             foreground.Visible = false;
             background.Visible = false;
 
-            await AssertImageAsync("flowers_opacity0.png", image);
+            await AssertImageAsync("empty.png", image);
         }
     }
 }

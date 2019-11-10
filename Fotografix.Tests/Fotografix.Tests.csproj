@@ -120,8 +120,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Composition\AdjustmentLayerTest.cs" />
+    <Compile Include="Composition\BitmapBlendingTest.cs" />
     <Compile Include="Composition\BitmapLayerTest.cs" />
-    <Compile Include="Composition\LayerBlendingTest.cs" />
+    <Compile Include="Composition\AdjustmentBlendingTest.cs" />
     <Compile Include="Composition\BlendModeTest.cs" />
     <Compile Include="UI\BlendModeListTest.cs" />
     <Compile Include="ImageTestBase.cs" />
@@ -154,9 +155,15 @@
     <Content Include="Images\flowers_bw_multiply.png" />
     <Content Include="Images\flowers.jpg" />
     <Content Include="Images\flowers_bw.png" />
-    <Content Include="Images\flowers_opacity0.png" />
-    <Content Include="Images\flowers_opacity50.png" />
+    <Content Include="Images\empty.png" />
+    <Content Include="Images\flowers_opacity50_bw.png" />
     <Content Include="Images\flowers_sh.png" />
+    <Content Include="Images\flowers_stars_opacity50.png" />
+    <Content Include="Images\flowers_stars_screen.png" />
+    <Content Include="Images\flowers_stars_screen_opacity50.png" />
+    <Content Include="Images\flowers_stars_small.png" />
+    <Content Include="Images\stars.jpg" />
+    <Content Include="Images\stars_small.jpg" />
     <Content Include="Properties\Default.rd.xml" />
     <Content Include="Assets\LockScreenLogo.scale-200.png" />
     <Content Include="Assets\SplashScreen.scale-200.png" />

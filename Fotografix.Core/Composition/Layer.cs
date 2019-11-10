@@ -7,26 +7,18 @@ namespace Fotografix.Composition
     public abstract class Layer : NotifyPropertyChangedBase, IDisposable
     {
         private readonly BlendEffect blendEffect;
-        private readonly OpacityEffect opacityEffect;
-        private readonly CompositeEffect compositeEffect;
 
         private string name;
         private bool visible;
         private BlendMode blendMode;
         private float opacity;
 
-        private ICanvasImage content;
         private ICanvasImage background;
         private ICanvasImage output;
 
         internal Layer()
         {
             this.blendEffect = new BlendEffect();
-            this.opacityEffect = new OpacityEffect();
-
-            this.compositeEffect = new CompositeEffect();
-            compositeEffect.Sources.Add(null); // this is set through the Background property
-            compositeEffect.Sources.Add(opacityEffect);
 
             this.visible = true;
             this.blendMode = BlendMode.Normal;
@@ -35,8 +27,6 @@ namespace Fotografix.Composition
 
         public virtual void Dispose()
         {
-            compositeEffect.Dispose();
-            opacityEffect.Dispose();
             blendEffect.Dispose();
         }
 
@@ -65,7 +55,6 @@ namespace Fotografix.Composition
                 if (SetValue(ref visible, value))
                 {
                     UpdateOutput();
-                    Invalidate();
                 }
             }
         }
@@ -81,13 +70,7 @@ namespace Fotografix.Composition
             {
                 if (SetValue(ref blendMode, value))
                 {
-                    if (blendMode != BlendMode.Normal)
-                    {
-                        blendEffect.Mode = Enum.Parse<BlendEffectMode>(Enum.GetName(typeof(BlendMode), blendMode));
-                    }
-
                     UpdateOutput();
-                    Invalidate();
                 }
             }
         }
@@ -103,9 +86,7 @@ namespace Fotografix.Composition
             {
                 if (SetValue(ref opacity, value))
                 {
-                    opacityEffect.Opacity = opacity;
                     UpdateOutput();
-                    Invalidate();
                 }
             }
         }
@@ -115,25 +96,6 @@ namespace Fotografix.Composition
         protected void Invalidate()
         {
             Invalidated?.Invoke(this, EventArgs.Empty);
-        }
-
-        protected ICanvasImage Content
-        {
-            get
-            {
-                return content;
-            }
-
-            set
-            {
-                if (content != value)
-                {
-                    this.content = value;
-                    opacityEffect.Source = value;
-                    UpdateOutput();
-                    Invalidate();
-                }
-            }
         }
 
         internal ICanvasImage Background
@@ -148,17 +110,9 @@ namespace Fotografix.Composition
                 if (background != value)
                 {
                     this.background = value;
-                    blendEffect.Background = value;
-                    compositeEffect.Sources[0] = value;
-                    OnBackgroundChanged();
                     UpdateOutput();
-                    Invalidate();
                 }
             }
-        }
-
-        protected virtual void OnBackgroundChanged()
-        {
         }
 
         internal ICanvasImage Output
@@ -180,40 +134,20 @@ namespace Fotografix.Composition
 
         internal event EventHandler OutputChanged;
 
-        private void UpdateOutput()
+        protected void UpdateOutput()
         {
-            if (visible && opacity == 1 && blendMode == BlendMode.Normal)
-            {
-                this.Output = content;
-            }
-            else if (background == null)
-            {
-                if (!visible)
-                {
-                    opacityEffect.Opacity = 0;
-                    Invalidate();
-                }
+            this.Output = ResolveOutput(background);
+            Invalidate();
+        }
 
-                this.Output = opacityEffect;
-            }
-            else if (!visible || opacity == 0)
-            {
-                this.Output = Background;
-            }
-            else if (blendMode == BlendMode.Normal /* && opacity != 1 */)
-            {
-                this.Output = compositeEffect;
-            }
-            else if (opacity == 1 /* && blendMode != BlendMode.Normal */)
-            {
-                blendEffect.Foreground = content;
-                this.Output = blendEffect;
-            }
-            else /* blendMode != BlendMode.Normal && opacity != 1 */
-            {
-                blendEffect.Foreground = opacityEffect;
-                this.Output = blendEffect;
-            }
+        protected abstract ICanvasImage ResolveOutput(ICanvasImage background);
+
+        protected ICanvasImage Blend(ICanvasImage foreground, ICanvasImage background)
+        {
+            blendEffect.Mode = Enum.Parse<BlendEffectMode>(Enum.GetName(typeof(BlendMode), blendMode));
+            blendEffect.Foreground = foreground;
+            blendEffect.Background = background;
+            return blendEffect;
         }
     }
 }
