@@ -1,12 +1,11 @@
 ﻿using Fotografix.Adjustments;
-using Fotografix.Composition;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Threading.Tasks;
 
 namespace Fotografix.Tests.Composition
 {
     [TestClass]
-    public class AdjustmentBlendingTest : ImageTestBase
+    public class AdjustmentBlendingTest : CompositionTestBase
     {
         private Image image;
         private Layer background;
@@ -19,13 +18,6 @@ namespace Fotografix.Tests.Composition
             this.background = image.Layers[0];
             this.foreground = new AdjustmentLayer(new BlackAndWhiteAdjustment());
             image.Layers.Add(foreground);
-        }
-
-        [TestCleanup]
-        public void Cleanup()
-        {
-            image.Dispose();
-            foreground.Dispose();
         }
 
         [TestMethod]

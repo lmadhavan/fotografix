@@ -1,8 +1,13 @@
-﻿using Fotografix.Composition;
+﻿using Fotografix.UI.Adjustments;
+using Fotografix.UI.BlendModes;
+using Fotografix.Win2D;
 using Microsoft.Graphics.Canvas;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Drawing;
+using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Windows.Storage;
 
@@ -10,48 +15,61 @@ namespace Fotografix.UI
 {
     public sealed class ImageEditor : NotifyPropertyChangedBase, IDisposable
     {
-        private readonly ICanvasResourceCreator resourceCreator;
         private readonly Image image;
+        private readonly Win2DBitmapFactory bitmapFactory;
+        private readonly Win2DCompositor compositor;
         private readonly ReversedCollectionView<Layer> layers;
 
         private Layer activeLayer;
         private BlendModeListItem selectedBlendMode;
 
-        public ImageEditor(ICanvasResourceCreator resourceCreator, int width, int height)
-            : this(resourceCreator, new BitmapLayer(resourceCreator, width, height))
+        private ImageEditor(Image image, Win2DBitmapFactory bitmapFactory)
         {
-        }
+            this.image = image;
+            this.bitmapFactory = bitmapFactory;
+            this.compositor = new Win2DCompositor(image);
 
-        private ImageEditor(ICanvasResourceCreator resourceCreator, BitmapLayer layer)
-        {
-            this.resourceCreator = resourceCreator;
-            this.image = new Image(layer);
             this.layers = new ReversedCollectionView<Layer>(image.Layers);
-            this.activeLayer = layer;
+            this.activeLayer = image.Layers.FirstOrDefault();
 
             image.Layers.CollectionChanged += OnLayerCollectionChanged;
         }
 
-        public static async Task<ImageEditor> CreateAsync(ICanvasResourceCreator resourceCreator, StorageFile file)
+        public static ImageEditor Create(Size size, ICanvasResourceCreator resourceCreator)
         {
-            BitmapLayer layer = await BitmapLayer.LoadAsync(resourceCreator, file);
-            return new ImageEditor(resourceCreator, layer);
+            Win2DBitmapFactory bitmapFactory = new Win2DBitmapFactory(resourceCreator);
+            BitmapLayer layer = CreateLayer(bitmapFactory, 1);
+
+            Image image = new Image(size);
+            image.Layers.Add(layer);
+
+            return new ImageEditor(image, bitmapFactory);
+        }
+
+        public static async Task<ImageEditor> CreateAsync(StorageFile file, ICanvasResourceCreator resourceCreator)
+        {
+            Win2DBitmapFactory bitmapFactory = new Win2DBitmapFactory(resourceCreator);
+            BitmapLayer layer = await LoadBitmapLayerAsync(file, bitmapFactory);
+
+            Image image = new Image(layer.Bitmap.Size);
+            image.Layers.Add(layer);
+
+            return new ImageEditor(image, bitmapFactory);
         }
 
         public void Dispose()
         {
             layers.Dispose();
-            image.Dispose();
+            
+            foreach (Layer layer in image.Layers)
+            {
+                Dispose(layer);
+            }
+
+            compositor.Dispose();
         }
 
-        public event EventHandler Invalidated
-        {
-            add { image.Invalidated += value; }
-            remove { image.Invalidated -= value; }
-        }
-
-        public int Width => image.Width;
-        public int Height => image.Height;
+        public Size Size => image.Size;
 
         public IList<Layer> Layers => layers;
 
@@ -64,7 +82,7 @@ namespace Fotografix.UI
 
             set
             {
-                if (SetValue(ref activeLayer, value))
+                if (SetProperty(ref activeLayer, value))
                 {
                     if (activeLayer != null)
                     {
@@ -72,12 +90,9 @@ namespace Fotografix.UI
                     }
 
                     RaisePropertyChanged(nameof(CanDeleteActiveLayer));
-                    RaisePropertyChanged(nameof(IsBlendModeEnabled));
                 }
             }
         }
-
-        public bool IsBlendModeEnabled => activeLayer != image.Layers[0];
 
         public BlendModeList BlendModes { get; } = BlendModeList.Create();
 
@@ -90,7 +105,7 @@ namespace Fotografix.UI
 
             set
             {
-                if (SetValue(ref selectedBlendMode, value))
+                if (SetProperty(ref selectedBlendMode, value))
                 {
                     if (activeLayer != null)
                     {
@@ -100,14 +115,25 @@ namespace Fotografix.UI
             }
         }
 
-        public void Draw(CanvasDrawingSession drawingSession)
+        public event EventHandler Invalidated
         {
-            image.Draw(drawingSession);
+            add => compositor.Invalidated += value;
+            remove => compositor.Invalidated -= value;
         }
 
-        public void AddLayer(Layer layer)
+        public void Draw(CanvasDrawingSession ds)
         {
-            image.Layers.Add(layer);
+            compositor.Draw(ds);
+        }
+
+        public void AddLayer()
+        {
+            image.Layers.Add(CreateLayer(bitmapFactory, image.Layers.Count + 1));
+        }
+
+        public void AddAdjustmentLayer(IAdjustmentLayerFactory adjustmentLayerFactory)
+        {
+            image.Layers.Add(adjustmentLayerFactory.CreateAdjustmentLayer());
         }
 
         public bool CanDeleteActiveLayer => activeLayer != image.Layers[0];
@@ -116,14 +142,14 @@ namespace Fotografix.UI
         {
             Layer layer = activeLayer;
             image.Layers.Remove(layer);
-            layer.Dispose();
+            Dispose(layer);
         }
 
-        public async Task ImportAsync(IReadOnlyList<StorageFile> files)
+        public async Task ImportLayersAsync(IEnumerable<StorageFile> files)
         {
             foreach (var file in files)
             {
-                BitmapLayer layer = await BitmapLayer.LoadAsync(resourceCreator, file);
+                BitmapLayer layer = await LoadBitmapLayerAsync(file, bitmapFactory);
                 image.Layers.Add(layer);
             }
         }
@@ -155,6 +181,28 @@ namespace Fotografix.UI
                 case NotifyCollectionChangedAction.Reset:
                     this.ActiveLayer = null;
                     break;
+            }
+        }
+
+        private static BitmapLayer CreateLayer(IBitmapFactory bitmapFactory, int id)
+        {
+            return new BitmapLayer(bitmapFactory.CreateBitmap(Size.Empty)) { Name = "Layer " + id };
+        }
+
+        private static async Task<BitmapLayer> LoadBitmapLayerAsync(StorageFile file, IBitmapFactory bitmapFactory)
+        {
+            using (Stream stream = await file.OpenStreamForReadAsync())
+            {
+                IBitmap bitmap = await bitmapFactory.LoadBitmapAsync(stream);
+                return new BitmapLayer(bitmap) { Name = file.DisplayName };
+            }
+        }
+
+        private static void Dispose(Layer layer)
+        {
+            if (layer is BitmapLayer bitmapLayer)
+            {
+                bitmapLayer.Bitmap.Dispose();
             }
         }
     }

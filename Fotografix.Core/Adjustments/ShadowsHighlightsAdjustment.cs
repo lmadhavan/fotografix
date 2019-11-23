@@ -1,33 +1,28 @@
-﻿using Microsoft.Graphics.Canvas;
-using Microsoft.Graphics.Canvas.Effects;
+﻿using System;
 
 namespace Fotografix.Adjustments
 {
     public sealed class ShadowsHighlightsAdjustment : Adjustment
     {
-        private readonly HighlightsAndShadowsEffect effect;
-
-        public ShadowsHighlightsAdjustment()
-        {
-            this.effect = new HighlightsAndShadowsEffect();
-        }
-
-        public override void Dispose()
-        {
-            effect.Dispose();
-        }
+        private float shadows;
+        private float highlights;
+        private float clarity;
 
         public float Shadows
         {
             get
             {
-                return effect.Shadows;
+                return shadows;
             }
 
             set
             {
-                effect.Shadows = value;
-                RaisePropertyChanged();
+                if (value < -1 || value > 1)
+                {
+                    throw new ArgumentOutOfRangeException();
+                }
+
+                SetProperty(ref shadows, value);
             }
         }
 
@@ -35,13 +30,17 @@ namespace Fotografix.Adjustments
         {
             get
             {
-                return effect.Highlights;
+                return highlights;
             }
 
             set
             {
-                effect.Highlights = value;
-                RaisePropertyChanged();
+                if (value < -1 || value > 1)
+                {
+                    throw new ArgumentOutOfRangeException();
+                }
+
+                SetProperty(ref highlights, value);
             }
         }
 
@@ -49,21 +48,18 @@ namespace Fotografix.Adjustments
         {
             get
             {
-                return effect.Clarity;
+                return clarity;
             }
 
             set
             {
-                effect.Clarity = value;
-                RaisePropertyChanged();
+                if (value < -1 || value > 1)
+                {
+                    throw new ArgumentOutOfRangeException();
+                }
+
+                SetProperty(ref clarity, value);
             }
-        }
-
-        internal override ICanvasImage Output => effect;
-
-        protected override void OnInputChanged()
-        {
-            effect.Source = Input;
         }
     }
 }

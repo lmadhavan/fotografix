@@ -6,6 +6,12 @@ using System.Collections.Specialized;
 
 namespace Fotografix.UI
 {
+    /// <summary>
+    /// Provides a view of an <see cref="ObservableCollection{T}"/> in which the order of elements is reversed.
+    /// </summary>
+    /// <remarks>
+    /// The view is modifiable; any changes made through the view are propagated to the underlying collection.
+    /// </remarks>
     public sealed class ReversedCollectionView<T> : IList<T>, IList, INotifyCollectionChanged, IDisposable
     {
         private readonly ObservableCollection<T> collection;

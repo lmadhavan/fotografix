@@ -1,11 +1,10 @@
-﻿using Fotografix.Composition;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Threading.Tasks;
 
 namespace Fotografix.Tests.Composition
 {
     [TestClass]
-    public class BitmapBlendingTest : ImageTestBase
+    public class BitmapBlendingTest : CompositionTestBase
     {
         private Image image;
         private Layer background;
@@ -18,13 +17,6 @@ namespace Fotografix.Tests.Composition
             this.background = image.Layers[0];
             this.foreground = await LoadLayerAsync("stars.jpg");
             image.Layers.Add(foreground);
-        }
-
-        [TestCleanup]
-        public void Cleanup()
-        {
-            image.Dispose();
-            foreground.Dispose();
         }
 
         [TestMethod]

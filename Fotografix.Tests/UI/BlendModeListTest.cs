@@ -1,5 +1,4 @@
-﻿using Fotografix.Composition;
-using Fotografix.UI;
+﻿using Fotografix.UI.BlendModes;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Linq;
 

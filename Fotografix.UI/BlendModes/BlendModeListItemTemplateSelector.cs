@@ -1,16 +1,16 @@
 ﻿using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
-namespace Fotografix.UI
+namespace Fotografix.UI.BlendModes
 {
-    public sealed class LayerTemplateSelector : DataTemplateSelector
+    public sealed class BlendModeListItemTemplateSelector : DataTemplateSelector
     {
-        public DataTemplate AdjustmentLayerTemplate { get; set; }
-        public DataTemplate DefaultLayerTemplate { get; set; }
+        public DataTemplate BlendModeTemplate { get; set; }
+        public DataTemplate SeparatorTemplate { get; set; }
 
         protected override DataTemplate SelectTemplateCore(object item)
         {
-            return item is AdjustmentLayer ? AdjustmentLayerTemplate : DefaultLayerTemplate;
+            return ((BlendModeListItem)item).IsSeparator ? SeparatorTemplate : BlendModeTemplate;
         }
 
         protected override DataTemplate SelectTemplateCore(object item, DependencyObject container)

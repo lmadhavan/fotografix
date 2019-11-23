@@ -1,4 +1,4 @@
-﻿using Fotografix.Composition;
+﻿using Fotografix.UI.Adjustments;
 using Microsoft.Graphics.Canvas.UI;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using System;
@@ -37,7 +37,7 @@ namespace Fotografix.UI
         {
             var item = (MenuFlyoutItem)sender;
             var adjustmentLayerFactory = (IAdjustmentLayerFactory)item.Tag;
-            editor.AddLayer(adjustmentLayerFactory.CreateAdjustmentLayer());
+            editor.AddAdjustmentLayer(adjustmentLayerFactory);
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -69,13 +69,13 @@ namespace Fotografix.UI
         {
             editor?.Dispose();
 
-            this.editor = await ImageEditor.CreateAsync(canvas, file);
+            this.editor = await ImageEditor.CreateAsync(file, canvas);
             editor.Invalidated += OnEditorInvalidated;
 
             Bindings.Update();
 
-            canvas.Width = editor.Width;
-            canvas.Height = editor.Height;
+            canvas.Width = editor.Size.Width;
+            canvas.Height = editor.Size.Height;
             canvas.Invalidate();
         }
 
@@ -106,12 +106,7 @@ namespace Fotografix.UI
             if (e.DataView.Contains(StandardDataFormats.StorageItems))
             {
                 var items = await e.DataView.GetStorageItemsAsync();
-                var files = items.OfType<StorageFile>().ToList();
-
-                if (files.Count > 0)
-                {
-                    await editor.ImportAsync(files);
-                }
+                await editor.ImportLayersAsync(items.OfType<StorageFile>());
             }
         }
 
@@ -132,10 +127,7 @@ namespace Fotografix.UI
             picker.CommitButtonText = "Import";
 
             var files = await picker.PickMultipleFilesAsync();
-            if (files.Count > 0)
-            {
-                await editor.ImportAsync(files);
-            }
+            await editor.ImportLayersAsync(files);
         }
 
         private static FileOpenPicker CreateFilePicker()

@@ -149,7 +149,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
-      <Version>6.2.8</Version>
+      <Version>6.2.9</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
@@ -163,7 +163,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Fotografix.Core\Fotografix.Core.csproj">
-      <Project>{995ab9fd-a276-4b5f-8f37-7952e38a7f24}</Project>
+      <Project>{258c6a47-8821-49eb-a1bb-188456689de4}</Project>
       <Name>Fotografix.Core</Name>
     </ProjectReference>
     <ProjectReference Include="..\Fotografix.UI\Fotografix.UI.csproj">

@@ -13,7 +13,7 @@ namespace Fotografix
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        protected bool SetValue<T>(ref T field, T value, [CallerMemberName] string propertyName = "")
+        protected bool SetProperty<T>(ref T field, T value, [CallerMemberName] string propertyName = "")
         {
             if (!EqualityComparer<T>.Default.Equals(field, value))
             {
