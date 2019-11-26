@@ -126,6 +126,7 @@
     </Compile>
     <Compile Include="Adjustments\AdjustmentTemplateSelector.cs" />
     <Compile Include="Adjustments\IAdjustmentLayerFactory.cs" />
+    <Compile Include="BitmapLayerFactory.cs" />
     <Compile Include="BlendModes\BlendModeListItemStyleSelector.cs" />
     <Compile Include="BlendModes\BlendModeListItemTemplateSelector.cs" />
     <Compile Include="BlendModes\BlendModeList.cs" />

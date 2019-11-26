@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Drawing;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.Storage;
@@ -16,17 +15,15 @@ namespace Fotografix.UI
     public sealed class ImageEditor : NotifyPropertyChangedBase, IDisposable
     {
         private readonly Image image;
-        private readonly Win2DBitmapFactory bitmapFactory;
         private readonly Win2DCompositor compositor;
         private readonly ReversedCollectionView<Layer> layers;
 
         private Layer activeLayer;
         private BlendModeListItem selectedBlendMode;
 
-        private ImageEditor(Image image, Win2DBitmapFactory bitmapFactory)
+        private ImageEditor(Image image)
         {
             this.image = image;
-            this.bitmapFactory = bitmapFactory;
             this.compositor = new Win2DCompositor(image);
 
             this.layers = new ReversedCollectionView<Layer>(image.Layers);
@@ -37,35 +34,27 @@ namespace Fotografix.UI
 
         public static ImageEditor Create(Size size, ICanvasResourceCreator resourceCreator)
         {
-            Win2DBitmapFactory bitmapFactory = new Win2DBitmapFactory(resourceCreator);
-            BitmapLayer layer = CreateLayer(bitmapFactory, 1);
+            BitmapLayer layer = CreateLayer(1);
 
             Image image = new Image(size);
             image.Layers.Add(layer);
 
-            return new ImageEditor(image, bitmapFactory);
+            return new ImageEditor(image);
         }
 
         public static async Task<ImageEditor> CreateAsync(StorageFile file, ICanvasResourceCreator resourceCreator)
         {
-            Win2DBitmapFactory bitmapFactory = new Win2DBitmapFactory(resourceCreator);
-            BitmapLayer layer = await LoadBitmapLayerAsync(file, bitmapFactory);
+            BitmapLayer layer = await BitmapLayerFactory.LoadBitmapLayerAsync(file);
 
             Image image = new Image(layer.Bitmap.Size);
             image.Layers.Add(layer);
 
-            return new ImageEditor(image, bitmapFactory);
+            return new ImageEditor(image);
         }
 
         public void Dispose()
         {
             layers.Dispose();
-            
-            foreach (Layer layer in image.Layers)
-            {
-                Dispose(layer);
-            }
-
             compositor.Dispose();
         }
 
@@ -128,7 +117,7 @@ namespace Fotografix.UI
 
         public void AddLayer()
         {
-            image.Layers.Add(CreateLayer(bitmapFactory, image.Layers.Count + 1));
+            image.Layers.Add(CreateLayer(image.Layers.Count + 1));
         }
 
         public void AddAdjustmentLayer(IAdjustmentLayerFactory adjustmentLayerFactory)
@@ -142,14 +131,13 @@ namespace Fotografix.UI
         {
             Layer layer = activeLayer;
             image.Layers.Remove(layer);
-            Dispose(layer);
         }
 
         public async Task ImportLayersAsync(IEnumerable<StorageFile> files)
         {
             foreach (var file in files)
             {
-                BitmapLayer layer = await LoadBitmapLayerAsync(file, bitmapFactory);
+                BitmapLayer layer = await BitmapLayerFactory.LoadBitmapLayerAsync(file);
                 image.Layers.Add(layer);
             }
         }
@@ -184,26 +172,9 @@ namespace Fotografix.UI
             }
         }
 
-        private static BitmapLayer CreateLayer(IBitmapFactory bitmapFactory, int id)
+        private static BitmapLayer CreateLayer(int id)
         {
-            return new BitmapLayer(bitmapFactory.CreateBitmap(Size.Empty)) { Name = "Layer " + id };
-        }
-
-        private static async Task<BitmapLayer> LoadBitmapLayerAsync(StorageFile file, IBitmapFactory bitmapFactory)
-        {
-            using (Stream stream = await file.OpenStreamForReadAsync())
-            {
-                IBitmap bitmap = await bitmapFactory.LoadBitmapAsync(stream);
-                return new BitmapLayer(bitmap) { Name = file.DisplayName };
-            }
-        }
-
-        private static void Dispose(Layer layer)
-        {
-            if (layer is BitmapLayer bitmapLayer)
-            {
-                bitmapLayer.Bitmap.Dispose();
-            }
+            return new BitmapLayer(Bitmap.Empty) { Name = "Layer " + id };
         }
     }
 }

@@ -4,14 +4,14 @@ namespace Fotografix
 {
     public sealed class BitmapLayer : Layer
     {
-        private IBitmap bitmap;
+        private Bitmap bitmap;
 
-        public BitmapLayer(IBitmap bitmap)
+        public BitmapLayer(Bitmap bitmap)
         {
             this.Bitmap = bitmap;
         }
 
-        public IBitmap Bitmap
+        public Bitmap Bitmap
         {
             get
             {
