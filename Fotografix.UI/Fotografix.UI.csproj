@@ -174,6 +174,10 @@
       <Project>{258c6a47-8821-49eb-a1bb-188456689de4}</Project>
       <Name>Fotografix.Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Fotografix.Editor\Fotografix.Editor.csproj">
+      <Project>{c2424398-29d9-4392-a0c0-c4699c7b913b}</Project>
+      <Name>Fotografix.Editor</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Fotografix.Win2D\Fotografix.Win2D.csproj">
       <Project>{c40b3dd4-0747-48af-a67e-2bc88ebb9fcc}</Project>
       <Name>Fotografix.Win2D</Name>

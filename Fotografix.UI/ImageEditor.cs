@@ -1,4 +1,5 @@
-﻿using Fotografix.UI.Adjustments;
+﻿using Fotografix.Editor;
+using Fotografix.UI.Adjustments;
 using Fotografix.UI.BlendModes;
 using Fotografix.Win2D;
 using Microsoft.Graphics.Canvas;
@@ -25,6 +26,8 @@ namespace Fotografix.UI
         {
             this.image = image;
             this.compositor = new Win2DCompositor(image);
+
+            this.History = new History();
 
             this.layers = new ReversedCollectionView<Layer>(image.Layers);
             this.activeLayer = image.Layers.FirstOrDefault();
@@ -59,6 +62,8 @@ namespace Fotografix.UI
         }
 
         public Size Size => image.Size;
+
+        public History History { get; }
 
         public IList<Layer> Layers => layers;
 
@@ -117,29 +122,40 @@ namespace Fotografix.UI
 
         public void AddLayer()
         {
-            image.Layers.Add(CreateLayer(image.Layers.Count + 1));
+            Layer layer = CreateLayer(image.Layers.Count + 1);
+            Execute(new AddLayerCommand(image, layer));
         }
 
         public void AddAdjustmentLayer(IAdjustmentLayerFactory adjustmentLayerFactory)
         {
-            image.Layers.Add(adjustmentLayerFactory.CreateAdjustmentLayer());
+            Layer layer = adjustmentLayerFactory.CreateAdjustmentLayer();
+            Execute(new AddLayerCommand(image, layer));
         }
 
         public bool CanDeleteActiveLayer => activeLayer != image.Layers[0];
 
         public void DeleteActiveLayer()
         {
-            Layer layer = activeLayer;
-            image.Layers.Remove(layer);
+            Execute(new RemoveLayerCommand(image, activeLayer));
         }
 
         public async Task ImportLayersAsync(IEnumerable<StorageFile> files)
         {
+            List<ICommand> commands = new List<ICommand>();
+
             foreach (var file in files)
             {
                 BitmapLayer layer = await BitmapLayerFactory.LoadBitmapLayerAsync(file);
-                image.Layers.Add(layer);
+                commands.Add(new AddLayerCommand(image, layer));
             }
+
+            Execute(new CompositeCommand(commands));
+        }
+
+        private void Execute(ICommand command)
+        {
+            command.Execute();
+            History.Add(command);
         }
 
         private void OnLayerCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)

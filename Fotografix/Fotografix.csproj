@@ -166,6 +166,10 @@
       <Project>{258c6a47-8821-49eb-a1bb-188456689de4}</Project>
       <Name>Fotografix.Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Fotografix.Editor\Fotografix.Editor.csproj">
+      <Project>{c2424398-29d9-4392-a0c0-c4699c7b913b}</Project>
+      <Name>Fotografix.Editor</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Fotografix.UI\Fotografix.UI.csproj">
       <Project>{319fa943-25c3-405e-97fc-02307cc817f0}</Project>
       <Name>Fotografix.UI</Name>

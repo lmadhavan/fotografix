@@ -116,6 +116,29 @@
                         <TextBlock Margin="6,0,0,0" Text="Open" />
                     </StackPanel>
                 </Button>
+
+                <Button Style="{StaticResource AppBarButtonStyle}"
+                        Click="{x:Bind editor.History.Undo}"
+                        IsEnabled="{x:Bind editor.History.CanUndo, Mode=OneWay}"
+                        ToolTipService.ToolTip="Undo">
+                    <Button.KeyboardAccelerators>
+                        <KeyboardAccelerator Modifiers="Control" Key="Z" />
+                    </Button.KeyboardAccelerators>
+                    
+                    <SymbolIcon Symbol="Undo" />
+                </Button>
+
+                <Button Style="{StaticResource AppBarButtonStyle}"
+                        Click="{x:Bind editor.History.Redo}"
+                        IsEnabled="{x:Bind editor.History.CanRedo, Mode=OneWay}"
+                        ToolTipService.ToolTip="Redo">
+                    <Button.KeyboardAccelerators>
+                        <KeyboardAccelerator Modifiers="Control,Shift" Key="Z" />
+                        <KeyboardAccelerator Modifiers="Control" Key="Y" />
+                    </Button.KeyboardAccelerators>
+
+                    <SymbolIcon Symbol="Redo" />
+                </Button>
             </StackPanel>
 
             <StackPanel Grid.Column="2" Orientation="Horizontal">
