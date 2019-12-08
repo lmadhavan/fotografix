@@ -134,6 +134,7 @@
     <Compile Include="Composition\LayerNode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Composition\BitmapNode.cs" />
+    <Compile Include="Win2DBitmapResamplingStrategy.cs" />
     <Compile Include="Win2DCompositor.cs" />
     <EmbeddedResource Include="Properties\Fotografix.Win2D.rd.xml" />
   </ItemGroup>
@@ -149,6 +150,10 @@
     <ProjectReference Include="..\Fotografix.Core\Fotografix.Core.csproj">
       <Project>{258c6a47-8821-49eb-a1bb-188456689de4}</Project>
       <Name>Fotografix.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Fotografix.Editor\Fotografix.Editor.csproj">
+      <Project>{c2424398-29d9-4392-a0c0-c4699c7b913b}</Project>
+      <Name>Fotografix.Editor</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">

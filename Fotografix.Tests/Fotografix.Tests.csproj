@@ -128,6 +128,7 @@
     <Compile Include="Composition\CompositionTestBase.cs" />
     <Compile Include="Composition\ImageAdjustmentsTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UI\DimensionConverterTest.cs" />
     <Compile Include="UI\ImageEditorTest.cs" />
     <Compile Include="UI\ReversedCollectionViewTest.cs" />
     <Compile Include="UnitTestApp.xaml.cs">

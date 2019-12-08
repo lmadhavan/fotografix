@@ -1,35 +1,35 @@
 ﻿using System.Collections.Generic;
 
-namespace Fotografix.Editor
+namespace Fotografix.Editor.Commands
 {
     public sealed class History : NotifyPropertyChangedBase
     {
-        private readonly Stack<ICommand> undoStack = new Stack<ICommand>();
-        private readonly Stack<ICommand> redoStack = new Stack<ICommand>();
+        private readonly Stack<IChange> undoStack = new Stack<IChange>();
+        private readonly Stack<IChange> redoStack = new Stack<IChange>();
 
         public bool CanUndo => undoStack.Count > 0;
         public bool CanRedo => redoStack.Count > 0;
 
-        public void Add(ICommand command)
+        public void Add(IChange change)
         {
-            undoStack.Push(command);
+            undoStack.Push(change);
             redoStack.Clear();
             RaiseEvents();
         }
 
         public void Undo()
         {
-            ICommand command = undoStack.Pop();
-            command.Undo();
-            redoStack.Push(command);
+            IChange change = undoStack.Pop();
+            change.Undo();
+            redoStack.Push(change);
             RaiseEvents();
         }
 
         public void Redo()
         {
-            ICommand command = redoStack.Pop();
-            command.Redo();
-            undoStack.Push(command);
+            IChange change = redoStack.Pop();
+            change.Apply();
+            undoStack.Push(change);
             RaiseEvents();
         }
 

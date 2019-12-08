@@ -16,79 +16,13 @@
     AllowDrop="True">
 
     <Page.Resources>
-        <Style x:Key="AppBarButtonStyle" TargetType="Button">
-            <Setter Property="BorderThickness" Value="0" />
-            <Setter Property="Padding" Value="10" />
-            <Setter Property="FontWeight" Value="SemiLight" />
-            <Setter Property="Background" Value="Transparent" />
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Styles.xaml" />
+            </ResourceDictionary.MergedDictionaries>
 
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <ContentPresenter x:Name="ContentPresenter"
-                                          Background="{TemplateBinding Background}"
-                                          BorderBrush="{TemplateBinding BorderBrush}"
-                                          BorderThickness="{TemplateBinding BorderThickness}"
-                                          Content="{TemplateBinding Content}"
-                                          ContentTemplate="{TemplateBinding ContentTemplate}"
-                                          ContentTransitions="{TemplateBinding ContentTransitions}"
-                                          CornerRadius="{TemplateBinding CornerRadius}"
-                                          Padding="{TemplateBinding Padding}"
-                                          HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                          VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
-                                          AutomationProperties.AccessibilityView="Raw">
-
-                            <VisualStateManager.VisualStateGroups>
-                                <VisualStateGroup x:Name="CommonStates">
-                                    <VisualState x:Name="Normal">
-                                        <Storyboard>
-                                            <PointerUpThemeAnimation Storyboard.TargetName="ContentPresenter" />
-                                        </Storyboard>
-                                    </VisualState>
-
-                                    <VisualState x:Name="PointerOver">
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Background">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListLowBrush}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ButtonForegroundPointerOver}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <PointerUpThemeAnimation Storyboard.TargetName="ContentPresenter" />
-                                        </Storyboard>
-                                    </VisualState>
-
-                                    <VisualState x:Name="Pressed">
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Background">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListMediumBrush}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ButtonForegroundPressed}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <PointerDownThemeAnimation Storyboard.TargetName="ContentPresenter" />
-                                        </Storyboard>
-                                    </VisualState>
-
-                                    <VisualState x:Name="Disabled">
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ButtonForegroundDisabled}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                    </VisualState>
-                                </VisualStateGroup>
-                            </VisualStateManager.VisualStateGroups>
-                        </ContentPresenter>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
-        <Style x:Key="PanelTitleTextBlockStyle" TargetType="TextBlock">
-            <Setter Property="FontWeight" Value="SemiLight" />
-            <Setter Property="FontSize" Value="20" />
-        </Style>
+            <ui:DimensionConverter x:Key="DimensionConverter" />
+        </ResourceDictionary>
     </Page.Resources>
 
     <Grid>
@@ -110,14 +44,14 @@
             </Grid.ColumnDefinitions>
 
             <StackPanel Grid.Column="0" Orientation="Horizontal">
-                <Button Click="OpenImage_Click" Style="{StaticResource AppBarButtonStyle}">
+                <Button Click="OpenImage_Click" Style="{StaticResource CommandButtonStyle}">
                     <StackPanel Orientation="Horizontal">
                         <SymbolIcon Symbol="OpenFile" />
                         <TextBlock Margin="6,0,0,0" Text="Open" />
                     </StackPanel>
                 </Button>
 
-                <Button Style="{StaticResource AppBarButtonStyle}"
+                <Button Style="{StaticResource CommandButtonStyle}"
                         Click="{x:Bind editor.History.Undo}"
                         IsEnabled="{x:Bind editor.History.CanUndo, Mode=OneWay}"
                         ToolTipService.ToolTip="Undo">
@@ -128,7 +62,7 @@
                     <SymbolIcon Symbol="Undo" />
                 </Button>
 
-                <Button Style="{StaticResource AppBarButtonStyle}"
+                <Button Style="{StaticResource CommandButtonStyle}"
                         Click="{x:Bind editor.History.Redo}"
                         IsEnabled="{x:Bind editor.History.CanRedo, Mode=OneWay}"
                         ToolTipService.ToolTip="Redo">
@@ -142,7 +76,44 @@
             </StackPanel>
 
             <StackPanel Grid.Column="2" Orientation="Horizontal">
-                <Button Style="{StaticResource AppBarButtonStyle}">
+                <Button Style="{StaticResource CommandButtonStyle}">
+                    <StackPanel Orientation="Horizontal">
+                        <SymbolIcon Symbol="FullScreen" />
+                        <TextBlock Margin="4,0,0,0" HorizontalTextAlignment="Center" MinWidth="80" Text="{x:Bind FormatSize(editor.Size), Mode=OneWay}" />
+                    </StackPanel>
+
+                    <Button.Flyout>
+                        <Flyout x:Name="resizeImageFlyout" Opened="ResizeImageFlyout_Opened">
+                            <ContentControl x:Name="resizeImageFlyoutContent">
+                                <ContentControl.ContentTemplate>
+                                    <DataTemplate x:DataType="ui:ResizeImageParameters">
+                                        <Grid>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                            </Grid.RowDefinitions>
+
+                                            <TextBlock Grid.Row="0" Text="Resize image" FontSize="16" FontWeight="SemiBold" />
+
+                                            <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,12">
+                                                <TextBox Text="{x:Bind Width, Converter={StaticResource DimensionConverter}, Mode=TwoWay}" Width="75" />
+                                                <TextBlock Text="×" FontSize="16" Margin="4,2" />
+                                                <TextBox Text="{x:Bind Height, Converter={StaticResource DimensionConverter}, Mode=TwoWay}" Width="75" />
+                                            </StackPanel>
+
+                                            <Button Grid.Row="2" HorizontalAlignment="Stretch" Margin="0,0,4,0" Style="{ThemeResource AccentButtonStyle}"
+                                                    Content="Resize" 
+                                                    Click="ResizeImage_Click" />
+                                        </Grid>
+                                    </DataTemplate>
+                                </ContentControl.ContentTemplate>
+                            </ContentControl>
+                        </Flyout>
+                    </Button.Flyout>
+                </Button>
+
+                <Button Style="{StaticResource CommandButtonStyle}">
                     <StackPanel Orientation="Horizontal">
                         <SymbolIcon Symbol="Zoom" />
                         <TextBlock Margin="4,0,0,0" HorizontalTextAlignment="Center" MinWidth="40" Text="{x:Bind sys:String.Format('{0:P0}', scrollViewer.ZoomFactor), Mode=OneWay}" />
@@ -183,16 +154,16 @@
                 <TextBlock Grid.Column="0" Margin="0,4,0,0" Style="{StaticResource PanelTitleTextBlockStyle}" Text="Layers" />
 
                 <StackPanel Grid.Column="1" Orientation="Horizontal">
-                    <Button x:Name="newAdjustmentButton" Style="{StaticResource AppBarButtonStyle}"
+                    <Button x:Name="newAdjustmentButton" Style="{StaticResource CommandButtonStyle}"
                             Flyout="{StaticResource NewAdjustmentMenuFlyout}">
                         <SymbolIcon Symbol="Add" />
                     </Button>
 
-                    <Button Style="{StaticResource AppBarButtonStyle}" Click="Import_Click" ToolTipService.ToolTip="Import">
+                    <Button Style="{StaticResource CommandButtonStyle}" Click="Import_Click" ToolTipService.ToolTip="Import">
                         <SymbolIcon Symbol="Import" />
                     </Button>
-                    
-                    <Button Style="{StaticResource AppBarButtonStyle}" Margin="4,0,0,0"
+
+                    <Button Style="{StaticResource CommandButtonStyle}" Margin="4,0,0,0"
                             IsEnabled="{x:Bind editor.CanDeleteActiveLayer, Mode=OneWay}"
                             Click="{x:Bind editor.DeleteActiveLayer}">
                         <SymbolIcon Symbol="Delete" />

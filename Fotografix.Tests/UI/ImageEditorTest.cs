@@ -1,5 +1,4 @@
 ﻿using Fotografix.UI;
-using Microsoft.Graphics.Canvas;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Drawing;
 using System.Threading.Tasks;
@@ -10,12 +9,14 @@ namespace Fotografix.Tests.UI
     [TestClass]
     public class ImageEditorTest
     {
+        private static readonly Size ImageSize = new Size(10, 10);
+
         private ImageEditor editor;
 
         [TestInitialize]
         public void Initialize()
         {
-            this.editor = ImageEditor.Create(new Size(10, 10), CanvasDevice.GetSharedDevice());
+            this.editor = ImageEditor.Create(ImageSize);
         }
 
         [TestCleanup]
@@ -69,6 +70,22 @@ namespace Fotografix.Tests.UI
             Assert.AreEqual(3, editor.Layers.Count);
             Assert.AreEqual(filename2, editor.Layers[0].Name);
             Assert.AreEqual(filename1, editor.Layers[1].Name);
+        }
+
+        [TestMethod]
+        public void ResizesImage()
+        {
+            var parameters = editor.CreateResizeImageParameters();
+            
+            Assert.AreEqual(ImageSize, parameters.Size, "Resize parameters should be initialized to current image size");
+
+            Size newImageSize = ImageSize * 2;
+            parameters.Width = newImageSize.Width;
+            parameters.Height = newImageSize.Height;
+
+            editor.ResizeImage(parameters);
+
+            Assert.AreEqual(newImageSize, editor.Size, "Image should have new size after resizing");
         }
     }
 }

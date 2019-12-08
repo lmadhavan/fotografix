@@ -1,6 +1,6 @@
-﻿namespace Fotografix.Editor
+﻿namespace Fotografix.Editor.Commands
 {
-    public sealed class RemoveLayerCommand : ICommand
+    public sealed class RemoveLayerCommand : ICommand, IChange
     {
         private readonly Image image;
         private readonly Layer layer;
@@ -13,19 +13,19 @@
             this.index = image.Layers.IndexOf(layer);
         }
 
-        public void Execute()
+        public IChange PrepareChange()
+        {
+            return this;
+        }
+
+        void IChange.Apply()
         {
             image.Layers.RemoveAt(index);
         }
 
-        public void Undo()
+        void IChange.Undo()
         {
             image.Layers.Insert(index, layer);
-        }
-
-        public void Redo()
-        {
-            Execute();
         }
     }
 }

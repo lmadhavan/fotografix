@@ -2,6 +2,8 @@
 using Microsoft.Graphics.Canvas.UI;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using System;
+using System.ComponentModel;
+using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.DataTransfer;
@@ -17,6 +19,7 @@ namespace Fotografix.UI
     {
         private StorageFile file;
         private ImageEditor editor;
+        private ResizeImageParameters resizeImageParameters;
 
         public ImageEditorPage()
         {
@@ -69,11 +72,21 @@ namespace Fotografix.UI
         {
             editor?.Dispose();
 
-            this.editor = await ImageEditor.CreateAsync(file, canvas);
+            this.editor = await ImageEditor.CreateAsync(file);
             editor.Invalidated += OnEditorInvalidated;
+            editor.PropertyChanged += OnEditorPropertyChanged;
 
             Bindings.Update();
+            UpdateCanvasSize();
+        }
 
+        private string FormatSize(Size size)
+        {
+            return $"{size.Width}×{size.Height}";
+        }
+
+        private void UpdateCanvasSize()
+        {
             canvas.Width = editor.Size.Width;
             canvas.Height = editor.Size.Height;
             canvas.Invalidate();
@@ -82,6 +95,14 @@ namespace Fotografix.UI
         private void OnEditorInvalidated(object sender, EventArgs e)
         {
             canvas.Invalidate();
+        }
+
+        private void OnEditorPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(ImageEditor.Size))
+            {
+                UpdateCanvasSize();
+            }
         }
 
         protected override void OnDragEnter(DragEventArgs e)
@@ -128,6 +149,18 @@ namespace Fotografix.UI
 
             var files = await picker.PickMultipleFilesAsync();
             await editor.ImportLayersAsync(files);
+        }
+
+        private void ResizeImageFlyout_Opened(object sender, object e)
+        {
+            this.resizeImageParameters = editor.CreateResizeImageParameters();
+            this.resizeImageFlyoutContent.Content = resizeImageParameters;
+        }
+
+        private void ResizeImage_Click(object sender, RoutedEventArgs e)
+        {
+            resizeImageFlyout.Hide();
+            editor.ResizeImage(resizeImageParameters);
         }
 
         private static FileOpenPicker CreateFilePicker()

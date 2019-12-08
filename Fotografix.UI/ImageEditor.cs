@@ -1,4 +1,4 @@
-﻿using Fotografix.Editor;
+﻿using Fotografix.Editor.Commands;
 using Fotografix.UI.Adjustments;
 using Fotografix.UI.BlendModes;
 using Fotografix.Win2D;
@@ -6,6 +6,7 @@ using Microsoft.Graphics.Canvas;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
@@ -32,10 +33,11 @@ namespace Fotografix.UI
             this.layers = new ReversedCollectionView<Layer>(image.Layers);
             this.activeLayer = image.Layers.FirstOrDefault();
 
+            image.PropertyChanged += OnImagePropertyChanged;
             image.Layers.CollectionChanged += OnLayerCollectionChanged;
         }
 
-        public static ImageEditor Create(Size size, ICanvasResourceCreator resourceCreator)
+        public static ImageEditor Create(Size size)
         {
             BitmapLayer layer = CreateLayer(1);
 
@@ -45,7 +47,7 @@ namespace Fotografix.UI
             return new ImageEditor(image);
         }
 
-        public static async Task<ImageEditor> CreateAsync(StorageFile file, ICanvasResourceCreator resourceCreator)
+        public static async Task<ImageEditor> CreateAsync(StorageFile file)
         {
             BitmapLayer layer = await BitmapLayerFactory.LoadBitmapLayerAsync(file);
 
@@ -152,10 +154,32 @@ namespace Fotografix.UI
             Execute(new CompositeCommand(commands));
         }
 
+        public ResizeImageParameters CreateResizeImageParameters()
+        {
+            return new ResizeImageParameters(Size);
+        }
+
+        public void ResizeImage(ResizeImageParameters resizeImageParameters)
+        {
+            if (resizeImageParameters.Size != Size)
+            {
+                Execute(new ResampleImageCommand(image, resizeImageParameters.Size, new Win2DBitmapResamplingStrategy()));
+            }
+        }
+
         private void Execute(ICommand command)
         {
-            command.Execute();
-            History.Add(command);
+            IChange change = command.PrepareChange();
+            change.Apply();
+            History.Add(change);
+        }
+
+        private void OnImagePropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(Image.Size))
+            {
+                RaisePropertyChanged(nameof(Size));
+            }
         }
 
         private void OnLayerCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)

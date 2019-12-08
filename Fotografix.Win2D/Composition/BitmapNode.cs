@@ -1,10 +1,11 @@
 ﻿using Microsoft.Graphics.Canvas;
+using System;
 using System.Drawing;
 using Windows.Graphics.DirectX;
 
 namespace Fotografix.Win2D.Composition
 {
-    internal sealed class BitmapNode : CompositionNode
+    internal sealed class BitmapNode : CompositionNode, IDisposable
     {
         private readonly CanvasBitmap bitmap;
 

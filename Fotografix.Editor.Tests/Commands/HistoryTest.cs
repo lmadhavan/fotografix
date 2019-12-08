@@ -1,45 +1,46 @@
-﻿using NUnit.Framework;
+﻿using Fotografix.Editor.Commands;
+using NUnit.Framework;
 
-namespace Fotografix.Editor.Tests
+namespace Fotografix.Editor.Tests.Commands
 {
     [TestFixture]
     public class HistoryTest
     {
         [Test]
-        public void UndoesAndRedoesCommand()
+        public void UndoesAndRedoesChange()
         {
             History history = new History();
-            FakeCommand command = new FakeCommand();
+            FakeChange change = new FakeChange();
 
             AssertHistoryState(history, canUndo: false, canRedo: false);
 
-            history.Add(command);
+            history.Add(change);
 
             AssertHistoryState(history, canUndo: true, canRedo: false);
-            AssertCommandState(command, undoCount: 0, redoCount: 0);
+            AssertCommandState(change, undoCount: 0, redoCount: 0);
 
             history.Undo();
 
             AssertHistoryState(history, canUndo: false, canRedo: true);
-            AssertCommandState(command, undoCount: 1, redoCount: 0);
+            AssertCommandState(change, undoCount: 1, redoCount: 0);
 
             history.Redo();
 
             AssertHistoryState(history, canUndo: true, canRedo: false);
-            AssertCommandState(command, undoCount: 1, redoCount: 1);
+            AssertCommandState(change, undoCount: 1, redoCount: 1);
         }
 
         [Test]
-        public void AddingNewCommandClearsRedoStack()
+        public void AddingNewChangeClearsRedoStack()
         {
             History history = new History();
 
-            history.Add(new FakeCommand());
+            history.Add(new FakeChange());
             history.Undo();
 
             AssertHistoryState(history, canUndo: false, canRedo: true);
 
-            history.Add(new FakeCommand());
+            history.Add(new FakeChange());
 
             AssertHistoryState(history, canUndo: true, canRedo: false);
         }
@@ -50,30 +51,25 @@ namespace Fotografix.Editor.Tests
             Assert.AreEqual(canRedo, history.CanRedo, "CanRedo");
         }
 
-        private void AssertCommandState(FakeCommand command, int undoCount, int redoCount)
+        private void AssertCommandState(FakeChange change, int undoCount, int redoCount)
         {
-            Assert.AreEqual(undoCount, command.UndoCount, "UndoCount");
-            Assert.AreEqual(redoCount, command.RedoCount, "RedoCount");
+            Assert.AreEqual(undoCount, change.UndoCount, "UndoCount");
+            Assert.AreEqual(redoCount, change.ApplyCount, "RedoCount");
         }
 
-        private sealed class FakeCommand : ICommand
+        private sealed class FakeChange : IChange
         {
+            public int ApplyCount { get; private set; }
             public int UndoCount { get; private set; }
-            public int RedoCount { get; private set; }
 
-            public void Execute()
+            public void Apply()
             {
-                Assert.Fail("Execute should never be called by History");
+                ApplyCount++;
             }
 
             public void Undo()
             {
                 UndoCount++;
-            }
-
-            public void Redo()
-            {
-                RedoCount++;
             }
         }
     }
