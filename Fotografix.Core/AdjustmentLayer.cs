@@ -29,5 +29,10 @@ namespace Fotografix
                 SetProperty(ref adjustment, value);
             }
         }
+
+        public override void Accept(ILayerVisitor visitor)
+        {
+            visitor.Visit(this);
+        }
     }
 }

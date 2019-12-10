@@ -60,5 +60,7 @@ namespace Fotografix
                 SetProperty(ref opacity, value);
             }
         }
+
+        public abstract void Accept(ILayerVisitor visitor);
     }
 }

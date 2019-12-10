@@ -1,4 +1,5 @@
-﻿using Fotografix.Editor.Commands;
+﻿using Fotografix.Adjustments;
+using Fotografix.Editor.Commands;
 using NUnit.Framework;
 using System.Drawing;
 
@@ -43,6 +44,22 @@ namespace Fotografix.Editor.Tests.Commands
 
             change.Undo();
             Assert.That(layer.Bitmap.Size, Is.EqualTo(originalBitmapSize));
+        }
+
+        [Test]
+        public void DoesNotAffectAdjustmentLayers()
+        {
+            Size originalImageSize = new Size(50, 25);
+            Image image = new Image(originalImageSize);
+
+            AdjustmentLayer layer = new AdjustmentLayer(new BlackAndWhiteAdjustment());
+            image.Layers.Add(layer);
+
+            Size newImageSize = new Size(100, 50);
+            IChange change = new ResampleImageCommand(image, newImageSize, new FakeResamplingStrategy()).PrepareChange();
+
+            change.Apply();
+            Assert.That(image.Layers[0], Is.EqualTo(layer));
         }
 
         private sealed class FakeResamplingStrategy : IBitmapResamplingStrategy

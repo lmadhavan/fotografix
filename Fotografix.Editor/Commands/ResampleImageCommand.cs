@@ -22,24 +22,13 @@ namespace Fotografix.Editor.Commands
             PointF ratio = new PointF((float)newSize.Width / oldSize.Width,
                                       (float)newSize.Height / oldSize.Height);
 
-            List<Bitmap> oldBitmaps = new List<Bitmap>();
-            List<Bitmap> newBitmaps = new List<Bitmap>();
-
-            foreach (BitmapLayer layer in image.Layers)
+            BitmapResamplingVisitor visitor = new BitmapResamplingVisitor(resamplingStrategy, ratio);
+            foreach (Layer layer in image.Layers)
             {
-                Bitmap oldBitmap = layer.Bitmap;
-                Bitmap newBitmap = resamplingStrategy.Resample(oldBitmap, Scale(oldBitmap.Size, ratio));
-
-                oldBitmaps.Add(oldBitmap);
-                newBitmaps.Add(newBitmap);
+                layer.Accept(visitor);
             }
 
-            return new ResampleImageChange(image, oldSize, newSize, oldBitmaps, newBitmaps);
-        }
-
-        private Size Scale(Size size, PointF ratio)
-        {
-            return new Size((int)(size.Width * ratio.X), (int)(size.Height * ratio.Y));
+            return new ResampleImageChange(image, oldSize, newSize, visitor.OldBitmaps, visitor.NewBitmaps);
         }
 
         private sealed class ResampleImageChange : IChange
@@ -65,10 +54,10 @@ namespace Fotografix.Editor.Commands
             {
                 image.Size = newSize;
 
-                int i = 0;
-                foreach (BitmapLayer layer in image.Layers)
+                BitmapUpdatingVisitor visitor = new BitmapUpdatingVisitor(newBitmaps);
+                foreach (Layer layer in image.Layers)
                 {
-                    layer.Bitmap = newBitmaps[i++];
+                    layer.Accept(visitor);
                 }
             }
 
@@ -76,11 +65,64 @@ namespace Fotografix.Editor.Commands
             {
                 image.Size = oldSize;
 
-                int i = 0;
-                foreach (BitmapLayer layer in image.Layers)
+                BitmapUpdatingVisitor visitor = new BitmapUpdatingVisitor(oldBitmaps);
+                foreach (Layer layer in image.Layers)
                 {
-                    layer.Bitmap = oldBitmaps[i++];
+                    layer.Accept(visitor);
                 }
+            }
+        }
+
+        private sealed class BitmapResamplingVisitor : ILayerVisitor
+        {
+            private readonly IBitmapResamplingStrategy resamplingStrategy;
+            private readonly PointF ratio;
+
+            public BitmapResamplingVisitor(IBitmapResamplingStrategy resamplingStrategy, PointF ratio)
+            {
+                this.resamplingStrategy = resamplingStrategy;
+                this.ratio = ratio;
+            }
+
+            public List<Bitmap> OldBitmaps { get; } = new List<Bitmap>();
+            public List<Bitmap> NewBitmaps { get; } = new List<Bitmap>();
+
+            public void Visit(AdjustmentLayer layer)
+            {
+            }
+
+            public void Visit(BitmapLayer layer)
+            {
+                Bitmap oldBitmap = layer.Bitmap;
+                Bitmap newBitmap = resamplingStrategy.Resample(oldBitmap, Scale(oldBitmap.Size, ratio));
+
+                OldBitmaps.Add(oldBitmap);
+                NewBitmaps.Add(newBitmap);
+            }
+
+            private static Size Scale(Size size, PointF ratio)
+            {
+                return new Size((int)(size.Width * ratio.X), (int)(size.Height * ratio.Y));
+            }
+        }
+
+        private sealed class BitmapUpdatingVisitor : ILayerVisitor
+        {
+            private readonly IEnumerator<Bitmap> bitmaps;
+
+            public BitmapUpdatingVisitor(IReadOnlyList<Bitmap> bitmaps)
+            {
+                this.bitmaps = bitmaps.GetEnumerator();
+            }
+
+            public void Visit(AdjustmentLayer layer)
+            {
+            }
+
+            public void Visit(BitmapLayer layer)
+            {
+                bitmaps.MoveNext();
+                layer.Bitmap = bitmaps.Current;
             }
         }
     }
