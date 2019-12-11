@@ -97,9 +97,11 @@
                                             <TextBlock Grid.Row="0" Text="Resize image" FontSize="16" FontWeight="SemiBold" />
 
                                             <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,12">
-                                                <TextBox Text="{x:Bind Width, Converter={StaticResource DimensionConverter}, Mode=TwoWay}" Width="75" />
-                                                <TextBlock Text="×" FontSize="16" Margin="4,2" />
-                                                <TextBox Text="{x:Bind Height, Converter={StaticResource DimensionConverter}, Mode=TwoWay}" Width="75" />
+                                                <TextBox Text="{x:Bind Width, Converter={StaticResource DimensionConverter}, Mode=TwoWay}" Width="100" TabIndex="0" />
+                                                <ToggleButton IsChecked="{x:Bind LockAspectRatio, Mode=TwoWay}" ToolTipService.ToolTip="Lock aspect ratio" TabIndex="2">
+                                                    <SymbolIcon Symbol="Link" />
+                                                </ToggleButton>
+                                                <TextBox Text="{x:Bind Height, Converter={StaticResource DimensionConverter}, Mode=TwoWay}" Width="100" TabIndex="1" />
                                             </StackPanel>
 
                                             <Button Grid.Row="2" HorizontalAlignment="Stretch" Margin="0,0,4,0" Style="{ThemeResource AccentButtonStyle}"

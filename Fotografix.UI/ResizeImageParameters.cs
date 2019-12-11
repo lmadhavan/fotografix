@@ -4,27 +4,85 @@ namespace Fotografix.UI
 {
     public sealed class ResizeImageParameters : NotifyPropertyChangedBase
     {
+        private readonly int originalWidth;
+        private readonly int originalHeight;
+
         private int width;
         private int height;
+        private bool lockAspectRatio;
 
         public ResizeImageParameters(Size size)
         {
-            this.width = size.Width;
-            this.height = size.Height;
+            this.originalWidth = this.width = size.Width;
+            this.originalHeight = this.height = size.Height;
+            this.lockAspectRatio = true;
         }
 
-        public Size Size => new Size(Width, Height);
+        public Size Size => new Size(width, height);
 
         public int Width
         {
-            get => width;
-            set => SetProperty(ref width, value);
+            get
+            {
+                return width;
+            }
+
+            set
+            {
+                if (SetProperty(ref width, value))
+                {
+                    AdjustHeight();
+                }
+            }
         }
 
         public int Height
         {
-            get => height;
-            set => SetProperty(ref height, value);
+            get
+            {
+                return height;
+            }
+
+            set
+            {
+                if (SetProperty(ref height, value))
+                {
+                    AdjustWidth();
+                }
+            }
+        }
+
+        public bool LockAspectRatio
+        {
+            get
+            {
+                return lockAspectRatio;
+            }
+
+            set
+            {
+                if (SetProperty(ref lockAspectRatio, value))
+                {
+                    // adjust one of the dimensions so that it honors the new value of lockAspectRatio
+                    AdjustHeight();
+                }
+            }
+        }
+
+        private void AdjustWidth()
+        {
+            if (lockAspectRatio)
+            {
+                this.Width = height * originalWidth / originalHeight;
+            }
+        }
+
+        private void AdjustHeight()
+        {
+            if (lockAspectRatio)
+            {
+                this.Height = width * originalHeight / originalWidth;
+            }
         }
     }
 }
