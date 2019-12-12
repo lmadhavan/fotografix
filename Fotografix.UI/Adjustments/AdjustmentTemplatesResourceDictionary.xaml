@@ -94,6 +94,15 @@
         </Grid>
     </DataTemplate>
 
+    <DataTemplate x:Name="brightnessContrastTemplate" x:DataType="a:BrightnessContrastAdjustment">
+        <StackPanel Orientation="Vertical">
+            <TextBlock Text="Brightness:" />
+            <Slider Style="{StaticResource AdjustmentSliderStyle}" Value="{x:Bind Brightness, Mode=TwoWay}" />
+            <TextBlock Text="Contrast:" />
+            <Slider Style="{StaticResource AdjustmentSliderStyle}" Value="{x:Bind Contrast, Mode=TwoWay}" />
+        </StackPanel>
+    </DataTemplate>
+
     <aui:AdjustmentTemplateSelector x:Key="AdjustmentTemplateSelector" x:Name="adjustmentTemplateSelector" />
     <MenuFlyout x:Key="NewAdjustmentMenuFlyout" x:Name="newAdjustmentMenuFlyout" />
 </ResourceDictionary>

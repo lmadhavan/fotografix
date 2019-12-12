@@ -41,6 +41,7 @@ namespace Fotografix.Win2D.Composition
             Adjustment.Register<GradientMapAdjustment, GradientMapAdjustmentNode>();
             Adjustment.Register<HueSaturationAdjustment, HueSaturationAdjustmentNode>();
             Adjustment.Register<ShadowsHighlightsAdjustment, ShadowsHighlightsAdjustmentNode>();
+            Adjustment.Register<BrightnessContrastAdjustment, BrightnessContrastAdjustmentNode>();
         }
     }
 }

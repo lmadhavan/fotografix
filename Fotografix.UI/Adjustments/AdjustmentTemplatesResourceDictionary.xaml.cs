@@ -14,6 +14,7 @@ namespace Fotografix.UI.Adjustments
             RegisterAdjustment<ShadowsHighlightsAdjustment>("Shadows/Highlights", shadowsHighlightsTemplate);
             RegisterAdjustment<HueSaturationAdjustment>("Hue/Saturation", hueSaturationTemplate);
             RegisterAdjustment<GradientMapAdjustment>("Gradient Map", gradientMapTemplate);
+            RegisterAdjustment<BrightnessContrastAdjustment>("Brightness/Contrast", brightnessContrastTemplate);
         }
 
         private void RegisterAdjustment<T>(string name, DataTemplate dataTemplate) where T : Adjustment, new()

@@ -62,6 +62,18 @@ namespace Fotografix.Tests.Composition
             await AssertImageAsync("flowers_gm.png", image);
         }
 
+        [TestMethod]
+        public async Task BrightnessContrastAdjustment()
+        {
+            AddAdjustment(new BrightnessContrastAdjustment()
+            {
+                Brightness = 0.5f,
+                Contrast = 0.5f
+            });
+
+            await AssertImageAsync("flowers_bc.png", image);
+        }
+
         private void AddAdjustment(Adjustment adjustment)
         {
             image.Layers.Add(new AdjustmentLayer(adjustment));
