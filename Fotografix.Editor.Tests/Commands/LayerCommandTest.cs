@@ -44,6 +44,20 @@ namespace Fotografix.Editor.Tests.Commands
             Assert.That(image.Layers, Is.EqualTo(new Layer[] { existingLayer }));
         }
 
+        [Test]
+        public void ReorderLayer()
+        {
+            image.Layers.Add(newLayer);
+
+            IChange change = new ReorderLayerCommand(image, 0, 1).PrepareChange();
+
+            change.Apply();
+            Assert.That(image.Layers, Is.EqualTo(new Layer[] { newLayer, existingLayer }));
+
+            change.Undo();
+            Assert.That(image.Layers, Is.EqualTo(new Layer[] { existingLayer, newLayer }));
+        }
+
         private static Layer CreateLayer()
         {
             return new BitmapLayer(Bitmap.Empty);

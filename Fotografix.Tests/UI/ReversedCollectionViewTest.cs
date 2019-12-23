@@ -54,6 +54,16 @@ namespace Fotografix.Tests.UI
         }
 
         [TestMethod]
+        public void MoveInUnderlyingCollection()
+        {
+            collection.Move(0, 1); // collection -> baz, foo <- view
+
+            Assert.AreEqual(NotifyCollectionChangedAction.Move, e.Action);
+            Assert.AreEqual(1, e.OldStartingIndex);
+            Assert.AreEqual(0, e.NewStartingIndex);
+        }
+
+        [TestMethod]
         public void AddToView()
         {
             view.Add("baz"); // view -> bar, foo, baz <- collection

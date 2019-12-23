@@ -105,6 +105,10 @@ namespace Fotografix.UI
             {
                 RaiseCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Replace, e.NewItems, e.OldItems, Reverse(e.OldStartingIndex)));
             }
+            else if (e.Action == NotifyCollectionChangedAction.Move && e.OldItems.Count == 1)
+            {
+                RaiseCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Move, e.NewItems, Reverse(e.NewStartingIndex), Reverse(e.OldStartingIndex)));
+            }
             else
             {
                 RaiseCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));

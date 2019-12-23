@@ -52,8 +52,8 @@
                 </Button>
 
                 <Button Style="{StaticResource CommandButtonStyle}"
-                        Click="{x:Bind editor.History.Undo}"
-                        IsEnabled="{x:Bind editor.History.CanUndo, Mode=OneWay}"
+                        Click="{x:Bind editor.Undo}"
+                        IsEnabled="{x:Bind editor.CanUndo, Mode=OneWay}"
                         ToolTipService.ToolTip="Undo">
                     <Button.KeyboardAccelerators>
                         <KeyboardAccelerator Modifiers="Control" Key="Z" />
@@ -63,8 +63,8 @@
                 </Button>
 
                 <Button Style="{StaticResource CommandButtonStyle}"
-                        Click="{x:Bind editor.History.Redo}"
-                        IsEnabled="{x:Bind editor.History.CanRedo, Mode=OneWay}"
+                        Click="{x:Bind editor.Redo}"
+                        IsEnabled="{x:Bind editor.CanRedo, Mode=OneWay}"
                         ToolTipService.ToolTip="Redo">
                     <Button.KeyboardAccelerators>
                         <KeyboardAccelerator Modifiers="Control,Shift" Key="Z" />

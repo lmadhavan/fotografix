@@ -1,6 +1,7 @@
 ﻿using Fotografix.Editor.Commands;
 using Fotografix.UI.Adjustments;
 using Fotografix.UI.BlendModes;
+using Fotografix.UI.Commands;
 using Fotografix.Win2D;
 using Microsoft.Graphics.Canvas;
 using System;
@@ -20,6 +21,9 @@ namespace Fotografix.UI
         private readonly Win2DCompositor compositor;
         private readonly ReversedCollectionView<Layer> layers;
 
+        private readonly CommandService commandService;
+        private readonly LayerReorderChangeSynthesizer layerReorderChangeSynthesizer;
+
         private Layer activeLayer;
         private BlendModeListItem selectedBlendMode;
 
@@ -28,18 +32,21 @@ namespace Fotografix.UI
             this.image = image;
             this.compositor = new Win2DCompositor(image);
 
-            this.History = new History();
-
             this.layers = new ReversedCollectionView<Layer>(image.Layers);
             this.activeLayer = image.Layers.FirstOrDefault();
 
             image.PropertyChanged += OnImagePropertyChanged;
             image.Layers.CollectionChanged += OnLayerCollectionChanged;
+
+            this.commandService = new CommandService();
+            commandService.PropertyChanged += OnCommandServicePropertyChanged;
+
+            this.layerReorderChangeSynthesizer = new LayerReorderChangeSynthesizer(image, commandService);
         }
 
         public static ImageEditor Create(Size size)
         {
-            BitmapLayer layer = CreateLayer(1);
+            BitmapLayer layer = BitmapLayerFactory.CreateBitmapLayer(1);
 
             Image image = new Image(size);
             image.Layers.Add(layer);
@@ -59,13 +66,30 @@ namespace Fotografix.UI
 
         public void Dispose()
         {
+            layerReorderChangeSynthesizer.Dispose();
+
             layers.Dispose();
             compositor.Dispose();
         }
 
-        public Size Size => image.Size;
+        #region Undo/Redo
 
-        public History History { get; }
+        public bool CanUndo => commandService.CanUndo;
+        public bool CanRedo => commandService.CanRedo;
+
+        public void Undo()
+        {
+            commandService.Undo();
+        }
+
+        public void Redo()
+        {
+            commandService.Redo();
+        }
+
+        #endregion
+
+        public Size Size => image.Size;
 
         public IList<Layer> Layers => layers;
 
@@ -124,21 +148,21 @@ namespace Fotografix.UI
 
         public void AddLayer()
         {
-            Layer layer = CreateLayer(image.Layers.Count + 1);
-            Execute(new AddLayerCommand(image, layer));
+            Layer layer = BitmapLayerFactory.CreateBitmapLayer(image.Layers.Count + 1);
+            commandService.Execute(new AddLayerCommand(image, layer));
         }
 
         public void AddAdjustmentLayer(IAdjustmentLayerFactory adjustmentLayerFactory)
         {
             Layer layer = adjustmentLayerFactory.CreateAdjustmentLayer();
-            Execute(new AddLayerCommand(image, layer));
+            commandService.Execute(new AddLayerCommand(image, layer));
         }
 
         public bool CanDeleteActiveLayer => activeLayer != image.Layers[0];
 
         public void DeleteActiveLayer()
         {
-            Execute(new RemoveLayerCommand(image, activeLayer));
+            commandService.Execute(new RemoveLayerCommand(image, activeLayer));
         }
 
         public async Task ImportLayersAsync(IEnumerable<StorageFile> files)
@@ -151,7 +175,7 @@ namespace Fotografix.UI
                 commands.Add(new AddLayerCommand(image, layer));
             }
 
-            Execute(new CompositeCommand(commands));
+            commandService.Execute(new CompositeCommand(commands));
         }
 
         public ResizeImageParameters CreateResizeImageParameters()
@@ -163,15 +187,8 @@ namespace Fotografix.UI
         {
             if (resizeImageParameters.Size != Size)
             {
-                Execute(new ResampleImageCommand(image, resizeImageParameters.Size, new Win2DBitmapResamplingStrategy()));
+                commandService.Execute(new ResampleImageCommand(image, resizeImageParameters.Size, new Win2DBitmapResamplingStrategy()));
             }
-        }
-
-        private void Execute(ICommand command)
-        {
-            IChange change = command.PrepareChange();
-            change.Apply();
-            History.Add(change);
         }
 
         private void OnImagePropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -212,9 +229,9 @@ namespace Fotografix.UI
             }
         }
 
-        private static BitmapLayer CreateLayer(int id)
+        private void OnCommandServicePropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            return new BitmapLayer(Bitmap.Empty) { Name = "Layer " + id };
+            RaisePropertyChanged(e.PropertyName);
         }
     }
 }
