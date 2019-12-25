@@ -9,6 +9,7 @@
     xmlns:ui="using:Fotografix.UI"
     xmlns:aui="using:Fotografix.UI.Adjustments"
     xmlns:bui="using:Fotografix.UI.BlendModes"
+    xmlns:lui="using:Fotografix.UI.Layers"
     xmlns:sys="using:System"
     mc:Ignorable="d"
     Background="{ThemeResource AppBarBackgroundThemeBrush}"
@@ -141,9 +142,11 @@
 
                     <DataTemplate x:Key="DefaultLayerTemplate" />
 
-                    <ui:LayerTemplateSelector x:Key="LayerTemplateSelector"
+                    <lui:LayerTemplateSelector x:Key="LayerTemplateSelector"
                                                AdjustmentLayerTemplate="{StaticResource AdjustmentLayerTemplate}"
                                                DefaultLayerTemplate="{StaticResource DefaultLayerTemplate}" />
+
+                    <lui:OpacitySliderToolTipValueConverter x:Key="OpacitySliderToolTipValueConverter" />
                 </ResourceDictionary>
             </StackPanel.Resources>
 
@@ -212,7 +215,11 @@
                               ItemContainerStyleSelector="{StaticResource BlendModeListItemStyleSelector}">
                     </ComboBox>
                     <TextBlock Grid.Column="1" Margin="12,4" Text="Opacity:" />
-                    <Slider Grid.Column="2" Style="{StaticResource AdjustmentSliderStyle}" Minimum="0" Value="{x:Bind editor.ActiveLayer.Opacity, Mode=TwoWay}" />
+                    <Slider Grid.Column="2"
+                            Style="{StaticResource AdjustmentSliderStyle}"
+                            Minimum="0"
+                            Value="{x:Bind editor.ActiveLayer.Opacity, Mode=TwoWay}"
+                            ThumbToolTipValueConverter="{StaticResource OpacitySliderToolTipValueConverter}" />
                 </Grid>
 
                 <ContentControl HorizontalContentAlignment="Stretch" ContentTemplateSelector="{StaticResource LayerTemplateSelector}" Content="{x:Bind editor.ActiveLayer, Mode=OneWay}" />

@@ -2,7 +2,7 @@
 using System;
 using System.ComponentModel;
 
-namespace Fotografix.UI.Commands
+namespace Fotografix.UI
 {
     /// <summary>
     /// Provides infrastructure for executing commands.

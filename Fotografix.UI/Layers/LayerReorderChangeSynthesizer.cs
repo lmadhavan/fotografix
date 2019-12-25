@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Specialized;
 
-namespace Fotografix.UI.Commands
+namespace Fotografix.UI.Layers
 {
     /// <summary>
     /// Synthesizes a <see cref="ReorderLayerCommand"/> change when a reordering is detected in the layer list.

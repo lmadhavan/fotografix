@@ -1,10 +1,10 @@
 ﻿using Fotografix.Editor.Commands;
 using Fotografix.UI;
-using Fotografix.UI.Commands;
+using Fotografix.UI.Layers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Drawing;
 
-namespace Fotografix.Tests.UI.Commands
+namespace Fotografix.Tests.UI.Layers
 {
     [TestClass]
     public class LayerReorderChangeSynthesizerTest

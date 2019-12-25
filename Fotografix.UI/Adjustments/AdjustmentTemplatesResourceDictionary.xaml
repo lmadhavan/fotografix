@@ -7,6 +7,7 @@
     xmlns:aui="using:Fotografix.UI.Adjustments">
 
     <ui:ColorConverter x:Key="ColorConverter" />
+    <aui:AdjustmentSliderToolTipValueConverter x:Key="AdjustmentSliderToolTipValueConverter" />
 
     <Style x:Key="AdjustmentSliderStyle" TargetType="Slider">
         <Setter Property="Minimum" Value="-1" />
@@ -14,6 +15,7 @@
         <Setter Property="StepFrequency" Value="0.01" />
         <Setter Property="SmallChange" Value="0.01" />
         <Setter Property="LargeChange" Value="0.1" />
+        <Setter Property="ThumbToolTipValueConverter" Value="{StaticResource AdjustmentSliderToolTipValueConverter}" />
     </Style>
 
     <Style x:Key="ColorPickerButtonStyle" TargetType="Button">

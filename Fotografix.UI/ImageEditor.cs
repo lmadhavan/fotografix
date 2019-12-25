@@ -1,7 +1,7 @@
 ﻿using Fotografix.Editor.Commands;
 using Fotografix.UI.Adjustments;
 using Fotografix.UI.BlendModes;
-using Fotografix.UI.Commands;
+using Fotografix.UI.Layers;
 using Fotografix.Win2D;
 using Microsoft.Graphics.Canvas;
 using System;

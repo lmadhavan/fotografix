@@ -120,7 +120,9 @@
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Layers\OpacitySliderToolTipValueConverter.cs" />
     <Compile Include="Adjustments\AdjustmentLayerFactory.cs" />
+    <Compile Include="Adjustments\AdjustmentSliderToolTipValueConverter.cs" />
     <Compile Include="Adjustments\AdjustmentTemplatesResourceDictionary.xaml.cs">
       <DependentUpon>AdjustmentTemplatesResourceDictionary.xaml</DependentUpon>
     </Compile>
@@ -135,15 +137,15 @@
       <DependentUpon>BlendModeListResourceDictionary.xaml</DependentUpon>
     </Compile>
     <Compile Include="ColorConverter.cs" />
-    <Compile Include="Commands\CommandService.cs" />
+    <Compile Include="CommandService.cs" />
     <Compile Include="DimensionConverter.cs" />
     <Compile Include="ImageEditor.cs" />
     <Compile Include="ImageEditorPage.xaml.cs">
       <DependentUpon>ImageEditorPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="LayerTemplateSelector.cs" />
-    <Compile Include="Commands\LayerReorderChangeSynthesizer.cs" />
+    <Compile Include="Layers\LayerTemplateSelector.cs" />
+    <Compile Include="Layers\LayerReorderChangeSynthesizer.cs" />
     <Compile Include="ResizeImageParameters.cs" />
     <Compile Include="ReversedCollectionView.cs" />
     <EmbeddedResource Include="Properties\Fotografix.Editor.rd.xml" />

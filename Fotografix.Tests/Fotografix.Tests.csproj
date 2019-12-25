@@ -124,14 +124,16 @@
     <Compile Include="Composition\BlendModeMappingTest.cs" />
     <Compile Include="Composition\CompositorInvalidationTest.cs" />
     <Compile Include="TestImages.cs" />
+    <Compile Include="UI\Adjustments\AdjustmentSliderToolTipValueConverterTest.cs" />
     <Compile Include="UI\BlendModeListTest.cs" />
     <Compile Include="Composition\CompositionTestBase.cs" />
     <Compile Include="Composition\ImageAdjustmentsTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="UI\Commands\CommandServiceTest.cs" />
+    <Compile Include="UI\CommandServiceTest.cs" />
     <Compile Include="UI\DimensionConverterTest.cs" />
     <Compile Include="UI\ImageEditorTest.cs" />
-    <Compile Include="UI\Commands\LayerReorderChangeSynthesizerTest.cs" />
+    <Compile Include="UI\Layers\OpacitySliderToolTipValueConverterTest.cs" />
+    <Compile Include="UI\Layers\LayerReorderChangeSynthesizerTest.cs" />
     <Compile Include="UI\ResizeImageParametersTest.cs" />
     <Compile Include="UI\ReversedCollectionViewTest.cs" />
     <Compile Include="UnitTestApp.xaml.cs">
@@ -205,6 +207,7 @@
       <Name>Fotografix.Win2D</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>

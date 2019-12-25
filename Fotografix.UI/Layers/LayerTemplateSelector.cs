@@ -1,7 +1,7 @@
 ﻿using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
-namespace Fotografix.UI
+namespace Fotografix.UI.Layers
 {
     public sealed class LayerTemplateSelector : DataTemplateSelector
     {

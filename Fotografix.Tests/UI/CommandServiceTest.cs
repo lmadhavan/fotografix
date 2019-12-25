@@ -1,9 +1,9 @@
 ﻿using Fotografix.Editor.Commands;
-using Fotografix.UI.Commands;
+using Fotografix.UI;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 
-namespace Fotografix.Tests.UI.Commands
+namespace Fotografix.Tests.UI
 {
     [TestClass]
     public class CommandServiceTest
