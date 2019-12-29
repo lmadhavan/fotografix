@@ -4,15 +4,15 @@
     {
         private readonly Image image;
 
-        public ReorderLayerCommand(Image image, int fromIndex, int toIndex)
+        public ReorderLayerCommand(Image image, int oldIndex, int newIndex)
         {
             this.image = image;
-            this.FromIndex = fromIndex;
-            this.ToIndex = toIndex;
+            this.OldIndex = oldIndex;
+            this.NewIndex = newIndex;
         }
 
-        public int FromIndex { get; }
-        public int ToIndex { get; }
+        public int OldIndex { get; }
+        public int NewIndex { get; }
 
         public IChange PrepareChange()
         {
@@ -21,12 +21,12 @@
 
         void IChange.Apply()
         {
-            image.Layers.Move(FromIndex, ToIndex);
+            image.Layers.Move(OldIndex, NewIndex);
         }
 
         void IChange.Undo()
         {
-            image.Layers.Move(ToIndex, FromIndex);
+            image.Layers.Move(NewIndex, OldIndex);
         }
     }
 }

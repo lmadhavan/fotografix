@@ -1,7 +1,7 @@
 ﻿using Fotografix.Editor.Commands;
 using Fotografix.UI.Adjustments;
 using Fotografix.UI.BlendModes;
-using Fotografix.UI.Layers;
+using Fotografix.UI.Collections;
 using Fotografix.Win2D;
 using Microsoft.Graphics.Canvas;
 using System;
@@ -20,28 +20,27 @@ namespace Fotografix.UI
         private readonly Image image;
         private readonly Win2DCompositor compositor;
         private readonly ReversedCollectionView<Layer> layers;
-
-        private readonly CommandService commandService;
-        private readonly LayerReorderChangeSynthesizer layerReorderChangeSynthesizer;
+        private readonly History history;
 
         private Layer activeLayer;
         private BlendModeListItem selectedBlendMode;
-
+        
         private ImageEditor(Image image)
         {
             this.image = image;
             this.compositor = new Win2DCompositor(image);
 
-            this.layers = new ReversedCollectionView<Layer>(image.Layers);
+            ReorderAwareCollectionView<Layer> reorderAwareCollectionView = new ReorderAwareCollectionView<Layer>(image.Layers);
+            reorderAwareCollectionView.ItemReordered += OnLayerReordered;
+            this.layers = new ReversedCollectionView<Layer>(reorderAwareCollectionView);
+
+            this.history = new History();
+            history.PropertyChanged += OnHistoryPropertyChanged;
+
             this.activeLayer = image.Layers.FirstOrDefault();
 
             image.PropertyChanged += OnImagePropertyChanged;
             image.Layers.CollectionChanged += OnLayerCollectionChanged;
-
-            this.commandService = new CommandService();
-            commandService.PropertyChanged += OnCommandServicePropertyChanged;
-
-            this.layerReorderChangeSynthesizer = new LayerReorderChangeSynthesizer(image, commandService);
         }
 
         public static ImageEditor Create(Size size)
@@ -66,25 +65,23 @@ namespace Fotografix.UI
 
         public void Dispose()
         {
-            layerReorderChangeSynthesizer.Dispose();
-
             layers.Dispose();
             compositor.Dispose();
         }
 
         #region Undo/Redo
 
-        public bool CanUndo => commandService.CanUndo;
-        public bool CanRedo => commandService.CanRedo;
+        public bool CanUndo => history.CanUndo;
+        public bool CanRedo => history.CanRedo;
 
         public void Undo()
         {
-            commandService.Undo();
+            history.Undo();
         }
 
         public void Redo()
         {
-            commandService.Redo();
+            history.Redo();
         }
 
         #endregion
@@ -149,20 +146,20 @@ namespace Fotografix.UI
         public void AddLayer()
         {
             Layer layer = BitmapLayerFactory.CreateBitmapLayer(image.Layers.Count + 1);
-            commandService.Execute(new AddLayerCommand(image, layer));
+            Execute(new AddLayerCommand(image, layer));
         }
 
         public void AddAdjustmentLayer(IAdjustmentLayerFactory adjustmentLayerFactory)
         {
             Layer layer = adjustmentLayerFactory.CreateAdjustmentLayer();
-            commandService.Execute(new AddLayerCommand(image, layer));
+            Execute(new AddLayerCommand(image, layer));
         }
 
         public bool CanDeleteActiveLayer => activeLayer != image.Layers[0];
 
         public void DeleteActiveLayer()
         {
-            commandService.Execute(new RemoveLayerCommand(image, activeLayer));
+            Execute(new RemoveLayerCommand(image, activeLayer));
         }
 
         public async Task ImportLayersAsync(IEnumerable<StorageFile> files)
@@ -175,7 +172,7 @@ namespace Fotografix.UI
                 commands.Add(new AddLayerCommand(image, layer));
             }
 
-            commandService.Execute(new CompositeCommand(commands));
+            Execute(new CompositeCommand(commands));
         }
 
         public ResizeImageParameters CreateResizeImageParameters()
@@ -187,7 +184,7 @@ namespace Fotografix.UI
         {
             if (resizeImageParameters.Size != Size)
             {
-                commandService.Execute(new ResampleImageCommand(image, resizeImageParameters.Size, new Win2DBitmapResamplingStrategy()));
+                Execute(new ResampleImageCommand(image, resizeImageParameters.Size, new Win2DBitmapResamplingStrategy()));
             }
         }
 
@@ -229,7 +226,19 @@ namespace Fotografix.UI
             }
         }
 
-        private void OnCommandServicePropertyChanged(object sender, PropertyChangedEventArgs e)
+        private void Execute(ICommand command)
+        {
+            IChange change = command.PrepareChange();
+            change.Apply();
+            history.Add(change);
+        }
+
+        private void OnLayerReordered(object sender, ItemReorderedEventArgs args)
+        {
+            history.Add(new ReorderLayerCommand(image, args.OldIndex, args.NewIndex));
+        }
+
+        private void OnHistoryPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             RaisePropertyChanged(e.PropertyName);
         }

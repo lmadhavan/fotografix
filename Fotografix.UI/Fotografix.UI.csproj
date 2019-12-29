@@ -120,6 +120,7 @@
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Collections\ReorderAwareCollectionView.cs" />
     <Compile Include="Layers\OpacitySliderToolTipValueConverter.cs" />
     <Compile Include="Adjustments\AdjustmentLayerFactory.cs" />
     <Compile Include="Adjustments\AdjustmentSliderToolTipValueConverter.cs" />
@@ -137,7 +138,6 @@
       <DependentUpon>BlendModeListResourceDictionary.xaml</DependentUpon>
     </Compile>
     <Compile Include="ColorConverter.cs" />
-    <Compile Include="CommandService.cs" />
     <Compile Include="DimensionConverter.cs" />
     <Compile Include="ImageEditor.cs" />
     <Compile Include="ImageEditorPage.xaml.cs">
@@ -145,9 +145,8 @@
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Layers\LayerTemplateSelector.cs" />
-    <Compile Include="Layers\LayerReorderChangeSynthesizer.cs" />
     <Compile Include="ResizeImageParameters.cs" />
-    <Compile Include="ReversedCollectionView.cs" />
+    <Compile Include="Collections\ReversedCollectionView.cs" />
     <EmbeddedResource Include="Properties\Fotografix.Editor.rd.xml" />
   </ItemGroup>
   <ItemGroup>

@@ -1,9 +1,9 @@
-﻿using Fotografix.UI;
+﻿using Fotografix.UI.Collections;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 
-namespace Fotografix.Tests.UI
+namespace Fotografix.Tests.UI.Collections
 {
     [TestClass]
     public class ReversedCollectionViewTest

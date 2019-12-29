@@ -1,38 +1,44 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 
-namespace Fotografix.UI
+namespace Fotografix.UI.Collections
 {
     /// <summary>
-    /// Provides a view of an <see cref="ObservableCollection{T}"/> in which the order of elements is reversed.
+    /// Provides a view of a list in which the order of elements is reversed.
     /// </summary>
     /// <remarks>
     /// The view is modifiable; any changes made through the view are propagated to the underlying collection.
     /// </remarks>
     public sealed class ReversedCollectionView<T> : IList<T>, IList, INotifyCollectionChanged, IDisposable
     {
-        private readonly ObservableCollection<T> collection;
+        private readonly IList<T> list;
 
-        public ReversedCollectionView(ObservableCollection<T> collection)
+        public ReversedCollectionView(IList<T> list)
         {
-            this.collection = collection;
-            collection.CollectionChanged += OnCollectionChanged;
+            this.list = list;
+
+            if (list is INotifyCollectionChanged)
+            {
+                ((INotifyCollectionChanged)list).CollectionChanged += OnCollectionChanged;
+            }
         }
 
         public void Dispose()
         {
-            collection.CollectionChanged -= OnCollectionChanged;
+            if (list is INotifyCollectionChanged)
+            {
+                ((INotifyCollectionChanged)list).CollectionChanged -= OnCollectionChanged;
+            }
         }
 
-        public int Count => collection.Count;
+        public int Count => list.Count;
 
         public T this[int index]
         {
-            get => collection[Reverse(index)];
-            set => collection[Reverse(index)] = value;
+            get => list[Reverse(index)];
+            set => list[Reverse(index)] = value;
         }
 
         public event NotifyCollectionChangedEventHandler CollectionChanged;
@@ -47,34 +53,34 @@ namespace Fotografix.UI
 
         public int IndexOf(T item)
         {
-            int index = collection.IndexOf(item);
+            int index = list.IndexOf(item);
             return index == -1 ? -1 : Reverse(index);
         }
 
         public void Insert(int index, T item)
         {
             // Insert normally inserts before index, since the collection is reversed, we need to insert after index
-            collection.Insert(Reverse(index) + 1, item);
+            list.Insert(Reverse(index) + 1, item);
         }
 
         public void RemoveAt(int index)
         {
-            collection.RemoveAt(Reverse(index));
+            list.RemoveAt(Reverse(index));
         }
 
         public void Add(T item)
         {
-            collection.Insert(0, item);
+            list.Insert(0, item);
         }
 
         public void Clear()
         {
-            collection.Clear();
+            list.Clear();
         }
 
         public bool Contains(T item)
         {
-            return collection.Contains(item);
+            return list.Contains(item);
         }
 
         public void CopyTo(T[] array, int arrayIndex)
@@ -87,7 +93,7 @@ namespace Fotografix.UI
 
         public bool Remove(T item)
         {
-            return collection.Remove(item);
+            return list.Remove(item);
         }
 
         private void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -133,7 +139,7 @@ namespace Fotografix.UI
         bool ICollection.IsSynchronized => false;
         bool ICollection<T>.IsReadOnly => false;
 
-        object ICollection.SyncRoot => ((IList)collection).SyncRoot;
+        object ICollection.SyncRoot => ((IList)list).SyncRoot;
 
         bool IList.IsFixedSize => false;
         bool IList.IsReadOnly => false;
