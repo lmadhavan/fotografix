@@ -121,6 +121,11 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Collections\ReorderAwareCollectionView.cs" />
+    <Compile Include="ICommandService.cs" />
+    <Compile Include="Layers\LayerTemplatesResourceDictionary.xaml.cs">
+      <DependentUpon>LayerTemplatesResourceDictionary.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Layers\LayerViewModel.cs" />
     <Compile Include="Layers\OpacitySliderToolTipValueConverter.cs" />
     <Compile Include="Adjustments\AdjustmentLayerFactory.cs" />
     <Compile Include="Adjustments\AdjustmentSliderToolTipValueConverter.cs" />
@@ -167,6 +172,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="ImageEditorPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Layers\LayerTemplatesResourceDictionary.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

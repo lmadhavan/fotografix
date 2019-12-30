@@ -12,9 +12,20 @@ namespace Fotografix.Editor.Commands
 
         public void Add(IChange change)
         {
-            undoStack.Push(change);
+            if (!TryMergeIntoPreviousChange(change))
+            {
+                undoStack.Push(change);
+            }
+
             redoStack.Clear();
             RaiseEvents();
+        }
+
+        private bool TryMergeIntoPreviousChange(IChange change)
+        {
+            return undoStack.Count > 0
+                && change is IMergeableChange mergeableChange
+                && mergeableChange.TryMergeInto(undoStack.Peek());
         }
 
         public void Undo()

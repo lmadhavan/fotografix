@@ -1,7 +1,7 @@
 ﻿using Fotografix.Editor.Commands;
 using Fotografix.UI.Adjustments;
-using Fotografix.UI.BlendModes;
 using Fotografix.UI.Collections;
+using Fotografix.UI.Layers;
 using Fotografix.Win2D;
 using Microsoft.Graphics.Canvas;
 using System;
@@ -15,7 +15,7 @@ using Windows.Storage;
 
 namespace Fotografix.UI
 {
-    public sealed class ImageEditor : NotifyPropertyChangedBase, IDisposable
+    public sealed class ImageEditor : NotifyPropertyChangedBase, ICommandService, IDisposable
     {
         private readonly Image image;
         private readonly Win2DCompositor compositor;
@@ -23,7 +23,7 @@ namespace Fotografix.UI
         private readonly History history;
 
         private Layer activeLayer;
-        private BlendModeListItem selectedBlendMode;
+        private LayerViewModel activeLayerViewModel;
         
         private ImageEditor(Image image)
         {
@@ -37,7 +37,7 @@ namespace Fotografix.UI
             this.history = new History();
             history.PropertyChanged += OnHistoryPropertyChanged;
 
-            this.activeLayer = image.Layers.FirstOrDefault();
+            this.ActiveLayer = image.Layers.FirstOrDefault();
 
             image.PropertyChanged += OnImagePropertyChanged;
             image.Layers.CollectionChanged += OnLayerCollectionChanged;
@@ -65,6 +65,7 @@ namespace Fotografix.UI
 
         public void Dispose()
         {
+            activeLayerViewModel?.Dispose();
             layers.Dispose();
             compositor.Dispose();
         }
@@ -101,35 +102,17 @@ namespace Fotografix.UI
             {
                 if (SetProperty(ref activeLayer, value))
                 {
-                    if (activeLayer != null)
-                    {
-                        SelectedBlendMode = BlendModes[activeLayer.BlendMode];
-                    }
-
+                    activeLayerViewModel?.Dispose();
+                    this.ActiveLayerViewModel = activeLayer == null ? null : new LayerViewModel(activeLayer, this);
                     RaisePropertyChanged(nameof(CanDeleteActiveLayer));
                 }
             }
         }
 
-        public BlendModeList BlendModes { get; } = BlendModeList.Create();
-
-        public BlendModeListItem SelectedBlendMode
+        public LayerViewModel ActiveLayerViewModel
         {
-            get
-            {
-                return selectedBlendMode;
-            }
-
-            set
-            {
-                if (SetProperty(ref selectedBlendMode, value))
-                {
-                    if (activeLayer != null)
-                    {
-                        activeLayer.BlendMode = selectedBlendMode.BlendMode;
-                    }
-                }
-            }
+            get => activeLayerViewModel;
+            private set => SetProperty(ref activeLayerViewModel, value);
         }
 
         public event EventHandler Invalidated
@@ -182,10 +165,7 @@ namespace Fotografix.UI
 
         public void ResizeImage(ResizeImageParameters resizeImageParameters)
         {
-            if (resizeImageParameters.Size != Size)
-            {
-                Execute(new ResampleImageCommand(image, resizeImageParameters.Size, new Win2DBitmapResamplingStrategy()));
-            }
+            Execute(new ResampleImageCommand(image, resizeImageParameters.Size, new Win2DBitmapResamplingStrategy()));
         }
 
         private void OnImagePropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -226,11 +206,15 @@ namespace Fotografix.UI
             }
         }
 
-        private void Execute(ICommand command)
+        public void Execute(ICommand command)
         {
             IChange change = command.PrepareChange();
-            change.Apply();
-            history.Add(change);
+
+            if (change != null)
+            {
+                change.Apply();
+                history.Add(change);
+            }
         }
 
         private void OnLayerReordered(object sender, ItemReorderedEventArgs args)

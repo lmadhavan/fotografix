@@ -7,9 +7,7 @@
     xmlns:canvas="using:Microsoft.Graphics.Canvas.UI.Xaml"
     xmlns:c="using:Fotografix"
     xmlns:ui="using:Fotografix.UI"
-    xmlns:aui="using:Fotografix.UI.Adjustments"
-    xmlns:bui="using:Fotografix.UI.BlendModes"
-    xmlns:lui="using:Fotografix.UI.Layers"
+    xmlns:layers="using:Fotografix.UI.Layers"
     xmlns:sys="using:System"
     mc:Ignorable="d"
     Background="{ThemeResource AppBarBackgroundThemeBrush}"
@@ -133,20 +131,8 @@
             <StackPanel.Resources>
                 <ResourceDictionary>
                     <ResourceDictionary.MergedDictionaries>
-                        <aui:AdjustmentTemplatesResourceDictionary />
+                        <layers:LayerTemplatesResourceDictionary />
                     </ResourceDictionary.MergedDictionaries>
-
-                    <DataTemplate x:Key="AdjustmentLayerTemplate" x:DataType="c:AdjustmentLayer">
-                        <ContentControl Margin="0,8,0,0" HorizontalContentAlignment="Stretch" ContentTemplateSelector="{StaticResource AdjustmentTemplateSelector}" Content="{x:Bind Adjustment}" />
-                    </DataTemplate>
-
-                    <DataTemplate x:Key="DefaultLayerTemplate" />
-
-                    <lui:LayerTemplateSelector x:Key="LayerTemplateSelector"
-                                               AdjustmentLayerTemplate="{StaticResource AdjustmentLayerTemplate}"
-                                               DefaultLayerTemplate="{StaticResource DefaultLayerTemplate}" />
-
-                    <lui:OpacitySliderToolTipValueConverter x:Key="OpacitySliderToolTipValueConverter" />
                 </ResourceDictionary>
             </StackPanel.Resources>
 
@@ -193,37 +179,13 @@
                 </ListView.ItemTemplate>
             </ListView>
 
-            <StackPanel Orientation="Vertical" Margin="0,16,0,0" Padding="6" Background="{ThemeResource NavigationViewExpandedPaneBackground}">
-                <TextBox Text="{x:Bind editor.ActiveLayer.Name, Mode=TwoWay}" />
-                
-                <Grid Margin="0,4">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="100" />
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-
-                    <Grid.Resources>
-                        <bui:BlendModeListResourceDictionary />
-                    </Grid.Resources>
-
-                    <ComboBox Grid.Column="0"
-                              HorizontalAlignment="Stretch"
-                              ItemsSource="{x:Bind editor.BlendModes}"
-                              SelectedItem="{x:Bind editor.SelectedBlendMode, Mode=TwoWay}"
-                              ItemTemplateSelector="{StaticResource BlendModeListItemTemplateSelector}"
-                              ItemContainerStyleSelector="{StaticResource BlendModeListItemStyleSelector}">
-                    </ComboBox>
-                    <TextBlock Grid.Column="1" Margin="12,4" Text="Opacity:" />
-                    <Slider Grid.Column="2"
-                            Style="{StaticResource AdjustmentSliderStyle}"
-                            Minimum="0"
-                            Value="{x:Bind editor.ActiveLayer.Opacity, Mode=TwoWay}"
-                            ThumbToolTipValueConverter="{StaticResource OpacitySliderToolTipValueConverter}" />
-                </Grid>
-
-                <ContentControl HorizontalContentAlignment="Stretch" ContentTemplateSelector="{StaticResource LayerTemplateSelector}" Content="{x:Bind editor.ActiveLayer, Mode=OneWay}" />
-            </StackPanel>
+            <Border Margin="0,16,0,0" Background="{ThemeResource NavigationViewExpandedPaneBackground}">
+                <ContentControl
+                    Padding="6"
+                    HorizontalContentAlignment="Stretch"
+                    ContentTemplate="{StaticResource LayerPropertiesTemplate}"
+                    Content="{x:Bind editor.ActiveLayerViewModel, Mode=OneWay}" />
+            </Border>
         </StackPanel>
     </Grid>
 </Page>

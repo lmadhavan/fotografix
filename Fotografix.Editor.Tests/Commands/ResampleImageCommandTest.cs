@@ -62,6 +62,16 @@ namespace Fotografix.Editor.Tests.Commands
             Assert.That(image.Layers[0], Is.EqualTo(layer));
         }
 
+        [Test]
+        public void ProducesNoChangeIfImageSizeIsUnchanged()
+        {
+            Image image = new Image(new Size(50, 25));
+
+            IChange change = new ResampleImageCommand(image, image.Size, new FakeResamplingStrategy()).PrepareChange();
+
+            Assert.IsNull(change);
+        }
+
         private sealed class FakeResamplingStrategy : IBitmapResamplingStrategy
         {
             public Bitmap Resample(Bitmap bitmap, Size newSize)

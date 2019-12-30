@@ -19,6 +19,12 @@ namespace Fotografix.Editor.Commands
         public IChange PrepareChange()
         {
             Size oldSize = image.Size;
+
+            if (oldSize == newSize)
+            {
+                return null;
+            }
+
             PointF ratio = new PointF((float)newSize.Width / oldSize.Width,
                                       (float)newSize.Height / oldSize.Height);
 
