@@ -128,7 +128,6 @@
     <Compile Include="Composition\Adjustments\ColorMatrixAdjustmentNode.cs" />
     <Compile Include="Composition\Adjustments\GradientMapAdjustmentNode.cs" />
     <Compile Include="Composition\Adjustments\HueSaturationAdjustmentNode.cs" />
-    <Compile Include="Composition\Adjustments\ShadowsHighlightsAdjustmentNode.cs" />
     <Compile Include="Composition\BitmapLayerNode.cs" />
     <Compile Include="Composition\CompositionNode.cs" />
     <Compile Include="Composition\ImageNode.cs" />

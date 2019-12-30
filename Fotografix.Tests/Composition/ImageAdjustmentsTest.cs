@@ -25,19 +25,6 @@ namespace Fotografix.Tests.Composition
         }
 
         [TestMethod]
-        public async Task ShadowsHighlightsAdjustment()
-        {
-            AddAdjustment(new ShadowsHighlightsAdjustment()
-            {
-                Shadows = 0.25f,
-                Highlights = -0.25f,
-                Clarity = 0.5f
-            });
-
-            await AssertImageAsync("flowers_sh.png", image);
-        }
-
-        [TestMethod]
         public async Task HueSaturationAdjustment()
         {
             AddAdjustment(new HueSaturationAdjustment()

@@ -34,17 +34,6 @@
     <DataTemplate x:Name="blackAndWhiteTemplate">
     </DataTemplate>
 
-    <DataTemplate x:Name="shadowsHighlightsTemplate" x:DataType="a:ShadowsHighlightsAdjustment">
-        <StackPanel Orientation="Vertical">
-            <TextBlock Text="Shadows:" />
-            <Slider Style="{StaticResource AdjustmentSliderStyle}" Value="{x:Bind Shadows, Mode=TwoWay}" />
-            <TextBlock Text="Highlights:" />
-            <Slider Style="{StaticResource AdjustmentSliderStyle}" Value="{x:Bind Highlights, Mode=TwoWay}" />
-            <TextBlock Text="Clarity:" />
-            <Slider Style="{StaticResource AdjustmentSliderStyle}" Value="{x:Bind Clarity, Mode=TwoWay}" />
-        </StackPanel>
-    </DataTemplate>
-
     <DataTemplate x:Name="hueSaturationTemplate" x:DataType="a:HueSaturationAdjustment">
         <StackPanel Orientation="Vertical">
             <TextBlock Text="Hue:" />

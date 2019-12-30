@@ -11,7 +11,6 @@ namespace Fotografix.UI.Adjustments
             InitializeComponent();
 
             RegisterAdjustment<BlackAndWhiteAdjustment>("Black & White", blackAndWhiteTemplate);
-            RegisterAdjustment<ShadowsHighlightsAdjustment>("Shadows/Highlights", shadowsHighlightsTemplate);
             RegisterAdjustment<HueSaturationAdjustment>("Hue/Saturation", hueSaturationTemplate);
             RegisterAdjustment<GradientMapAdjustment>("Gradient Map", gradientMapTemplate);
             RegisterAdjustment<BrightnessContrastAdjustment>("Brightness/Contrast", brightnessContrastTemplate);
