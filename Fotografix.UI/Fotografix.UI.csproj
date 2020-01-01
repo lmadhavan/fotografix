@@ -120,6 +120,11 @@
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Adjustments\AdjustmentViewModelFactory.cs" />
+    <Compile Include="Adjustments\BrightnessContrastAdjustmentViewModel.cs" />
+    <Compile Include="Adjustments\GradientMapAdjustmentViewModel.cs" />
+    <Compile Include="Adjustments\HueSaturationAdjustmentViewModel.cs" />
+    <Compile Include="Adjustments\IAdjustmentViewModel.cs" />
     <Compile Include="Collections\ReorderAwareCollectionView.cs" />
     <Compile Include="ICommandService.cs" />
     <Compile Include="Layers\LayerTemplatesResourceDictionary.xaml.cs">
@@ -149,7 +154,7 @@
       <DependentUpon>ImageEditorPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Layers\LayerTemplateSelector.cs" />
+    <Compile Include="PropertyEditorViewModelBase.cs" />
     <Compile Include="ResizeImageParameters.cs" />
     <Compile Include="Collections\ReversedCollectionView.cs" />
     <EmbeddedResource Include="Properties\Fotografix.Editor.rd.xml" />

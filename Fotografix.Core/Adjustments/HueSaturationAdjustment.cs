@@ -61,5 +61,10 @@ namespace Fotografix.Adjustments
                 SetProperty(ref lightness, value);
             }
         }
+
+        public override void Accept(AdjustmentVisitor visitor)
+        {
+            visitor.Visit(this);
+        }
     }
 }

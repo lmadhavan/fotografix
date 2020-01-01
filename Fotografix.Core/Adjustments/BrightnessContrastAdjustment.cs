@@ -16,5 +16,10 @@
             get => contrast;
             set => SetProperty(ref contrast, value);
         }
+
+        public override void Accept(AdjustmentVisitor visitor)
+        {
+            visitor.Visit(this);
+        }
     }
 }

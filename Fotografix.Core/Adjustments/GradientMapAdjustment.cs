@@ -18,5 +18,10 @@ namespace Fotografix.Adjustments
             get => highlights;
             set => SetProperty(ref highlights, value);
         }
+
+        public override void Accept(AdjustmentVisitor visitor)
+        {
+            visitor.Visit(this);
+        }
     }
 }

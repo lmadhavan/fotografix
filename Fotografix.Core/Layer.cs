@@ -61,6 +61,6 @@ namespace Fotografix
             }
         }
 
-        public abstract void Accept(ILayerVisitor visitor);
+        public abstract void Accept(LayerVisitor visitor);
     }
 }

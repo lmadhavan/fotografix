@@ -30,7 +30,7 @@ namespace Fotografix
             }
         }
 
-        public override void Accept(ILayerVisitor visitor)
+        public override void Accept(LayerVisitor visitor)
         {
             visitor.Visit(this);
         }

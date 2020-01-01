@@ -2,12 +2,11 @@
     x:Class="Fotografix.UI.Adjustments.AdjustmentTemplatesResourceDictionary"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:a="using:Fotografix.Adjustments"
     xmlns:ui="using:Fotografix.UI"
-    xmlns:aui="using:Fotografix.UI.Adjustments">
+    xmlns:a="using:Fotografix.UI.Adjustments">
 
     <ui:ColorConverter x:Key="ColorConverter" />
-    <aui:AdjustmentSliderToolTipValueConverter x:Key="AdjustmentSliderToolTipValueConverter" />
+    <a:AdjustmentSliderToolTipValueConverter x:Key="AdjustmentSliderToolTipValueConverter" />
 
     <Style x:Key="AdjustmentSliderStyle" TargetType="Slider">
         <Setter Property="Minimum" Value="-1" />
@@ -31,10 +30,7 @@
         <Setter Property="IsColorPreviewVisible" Value="False" />
     </Style>
 
-    <DataTemplate x:Name="blackAndWhiteTemplate">
-    </DataTemplate>
-
-    <DataTemplate x:Name="hueSaturationTemplate" x:DataType="a:HueSaturationAdjustment">
+    <DataTemplate x:Name="hueSaturationTemplate" x:DataType="a:HueSaturationAdjustmentViewModel">
         <StackPanel Orientation="Vertical">
             <TextBlock Text="Hue:" />
             <Slider Style="{StaticResource AdjustmentSliderStyle}" Value="{x:Bind Hue, Mode=TwoWay}" />
@@ -45,7 +41,7 @@
         </StackPanel>
     </DataTemplate>
 
-    <DataTemplate x:Name="gradientMapTemplate" x:DataType="a:GradientMapAdjustment">
+    <DataTemplate x:Name="gradientMapTemplate" x:DataType="a:GradientMapAdjustmentViewModel">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />
@@ -85,7 +81,7 @@
         </Grid>
     </DataTemplate>
 
-    <DataTemplate x:Name="brightnessContrastTemplate" x:DataType="a:BrightnessContrastAdjustment">
+    <DataTemplate x:Name="brightnessContrastTemplate" x:DataType="a:BrightnessContrastAdjustmentViewModel">
         <StackPanel Orientation="Vertical">
             <TextBlock Text="Brightness:" />
             <Slider Style="{StaticResource AdjustmentSliderStyle}" Value="{x:Bind Brightness, Mode=TwoWay}" />
@@ -94,6 +90,6 @@
         </StackPanel>
     </DataTemplate>
 
-    <aui:AdjustmentTemplateSelector x:Key="AdjustmentTemplateSelector" x:Name="adjustmentTemplateSelector" />
+    <a:AdjustmentTemplateSelector x:Key="AdjustmentTemplateSelector" x:Name="adjustmentTemplateSelector" />
     <MenuFlyout x:Key="NewAdjustmentMenuFlyout" x:Name="newAdjustmentMenuFlyout" />
 </ResourceDictionary>

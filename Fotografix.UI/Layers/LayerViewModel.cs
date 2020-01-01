@@ -1,73 +1,86 @@
-﻿using Fotografix.Adjustments;
-using Fotografix.Editor.Commands;
+﻿using Fotografix.UI.Adjustments;
 using Fotografix.UI.BlendModes;
-using System;
 using System.ComponentModel;
 
 namespace Fotografix.UI.Layers
 {
-    public sealed class LayerViewModel : NotifyPropertyChangedBase, ILayerVisitor, IDisposable
+    public sealed class LayerViewModel : PropertyEditorViewModelBase<Layer>
     {
         private static readonly BlendModeList BlendModeList = BlendModeList.Create();
 
-        private readonly Layer layer;
-        private readonly ICommandService commandService;
+        private IAdjustmentViewModel adjustmentViewModel;
 
-        public LayerViewModel(Layer layer, ICommandService commandService)
+        public LayerViewModel(Layer layer, ICommandService commandService) : base(layer, commandService)
         {
-            this.layer = layer;
-            layer.Accept(this);
-            layer.PropertyChanged += OnLayerPropertyChanged;
-            
-            this.commandService = commandService;
-        }
-
-        public void Dispose()
-        {
-            layer.PropertyChanged -= OnLayerPropertyChanged;
+            CreateAdjustmentViewModel();
         }
 
         public string Name
         {
-            get => layer.Name;
-            set => commandService.Execute(new ChangePropertyCommand(layer, nameof(layer.Name), value));
+            get => Target.Name;
+            set => SetTargetProperty(value);
         }
 
         public BlendModeList AvailableBlendModes => BlendModeList;
 
         public BlendModeListItem BlendMode
         {
-            get => BlendModeList[layer.BlendMode];
-            set => commandService.Execute(new ChangePropertyCommand(layer, nameof(layer.BlendMode), value.BlendMode));
+            get => BlendModeList[Target.BlendMode];
+            set => SetTargetProperty(value.BlendMode);
         }
 
         public float Opacity
         {
-            get => layer.Opacity;
-            set => commandService.Execute(new ChangePropertyCommand(layer, nameof(layer.Opacity), value));
+            get => Target.Opacity;
+            set => SetTargetProperty(value);
         }
 
-        public Adjustment Adjustment { get; private set; }
-
-        private void OnLayerPropertyChanged(object sender, PropertyChangedEventArgs e)
+        public IAdjustmentViewModel AdjustmentViewModel
         {
-            switch (e.PropertyName)
+            get
             {
-                case nameof(layer.Name):
-                case nameof(layer.BlendMode):
-                case nameof(layer.Opacity):
-                    RaisePropertyChanged(e.PropertyName);
-                    break;
+                return adjustmentViewModel;
+            }
+
+            private set
+            {
+                var oldValue = adjustmentViewModel;
+
+                if (SetProperty(ref adjustmentViewModel, value))
+                {
+                    oldValue?.Dispose();
+                }
             }
         }
 
-        void ILayerVisitor.Visit(AdjustmentLayer layer)
+        protected override void OnTargetPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            this.Adjustment = layer.Adjustment;
+            if (e.PropertyName == nameof(AdjustmentLayer.Adjustment))
+            {
+                CreateAdjustmentViewModel();
+            }
+
+            base.OnTargetPropertyChanged(sender, e);
         }
 
-        void ILayerVisitor.Visit(BitmapLayer layer)
+        private void CreateAdjustmentViewModel()
         {
+            Target.Accept(new AdjustmentViewModelFactoryVisitor(this));
+        }
+
+        private sealed class AdjustmentViewModelFactoryVisitor : LayerVisitor
+        {
+            private readonly LayerViewModel layerViewModel;
+
+            public AdjustmentViewModelFactoryVisitor(LayerViewModel layerViewModel)
+            {
+                this.layerViewModel = layerViewModel;
+            }
+
+            public override void Visit(AdjustmentLayer layer)
+            {
+                layerViewModel.AdjustmentViewModel = AdjustmentViewModelFactory.CreateAdjustmentViewModel(layer.Adjustment, layerViewModel.CommandService);
+            }
         }
     }
 }

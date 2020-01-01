@@ -79,7 +79,7 @@ namespace Fotografix.Editor.Commands
             }
         }
 
-        private sealed class BitmapResamplingVisitor : ILayerVisitor
+        private sealed class BitmapResamplingVisitor : LayerVisitor
         {
             private readonly IBitmapResamplingStrategy resamplingStrategy;
             private readonly PointF ratio;
@@ -93,11 +93,7 @@ namespace Fotografix.Editor.Commands
             public List<Bitmap> OldBitmaps { get; } = new List<Bitmap>();
             public List<Bitmap> NewBitmaps { get; } = new List<Bitmap>();
 
-            public void Visit(AdjustmentLayer layer)
-            {
-            }
-
-            public void Visit(BitmapLayer layer)
+            public override void Visit(BitmapLayer layer)
             {
                 Bitmap oldBitmap = layer.Bitmap;
                 Bitmap newBitmap = resamplingStrategy.Resample(oldBitmap, Scale(oldBitmap.Size, ratio));
@@ -112,7 +108,7 @@ namespace Fotografix.Editor.Commands
             }
         }
 
-        private sealed class BitmapUpdatingVisitor : ILayerVisitor
+        private sealed class BitmapUpdatingVisitor : LayerVisitor
         {
             private readonly IEnumerator<Bitmap> bitmaps;
 
@@ -121,11 +117,7 @@ namespace Fotografix.Editor.Commands
                 this.bitmaps = bitmaps.GetEnumerator();
             }
 
-            public void Visit(AdjustmentLayer layer)
-            {
-            }
-
-            public void Visit(BitmapLayer layer)
+            public override void Visit(BitmapLayer layer)
             {
                 bitmaps.MoveNext();
                 layer.Bitmap = bitmaps.Current;

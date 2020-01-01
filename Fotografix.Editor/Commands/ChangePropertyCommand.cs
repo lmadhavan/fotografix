@@ -2,6 +2,13 @@
 
 namespace Fotografix.Editor.Commands
 {
+    /// <summary>
+    /// Changes the value of a specific property of an object.
+    /// </summary>
+    /// <remarks>
+    /// This command produces mergeable changes; successive changes to the same property
+    /// of the same object can be merged into a single change.
+    /// </remarks>
     public sealed class ChangePropertyCommand : ICommand
     {
         private readonly object target;
