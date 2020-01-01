@@ -1,4 +1,6 @@
-﻿namespace Fotografix.Adjustments
+﻿using System;
+
+namespace Fotografix.Adjustments
 {
     public sealed class BrightnessContrastAdjustment : Adjustment
     {
@@ -7,14 +9,38 @@
 
         public float Brightness
         {
-            get => brightness;
-            set => SetProperty(ref brightness, value);
+            get
+            {
+                return brightness;
+            }
+
+            set
+            {
+                if (value < -1 || value > 1)
+                {
+                    throw new ArgumentOutOfRangeException();
+                }
+
+                SetProperty(ref brightness, value);
+            }
         }
 
         public float Contrast
         {
-            get => contrast;
-            set => SetProperty(ref contrast, value);
+            get
+            {
+                return contrast;
+            }
+
+            set
+            {
+                if (value < -1 || value > 1)
+                {
+                    throw new ArgumentOutOfRangeException();
+                }
+
+                SetProperty(ref contrast, value);
+            }
         }
 
         public override void Accept(AdjustmentVisitor visitor)
