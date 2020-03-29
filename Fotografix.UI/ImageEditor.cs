@@ -1,4 +1,5 @@
-﻿using Fotografix.Editor.Commands;
+﻿using Fotografix.Editor;
+using Fotografix.Editor.Layers;
 using Fotografix.UI.Adjustments;
 using Fotografix.UI.Collections;
 using Fotografix.UI.Layers;
@@ -147,7 +148,7 @@ namespace Fotografix.UI
 
         public async Task ImportLayersAsync(IEnumerable<StorageFile> files)
         {
-            List<ICommand> commands = new List<ICommand>();
+            List<Command> commands = new List<Command>();
 
             foreach (var file in files)
             {
@@ -206,14 +207,12 @@ namespace Fotografix.UI
             }
         }
 
-        public void Execute(ICommand command)
+        public void Execute(Command command)
         {
-            IChange change = command.PrepareChange();
-
-            if (change != null)
+            if (command.IsEffective)
             {
-                change.Apply();
-                history.Add(change);
+                command.Execute();
+                history.Add(command);
             }
         }
 

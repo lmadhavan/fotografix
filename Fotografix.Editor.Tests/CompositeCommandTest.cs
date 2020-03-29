@@ -1,8 +1,7 @@
-﻿using Fotografix.Editor.Commands;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using System.Collections.Generic;
 
-namespace Fotografix.Editor.Tests.Commands
+namespace Fotografix.Editor.Tests
 {
     [TestFixture]
     public class CompositeCommandTest
@@ -22,33 +21,21 @@ namespace Fotografix.Editor.Tests.Commands
         }
 
         [Test]
-        public void PreparesChanges()
+        public void ExecutesAllCommands()
         {
-            compositeCommand.PrepareChange();
-            Assert.That(results, Is.EquivalentTo(new string[] { "Prepare1", "Prepare2" }));
+            compositeCommand.Execute();
+            Assert.That(results, Is.EqualTo(new string[] { "Execute1", "Execute2" }));
         }
 
         [Test]
-        public void AppliesChangesInSpecifiedOrder()
+        public void UndoesAllCommandsInReverseOrder()
         {
-            IChange change = compositeCommand.PrepareChange();
-            results.Clear();
-            change.Apply();
-
-            Assert.That(results, Is.EqualTo(new string[] { "Apply1", "Apply2" }));
-        }
-
-        [Test]
-        public void UndoesChangesInReverseOrder()
-        {
-            IChange change = compositeCommand.PrepareChange();
-            results.Clear();
-            change.Undo();
+            compositeCommand.Undo();
 
             Assert.That(results, Is.EqualTo(new string[] { "Undo2", "Undo1" }));
         }
 
-        private sealed class FakeCommand : ICommand, IChange
+        private sealed class FakeCommand : Command
         {
             private readonly List<string> results;
             private readonly int i;
@@ -59,18 +46,12 @@ namespace Fotografix.Editor.Tests.Commands
                 this.i = i;
             }
 
-            public IChange PrepareChange()
+            public override void Execute()
             {
-                results.Add("Prepare" + i);
-                return this;
+                results.Add("Execute" + i);
             }
 
-            public void Apply()
-            {
-                results.Add("Apply" + i);
-            }
-
-            public void Undo()
+            public override void Undo()
             {
                 results.Add("Undo" + i);
             }

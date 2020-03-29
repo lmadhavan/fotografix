@@ -1,6 +1,6 @@
-﻿namespace Fotografix.Editor.Commands
+﻿namespace Fotografix.Editor.Layers
 {
-    public sealed class AddLayerCommand : ICommand, IChange
+    public sealed class AddLayerCommand : Command
     {
         private readonly Image image;
         private readonly Layer layer;
@@ -11,17 +11,12 @@
             this.layer = layer;
         }
 
-        public IChange PrepareChange()
-        {
-            return this;
-        }
-
-        void IChange.Apply()
+        public override void Execute()
         {
             image.Layers.Add(layer);
         }
 
-        void IChange.Undo()
+        public override void Undo()
         {
             image.Layers.RemoveAt(image.Layers.Count - 1);
         }

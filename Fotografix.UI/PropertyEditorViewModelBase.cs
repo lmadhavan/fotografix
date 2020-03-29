@@ -1,4 +1,4 @@
-﻿using Fotografix.Editor.Commands;
+﻿using Fotografix.Editor;
 using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;

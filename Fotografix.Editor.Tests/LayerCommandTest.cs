@@ -1,8 +1,8 @@
-using Fotografix.Editor.Commands;
+using Fotografix.Editor.Layers;
 using NUnit.Framework;
 using System.Drawing;
 
-namespace Fotografix.Editor.Tests.Commands
+namespace Fotografix.Editor.Tests
 {
     public class LayerCommandTest
     {
@@ -23,24 +23,24 @@ namespace Fotografix.Editor.Tests.Commands
         [Test]
         public void AddLayer()
         {
-            IChange change = new AddLayerCommand(image, newLayer).PrepareChange();
+            Command command = new AddLayerCommand(image, newLayer);
 
-            change.Apply();
+            command.Execute();
             Assert.That(image.Layers, Is.EqualTo(new Layer[] { existingLayer, newLayer }));
 
-            change.Undo();
+            command.Undo();
             Assert.That(image.Layers, Is.EqualTo(new Layer[] { existingLayer }));
         }
 
         [Test]
         public void RemoveLayer()
         {
-            IChange change = new RemoveLayerCommand(image, existingLayer).PrepareChange();
+            Command command = new RemoveLayerCommand(image, existingLayer);
 
-            change.Apply();
+            command.Execute();
             Assert.That(image.Layers, Is.Empty);
 
-            change.Undo();
+            command.Undo();
             Assert.That(image.Layers, Is.EqualTo(new Layer[] { existingLayer }));
         }
 
@@ -49,12 +49,12 @@ namespace Fotografix.Editor.Tests.Commands
         {
             image.Layers.Add(newLayer);
 
-            IChange change = new ReorderLayerCommand(image, 0, 1).PrepareChange();
+            Command command = new ReorderLayerCommand(image, 0, 1);
 
-            change.Apply();
+            command.Execute();
             Assert.That(image.Layers, Is.EqualTo(new Layer[] { newLayer, existingLayer }));
 
-            change.Undo();
+            command.Undo();
             Assert.That(image.Layers, Is.EqualTo(new Layer[] { existingLayer, newLayer }));
         }
 

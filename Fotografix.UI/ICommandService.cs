@@ -1,9 +1,9 @@
-﻿using Fotografix.Editor.Commands;
+﻿using Fotografix.Editor;
 
 namespace Fotografix.UI
 {
     public interface ICommandService
     {
-        void Execute(ICommand command);
+        void Execute(Command command);
     }
 }
