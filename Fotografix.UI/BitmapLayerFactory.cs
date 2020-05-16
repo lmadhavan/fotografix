@@ -1,13 +1,18 @@
-﻿using System.Threading.Tasks;
+﻿using Fotografix.Win2D;
+using System.Drawing;
+using System.Threading.Tasks;
 using Windows.Storage;
 
 namespace Fotografix.UI
 {
     public static class BitmapLayerFactory
     {
+        private static IBitmapFactory bitmapFactory = new Win2DBitmapFactory();
+
         public static BitmapLayer CreateBitmapLayer(string name)
         {
-            return new BitmapLayer(Bitmap.Empty) { Name = name };
+            Bitmap bitmap = bitmapFactory.CreateBitmap(Size.Empty);
+            return new BitmapLayer(bitmap) { Name = name };
         }
 
         public static BitmapLayer CreateBitmapLayer(int id)
@@ -17,7 +22,7 @@ namespace Fotografix.UI
 
         public static async Task<BitmapLayer> LoadBitmapLayerAsync(StorageFile file)
         {
-            Bitmap bitmap = await BitmapLoader.LoadBitmapAsync(file);
+            Bitmap bitmap = await BitmapLoader.LoadBitmapAsync(file, bitmapFactory);
             return new BitmapLayer(bitmap) { Name = file.DisplayName };
         }
     }

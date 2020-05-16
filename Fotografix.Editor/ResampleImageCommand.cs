@@ -7,16 +7,14 @@ namespace Fotografix.Editor
     {
         private readonly Image image;
         private readonly Size newSize;
-        private readonly IBitmapResamplingStrategy resamplingStrategy;
 
         private Size oldSize;
         private List<Bitmap> oldBitmaps;
 
-        public ResampleImageCommand(Image image, Size newSize, IBitmapResamplingStrategy resamplingStrategy)
+        public ResampleImageCommand(Image image, Size newSize)
         {
             this.image = image;
             this.newSize = newSize;
-            this.resamplingStrategy = resamplingStrategy;
         }
 
         public override bool IsEffective => image.Size != newSize;
@@ -34,7 +32,7 @@ namespace Fotografix.Editor
                 if (layer is BitmapLayer bitmapLayer)
                 {
                     Bitmap oldBitmap = bitmapLayer.Bitmap;
-                    Bitmap newBitmap = resamplingStrategy.Resample(oldBitmap, Scale(oldBitmap.Size, ratio));
+                    Bitmap newBitmap = oldBitmap.Scale(ratio);
 
                     oldBitmaps.Add(oldBitmap);
                     bitmapLayer.Bitmap = newBitmap;
@@ -60,9 +58,5 @@ namespace Fotografix.Editor
             image.Size = oldSize;
         }
 
-        private static Size Scale(Size size, PointF ratio)
-        {
-            return new Size((int)(size.Width * ratio.X), (int)(size.Height * ratio.Y));
-        }
     }
 }

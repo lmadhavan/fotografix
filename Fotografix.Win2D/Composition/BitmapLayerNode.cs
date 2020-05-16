@@ -9,7 +9,7 @@ namespace Fotografix.Win2D.Composition
         private readonly BitmapLayer layer;
         private readonly OpacityEffect opacityEffect;
         private readonly CompositeEffect compositeEffect;
-        private BitmapNode bitmapNode;
+        private Win2DBitmap bitmap;
 
         public BitmapLayerNode(BitmapLayer layer) : base(layer)
         {
@@ -22,13 +22,12 @@ namespace Fotografix.Win2D.Composition
             compositeEffect.Sources.Add(null);
             compositeEffect.Sources.Add(null);
 
-            this.bitmapNode = new BitmapNode(layer.Bitmap);
+            this.bitmap = (Win2DBitmap)layer.Bitmap;
             UpdateOutput();
         }
 
         public override void Dispose()
         {
-            bitmapNode.Dispose();
             compositeEffect.Dispose();
             opacityEffect.Dispose();
             base.Dispose();
@@ -38,8 +37,7 @@ namespace Fotografix.Win2D.Composition
         {
             if (e.PropertyName == nameof(BitmapLayer.Bitmap))
             {
-                bitmapNode.Dispose();
-                this.bitmapNode = new BitmapNode(layer.Bitmap);
+                this.bitmap = (Win2DBitmap)layer.Bitmap;
             }
 
             base.OnLayerPropertyChanged(sender, e);
@@ -73,10 +71,10 @@ namespace Fotografix.Win2D.Composition
         {
             if (layer.Opacity == 1)
             {
-                return bitmapNode.Output;
+                return bitmap.Output;
             }
 
-            opacityEffect.Source = bitmapNode.Output;
+            opacityEffect.Source = bitmap.Output;
             opacityEffect.Opacity = layer.Opacity;
             return opacityEffect;
         }

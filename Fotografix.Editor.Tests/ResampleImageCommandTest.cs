@@ -14,7 +14,7 @@ namespace Fotografix.Editor.Tests
             Image image = new Image(originalImageSize);
 
             Size newImageSize = new Size(100, 50);
-            Command command = new ResampleImageCommand(image, newImageSize, new FakeResamplingStrategy());
+            Command command = new ResampleImageCommand(image, newImageSize);
 
             command.Execute();
             Assert.That(image.Size, Is.EqualTo(newImageSize));
@@ -30,11 +30,11 @@ namespace Fotografix.Editor.Tests
             Image image = new Image(originalImageSize);
 
             Size originalBitmapSize = new Size(10, 20);
-            BitmapLayer layer = new BitmapLayer(new Bitmap(originalBitmapSize));
+            BitmapLayer layer = new BitmapLayer(new FakeBitmap(originalBitmapSize));
             image.Layers.Add(layer);
 
             Size newImageSize = new Size(100, 50); // 200% of original image size
-            Command command = new ResampleImageCommand(image, newImageSize, new FakeResamplingStrategy());
+            Command command = new ResampleImageCommand(image, newImageSize);
 
             Size expectedNewBitmapSize = new Size(20, 40); // 200% of original bitmap size
 
@@ -55,18 +55,10 @@ namespace Fotografix.Editor.Tests
             image.Layers.Add(layer);
 
             Size newImageSize = new Size(100, 50);
-            Command command = new ResampleImageCommand(image, newImageSize, new FakeResamplingStrategy());
+            Command command = new ResampleImageCommand(image, newImageSize);
 
             command.Execute();
             Assert.That(image.Layers[0], Is.EqualTo(layer));
-        }
-
-        private sealed class FakeResamplingStrategy : IBitmapResamplingStrategy
-        {
-            public Bitmap Resample(Bitmap bitmap, Size newSize)
-            {
-                return new Bitmap(newSize);
-            }
         }
     }
 }

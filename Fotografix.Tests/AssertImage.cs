@@ -9,15 +9,16 @@ namespace Fotografix.Tests
 {
     public static class AssertImage
     {
-        public static async Task IsEquivalentAsync(string fileWithExpectedOutput, Image actualImage)
+        private static IBitmapFactory bitmapFactory = new Win2DBitmapFactory();
+
+        public static async Task IsEquivalentAsync(string fileWithExpectedOutput, IWin2DDrawable actual)
         {
             var file = await TestImages.GetFileAsync(fileWithExpectedOutput);
-            Bitmap expected = await BitmapLoader.LoadBitmapAsync(file);
 
-            using (Win2DCompositor compositor = new Win2DCompositor(actualImage))
-            using (CanvasBitmap actual = TestRenderer.Render(compositor))
+            using (Bitmap expectedBitmap = await BitmapLoader.LoadBitmapAsync(file, bitmapFactory))
+            using (CanvasBitmap actualBitmap = TestRenderer.Render(actual))
             {
-                AssertBytesAreEqual(expected.Pixels, actual.GetPixelBytes(), 3);
+                AssertBytesAreEqual(expectedBitmap.GetPixelBytes(), actualBitmap.GetPixelBytes(), 3);
             }
         }
 

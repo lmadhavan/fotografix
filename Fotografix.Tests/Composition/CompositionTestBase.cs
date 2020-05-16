@@ -1,4 +1,5 @@
 ﻿using Fotografix.UI;
+using Fotografix.Win2D;
 using System.Threading.Tasks;
 
 namespace Fotografix.Tests.Composition
@@ -22,7 +23,10 @@ namespace Fotografix.Tests.Composition
 
         protected async Task AssertImageAsync(string fileWithExpectedOutput, Image actualImage)
         {
-            await AssertImage.IsEquivalentAsync(fileWithExpectedOutput, actualImage);
+            using (Win2DCompositor compositor = new Win2DCompositor(actualImage))
+            {
+                await AssertImage.IsEquivalentAsync(fileWithExpectedOutput, compositor);
+            }
         }
     }
 }

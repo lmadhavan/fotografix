@@ -19,5 +19,10 @@ namespace Fotografix.Tests
         {
             await TestRenderer.RenderToTempFolderAsync(Editor, filename);
         }
+
+        protected async Task AssertImageAsync(string fileWithExpectedImage)
+        {
+            await AssertImage.IsEquivalentAsync(fileWithExpectedImage, Editor);
+        }
     }
 }

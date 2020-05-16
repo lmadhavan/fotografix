@@ -60,7 +60,7 @@ namespace Fotografix.Editor.Tests
 
         private static Layer CreateLayer()
         {
-            return new BitmapLayer(Bitmap.Empty);
+            return new BitmapLayer(new FakeBitmap());
         }
     }
 }
