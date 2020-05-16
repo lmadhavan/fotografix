@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 
 namespace Fotografix.Tests
 {
-    [Ignore]
     [TestClass]
     public class BrushToolAcceptanceTest : AcceptanceTestBase
     {
@@ -23,7 +22,7 @@ namespace Fotografix.Tests
                 new PointF(200, 50)
             });
 
-            await RenderToTempFolderAsync("flowers_brush.png");
+            await AssertImageAsync("flowers_brush.png");
         }
 
         private void ConfigureBrushTool(float size, Color color)

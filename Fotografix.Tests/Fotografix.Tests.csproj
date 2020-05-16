@@ -157,6 +157,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Images\flowers_bc.png" />
+    <Content Include="Images\flowers_brush.png" />
     <Content Include="Images\flowers_bw_multiply_opacity50.png" />
     <Content Include="Images\flowers_bw_opacity50.png" />
     <Content Include="Images\flowers_gm.png" />

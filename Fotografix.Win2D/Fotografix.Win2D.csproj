@@ -120,6 +120,7 @@
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="BrushStrokePainter.cs" />
     <Compile Include="Composition\AdjustmentLayerNode.cs" />
     <Compile Include="Composition\Adjustments\AdjustmentNode.cs" />
     <Compile Include="Composition\Adjustments\BrightnessContrastAdjustmentNode.cs" />

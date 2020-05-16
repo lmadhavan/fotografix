@@ -1,5 +1,4 @@
 ﻿using Microsoft.Graphics.Canvas;
-using System;
 using System.Drawing;
 using Windows.Graphics.DirectX;
 
@@ -53,7 +52,11 @@ namespace Fotografix.Win2D
 
         public override void Paint(BrushStroke brushStroke)
         {
-            throw new NotImplementedException();
+            using (CanvasDrawingSession ds = renderTarget.CreateDrawingSession())
+            {
+                BrushStrokePainter painter = new BrushStrokePainter(brushStroke);
+                painter.Paint(ds);
+            }
         }
     }
 }
