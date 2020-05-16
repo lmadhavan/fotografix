@@ -33,5 +33,10 @@ namespace Fotografix
         {
             visitor.Visit(this);
         }
+
+        public override void Paint(BrushStroke brushStroke)
+        {
+            bitmap.Paint(brushStroke);
+        }
     }
 }

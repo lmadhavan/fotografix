@@ -29,6 +29,11 @@ namespace Fotografix
         public Size Size { get; }
         public byte[] Pixels { get; }
 
+        public void Paint(BrushStroke brushStroke)
+        {
+            throw new NotImplementedException();
+        }
+
         private static int GetBufferLength(Size size)
         {
             return size.Width * size.Height * 4;

@@ -119,10 +119,14 @@
     <SDKReference Include="TestPlatform.Universal, Version=$(UnitTestPlatformVersion)" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AcceptanceTestBase.cs" />
+    <Compile Include="AssertImage.cs" />
     <Compile Include="Composition\BitmapBlendingTest.cs" />
     <Compile Include="Composition\AdjustmentBlendingTest.cs" />
     <Compile Include="Composition\BlendModeMappingTest.cs" />
     <Compile Include="Composition\CompositorInvalidationTest.cs" />
+    <Compile Include="BrushToolAcceptanceTest.cs" />
+    <Compile Include="TestRenderer.cs" />
     <Compile Include="TestImages.cs" />
     <Compile Include="UI\Adjustments\AdjustmentSliderToolTipValueConverterTest.cs" />
     <Compile Include="UI\BlendModeListTest.cs" />

@@ -132,6 +132,7 @@
     <Compile Include="Composition\CompositionNode.cs" />
     <Compile Include="Composition\ImageNode.cs" />
     <Compile Include="Composition\LayerNode.cs" />
+    <Compile Include="IWin2DDrawable.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Composition\BitmapNode.cs" />
     <Compile Include="Composition\TransparencyGridNode.cs" />

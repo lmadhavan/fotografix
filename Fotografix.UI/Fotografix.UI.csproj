@@ -125,6 +125,7 @@
     <Compile Include="Adjustments\GradientMapAdjustmentViewModel.cs" />
     <Compile Include="Adjustments\HueSaturationAdjustmentViewModel.cs" />
     <Compile Include="Adjustments\IAdjustmentViewModel.cs" />
+    <Compile Include="BitmapLoader.cs" />
     <Compile Include="Collections\ReorderAwareCollectionView.cs" />
     <Compile Include="ICommandService.cs" />
     <Compile Include="Layers\LayerTemplatesResourceDictionary.xaml.cs">

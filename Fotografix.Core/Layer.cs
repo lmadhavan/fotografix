@@ -62,5 +62,7 @@ namespace Fotografix
         }
 
         public abstract void Accept(LayerVisitor visitor);
+
+        public abstract void Paint(BrushStroke brushStroke);
     }
 }

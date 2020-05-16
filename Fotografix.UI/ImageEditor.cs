@@ -1,5 +1,6 @@
 ﻿using Fotografix.Editor;
 using Fotografix.Editor.Layers;
+using Fotografix.Editor.Tools;
 using Fotografix.UI.Adjustments;
 using Fotografix.UI.Collections;
 using Fotografix.UI.Layers;
@@ -16,12 +17,13 @@ using Windows.Storage;
 
 namespace Fotografix.UI
 {
-    public sealed class ImageEditor : NotifyPropertyChangedBase, ICommandService, IDisposable
+    public sealed class ImageEditor : NotifyPropertyChangedBase, ICommandService, IDisposable, IWin2DDrawable
     {
         private readonly Image image;
         private readonly Win2DCompositor compositor;
         private readonly ReversedCollectionView<Layer> layers;
         private readonly History history;
+        private readonly ITool tool;
 
         private Layer activeLayer;
         private LayerViewModel activeLayerViewModel;
@@ -37,6 +39,10 @@ namespace Fotografix.UI
 
             this.history = new History();
             history.PropertyChanged += OnHistoryPropertyChanged;
+
+            BrushTool tool = new BrushTool();
+            tool.BrushStrokeCompleted += OnBrushStrokeCompleted;
+            this.tool = tool;
 
             this.ActiveLayer = image.Layers.FirstOrDefault();
 
@@ -169,6 +175,23 @@ namespace Fotografix.UI
             Execute(new ResampleImageCommand(image, resizeImageParameters.Size, new Win2DBitmapResamplingStrategy()));
         }
 
+        public object ToolSettings => tool.Settings;
+
+        public void PointerPressed(PointF pt)
+        {
+            tool.PointerPressed(pt);
+        }
+
+        public void PointerMoved(PointF pt)
+        {
+            tool.PointerMoved(pt);
+        }
+
+        public void PointerReleased(PointF pt)
+        {
+            tool.PointerReleased(pt);
+        }
+
         private void OnImagePropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == nameof(Image.Size))
@@ -224,6 +247,11 @@ namespace Fotografix.UI
         private void OnHistoryPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             RaisePropertyChanged(e.PropertyName);
+        }
+
+        private void OnBrushStrokeCompleted(object sender, BrushStrokeEventArgs e)
+        {
+            activeLayer.Paint(e.BrushStroke);
         }
     }
 }
