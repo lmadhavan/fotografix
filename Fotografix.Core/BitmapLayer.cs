@@ -29,6 +29,8 @@ namespace Fotografix
             }
         }
 
+        public override bool CanPaint => true;
+
         public override void Accept(LayerVisitor visitor)
         {
             visitor.Visit(this);

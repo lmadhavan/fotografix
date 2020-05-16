@@ -61,8 +61,13 @@ namespace Fotografix
             }
         }
 
+        public virtual bool CanPaint => false;
+
         public abstract void Accept(LayerVisitor visitor);
 
-        public abstract void Paint(BrushStroke brushStroke);
+        public virtual void Paint(BrushStroke brushStroke)
+        {
+            throw new NotSupportedException();
+        }
     }
 }

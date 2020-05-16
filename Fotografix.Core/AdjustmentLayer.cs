@@ -34,10 +34,5 @@ namespace Fotografix
         {
             visitor.Visit(this);
         }
-
-        public override void Paint(BrushStroke brushStroke)
-        {
-            throw new NotSupportedException();
-        }
     }
 }

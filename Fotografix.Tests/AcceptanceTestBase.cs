@@ -1,4 +1,6 @@
-﻿using Fotografix.UI;
+﻿using Fotografix.Adjustments;
+using Fotografix.UI;
+using Fotografix.UI.Adjustments;
 using System.Threading.Tasks;
 
 namespace Fotografix.Tests
@@ -23,6 +25,11 @@ namespace Fotografix.Tests
         protected async Task AssertImageAsync(string fileWithExpectedImage)
         {
             await AssertImage.IsEquivalentAsync(fileWithExpectedImage, Editor);
+        }
+
+        protected void AddAdjustmentLayer<T>() where T : Adjustment, new()
+        {
+            Editor.AddAdjustmentLayer(new AdjustmentLayerFactory<T>("Test Adjustment"));
         }
     }
 }

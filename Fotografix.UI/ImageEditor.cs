@@ -112,6 +112,7 @@ namespace Fotografix.UI
                     activeLayerViewModel?.Dispose();
                     this.ActiveLayerViewModel = activeLayer == null ? null : new LayerViewModel(activeLayer, this);
                     RaisePropertyChanged(nameof(CanDeleteActiveLayer));
+                    tool.LayerActivated(activeLayer);
                 }
             }
         }
@@ -176,6 +177,7 @@ namespace Fotografix.UI
         }
 
         public object ToolSettings => tool.Settings;
+        public ToolCursor ToolCursor => tool.Cursor;
 
         public void PointerPressed(PointF pt)
         {
