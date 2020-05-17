@@ -1,6 +1,5 @@
-﻿using Fotografix.Adjustments;
-using Fotografix.UI;
-using Fotografix.UI.Adjustments;
+﻿using Fotografix.UI;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Threading.Tasks;
 
 namespace Fotografix.Tests
@@ -27,9 +26,14 @@ namespace Fotografix.Tests
             await AssertImage.IsEquivalentAsync(fileWithExpectedImage, Editor);
         }
 
-        protected void AddAdjustmentLayer<T>() where T : Adjustment, new()
+        protected void AssertCanUndo()
         {
-            Editor.AddAdjustmentLayer(new AdjustmentLayerFactory<T>("Test Adjustment"));
+            Assert.IsTrue(Editor.CanUndo);
+        }
+
+        protected void Undo()
+        {
+            Editor.Undo();
         }
     }
 }

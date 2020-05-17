@@ -65,7 +65,7 @@ namespace Fotografix
 
         public abstract void Accept(LayerVisitor visitor);
 
-        public virtual void Paint(BrushStroke brushStroke)
+        public virtual IUndoable Paint(BrushStroke brushStroke)
         {
             throw new NotSupportedException();
         }

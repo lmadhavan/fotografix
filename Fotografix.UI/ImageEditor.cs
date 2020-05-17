@@ -253,7 +253,7 @@ namespace Fotografix.UI
 
         private void OnBrushStrokeCompleted(object sender, BrushStrokeEventArgs e)
         {
-            activeLayer.Paint(e.BrushStroke);
+            Execute(new PaintBrushStrokeCommand(activeLayer, e.BrushStroke));
         }
     }
 }
