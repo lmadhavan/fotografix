@@ -1,4 +1,5 @@
 ﻿using Fotografix.Adjustments;
+using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Effects;
 
 namespace Fotografix.Win2D.Composition.Adjustments
@@ -10,7 +11,6 @@ namespace Fotografix.Win2D.Composition.Adjustments
         public BlackAndWhiteAdjustmentNode(BlackAndWhiteAdjustment adjustment)
         {
             this.grayscaleEffect = new GrayscaleEffect();
-            this.Output = grayscaleEffect;
         }
 
         public override void Dispose()
@@ -19,9 +19,10 @@ namespace Fotografix.Win2D.Composition.Adjustments
             base.Dispose();
         }
 
-        protected override void OnInputChanged()
+        public override ICanvasImage GetOutput(ICanvasImage input)
         {
-            grayscaleEffect.Source = Input;
+            grayscaleEffect.Source = input;
+            return grayscaleEffect;
         }
     }
 }

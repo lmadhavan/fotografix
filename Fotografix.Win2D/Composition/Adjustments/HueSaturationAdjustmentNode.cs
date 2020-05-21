@@ -1,4 +1,5 @@
 ﻿using Fotografix.Adjustments;
+using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Effects;
 using System;
 using System.ComponentModel;
@@ -29,9 +30,10 @@ namespace Fotografix.Win2D.Composition.Adjustments
             base.Dispose();
         }
 
-        protected override void OnInputChanged()
+        public override ICanvasImage GetOutput(ICanvasImage input)
         {
-            hueEffect.Source = Input;
+            hueEffect.Source = input;
+            return colorMatrixEffect;
         }
 
         private void OnAdjustmentPropertyChanged(object sender, PropertyChangedEventArgs e)

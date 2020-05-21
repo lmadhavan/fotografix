@@ -5,12 +5,13 @@ using Microsoft.Graphics.Canvas.Effects;
 
 namespace Fotografix.Win2D.Composition
 {
-    internal abstract class LayerNode : CompositionNode, IDisposable
+    internal abstract class LayerNode : IDisposable
     {
         private readonly Layer layer;
         private readonly BlendEffect blendEffect;
 
         private ICanvasImage background;
+        private ICanvasImage output;
 
         protected LayerNode(Layer layer)
         {
@@ -41,6 +42,25 @@ namespace Fotografix.Win2D.Composition
                 }
             }
         }
+
+        public ICanvasImage Output
+        {
+            get
+            {
+                return output;
+            }
+
+            private set
+            {
+                if (output != value)
+                {
+                    this.output = value;
+                    OutputChanged?.Invoke(this, EventArgs.Empty);
+                }
+            }
+        }
+
+        public event EventHandler OutputChanged;
 
         protected void UpdateOutput()
         {

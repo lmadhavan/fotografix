@@ -1,4 +1,5 @@
 ﻿using Fotografix.Adjustments;
+using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Effects;
 using System.ComponentModel;
 
@@ -17,7 +18,6 @@ namespace Fotografix.Win2D.Composition.Adjustments
 
             this.gammaEffect = new GammaTransferEffect();
             this.contrastEffect = new ContrastEffect() { Source = gammaEffect };
-            this.Output = contrastEffect;
 
             UpdateGamma();
             UpdateContrast();
@@ -32,9 +32,10 @@ namespace Fotografix.Win2D.Composition.Adjustments
             base.Dispose();
         }
 
-        protected override void OnInputChanged()
+        public override ICanvasImage GetOutput(ICanvasImage input)
         {
-            gammaEffect.Source = Input;
+            gammaEffect.Source = input;
+            return contrastEffect;
         }
 
         private void OnAdjustmentPropertyChanged(object sender, PropertyChangedEventArgs e)

@@ -1,14 +1,16 @@
-﻿using System;
+﻿using Microsoft.Graphics.Canvas;
+using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 
 namespace Fotografix.Win2D.Composition
 {
-    internal sealed class ImageNode : CompositionNode, IDisposable
+    internal sealed class ImageNode : IDisposable
     {
         private readonly Image image;
         private readonly Dictionary<Layer, LayerNode> layerNodes = new Dictionary<Layer, LayerNode>();
 
+        private ICanvasImage output;
         private bool relinking;
 
         internal ImageNode(Image image)
@@ -25,6 +27,14 @@ namespace Fotografix.Win2D.Composition
             UnregisterAll();
         }
 
+        public void Draw(CanvasDrawingSession ds)
+        {
+            if (output != null)
+            {
+                ds.DrawImage(output);
+            }
+        }
+
         private void RelinkLayers()
         {
             if (relinking)
@@ -39,7 +49,7 @@ namespace Fotografix.Win2D.Composition
 
             if (n == 0)
             {
-                this.Output = null;
+                this.output = null;
             }
             else
             {
@@ -51,7 +61,7 @@ namespace Fotografix.Win2D.Composition
                     layerNodes[layers[i]].Background = layerNodes[layers[i - 1]].Output;
                 }
 
-                this.Output = layerNodes[layers[n - 1]].Output;
+                this.output = layerNodes[layers[n - 1]].Output;
             }
 
             this.relinking = false;

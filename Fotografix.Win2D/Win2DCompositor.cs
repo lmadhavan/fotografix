@@ -28,14 +28,8 @@ namespace Fotografix.Win2D
 
         public void Draw(CanvasDrawingSession ds)
         {
-            ds.DrawImage(transparencyGrid.Output);
-
-            ICanvasImage output = imageNode.Output;
-
-            if (output != null)
-            {
-                ds.DrawImage(output);
-            }
+            transparencyGrid.Draw(ds);
+            imageNode.Draw(ds);
         }
     }
 }

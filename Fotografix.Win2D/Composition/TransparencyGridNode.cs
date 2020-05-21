@@ -6,7 +6,7 @@ using Windows.UI;
 
 namespace Fotografix.Win2D.Composition
 {
-    internal sealed class TransparencyGridNode : CompositionNode, IDisposable
+    internal sealed class TransparencyGridNode : IDisposable
     {
         private readonly CanvasCommandList gridTile;
         private readonly TileEffect tileEffect;
@@ -26,14 +26,17 @@ namespace Fotografix.Win2D.Composition
                 Source = gridTile,
                 SourceRectangle = new Rect(0, 0, gridSize * 2, gridSize * 2)
             };
-
-            this.Output = tileEffect;
         }
 
         public void Dispose()
         {
             tileEffect.Dispose();
             gridTile.Dispose();
+        }
+
+        public void Draw(CanvasDrawingSession ds)
+        {
+            ds.DrawImage(tileEffect);
         }
     }
 }

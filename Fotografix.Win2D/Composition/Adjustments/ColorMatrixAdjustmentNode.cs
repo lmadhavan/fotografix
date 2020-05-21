@@ -1,4 +1,4 @@
-﻿using Fotografix.Adjustments;
+﻿using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Effects;
 
 namespace Fotografix.Win2D.Composition.Adjustments
@@ -11,7 +11,6 @@ namespace Fotografix.Win2D.Composition.Adjustments
         protected ColorMatrixAdjustmentNode()
         {
             this.colorMatrixEffect = new ColorMatrixEffect();
-            this.Output = colorMatrixEffect;
 
             this.colorMatrix = new Matrix5x4
             { 
@@ -28,9 +27,10 @@ namespace Fotografix.Win2D.Composition.Adjustments
             colorMatrixEffect.Dispose();
         }
 
-        protected override void OnInputChanged()
+        public override ICanvasImage GetOutput(ICanvasImage input)
         {
-            colorMatrixEffect.Source = Input;
+            colorMatrixEffect.Source = input;
+            return colorMatrixEffect;
         }
     }
 }

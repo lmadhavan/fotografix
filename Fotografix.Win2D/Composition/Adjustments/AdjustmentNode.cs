@@ -3,31 +3,12 @@ using System;
 
 namespace Fotografix.Win2D.Composition.Adjustments
 {
-    internal abstract class AdjustmentNode : CompositionNode, IDisposable
+    internal abstract class AdjustmentNode : IDisposable
     {
-        private ICanvasImage input;
-
         public virtual void Dispose()
         {
         }
 
-        public ICanvasImage Input
-        {
-            get
-            {
-                return input;
-            }
-
-            set
-            {
-                if (input != value)
-                {
-                    this.input = value;
-                    OnInputChanged();
-                }
-            }
-        }
-
-        protected abstract void OnInputChanged();
+        public abstract ICanvasImage GetOutput(ICanvasImage input);
     }
 }

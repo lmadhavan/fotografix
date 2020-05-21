@@ -60,25 +60,23 @@ namespace Fotografix.Win2D.Composition
 
         private ICanvasImage BlendAdjustment(ICanvasImage background)
         {
-            adjustmentNode.Input = background;
+            ICanvasImage adjustmentOutput = adjustmentNode.GetOutput(background);
 
             if (layer.BlendMode == BlendMode.Normal)
             {
-                return adjustmentNode.Output;
+                return adjustmentOutput;
             }
 
-            return Blend(adjustmentNode.Output, background);
+            return Blend(adjustmentOutput, background);
         }
 
         private void RegisterAdjustment()
         {
             this.adjustmentNode = NodeFactory.Adjustment.Create(layer.Adjustment);
-            adjustmentNode.OutputChanged += OnAdjustmentOutputChanged;
         }
 
         private void UnregisterAdjustment()
         {
-            adjustmentNode.OutputChanged -= OnAdjustmentOutputChanged;
             adjustmentNode.Dispose();
         }
 

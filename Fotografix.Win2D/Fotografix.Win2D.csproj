@@ -130,7 +130,6 @@
     <Compile Include="Composition\Adjustments\GradientMapAdjustmentNode.cs" />
     <Compile Include="Composition\Adjustments\HueSaturationAdjustmentNode.cs" />
     <Compile Include="Composition\BitmapLayerNode.cs" />
-    <Compile Include="Composition\CompositionNode.cs" />
     <Compile Include="Composition\ImageNode.cs" />
     <Compile Include="Composition\LayerNode.cs" />
     <Compile Include="IWin2DDrawable.cs" />
