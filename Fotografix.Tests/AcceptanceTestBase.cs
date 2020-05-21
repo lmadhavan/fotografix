@@ -1,11 +1,14 @@
 ﻿using Fotografix.UI;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using System.Threading.Tasks;
 
 namespace Fotografix.Tests
 {
     public abstract class AcceptanceTestBase
     {
+        private bool invalidated;
+
         protected ImageEditor Editor { get; private set; }
 
         protected async Task OpenImageAsync(string filename)
@@ -14,6 +17,7 @@ namespace Fotografix.Tests
 
             var file = await TestImages.GetFileAsync(filename);
             this.Editor = await ImageEditor.CreateAsync(file);
+            Editor.Invalidated += OnEditorInvalidated;
         }
 
         protected async Task RenderToTempFolderAsync(string filename)
@@ -23,6 +27,7 @@ namespace Fotografix.Tests
 
         protected async Task AssertImageAsync(string fileWithExpectedImage)
         {
+            AssertInvalidated();
             await AssertImage.IsEquivalentAsync(fileWithExpectedImage, Editor);
         }
 
@@ -34,6 +39,17 @@ namespace Fotografix.Tests
         protected void Undo()
         {
             Editor.Undo();
+        }
+
+        private void OnEditorInvalidated(object sender, EventArgs e)
+        {
+            this.invalidated = true;
+        }
+
+        private void AssertInvalidated()
+        {
+            Assert.IsTrue(invalidated);
+            this.invalidated = false;
         }
     }
 }

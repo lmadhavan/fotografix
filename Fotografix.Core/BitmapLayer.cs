@@ -38,25 +38,27 @@ namespace Fotografix
 
         public override IUndoable Paint(BrushStroke brushStroke)
         {
-            BitmapState bitmapState = new BitmapState(bitmap);
+            BitmapState bitmapState = new BitmapState(this);
             bitmap.Paint(brushStroke);
+            RaiseContentChanged();
             return bitmapState;
         }
 
         private sealed class BitmapState : IUndoable
         {
-            private readonly Bitmap bitmap;
+            private readonly BitmapLayer layer;
             private readonly byte[] pixels;
 
-            public BitmapState(Bitmap bitmap)
+            public BitmapState(BitmapLayer layer)
             {
-                this.bitmap = bitmap;
-                this.pixels = bitmap.GetPixelBytes();
+                this.layer = layer;
+                this.pixels = layer.bitmap.GetPixelBytes();
             }
 
             public void Undo()
             {
-                bitmap.SetPixelBytes(pixels);
+                layer.bitmap.SetPixelBytes(pixels);
+                layer.RaiseContentChanged();
             }
         }
     }

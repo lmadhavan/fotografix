@@ -10,9 +10,11 @@ namespace Fotografix.Win2D.Composition.Adjustments
         private readonly HueSaturationAdjustment adjustment;
         private readonly HueRotationEffect hueEffect;
 
-        public HueSaturationAdjustmentNode(HueSaturationAdjustment adjustment) : base(adjustment)
+        public HueSaturationAdjustmentNode(HueSaturationAdjustment adjustment)
         {
             this.adjustment = adjustment;
+            adjustment.PropertyChanged += OnAdjustmentPropertyChanged;
+
             this.hueEffect = new HueRotationEffect();
             colorMatrixEffect.Source = hueEffect;
             UpdateHueAngle();
@@ -22,16 +24,17 @@ namespace Fotografix.Win2D.Composition.Adjustments
         public override void Dispose()
         {
             hueEffect.Dispose();
+
+            adjustment.PropertyChanged -= OnAdjustmentPropertyChanged;
             base.Dispose();
         }
 
         protected override void OnInputChanged()
         {
             hueEffect.Source = Input;
-            Invalidate();
         }
 
-        protected override void OnAdjustmentPropertyChanged(object sender, PropertyChangedEventArgs e)
+        private void OnAdjustmentPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == nameof(HueSaturationAdjustment.Hue))
             {
@@ -41,8 +44,6 @@ namespace Fotografix.Win2D.Composition.Adjustments
             {
                 UpdateColorMatrix();
             }
-
-            base.OnAdjustmentPropertyChanged(sender, e);
         }
 
         private void UpdateHueAngle()

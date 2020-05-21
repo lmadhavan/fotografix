@@ -8,7 +8,7 @@ namespace Fotografix.Win2D.Composition.Adjustments
         protected readonly ColorMatrixEffect colorMatrixEffect;
         protected Matrix5x4 colorMatrix;
 
-        protected ColorMatrixAdjustmentNode(Adjustment adjustment) : base(adjustment)
+        protected ColorMatrixAdjustmentNode()
         {
             this.colorMatrixEffect = new ColorMatrixEffect();
             this.Output = colorMatrixEffect;
@@ -31,7 +31,6 @@ namespace Fotografix.Win2D.Composition.Adjustments
         protected override void OnInputChanged()
         {
             colorMatrixEffect.Source = Input;
-            Invalidate();
         }
     }
 }

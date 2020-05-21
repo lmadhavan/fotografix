@@ -1,5 +1,6 @@
 ﻿using Fotografix.Adjustments;
 using Fotografix.Editor.Tools;
+using Fotografix.Testing;
 using NUnit.Framework;
 using System.Drawing;
 

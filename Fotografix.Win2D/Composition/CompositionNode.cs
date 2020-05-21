@@ -11,11 +11,6 @@ namespace Fotografix.Win2D.Composition
         private ICanvasImage output;
 
         /// <summary>
-        /// Occurs when the content of the node has been invalidated.
-        /// </summary>
-        public event EventHandler Invalidated;
-
-        /// <summary>
         /// Gets the output image of the node.
         /// </summary>
         public ICanvasImage Output
@@ -39,13 +34,5 @@ namespace Fotografix.Win2D.Composition
         /// Occurs when the value of the <see cref="Output"/> property has changed.
         /// </summary>
         public event EventHandler OutputChanged;
-
-        /// <summary>
-        /// Raises the <see cref="Invalidated"/> event.
-        /// </summary>
-        protected void Invalidate()
-        {
-            Invalidated?.Invoke(this, EventArgs.Empty);
-        }
     }
 }

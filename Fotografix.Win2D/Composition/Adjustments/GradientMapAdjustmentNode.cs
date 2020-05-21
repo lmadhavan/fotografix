@@ -8,16 +8,23 @@ namespace Fotografix.Win2D.Composition.Adjustments
     {
         private readonly GradientMapAdjustment adjustment;
 
-        public GradientMapAdjustmentNode(GradientMapAdjustment adjustment) : base(adjustment)
+        public GradientMapAdjustmentNode(GradientMapAdjustment adjustment)
         {
             this.adjustment = adjustment;
+            adjustment.PropertyChanged += OnAdjustmentPropertyChanged;
+
             UpdateColorMatrix();
         }
 
-        protected override void OnAdjustmentPropertyChanged(object sender, PropertyChangedEventArgs e)
+        public override void Dispose()
+        {
+            adjustment.PropertyChanged -= OnAdjustmentPropertyChanged;
+            base.Dispose();
+        }
+
+        private void OnAdjustmentPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             UpdateColorMatrix();
-            base.OnAdjustmentPropertyChanged(sender, e);
         }
 
         private void UpdateColorMatrix()

@@ -55,13 +55,11 @@ namespace Fotografix.Win2D.Composition
             }
 
             this.relinking = false;
-            Invalidate();
         }
 
         private void Register(Layer layer)
         {
             LayerNode node = NodeFactory.Layer.Create(layer);
-            node.Invalidated += OnLayerInvalidated;
             node.OutputChanged += OnLayerOutputChanged;
             this.layerNodes[layer] = node;
         }
@@ -70,7 +68,6 @@ namespace Fotografix.Win2D.Composition
         {
             if (layerNodes.Remove(layer, out LayerNode node))
             {
-                node.Invalidated -= OnLayerInvalidated;
                 node.OutputChanged -= OnLayerOutputChanged;
                 node.Dispose();
             }
@@ -92,14 +89,6 @@ namespace Fotografix.Win2D.Composition
             }
 
             layerNodes.Clear();
-        }
-
-        private void OnLayerInvalidated(object sender, EventArgs e)
-        {
-            if (!relinking)
-            {
-                Invalidate();
-            }
         }
 
         private void OnLayerOutputChanged(object sender, EventArgs e)

@@ -45,7 +45,6 @@ namespace Fotografix.Win2D.Composition
         protected void UpdateOutput()
         {
             this.Output = ResolveOutput(background);
-            Invalidate();
         }
 
         protected virtual void OnLayerPropertyChanged(object sender, PropertyChangedEventArgs e)

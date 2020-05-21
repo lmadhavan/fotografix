@@ -1,10 +1,11 @@
-﻿using System;
-using System.Drawing;
+﻿using System.Drawing;
 
-namespace Fotografix.Editor.Tests
+namespace Fotografix.Testing
 {
-    public sealed class FakeBitmap : Bitmap
+    public class FakeBitmap : Bitmap
     {
+        private byte[] pixels;
+
         public FakeBitmap() : this(Size.Empty)
         {
         }
@@ -15,12 +16,12 @@ namespace Fotografix.Editor.Tests
 
         public override byte[] GetPixelBytes()
         {
-            throw new NotImplementedException();
+            return pixels;
         }
 
         public override void SetPixelBytes(byte[] pixels)
         {
-            throw new NotImplementedException();
+            this.pixels = pixels;
         }
 
         public override Bitmap Scale(Size newSize)
@@ -30,7 +31,6 @@ namespace Fotografix.Editor.Tests
 
         public override void Paint(BrushStroke brushStroke)
         {
-            throw new NotImplementedException();
         }
     }
 }

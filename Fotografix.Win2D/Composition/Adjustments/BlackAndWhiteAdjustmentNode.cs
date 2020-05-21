@@ -7,7 +7,7 @@ namespace Fotografix.Win2D.Composition.Adjustments
     {
         private readonly GrayscaleEffect grayscaleEffect;
 
-        public BlackAndWhiteAdjustmentNode(BlackAndWhiteAdjustment adjustment) : base(adjustment)
+        public BlackAndWhiteAdjustmentNode(BlackAndWhiteAdjustment adjustment)
         {
             this.grayscaleEffect = new GrayscaleEffect();
             this.Output = grayscaleEffect;
@@ -22,7 +22,6 @@ namespace Fotografix.Win2D.Composition.Adjustments
         protected override void OnInputChanged()
         {
             grayscaleEffect.Source = Input;
-            Invalidate();
         }
     }
 }

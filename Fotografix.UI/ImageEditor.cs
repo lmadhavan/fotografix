@@ -47,6 +47,7 @@ namespace Fotografix.UI
             this.ActiveLayer = image.Layers.FirstOrDefault();
 
             image.PropertyChanged += OnImagePropertyChanged;
+            image.ContentChanged += OnImageContentChanged;
             image.Layers.CollectionChanged += OnLayerCollectionChanged;
         }
 
@@ -123,11 +124,7 @@ namespace Fotografix.UI
             private set => SetProperty(ref activeLayerViewModel, value);
         }
 
-        public event EventHandler Invalidated
-        {
-            add => compositor.Invalidated += value;
-            remove => compositor.Invalidated -= value;
-        }
+        public event EventHandler Invalidated;
 
         public void Draw(CanvasDrawingSession ds)
         {
@@ -254,6 +251,11 @@ namespace Fotografix.UI
         private void OnBrushStrokeCompleted(object sender, BrushStrokeEventArgs e)
         {
             Execute(new PaintBrushStrokeCommand(activeLayer, e.BrushStroke));
+        }
+
+        private void OnImageContentChanged(object sender, ContentChangedEventArgs e)
+        {
+            Invalidated?.Invoke(this, EventArgs.Empty);
         }
     }
 }

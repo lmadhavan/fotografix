@@ -26,12 +26,6 @@ namespace Fotografix.Win2D
 
         public Size Size => image.Size;
 
-        public event EventHandler Invalidated
-        {
-            add => imageNode.Invalidated += value;
-            remove => imageNode.Invalidated -= value;
-        }
-
         public void Draw(CanvasDrawingSession ds)
         {
             ds.DrawImage(transparencyGrid.Output);

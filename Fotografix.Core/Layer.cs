@@ -2,7 +2,7 @@
 
 namespace Fotografix
 {
-    public abstract class Layer : NotifyPropertyChangedBase
+    public abstract class Layer : NotifyContentChangedBase
     {
         private string name = "";
         private bool visible = true;
@@ -33,14 +33,34 @@ namespace Fotografix
 
         public bool Visible
         {
-            get => visible;
-            set => SetProperty(ref visible, value);
+            get
+            {
+                return visible;
+            }
+
+            set
+            {
+                if (SetProperty(ref visible, value))
+                {
+                    RaiseContentChanged();
+                }
+            }
         }
 
         public BlendMode BlendMode
         {
-            get => blendMode;
-            set => SetProperty(ref blendMode, value);
+            get
+            {
+                return blendMode;
+            }
+
+            set
+            {
+                if (SetProperty(ref blendMode, value))
+                {
+                    RaiseContentChanged();
+                }
+            }
         }
 
         public float Opacity
@@ -57,7 +77,10 @@ namespace Fotografix
                     throw new ArgumentOutOfRangeException();
                 }
 
-                SetProperty(ref opacity, value);
+                if (SetProperty(ref opacity, value))
+                {
+                    RaiseContentChanged();
+                }
             }
         }
 

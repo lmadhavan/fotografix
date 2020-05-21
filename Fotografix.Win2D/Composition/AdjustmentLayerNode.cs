@@ -73,20 +73,13 @@ namespace Fotografix.Win2D.Composition
         private void RegisterAdjustment()
         {
             this.adjustmentNode = NodeFactory.Adjustment.Create(layer.Adjustment);
-            adjustmentNode.Invalidated += OnAdjustmentInvalidated;
             adjustmentNode.OutputChanged += OnAdjustmentOutputChanged;
         }
 
         private void UnregisterAdjustment()
         {
             adjustmentNode.OutputChanged -= OnAdjustmentOutputChanged;
-            adjustmentNode.Invalidated -= OnAdjustmentInvalidated;
             adjustmentNode.Dispose();
-        }
-
-        private void OnAdjustmentInvalidated(object sender, EventArgs e)
-        {
-            Invalidate();
         }
 
         private void OnAdjustmentOutputChanged(object sender, EventArgs e)

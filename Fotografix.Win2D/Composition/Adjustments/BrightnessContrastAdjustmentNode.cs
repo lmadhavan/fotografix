@@ -10,9 +10,11 @@ namespace Fotografix.Win2D.Composition.Adjustments
         private readonly GammaTransferEffect gammaEffect;
         private readonly ContrastEffect contrastEffect;
 
-        public BrightnessContrastAdjustmentNode(BrightnessContrastAdjustment adjustment) : base(adjustment)
+        public BrightnessContrastAdjustmentNode(BrightnessContrastAdjustment adjustment)
         {
             this.adjustment = adjustment;
+            adjustment.PropertyChanged += OnAdjustmentPropertyChanged;
+
             this.gammaEffect = new GammaTransferEffect();
             this.contrastEffect = new ContrastEffect() { Source = gammaEffect };
             this.Output = contrastEffect;
@@ -25,16 +27,17 @@ namespace Fotografix.Win2D.Composition.Adjustments
         {
             contrastEffect.Dispose();
             gammaEffect.Dispose();
+
+            adjustment.PropertyChanged -= OnAdjustmentPropertyChanged;
             base.Dispose();
         }
 
         protected override void OnInputChanged()
         {
             gammaEffect.Source = Input;
-            Invalidate();
         }
 
-        protected override void OnAdjustmentPropertyChanged(object sender, PropertyChangedEventArgs e)
+        private void OnAdjustmentPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             switch (e.PropertyName)
             {
@@ -46,8 +49,6 @@ namespace Fotografix.Win2D.Composition.Adjustments
                     UpdateContrast();
                     break;
             }
-
-            base.OnAdjustmentPropertyChanged(sender, e);
         }
 
         private void UpdateContrast()
