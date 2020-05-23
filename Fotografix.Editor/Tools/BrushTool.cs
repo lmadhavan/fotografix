@@ -8,8 +8,8 @@ namespace Fotografix.Editor.Tools
         private bool enabled;
         private BrushStroke brushStroke;
 
-        public float Size { get; set; }
-        public Color Color { get; set; }
+        public float Size { get; set; } = 5;
+        public Color Color { get; set; } = Color.White;
 
         object ITool.Settings => this;
         public ToolCursor Cursor => enabled ? ToolCursor.Crosshair : ToolCursor.Disabled;

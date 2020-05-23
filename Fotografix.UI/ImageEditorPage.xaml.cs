@@ -9,8 +9,10 @@ using System.Threading.Tasks;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Storage;
 using Windows.Storage.Pickers;
+using Windows.UI.Input;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Navigation;
 
 namespace Fotografix.UI
@@ -173,6 +175,27 @@ namespace Fotografix.UI
             picker.FileTypeFilter.Add(".jpg");
             picker.FileTypeFilter.Add(".png");
             return picker;
+        }
+
+        private void Canvas_PointerPressed(object sender, PointerRoutedEventArgs e)
+        {
+            editor.PointerPressed(GetEditorPoint(e));
+        }
+
+        private void Canvas_PointerMoved(object sender, PointerRoutedEventArgs e)
+        {
+            editor.PointerMoved(GetEditorPoint(e));
+        }
+
+        private void Canvas_PointerReleased(object sender, PointerRoutedEventArgs e)
+        {
+            editor.PointerReleased(GetEditorPoint(e));
+        }
+
+        private PointF GetEditorPoint(PointerRoutedEventArgs e)
+        {
+            PointerPoint pt = e.GetCurrentPoint(canvas);
+            return new PointF((float)pt.Position.X, (float)pt.Position.Y);
         }
     }
 }

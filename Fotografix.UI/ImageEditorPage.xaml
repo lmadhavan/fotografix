@@ -124,7 +124,13 @@
         </Grid>
 
         <ScrollViewer x:Name="scrollViewer" Grid.Row="1" Grid.Column="0" HorizontalScrollBarVisibility="Auto" ZoomMode="Enabled">
-            <canvas:CanvasControl x:Name="canvas" CreateResources="Canvas_CreateResources" Draw="Canvas_Draw" />
+            <canvas:CanvasControl x:Name="canvas"
+                                  CreateResources="Canvas_CreateResources"
+                                  Draw="Canvas_Draw"
+                                  PointerPressed="Canvas_PointerPressed"
+                                  PointerMoved="Canvas_PointerMoved"
+                                  PointerReleased="Canvas_PointerReleased"
+                                  />
         </ScrollViewer>
 
         <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Vertical" Background="{ThemeResource AppBarBackgroundThemeBrush}" Padding="8" BorderThickness="1,0,0,0" BorderBrush="{ThemeResource ButtonBorderThemeBrush}">
