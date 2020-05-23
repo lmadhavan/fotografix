@@ -1,7 +1,9 @@
-﻿using Fotografix.UI.Adjustments;
+﻿using Fotografix.Editor.Tools;
+using Fotografix.UI.Adjustments;
 using Microsoft.Graphics.Canvas.UI;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
@@ -9,6 +11,7 @@ using System.Threading.Tasks;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Storage;
 using Windows.Storage.Pickers;
+using Windows.UI.Core;
 using Windows.UI.Input;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -19,12 +22,22 @@ namespace Fotografix.UI
 {
     public sealed partial class ImageEditorPage : Page
     {
+        private static readonly Dictionary<ToolCursor, CoreCursor> CursorMap = new Dictionary<ToolCursor, CoreCursor>
+        {
+            [ToolCursor.Crosshair] = new CoreCursor(CoreCursorType.Cross, 0),
+            [ToolCursor.Disabled] = new CoreCursor(CoreCursorType.UniversalNo, 0)
+        };
+
+        private readonly CoreWindow window;
+        private CoreCursor originalCursor;
+
         private StorageFile file;
         private ImageEditor editor;
         private ResizeImageParameters resizeImageParameters;
 
         public ImageEditorPage()
         {
+            this.window = CoreWindow.GetForCurrentThread();
             this.InitializeComponent();
             BindNewAdjustmentMenuFlyout();
         }
@@ -177,6 +190,11 @@ namespace Fotografix.UI
             return picker;
         }
 
+        private void Canvas_PointerEntered(object sender, PointerRoutedEventArgs e)
+        {
+            this.originalCursor = window.PointerCursor;
+        }
+
         private void Canvas_PointerPressed(object sender, PointerRoutedEventArgs e)
         {
             editor?.PointerPressed(GetEditorPoint(e));
@@ -184,12 +202,18 @@ namespace Fotografix.UI
 
         private void Canvas_PointerMoved(object sender, PointerRoutedEventArgs e)
         {
+            window.PointerCursor = CursorMap[editor?.ToolCursor ?? ToolCursor.Disabled];
             editor?.PointerMoved(GetEditorPoint(e));
         }
 
         private void Canvas_PointerReleased(object sender, PointerRoutedEventArgs e)
         {
             editor?.PointerReleased(GetEditorPoint(e));
+        }
+
+        private void Canvas_PointerExited(object sender, PointerRoutedEventArgs e)
+        {
+            window.PointerCursor = originalCursor;
         }
 
         private PointF GetEditorPoint(PointerRoutedEventArgs e)

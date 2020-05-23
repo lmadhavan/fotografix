@@ -127,9 +127,11 @@
             <canvas:CanvasControl x:Name="canvas"
                                   CreateResources="Canvas_CreateResources"
                                   Draw="Canvas_Draw"
+                                  PointerEntered="Canvas_PointerEntered"
                                   PointerPressed="Canvas_PointerPressed"
                                   PointerMoved="Canvas_PointerMoved"
                                   PointerReleased="Canvas_PointerReleased"
+                                  PointerExited="Canvas_PointerExited"
                                   />
         </ScrollViewer>
 
