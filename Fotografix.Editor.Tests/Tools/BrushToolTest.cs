@@ -68,6 +68,19 @@ namespace Fotografix.Editor.Tests.Tools
             Assert.That(brushStrokeCompletedEvent, Is.Null);
         }
 
+        [Test]
+        public void StopsUpdatingBrushStrokeAfterPointerIsReleased()
+        {
+            ActivateBitmapLayer();
+            tool.PointerPressed(Start);
+            tool.PointerMoved(End);
+            tool.PointerReleased(End);
+            tool.PointerMoved(PointF.Empty);
+
+            BrushStroke brushStroke = brushStrokeCompletedEvent.BrushStroke;
+            Assert.That(brushStroke.Points, Has.Count.EqualTo(2));
+        }
+
         private void ActivateBitmapLayer()
         {
             tool.LayerActivated(new BitmapLayer(new FakeBitmap()));

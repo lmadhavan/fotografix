@@ -37,6 +37,7 @@ namespace Fotografix.Editor.Tools
             if (brushStroke != null)
             {
                 BrushStrokeCompleted?.Invoke(this, new BrushStrokeEventArgs(brushStroke));
+                this.brushStroke = null;
             }
         }
 
