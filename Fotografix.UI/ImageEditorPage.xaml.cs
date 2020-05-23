@@ -179,17 +179,17 @@ namespace Fotografix.UI
 
         private void Canvas_PointerPressed(object sender, PointerRoutedEventArgs e)
         {
-            editor.PointerPressed(GetEditorPoint(e));
+            editor?.PointerPressed(GetEditorPoint(e));
         }
 
         private void Canvas_PointerMoved(object sender, PointerRoutedEventArgs e)
         {
-            editor.PointerMoved(GetEditorPoint(e));
+            editor?.PointerMoved(GetEditorPoint(e));
         }
 
         private void Canvas_PointerReleased(object sender, PointerRoutedEventArgs e)
         {
-            editor.PointerReleased(GetEditorPoint(e));
+            editor?.PointerReleased(GetEditorPoint(e));
         }
 
         private PointF GetEditorPoint(PointerRoutedEventArgs e)
