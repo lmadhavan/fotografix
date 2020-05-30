@@ -27,7 +27,7 @@ namespace Fotografix.UI
 
         private Layer activeLayer;
         private LayerViewModel activeLayerViewModel;
-        
+
         private ImageEditor(Image image)
         {
             this.image = image;
@@ -40,14 +40,19 @@ namespace Fotografix.UI
             this.history = new History();
             history.PropertyChanged += OnHistoryPropertyChanged;
 
-            BrushTool tool = new BrushTool();
+            BrushTool tool = new BrushTool()
+            {
+                Size = 5,
+                Color = Color.White
+            };
+            tool.BrushStrokeStarted += OnBrushStrokeStarted;
             tool.BrushStrokeCompleted += OnBrushStrokeCompleted;
             this.tool = tool;
 
             this.ActiveLayer = image.Layers.FirstOrDefault();
 
             image.PropertyChanged += OnImagePropertyChanged;
-            image.ContentChanged += OnImageContentChanged;
+            image.ContentChanged += OnContentChanged;
             image.Layers.CollectionChanged += OnLayerCollectionChanged;
         }
 
@@ -248,12 +253,20 @@ namespace Fotografix.UI
             RaisePropertyChanged(e.PropertyName);
         }
 
-        private void OnBrushStrokeCompleted(object sender, BrushStrokeEventArgs e)
+        private void OnBrushStrokeStarted(object sender, BrushStrokeEventArgs e)
         {
-            Execute(new PaintBrushStrokeCommand(activeLayer, e.BrushStroke));
+            compositor.BeginBrushStrokePreview(e.Layer, e.BrushStroke);
+            e.BrushStroke.ContentChanged += OnContentChanged;
         }
 
-        private void OnImageContentChanged(object sender, ContentChangedEventArgs e)
+        private void OnBrushStrokeCompleted(object sender, BrushStrokeEventArgs e)
+        {
+            e.BrushStroke.ContentChanged -= OnContentChanged;
+            compositor.EndBrushStrokePreview(e.Layer);
+            Execute(e.CreatePaintCommand());
+        }
+
+        private void OnContentChanged(object sender, ContentChangedEventArgs e)
         {
             Invalidated?.Invoke(this, EventArgs.Empty);
         }

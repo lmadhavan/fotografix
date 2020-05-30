@@ -31,5 +31,15 @@ namespace Fotografix.Win2D
             transparencyGrid.Draw(ds);
             imageNode.Draw(ds);
         }
+
+        public void BeginBrushStrokePreview(Layer layer, BrushStroke brushStroke)
+        {
+            imageNode.BeginBrushStrokePreview(layer, brushStroke);
+        }
+
+        public void EndBrushStrokePreview(Layer layer)
+        {
+            imageNode.EndBrushStrokePreview(layer);
+        }
     }
 }

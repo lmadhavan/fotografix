@@ -27,7 +27,7 @@ namespace Fotografix.Tests
 
         protected async Task AssertImageAsync(string fileWithExpectedImage)
         {
-            AssertInvalidated();
+            AssertInvalidated($"Displayed image was not updated (expecting {fileWithExpectedImage})");
             await AssertImage.IsEquivalentAsync(fileWithExpectedImage, Editor);
         }
 
@@ -46,9 +46,9 @@ namespace Fotografix.Tests
             this.invalidated = true;
         }
 
-        private void AssertInvalidated()
+        private void AssertInvalidated(string message)
         {
-            Assert.IsTrue(invalidated);
+            Assert.IsTrue(invalidated, message);
             this.invalidated = false;
         }
     }

@@ -2,7 +2,6 @@
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Effects;
 using System;
-using System.ComponentModel;
 
 namespace Fotografix.Win2D.Composition
 {
@@ -25,17 +24,6 @@ namespace Fotografix.Win2D.Composition
             UnregisterAdjustment();
             crossFadeEffect.Dispose();
             base.Dispose();
-        }
-
-        protected override void OnLayerPropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == nameof(AdjustmentLayer.Adjustment))
-            {
-                UnregisterAdjustment();
-                RegisterAdjustment();
-            }
-
-            base.OnLayerPropertyChanged(sender, e);
         }
 
         protected override ICanvasImage ResolveOutput(ICanvasImage background)

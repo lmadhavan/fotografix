@@ -35,6 +35,16 @@ namespace Fotografix.Win2D.Composition
             }
         }
 
+        public void BeginBrushStrokePreview(Layer layer, BrushStroke brushStroke)
+        {
+            layerNodes[layer].BeginBrushStrokePreview(brushStroke);
+        }
+
+        public void EndBrushStrokePreview(Layer layer)
+        {
+            layerNodes[layer].EndBrushStrokePreview();
+        }
+
         private void RelinkLayers()
         {
             if (relinking)

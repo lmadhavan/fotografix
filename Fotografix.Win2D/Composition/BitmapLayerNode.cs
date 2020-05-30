@@ -8,39 +8,26 @@ namespace Fotografix.Win2D.Composition
     {
         private readonly BitmapLayer layer;
         private readonly OpacityEffect opacityEffect;
-        private readonly CompositeEffect compositeEffect;
+        private readonly CompositeEffectNode compositeEffectNode;
         private Win2DBitmap bitmap;
 
         public BitmapLayerNode(BitmapLayer layer) : base(layer)
         {
             this.layer = layer;
+            layer.PropertyChanged += OnLayerPropertyChanged;
 
             this.opacityEffect = new OpacityEffect();
 
-            this.compositeEffect = new CompositeEffect();
-            // reserve background and foreground slots for the effect, actual sources are set later
-            compositeEffect.Sources.Add(null);
-            compositeEffect.Sources.Add(null);
-
-            this.bitmap = (Win2DBitmap)layer.Bitmap;
-            UpdateOutput();
+            this.compositeEffectNode = new CompositeEffectNode();
+            UpdateBitmap();
         }
 
         public override void Dispose()
         {
-            compositeEffect.Dispose();
+            compositeEffectNode.Dispose();
             opacityEffect.Dispose();
+            layer.PropertyChanged -= OnLayerPropertyChanged;
             base.Dispose();
-        }
-
-        protected override void OnLayerPropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == nameof(BitmapLayer.Bitmap))
-            {
-                this.bitmap = (Win2DBitmap)layer.Bitmap;
-            }
-
-            base.OnLayerPropertyChanged(sender, e);
         }
 
         protected override ICanvasImage ResolveOutput(ICanvasImage background)
@@ -59,9 +46,7 @@ namespace Fotografix.Win2D.Composition
 
             if (layer.BlendMode == BlendMode.Normal)
             {
-                compositeEffect.Sources[0] = background;
-                compositeEffect.Sources[1] = bitmapWithOpacity;
-                return compositeEffect;
+                return compositeEffectNode.ResolveOutput(bitmapWithOpacity, background);
             }
 
             return Blend(bitmapWithOpacity, background);
@@ -77,6 +62,20 @@ namespace Fotografix.Win2D.Composition
             opacityEffect.Source = bitmap.Output;
             opacityEffect.Opacity = layer.Opacity;
             return opacityEffect;
+        }
+
+        private void OnLayerPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(BitmapLayer.Bitmap))
+            {
+                UpdateBitmap();
+            }
+        }
+
+        private void UpdateBitmap()
+        {
+            this.bitmap = (Win2DBitmap)layer.Bitmap;
+            UpdateOutput();
         }
     }
 }

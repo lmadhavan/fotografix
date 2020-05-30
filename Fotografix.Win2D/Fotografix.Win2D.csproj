@@ -124,6 +124,8 @@
     <Compile Include="Composition\AdjustmentLayerNode.cs" />
     <Compile Include="Composition\Adjustments\AdjustmentNode.cs" />
     <Compile Include="Composition\Adjustments\BrightnessContrastAdjustmentNode.cs" />
+    <Compile Include="Composition\BrushStrokeNode.cs" />
+    <Compile Include="Composition\CompositeEffectNode.cs" />
     <Compile Include="Composition\NodeFactory.cs" />
     <Compile Include="Composition\Adjustments\BlackAndWhiteAdjustmentNode.cs" />
     <Compile Include="Composition\Adjustments\ColorMatrixAdjustmentNode.cs" />

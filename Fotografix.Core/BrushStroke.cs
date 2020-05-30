@@ -3,7 +3,7 @@ using System.Drawing;
 
 namespace Fotografix
 {
-    public sealed class BrushStroke
+    public sealed class BrushStroke : NotifyContentChangedBase
     {
         private readonly List<PointF> points = new List<PointF>();
 
@@ -22,6 +22,7 @@ namespace Fotografix
         public void AddPoint(PointF pt)
         {
             points.Add(pt);
+            RaiseContentChanged();
         }
     }
 }

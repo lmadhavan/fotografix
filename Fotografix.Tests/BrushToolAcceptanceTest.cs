@@ -16,10 +16,16 @@ namespace Fotografix.Tests
 
             AssertToolCursor(ToolCursor.Crosshair);
 
-            DragPointer(new PointF[] {
+            PressAndDragPointer(new PointF[] {
                 new PointF(100, 100),
                 new PointF(250, 150),
-                new PointF(250, 350),
+                new PointF(250, 350)
+            });
+
+            await AssertImageAsync("flowers_brush_partial.png");
+
+            ContinueDraggingAndReleasePointer(new PointF[]
+            {
                 new PointF(75, 200),
                 new PointF(200, 50)
             });
@@ -44,11 +50,19 @@ namespace Fotografix.Tests
             Assert.AreEqual(expected, Editor.ToolCursor);
         }
 
-        private void DragPointer(PointF[] points)
+        private void PressAndDragPointer(PointF[] points)
         {
             Editor.PointerPressed(points[0]);
 
             for (int i = 1; i < points.Length; i++)
+            {
+                Editor.PointerMoved(points[i]);
+            }
+        }
+
+        private void ContinueDraggingAndReleasePointer(PointF[] points)
+        {
+            for (int i = 0; i < points.Length; i++)
             {
                 Editor.PointerMoved(points[i]);
             }

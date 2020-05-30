@@ -5,25 +5,28 @@ namespace Fotografix.Editor.Tools
 {
     public sealed class BrushTool : ITool, IBrushToolSettings
     {
-        private bool enabled;
+        private Layer activeLayer;
         private BrushStroke brushStroke;
 
-        public float Size { get; set; } = 5;
-        public Color Color { get; set; } = Color.White;
+        public float Size { get; set; }
+        public Color Color { get; set; }
 
         object ITool.Settings => this;
-        public ToolCursor Cursor => enabled ? ToolCursor.Crosshair : ToolCursor.Disabled;
+        public ToolCursor Cursor => Enabled ? ToolCursor.Crosshair : ToolCursor.Disabled;
+
+        private bool Enabled => activeLayer.CanPaint;
 
         public void LayerActivated(Layer layer)
         {
-            this.enabled = layer.CanPaint;
+            this.activeLayer = layer;
         }
 
         public void PointerPressed(PointF pt)
         {
-            if (enabled)
+            if (Enabled)
             {
                 this.brushStroke = new BrushStroke(pt, Size, Color);
+                BrushStrokeStarted?.Invoke(this, new BrushStrokeEventArgs(activeLayer, brushStroke));
             }
         }
 
@@ -36,11 +39,12 @@ namespace Fotografix.Editor.Tools
         {
             if (brushStroke != null)
             {
-                BrushStrokeCompleted?.Invoke(this, new BrushStrokeEventArgs(brushStroke));
+                BrushStrokeCompleted?.Invoke(this, new BrushStrokeEventArgs(activeLayer, brushStroke));
                 this.brushStroke = null;
             }
         }
 
+        public event EventHandler<BrushStrokeEventArgs> BrushStrokeStarted;
         public event EventHandler<BrushStrokeEventArgs> BrushStrokeCompleted;
     }
 }

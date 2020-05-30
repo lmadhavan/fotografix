@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel;
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Effects;
 
@@ -12,17 +11,18 @@ namespace Fotografix.Win2D.Composition
 
         private ICanvasImage background;
         private ICanvasImage output;
+        private BrushStrokeNode brushStrokeNode;
 
         protected LayerNode(Layer layer)
         {
             this.layer = layer;
             this.blendEffect = new BlendEffect();
-            layer.PropertyChanged += OnLayerPropertyChanged;
+            layer.ContentChanged += OnContentChanged;
         }
 
         public virtual void Dispose()
         {
-            layer.PropertyChanged -= OnLayerPropertyChanged;
+            layer.ContentChanged -= OnContentChanged;
             blendEffect.Dispose();
         }
 
@@ -62,17 +62,35 @@ namespace Fotografix.Win2D.Composition
 
         public event EventHandler OutputChanged;
 
-        protected void UpdateOutput()
+        public void BeginBrushStrokePreview(BrushStroke brushStroke)
         {
-            this.Output = ResolveOutput(background);
+            this.brushStrokeNode = new BrushStrokeNode(brushStroke);
+            brushStrokeNode.OutputChanged += OnContentChanged;
+            UpdateOutput();
         }
 
-        protected virtual void OnLayerPropertyChanged(object sender, PropertyChangedEventArgs e)
+        public void EndBrushStrokePreview()
         {
-            if (e.PropertyName != nameof(Layer.Name))
+            brushStrokeNode.Dispose();
+            this.brushStrokeNode = null;
+            UpdateOutput();
+        }
+
+        protected void UpdateOutput()
+        {
+            ICanvasImage output = ResolveOutput(background);
+            
+            if (brushStrokeNode != null)
             {
-                UpdateOutput();
+                output = brushStrokeNode.ResolveOutput(output);
             }
+            
+            this.Output = output;
+        }
+
+        private void OnContentChanged(object sender, EventArgs e)
+        {
+            UpdateOutput();
         }
 
         protected abstract ICanvasImage ResolveOutput(ICanvasImage background);
