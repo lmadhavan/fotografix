@@ -49,7 +49,7 @@ namespace Fotografix.UI
             tool.BrushStrokeCompleted += OnBrushStrokeCompleted;
             this.tool = tool;
 
-            this.ActiveLayer = image.Layers.FirstOrDefault();
+            this.ActiveLayer = image.Layers.First();
 
             image.PropertyChanged += OnImagePropertyChanged;
             image.ContentChanged += OnContentChanged;
@@ -113,7 +113,7 @@ namespace Fotografix.UI
 
             set
             {
-                if (SetProperty(ref activeLayer, value))
+                if (value != null && SetProperty(ref activeLayer, value))
                 {
                     activeLayerViewModel?.Dispose();
                     this.ActiveLayerViewModel = activeLayer == null ? null : new LayerViewModel(activeLayer, this);
@@ -226,10 +226,6 @@ namespace Fotografix.UI
                     {
                         this.ActiveLayer = (Layer)e.NewItems[0];
                     }
-                    break;
-
-                case NotifyCollectionChangedAction.Reset:
-                    this.ActiveLayer = null;
                     break;
             }
         }
