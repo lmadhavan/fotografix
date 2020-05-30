@@ -120,6 +120,9 @@
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="..\SharedAssemblyInfo.cs">
+      <Link>Properties\SharedAssemblyInfo.cs</Link>
+    </Compile>
     <Compile Include="BrushStrokePainter.cs" />
     <Compile Include="Composition\AdjustmentLayerNode.cs" />
     <Compile Include="Composition\Adjustments\AdjustmentNode.cs" />
@@ -154,10 +157,6 @@
     <ProjectReference Include="..\Fotografix.Core\Fotografix.Core.csproj">
       <Project>{258c6a47-8821-49eb-a1bb-188456689de4}</Project>
       <Name>Fotografix.Core</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Fotografix.Editor\Fotografix.Editor.csproj">
-      <Project>{c2424398-29d9-4392-a0c0-c4699c7b913b}</Project>
-      <Name>Fotografix.Editor</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">

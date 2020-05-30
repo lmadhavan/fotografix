@@ -120,6 +120,9 @@
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="..\SharedAssemblyInfo.cs">
+      <Link>Properties\SharedAssemblyInfo.cs</Link>
+    </Compile>
     <Compile Include="Adjustments\AdjustmentViewModelFactory.cs" />
     <Compile Include="Adjustments\BrightnessContrastAdjustmentViewModel.cs" />
     <Compile Include="Adjustments\GradientMapAdjustmentViewModel.cs" />
