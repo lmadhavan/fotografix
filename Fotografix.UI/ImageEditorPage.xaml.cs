@@ -1,4 +1,5 @@
-﻿using Fotografix.Editor.Tools;
+﻿using Fotografix.Editor;
+using Fotografix.Editor.Tools;
 using Fotografix.UI.Adjustments;
 using Microsoft.Graphics.Canvas.UI;
 using Microsoft.Graphics.Canvas.UI.Xaml;
@@ -29,6 +30,8 @@ namespace Fotografix.UI
         };
 
         private readonly CoreWindow window;
+        private readonly Viewport viewport;
+
         private CoreCursor originalCursor;
 
         private StorageFile file;
@@ -39,6 +42,7 @@ namespace Fotografix.UI
         {
             this.window = CoreWindow.GetForCurrentThread();
             this.InitializeComponent();
+            this.viewport = new ScrollViewerViewport(scrollViewer);
             BindNewAdjustmentMenuFlyout();
         }
 
@@ -93,6 +97,7 @@ namespace Fotografix.UI
 
             Bindings.Update();
             UpdateCanvasSize();
+            FitToScreen();
         }
 
         private string FormatSize(Size size)
@@ -105,6 +110,11 @@ namespace Fotografix.UI
             canvas.Width = editor.Size.Width;
             canvas.Height = editor.Size.Height;
             canvas.Invalidate();
+        }
+
+        private void FitToScreen()
+        {
+            viewport.ZoomToFit(editor.Size);
         }
 
         private void OnEditorInvalidated(object sender, EventArgs e)

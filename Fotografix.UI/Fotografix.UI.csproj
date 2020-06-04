@@ -161,6 +161,7 @@
     <Compile Include="PropertyEditorViewModelBase.cs" />
     <Compile Include="ResizeImageParameters.cs" />
     <Compile Include="Collections\ReversedCollectionView.cs" />
+    <Compile Include="ScrollViewerViewport.cs" />
     <EmbeddedResource Include="Properties\Fotografix.Editor.rd.xml" />
   </ItemGroup>
   <ItemGroup>
