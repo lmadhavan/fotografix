@@ -3,7 +3,9 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
+using Windows.ApplicationModel.Core;
 using Windows.Storage;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
 namespace Fotografix.UI
@@ -13,6 +15,12 @@ namespace Fotografix.UI
         public TabViewContainer()
         {
             this.InitializeComponent();
+
+            var coreTitleBar = CoreApplication.GetCurrentView().TitleBar;
+            coreTitleBar.ExtendViewIntoTitleBar = true;
+            coreTitleBar.LayoutMetricsChanged += OnLayoutMetricsChanged;
+
+            Window.Current.SetTitleBar(tabStripFooter);
         }
 
         public async Task AddNewTab()
@@ -41,6 +49,22 @@ namespace Fotografix.UI
             ImageEditorPage page = GetPage(args.Tab);
             tabView.TabItems.Remove(args.Tab);
             page.Dispose();
+        }
+
+        private void OnLayoutMetricsChanged(CoreApplicationViewTitleBar sender, object args)
+        {
+            if (FlowDirection == FlowDirection.LeftToRight)
+            {
+                tabStripHeader.MinWidth = sender.SystemOverlayLeftInset;
+                tabStripFooter.MinWidth = sender.SystemOverlayRightInset;
+            }
+            else
+            {
+                tabStripHeader.MinWidth = sender.SystemOverlayRightInset;
+                tabStripFooter.MinWidth = sender.SystemOverlayLeftInset;
+            }
+
+            tabStripHeader.Height = tabStripFooter.Height = sender.Height;
         }
 
         private async Task<StorageFile> GetSampleImageAsync()

@@ -11,10 +11,19 @@
 
     <muxc:TabView
         x:Name="tabView"
+        Margin="0,-8,0,0"
         HorizontalAlignment="Stretch"
         VerticalAlignment="Stretch"
         AddTabButtonClick="OnAddTabRequested"
         TabCloseRequested="OnCloseTabRequested"
-    />
+    >
+        <muxc:TabView.TabStripHeader>
+            <Grid x:Name="tabStripHeader" Background="Transparent" />
+        </muxc:TabView.TabStripHeader>
+        
+        <muxc:TabView.TabStripFooter>
+            <Grid x:Name="tabStripFooter" Background="Transparent" />
+        </muxc:TabView.TabStripFooter>
+    </muxc:TabView>
 
 </UserControl>
