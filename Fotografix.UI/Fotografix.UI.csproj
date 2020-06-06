@@ -162,11 +162,17 @@
     <Compile Include="ResizeImageParameters.cs" />
     <Compile Include="Collections\ReversedCollectionView.cs" />
     <Compile Include="ScrollViewerViewport.cs" />
+    <Compile Include="TabViewContainer.xaml.cs">
+      <DependentUpon>TabViewContainer.xaml</DependentUpon>
+    </Compile>
     <EmbeddedResource Include="Properties\Fotografix.Editor.rd.xml" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
       <Version>6.2.9</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.UI.Xaml">
+      <Version>2.4.2</Version>
     </PackageReference>
     <PackageReference Include="Win2d.uwp">
       <Version>1.24.0</Version>
@@ -192,6 +198,10 @@
     <Page Include="Styles.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="TabViewContainer.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>

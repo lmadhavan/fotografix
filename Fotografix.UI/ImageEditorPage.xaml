@@ -11,7 +11,6 @@
     xmlns:sys="using:System"
     mc:Ignorable="d"
     Background="{ThemeResource AppBarBackgroundThemeBrush}"
-    Unloaded="Page_Unloaded"
     AllowDrop="True">
 
     <Page.Resources>

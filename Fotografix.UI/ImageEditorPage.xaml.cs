@@ -21,7 +21,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Fotografix.UI
 {
-    public sealed partial class ImageEditorPage : Page
+    public sealed partial class ImageEditorPage : Page, IDisposable
     {
         private static readonly Dictionary<ToolCursor, CoreCursor> CursorMap = new Dictionary<ToolCursor, CoreCursor>
         {
@@ -46,6 +46,12 @@ namespace Fotografix.UI
             BindNewAdjustmentMenuFlyout();
         }
 
+        public void Dispose()
+        {
+            canvas.RemoveFromVisualTree();
+            editor?.Dispose();
+        }
+
         private void BindNewAdjustmentMenuFlyout()
         {
             var menuFlyout = (MenuFlyout)newAdjustmentButton.Flyout;
@@ -66,12 +72,6 @@ namespace Fotografix.UI
         {
             base.OnNavigatedTo(e);
             this.file = (StorageFile)e.Parameter;
-        }
-
-        private void Page_Unloaded(object sender, RoutedEventArgs e)
-        {
-            canvas.RemoveFromVisualTree();
-            editor?.Dispose();
         }
 
         private void Canvas_CreateResources(CanvasControl sender, CanvasCreateResourcesEventArgs args)
