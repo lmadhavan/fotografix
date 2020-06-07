@@ -130,7 +130,10 @@
     <Compile Include="Adjustments\IAdjustmentViewModel.cs" />
     <Compile Include="BitmapLoader.cs" />
     <Compile Include="Collections\ReorderAwareCollectionView.cs" />
+    <Compile Include="ITitleBarLayoutMetrics.cs" />
+    <Compile Include="TitleBar.cs" />
     <Compile Include="ICommandService.cs" />
+    <Compile Include="ICustomTitleBarProvider.cs" />
     <Compile Include="Layers\LayerTemplatesResourceDictionary.xaml.cs">
       <DependentUpon>LayerTemplatesResourceDictionary.xaml</DependentUpon>
     </Compile>

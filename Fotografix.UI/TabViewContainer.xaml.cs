@@ -3,24 +3,17 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
-using Windows.ApplicationModel.Core;
 using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
 namespace Fotografix.UI
 {
-    public sealed partial class TabViewContainer : UserControl
+    public sealed partial class TabViewContainer : UserControl, ICustomTitleBarProvider
     {
         public TabViewContainer()
         {
             this.InitializeComponent();
-
-            var coreTitleBar = CoreApplication.GetCurrentView().TitleBar;
-            coreTitleBar.ExtendViewIntoTitleBar = true;
-            coreTitleBar.LayoutMetricsChanged += OnLayoutMetricsChanged;
-
-            Window.Current.SetTitleBar(tabStripFooter);
         }
 
         public async Task AddNewTab()
@@ -51,22 +44,6 @@ namespace Fotografix.UI
             page.Dispose();
         }
 
-        private void OnLayoutMetricsChanged(CoreApplicationViewTitleBar sender, object args)
-        {
-            if (FlowDirection == FlowDirection.LeftToRight)
-            {
-                tabStripHeader.MinWidth = sender.SystemOverlayLeftInset;
-                tabStripFooter.MinWidth = sender.SystemOverlayRightInset;
-            }
-            else
-            {
-                tabStripHeader.MinWidth = sender.SystemOverlayRightInset;
-                tabStripFooter.MinWidth = sender.SystemOverlayLeftInset;
-            }
-
-            tabStripHeader.Height = tabStripFooter.Height = sender.Height;
-        }
-
         private async Task<StorageFile> GetSampleImageAsync()
         {
             var samplesFolder = await Package.Current.InstalledLocation.GetFolderAsync("Sample Images");
@@ -77,6 +54,24 @@ namespace Fotografix.UI
         {
             Frame frame = (Frame)tab.Content;
             return (ImageEditorPage)frame.Content;
+        }
+
+        UIElement ICustomTitleBarProvider.CustomTitleBar => tabStripFooter;
+
+        void ICustomTitleBarProvider.UpdateLayout(ITitleBarLayoutMetrics metrics)
+        {
+            if (FlowDirection == FlowDirection.LeftToRight)
+            {
+                tabStripHeader.MinWidth = metrics.SystemOverlayLeftInset;
+                tabStripFooter.MinWidth = metrics.SystemOverlayRightInset;
+            }
+            else
+            {
+                tabStripHeader.MinWidth = metrics.SystemOverlayRightInset;
+                tabStripFooter.MinWidth = metrics.SystemOverlayLeftInset;
+            }
+
+            tabStripHeader.Height = tabStripFooter.Height = metrics.Height;
         }
     }
 }

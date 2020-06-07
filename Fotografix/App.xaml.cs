@@ -18,6 +18,7 @@ namespace Fotografix
             if (container == null)
             {
                 container = new TabViewContainer();
+                TitleBar.GetForCurrentView().Customize(container);
                 Window.Current.Content = container;
             }
 
