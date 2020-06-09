@@ -7,6 +7,7 @@
     xmlns:canvas="using:Microsoft.Graphics.Canvas.UI.Xaml"
     xmlns:c="using:Fotografix"
     xmlns:ui="using:Fotografix.UI"
+    xmlns:e="using:Fotografix.Editor"
     xmlns:layers="using:Fotografix.UI.Layers"
     xmlns:sys="using:System"
     mc:Ignorable="d"
@@ -84,7 +85,7 @@
                         <Flyout x:Name="resizeImageFlyout" Opened="ResizeImageFlyout_Opened">
                             <ContentControl x:Name="resizeImageFlyoutContent">
                                 <ContentControl.ContentTemplate>
-                                    <DataTemplate x:DataType="ui:ResizeImageParameters">
+                                    <DataTemplate x:DataType="e:ResizeImageParameters">
                                         <Grid>
                                             <Grid.RowDefinitions>
                                                 <RowDefinition Height="Auto" />

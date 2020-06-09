@@ -1,6 +1,6 @@
 ﻿using System.Drawing;
 
-namespace Fotografix.UI
+namespace Fotografix.Editor
 {
     public sealed class ResizeImageParameters : NotifyPropertyChangedBase
     {

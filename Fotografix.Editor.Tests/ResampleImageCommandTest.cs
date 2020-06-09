@@ -3,7 +3,7 @@ using Fotografix.Testing;
 using NUnit.Framework;
 using System.Drawing;
 
-namespace Fotografix.Editor.Tests
+namespace Fotografix.Editor
 {
     [TestFixture]
     public class ResampleImageCommandTest

@@ -1,6 +1,6 @@
 ﻿using NUnit.Framework;
 
-namespace Fotografix.Editor.Tests
+namespace Fotografix.Editor
 {
     [TestFixture]
     public class ChangePropertyCommandTest

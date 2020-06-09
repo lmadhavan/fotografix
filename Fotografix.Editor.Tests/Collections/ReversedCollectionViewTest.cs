@@ -1,19 +1,18 @@
-﻿using Fotografix.UI.Collections;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using NUnit.Framework;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 
-namespace Fotografix.Tests.UI.Collections
+namespace Fotografix.Editor.Collections
 {
-    [TestClass]
+    [TestFixture]
     public class ReversedCollectionViewTest
     {
         private ObservableCollection<string> collection;
         private ReversedCollectionView<string> view;
         private NotifyCollectionChangedEventArgs e;
 
-        [TestInitialize]
-        public void Initialize()
+        [SetUp]
+        public void SetUp()
         {
             this.collection = new ObservableCollection<string>();
             collection.Add("foo");
@@ -23,7 +22,7 @@ namespace Fotografix.Tests.UI.Collections
             view.CollectionChanged += (s, e) => this.e = e;
         }
 
-        [TestMethod]
+        [Test]
         public void AddToUnderlyingCollection()
         {
             collection.Add("baz"); // collection -> foo, bar, baz <- view
@@ -33,7 +32,7 @@ namespace Fotografix.Tests.UI.Collections
             Assert.AreEqual("baz", view[0]);
         }
 
-        [TestMethod]
+        [Test]
         public void RemoveFromUnderlyingCollection()
         {
             collection.Remove("foo"); // collection -> bar <- view
@@ -42,7 +41,7 @@ namespace Fotografix.Tests.UI.Collections
             Assert.AreEqual(1, e.OldStartingIndex);
         }
 
-        [TestMethod]
+        [Test]
         public void ReplaceInUnderlyingCollection()
         {
             collection[1] = "baz"; // collection -> foo, baz <- view
@@ -53,7 +52,7 @@ namespace Fotografix.Tests.UI.Collections
             Assert.AreEqual("baz", view[0]);
         }
 
-        [TestMethod]
+        [Test]
         public void MoveInUnderlyingCollection()
         {
             collection.Move(0, 1); // collection -> baz, foo <- view
@@ -63,7 +62,7 @@ namespace Fotografix.Tests.UI.Collections
             Assert.AreEqual(0, e.NewStartingIndex);
         }
 
-        [TestMethod]
+        [Test]
         public void AddToView()
         {
             view.Add("baz"); // view -> bar, foo, baz <- collection
@@ -72,7 +71,7 @@ namespace Fotografix.Tests.UI.Collections
             Assert.AreEqual("baz", collection[0]);
         }
 
-        [TestMethod]
+        [Test]
         public void InsertInView()
         {
             view.Insert(1, "baz"); // view -> bar, baz, foo <- collection
@@ -81,7 +80,7 @@ namespace Fotografix.Tests.UI.Collections
             Assert.AreEqual("baz", collection[1]);
         }
 
-        [TestMethod]
+        [Test]
         public void RemoveFromView()
         {
             view.RemoveAt(0); // view -> foo <- collection
@@ -90,7 +89,7 @@ namespace Fotografix.Tests.UI.Collections
             Assert.AreEqual("foo", collection[0]);
         }
 
-        [TestMethod]
+        [Test]
         public void ReplaceInView()
         {
             view[0] = "baz"; // view -> baz, foo <- collection

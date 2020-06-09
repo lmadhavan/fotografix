@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 
-namespace Fotografix.UI.Collections
+namespace Fotografix.Editor.Collections
 {
     /// <summary>
     /// Provides a view of a list in which the order of elements is reversed.

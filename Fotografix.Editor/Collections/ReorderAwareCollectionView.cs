@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 
-namespace Fotografix.UI.Collections
+namespace Fotografix.Editor.Collections
 {
     /// <summary>
     /// Provides a wrapper around a list that notifies clients when an item is reordered through

@@ -1,8 +1,8 @@
 ﻿using Fotografix.Editor;
+using Fotografix.Editor.Collections;
 using Fotografix.Editor.Layers;
 using Fotografix.Editor.Tools;
 using Fotografix.UI.Adjustments;
-using Fotografix.UI.Collections;
 using Fotografix.UI.Layers;
 using Fotografix.Win2D;
 using Microsoft.Graphics.Canvas;

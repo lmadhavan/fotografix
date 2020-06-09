@@ -1,7 +1,7 @@
 ﻿using NUnit.Framework;
 using System.Collections.Generic;
 
-namespace Fotografix.Editor.Tests
+namespace Fotografix.Editor
 {
     [TestFixture]
     public class CompositeCommandTest

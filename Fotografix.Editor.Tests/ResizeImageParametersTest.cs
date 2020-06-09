@@ -1,13 +1,12 @@
-﻿using Fotografix.UI;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using NUnit.Framework;
 using System.Drawing;
 
-namespace Fotografix.Tests.UI
+namespace Fotografix.Editor
 {
-    [TestClass]
+    [TestFixture]
     public class ResizeImageParametersTest
     {
-        [TestMethod]
+        [Test]
         public void AspectRatioLocked_ChangingWidthShouldChangeHeight()
         {
             ResizeImageParameters parameters = new ResizeImageParameters(new Size(20, 10));
@@ -17,7 +16,7 @@ namespace Fotografix.Tests.UI
             Assert.AreEqual(5, parameters.Height);
         }
 
-        [TestMethod]
+        [Test]
         public void AspectRatioLocked_ChangingHeightShouldChangeWidth()
         {
             ResizeImageParameters parameters = new ResizeImageParameters(new Size(20, 10));
@@ -27,7 +26,7 @@ namespace Fotografix.Tests.UI
             Assert.AreEqual(10, parameters.Width);
         }
 
-        [TestMethod]
+        [Test]
         public void AspectRatioUnlocked_ChangingWidthShouldNotChangeHeight()
         {
             ResizeImageParameters parameters = new ResizeImageParameters(new Size(20, 10));
@@ -37,7 +36,7 @@ namespace Fotografix.Tests.UI
             Assert.AreEqual(10, parameters.Height);
         }
 
-        [TestMethod]
+        [Test]
         public void AspectRatioUnlocked_ChangingHeightShouldNotChangeWidth()
         {
             ResizeImageParameters parameters = new ResizeImageParameters(new Size(20, 10));
@@ -47,7 +46,7 @@ namespace Fotografix.Tests.UI
             Assert.AreEqual(20, parameters.Width);
         }
 
-        [TestMethod]
+        [Test]
         public void LockingAspectRatioUpdatesExistingDimensions()
         {
             ResizeImageParameters parameters = new ResizeImageParameters(new Size(20, 10));

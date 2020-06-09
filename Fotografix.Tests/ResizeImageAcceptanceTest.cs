@@ -1,4 +1,4 @@
-﻿using Fotografix.UI;
+﻿using Fotografix.Editor;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Threading.Tasks;
 
