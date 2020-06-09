@@ -207,6 +207,7 @@ namespace Fotografix.UI
 
         private void Canvas_PointerPressed(object sender, PointerRoutedEventArgs e)
         {
+            canvas.CapturePointer(e.Pointer);
             editor?.PointerPressed(GetEditorPoint(e));
         }
 
@@ -219,6 +220,7 @@ namespace Fotografix.UI
         private void Canvas_PointerReleased(object sender, PointerRoutedEventArgs e)
         {
             editor?.PointerReleased(GetEditorPoint(e));
+            canvas.ReleasePointerCapture(e.Pointer);
         }
 
         private void Canvas_PointerExited(object sender, PointerRoutedEventArgs e)
