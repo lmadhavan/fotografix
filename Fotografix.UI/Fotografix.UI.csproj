@@ -131,10 +131,17 @@
     <Compile Include="BitmapLoader.cs" />
     <Compile Include="BlendModes\BlendModeList.cs" />
     <Compile Include="BlendModes\BlendModeListItem.cs" />
-    <Compile Include="FilePickerFactory.cs" />
+    <Compile Include="FileManagement\FilePickerFactory.cs" />
+    <Compile Include="FileManagement\ICreateImageEditorCommand.cs" />
+    <Compile Include="FileManagement\NewImageParameters.cs" />
     <Compile Include="ImageEditorPageParameters.cs" />
     <Compile Include="ITitleBarLayoutMetrics.cs" />
-    <Compile Include="IWorkspace.cs" />
+    <Compile Include="FileManagement\IWorkspace.cs" />
+    <Compile Include="FileManagement\NewImageCommand.cs" />
+    <Compile Include="FileManagement\NewImageDialog.xaml.cs">
+      <DependentUpon>NewImageDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="FileManagement\OpenFileCommand.cs" />
     <Compile Include="TitleBar.cs" />
     <Compile Include="ICommandService.cs" />
     <Compile Include="ICustomTitleBarProvider.cs" />
@@ -195,6 +202,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Layers\LayerTemplatesResourceDictionary.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="FileManagement\NewImageDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

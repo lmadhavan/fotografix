@@ -1,6 +1,6 @@
 ﻿using Windows.Storage.Pickers;
 
-namespace Fotografix.UI
+namespace Fotografix.UI.FileManagement
 {
     public static class FilePickerFactory
     {

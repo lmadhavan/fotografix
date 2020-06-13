@@ -1,16 +1,16 @@
-﻿using Windows.Storage;
+﻿using Fotografix.UI.FileManagement;
 
 namespace Fotografix.UI
 {
     public sealed class ImageEditorPageParameters
     {
-        public ImageEditorPageParameters(IWorkspace workspace, StorageFile file)
+        public ImageEditorPageParameters(IWorkspace workspace, ICreateImageEditorCommand command)
         {
             this.Workspace = workspace;
-            this.File = file;
+            this.Command = command;
         }
 
         public IWorkspace Workspace { get; }
-        public StorageFile File { get; }
+        public ICreateImageEditorCommand Command { get; }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Fotografix.Editor;
 using Fotografix.Editor.Tools;
 using Fotografix.UI.Adjustments;
+using Fotografix.UI.FileManagement;
 using Microsoft.Graphics.Canvas.UI;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using System;
@@ -34,7 +35,7 @@ namespace Fotografix.UI
 
         private CoreCursor originalCursor;
         private IWorkspace workspace;
-        private StorageFile file;
+        private ICreateImageEditorCommand createCommand;
         private ImageEditor editor;
         private ResizeImageParameters resizeImageParameters;
 
@@ -74,7 +75,7 @@ namespace Fotografix.UI
 
             var parameters = (ImageEditorPageParameters)e.Parameter;
             this.workspace = parameters.Workspace;
-            this.file = parameters.File;
+            this.createCommand = parameters.Command;
         }
 
         private void Canvas_CreateResources(CanvasControl sender, CanvasCreateResourcesEventArgs args)
@@ -94,7 +95,7 @@ namespace Fotografix.UI
         {
             editor?.Dispose();
 
-            this.editor = await ImageEditor.CreateAsync(file);
+            this.editor = await createCommand.ExecuteAsync();
             editor.Invalidated += OnEditorInvalidated;
             editor.PropertyChanged += OnEditorPropertyChanged;
 
@@ -159,9 +160,14 @@ namespace Fotografix.UI
             }
         }
 
+        private async void NewImage_Click(object sender, RoutedEventArgs e)
+        {
+            await workspace.NewImageAsync();
+        }
+
         private async void OpenImage_Click(object sender, RoutedEventArgs e)
         {
-            await workspace.OpenImageAsync();
+            await workspace.OpenFileAsync();
         }
 
         private async void Import_Click(object sender, RoutedEventArgs e)

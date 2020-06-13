@@ -1,4 +1,5 @@
-﻿using Microsoft.UI.Xaml.Controls;
+﻿using Fotografix.UI.FileManagement;
+using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -20,29 +21,41 @@ namespace Fotografix.UI
         public async Task AddNewTabAsync()
         {
             StorageFile file = await GetSampleImageAsync();
-            AddNewTab(file);
+            AddNewTab(new OpenFileCommand(file));
         }
 
-        public async Task OpenImageAsync()
+        public async Task NewImageAsync()
+        {
+            NewImageParameters parameters = new NewImageParameters();
+
+            NewImageDialog dialog = new NewImageDialog(parameters);
+            if (await dialog.ShowAsync() == ContentDialogResult.Primary)
+            {
+                AddNewTab(new NewImageCommand(parameters.Size));
+                ActivateLatestTab();
+            }
+        }
+
+        public async Task OpenFileAsync()
         {
             FileOpenPicker picker = FilePickerFactory.CreateFilePicker();
 
             StorageFile file = await picker.PickSingleFileAsync();
             if (file != null)
             {
-                AddNewTab(file);
+                AddNewTab(new OpenFileCommand(file));
                 ActivateLatestTab();
             }
         }
 
-        private void AddNewTab(StorageFile file)
+        private void AddNewTab(ICreateImageEditorCommand command)
         {
             Frame frame = new Frame();
-            frame.Navigate(typeof(ImageEditorPage), new ImageEditorPageParameters(workspace: this, file));
+            frame.Navigate(typeof(ImageEditorPage), new ImageEditorPageParameters(workspace: this, command));
 
             TabViewItem tab = new TabViewItem()
             {
-                Header = file.DisplayName,
+                Header = command.Title,
                 Content = frame
             };
             tabView.TabItems.Add(tab);
