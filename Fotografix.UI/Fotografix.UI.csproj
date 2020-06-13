@@ -131,7 +131,10 @@
     <Compile Include="BitmapLoader.cs" />
     <Compile Include="BlendModes\BlendModeList.cs" />
     <Compile Include="BlendModes\BlendModeListItem.cs" />
+    <Compile Include="FilePickerFactory.cs" />
+    <Compile Include="ImageEditorPageParameters.cs" />
     <Compile Include="ITitleBarLayoutMetrics.cs" />
+    <Compile Include="IWorkspace.cs" />
     <Compile Include="TitleBar.cs" />
     <Compile Include="ICommandService.cs" />
     <Compile Include="ICustomTitleBarProvider.cs" />

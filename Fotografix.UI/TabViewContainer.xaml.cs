@@ -4,24 +4,41 @@ using System.Linq;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.Storage;
+using Windows.Storage.Pickers;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
 namespace Fotografix.UI
 {
-    public sealed partial class TabViewContainer : UserControl, ICustomTitleBarProvider
+    public sealed partial class TabViewContainer : UserControl, ICustomTitleBarProvider, IWorkspace
     {
         public TabViewContainer()
         {
             this.InitializeComponent();
         }
 
-        public async Task AddNewTab()
+        public async Task AddNewTabAsync()
         {
             StorageFile file = await GetSampleImageAsync();
+            AddNewTab(file);
+        }
 
+        public async Task OpenImageAsync()
+        {
+            FileOpenPicker picker = FilePickerFactory.CreateFilePicker();
+
+            StorageFile file = await picker.PickSingleFileAsync();
+            if (file != null)
+            {
+                AddNewTab(file);
+                ActivateLatestTab();
+            }
+        }
+
+        private void AddNewTab(StorageFile file)
+        {
             Frame frame = new Frame();
-            frame.Navigate(typeof(ImageEditorPage), file);
+            frame.Navigate(typeof(ImageEditorPage), new ImageEditorPageParameters(workspace: this, file));
 
             TabViewItem tab = new TabViewItem()
             {
@@ -31,9 +48,14 @@ namespace Fotografix.UI
             tabView.TabItems.Add(tab);
         }
 
-        private async void OnAddTabRequested(TabView sender, object args)
+        private async void OnNewTabRequested(TabView sender, object args)
         {
-            await AddNewTab();
+            await AddNewTabAsync();
+            ActivateLatestTab();
+        }
+
+        private void ActivateLatestTab()
+        {
             tabView.SelectedItem = tabView.TabItems.Last();
         }
 

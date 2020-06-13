@@ -33,7 +33,7 @@ namespace Fotografix.UI
         private readonly Viewport viewport;
 
         private CoreCursor originalCursor;
-
+        private IWorkspace workspace;
         private StorageFile file;
         private ImageEditor editor;
         private ResizeImageParameters resizeImageParameters;
@@ -71,7 +71,10 @@ namespace Fotografix.UI
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
-            this.file = (StorageFile)e.Parameter;
+
+            var parameters = (ImageEditorPageParameters)e.Parameter;
+            this.workspace = parameters.Workspace;
+            this.file = parameters.File;
         }
 
         private void Canvas_CreateResources(CanvasControl sender, CanvasCreateResourcesEventArgs args)
@@ -158,18 +161,12 @@ namespace Fotografix.UI
 
         private async void OpenImage_Click(object sender, RoutedEventArgs e)
         {
-            FileOpenPicker picker = CreateFilePicker();
-
-            this.file = await picker.PickSingleFileAsync();
-            if (file != null)
-            {
-                await LoadImageAsync();
-            }
+            await workspace.OpenImageAsync();
         }
 
         private async void Import_Click(object sender, RoutedEventArgs e)
         {
-            FileOpenPicker picker = CreateFilePicker();
+            FileOpenPicker picker = FilePickerFactory.CreateFilePicker();
             picker.CommitButtonText = "Import";
 
             var files = await picker.PickMultipleFilesAsync();
@@ -186,18 +183,6 @@ namespace Fotografix.UI
         {
             resizeImageFlyout.Hide();
             editor.ResizeImage(resizeImageParameters);
-        }
-
-        private static FileOpenPicker CreateFilePicker()
-        {
-            FileOpenPicker picker = new FileOpenPicker()
-            {
-                SuggestedStartLocation = PickerLocationId.PicturesLibrary,
-                ViewMode = PickerViewMode.Thumbnail
-            };
-            picker.FileTypeFilter.Add(".jpg");
-            picker.FileTypeFilter.Add(".png");
-            return picker;
         }
 
         private void Canvas_PointerEntered(object sender, PointerRoutedEventArgs e)

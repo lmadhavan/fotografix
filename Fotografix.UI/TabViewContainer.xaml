@@ -14,7 +14,7 @@
         Margin="0,-8,0,0"
         HorizontalAlignment="Stretch"
         VerticalAlignment="Stretch"
-        AddTabButtonClick="OnAddTabRequested"
+        AddTabButtonClick="OnNewTabRequested"
         TabCloseRequested="OnCloseTabRequested"
     >
         <muxc:TabView.TabStripHeader>

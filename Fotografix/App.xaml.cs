@@ -24,7 +24,7 @@ namespace Fotografix
 
             if (e.PrelaunchActivated == false)
             {
-                await container.AddNewTab();
+                await container.AddNewTabAsync();
                 Window.Current.Activate();
             }
         }
