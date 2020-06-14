@@ -19,8 +19,6 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Styles.xaml" />
             </ResourceDictionary.MergedDictionaries>
-
-            <ui:DimensionConverter x:Key="DimensionConverter" />
         </ResourceDictionary>
     </Page.Resources>
 
@@ -81,43 +79,11 @@
             </StackPanel>
 
             <StackPanel Grid.Column="2" Orientation="Horizontal">
-                <Button Style="{StaticResource CommandButtonStyle}">
+                <Button Click="ResizeImage_Click" Style="{StaticResource CommandButtonStyle}">
                     <StackPanel Orientation="Horizontal">
                         <SymbolIcon Symbol="FullScreen" />
                         <TextBlock Margin="4,0,0,0" HorizontalTextAlignment="Center" MinWidth="80" Text="{x:Bind FormatSize(editor.Size), Mode=OneWay}" />
                     </StackPanel>
-
-                    <Button.Flyout>
-                        <Flyout x:Name="resizeImageFlyout" Opened="ResizeImageFlyout_Opened">
-                            <ContentControl x:Name="resizeImageFlyoutContent">
-                                <ContentControl.ContentTemplate>
-                                    <DataTemplate x:DataType="e:ResizeImageParameters">
-                                        <Grid>
-                                            <Grid.RowDefinitions>
-                                                <RowDefinition Height="Auto" />
-                                                <RowDefinition Height="Auto" />
-                                                <RowDefinition Height="Auto" />
-                                            </Grid.RowDefinitions>
-
-                                            <TextBlock Grid.Row="0" Text="Resize image" FontSize="16" FontWeight="SemiBold" />
-
-                                            <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,12">
-                                                <TextBox Text="{x:Bind Width, Converter={StaticResource DimensionConverter}, Mode=TwoWay}" Width="100" TabIndex="0" />
-                                                <ToggleButton IsChecked="{x:Bind LockAspectRatio, Mode=TwoWay}" ToolTipService.ToolTip="Lock aspect ratio" TabIndex="2">
-                                                    <SymbolIcon Symbol="Link" />
-                                                </ToggleButton>
-                                                <TextBox Text="{x:Bind Height, Converter={StaticResource DimensionConverter}, Mode=TwoWay}" Width="100" TabIndex="1" />
-                                            </StackPanel>
-
-                                            <Button Grid.Row="2" HorizontalAlignment="Stretch" Margin="0,0,4,0" Style="{ThemeResource AccentButtonStyle}"
-                                                    Content="Resize" 
-                                                    Click="ResizeImage_Click" />
-                                        </Grid>
-                                    </DataTemplate>
-                                </ContentControl.ContentTemplate>
-                            </ContentControl>
-                        </Flyout>
-                    </Button.Flyout>
                 </Button>
 
                 <Button Style="{StaticResource CommandButtonStyle}">

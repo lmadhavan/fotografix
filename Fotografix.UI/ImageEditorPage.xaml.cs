@@ -37,7 +37,6 @@ namespace Fotografix.UI
         private IWorkspace workspace;
         private ICreateImageEditorCommand createCommand;
         private ImageEditor editor;
-        private ResizeImageParameters resizeImageParameters;
 
         public ImageEditorPage()
         {
@@ -179,16 +178,15 @@ namespace Fotografix.UI
             await editor.ImportLayersAsync(files);
         }
 
-        private void ResizeImageFlyout_Opened(object sender, object e)
+        private async void ResizeImage_Click(object sender, RoutedEventArgs e)
         {
-            this.resizeImageParameters = editor.CreateResizeImageParameters();
-            this.resizeImageFlyoutContent.Content = resizeImageParameters;
-        }
+            ResizeImageParameters parameters = editor.CreateResizeImageParameters();
 
-        private void ResizeImage_Click(object sender, RoutedEventArgs e)
-        {
-            resizeImageFlyout.Hide();
-            editor.ResizeImage(resizeImageParameters);
+            ResizeImageDialog dialog = new ResizeImageDialog(parameters);
+            if (await dialog.ShowAsync(ContentDialogPlacement.InPlace) == ContentDialogResult.Primary)
+            {
+                editor.ResizeImage(parameters);
+            }
         }
 
         private void Canvas_PointerEntered(object sender, PointerRoutedEventArgs e)

@@ -11,11 +11,7 @@ namespace Fotografix.UI.FileManagement
         public NewImageDialog(NewImageParameters parameters)
         {
             this.parameters = parameters;
-            this.numberFormatter = new DecimalFormatter() { 
-                FractionDigits = 0,
-                NumberRounder = new IncrementNumberRounder() 
-            };
-
+            this.numberFormatter = NumberFormatters.Dimension;
             this.InitializeComponent();
         }
     }

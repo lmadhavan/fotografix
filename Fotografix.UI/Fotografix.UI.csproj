@@ -142,6 +142,10 @@
       <DependentUpon>NewImageDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="FileManagement\OpenFileCommand.cs" />
+    <Compile Include="NumberFormatters.cs" />
+    <Compile Include="ResizeImageDialog.xaml.cs">
+      <DependentUpon>ResizeImageDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="TitleBar.cs" />
     <Compile Include="ICommandService.cs" />
     <Compile Include="ICustomTitleBarProvider.cs" />
@@ -164,7 +168,6 @@
       <DependentUpon>BlendModeListResourceDictionary.xaml</DependentUpon>
     </Compile>
     <Compile Include="ColorConverter.cs" />
-    <Compile Include="DimensionConverter.cs" />
     <Compile Include="ImageEditor.cs" />
     <Compile Include="ImageEditorPage.xaml.cs">
       <DependentUpon>ImageEditorPage.xaml</DependentUpon>
@@ -206,6 +209,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="FileManagement\NewImageDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ResizeImageDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
