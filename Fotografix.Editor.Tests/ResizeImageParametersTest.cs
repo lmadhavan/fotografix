@@ -27,6 +27,16 @@ namespace Fotografix.Editor
         }
 
         [Test]
+        public void AspectRatioLocked_VerySmallDimensionIsNotRoundedToZero()
+        {
+            ResizeImageParameters parameters = new ResizeImageParameters(new Size(20, 10));
+            parameters.LockAspectRatio = true;
+            parameters.Width = 1;
+
+            Assert.AreEqual(1, parameters.Height);
+        }
+
+        [Test]
         public void AspectRatioUnlocked_ChangingWidthShouldNotChangeHeight()
         {
             ResizeImageParameters parameters = new ResizeImageParameters(new Size(20, 10));

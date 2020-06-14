@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 
 namespace Fotografix.Editor
 {
@@ -73,7 +74,7 @@ namespace Fotografix.Editor
         {
             if (lockAspectRatio)
             {
-                this.Width = height * originalWidth / originalHeight;
+                this.Width = Math.Max(1, height * originalWidth / originalHeight);
             }
         }
 
@@ -81,7 +82,7 @@ namespace Fotografix.Editor
         {
             if (lockAspectRatio)
             {
-                this.Height = width * originalHeight / originalWidth;
+                this.Height = Math.Max(1, width * originalHeight / originalWidth);
             }
         }
     }
