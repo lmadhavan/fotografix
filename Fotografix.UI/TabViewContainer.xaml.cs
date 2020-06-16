@@ -1,13 +1,12 @@
 ﻿using Fotografix.UI.FileManagement;
 using Microsoft.UI.Xaml.Controls;
 using System;
-using System.Linq;
 using System.Threading.Tasks;
-using Windows.ApplicationModel;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Input;
 
 namespace Fotografix.UI
 {
@@ -18,10 +17,9 @@ namespace Fotografix.UI
             this.InitializeComponent();
         }
 
-        public async Task AddNewTabAsync()
+        public void OpenStartPage()
         {
-            StorageFile file = await GetSampleImageAsync();
-            AddNewTab(new OpenFileCommand(file));
+            CreateEmptyTab().OpenStartPage();
         }
 
         public async Task NewImageAsync()
@@ -31,8 +29,7 @@ namespace Fotografix.UI
             NewImageDialog dialog = new NewImageDialog(parameters);
             if (await dialog.ShowAsync() == ContentDialogResult.Primary)
             {
-                AddNewTab(new NewImageCommand(parameters.Size));
-                ActivateLatestTab();
+                GetOrCreateEmptyTab().OpenImageEditor(new NewImageCommand(parameters.Size));
             }
         }
 
@@ -43,53 +40,68 @@ namespace Fotografix.UI
             StorageFile file = await picker.PickSingleFileAsync();
             if (file != null)
             {
-                AddNewTab(new OpenFileCommand(file));
-                ActivateLatestTab();
+                GetOrCreateEmptyTab().OpenImageEditor(new OpenFileCommand(file));
             }
         }
 
-        private void AddNewTab(ICreateImageEditorCommand command)
+        private Tab GetOrCreateEmptyTab()
         {
-            Frame frame = new Frame();
-            frame.Navigate(typeof(ImageEditorPage), new ImageEditorPageParameters(workspace: this, command));
+            Tab tab = (Tab)tabView.SelectedItem;
 
-            TabViewItem tab = new TabViewItem()
+            if (tab != null && tab.IsEmpty)
             {
-                Header = command.Title,
-                Content = frame
-            };
+                return tab;
+            }
+
+            return CreateEmptyTab();
+        }
+
+        private Tab CreateEmptyTab()
+        {
+            Tab tab = new Tab(workspace: this);
             tabView.TabItems.Add(tab);
+
+            if (IsLoaded)
+            {
+                tabView.SelectedItem = tab;
+            }
+
+            return tab;
         }
 
-        private async void OnNewTabRequested(TabView sender, object args)
-        {
-            await AddNewTabAsync();
-            ActivateLatestTab();
-        }
+        #region TabView event handlers
 
-        private void ActivateLatestTab()
+        private void OnNewTabRequested(TabView sender, object args)
         {
-            tabView.SelectedItem = tabView.TabItems.Last();
+            OpenStartPage();
         }
 
         private void OnCloseTabRequested(TabView sender, TabViewTabCloseRequestedEventArgs args)
         {
-            ImageEditorPage page = GetPage(args.Tab);
-            tabView.TabItems.Remove(args.Tab);
-            page.Dispose();
+            Tab tab = (Tab)args.Tab;
+            tabView.TabItems.Remove(tab);
+            tab.Dispose();
         }
 
-        private async Task<StorageFile> GetSampleImageAsync()
+        #endregion
+
+        #region Keyboard accelerator event handlers
+
+        private async void OnNewImageInvoked(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
         {
-            var samplesFolder = await Package.Current.InstalledLocation.GetFolderAsync("Sample Images");
-            return await samplesFolder.GetFileAsync("flowers.jpg");
+            args.Handled = true;
+            await NewImageAsync();
         }
 
-        private ImageEditorPage GetPage(TabViewItem tab)
+        private async void OnOpenFileInvoked(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
         {
-            Frame frame = (Frame)tab.Content;
-            return (ImageEditorPage)frame.Content;
+            args.Handled = true;
+            await OpenFileAsync();
         }
+
+        #endregion
+
+        #region Title bar customization
 
         UIElement ICustomTitleBarProvider.CustomTitleBar => tabStripFooter;
 
@@ -108,5 +120,7 @@ namespace Fotografix.UI
 
             tabStripHeader.Height = tabStripFooter.Height = metrics.Height;
         }
+
+        #endregion
     }
 }

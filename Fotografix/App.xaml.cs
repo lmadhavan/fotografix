@@ -11,20 +11,20 @@ namespace Fotografix
             this.InitializeComponent();
         }
 
-        protected override async void OnLaunched(LaunchActivatedEventArgs e)
+        protected override void OnLaunched(LaunchActivatedEventArgs e)
         {
             TabViewContainer container = Window.Current.Content as TabViewContainer;
 
             if (container == null)
             {
                 container = new TabViewContainer();
-                TitleBar.GetForCurrentView().Customize(container);
+                TitleBar.GetForCurrentView().Customize(titleBarProvider: container);
                 Window.Current.Content = container;
             }
 
             if (e.PrelaunchActivated == false)
             {
-                await container.AddNewTabAsync();
+                container.OpenStartPage();
                 Window.Current.Activate();
             }
         }

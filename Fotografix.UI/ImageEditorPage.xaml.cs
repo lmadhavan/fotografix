@@ -34,7 +34,6 @@ namespace Fotografix.UI
         private readonly Viewport viewport;
 
         private CoreCursor originalCursor;
-        private IWorkspace workspace;
         private ICreateImageEditorCommand createCommand;
         private ImageEditor editor;
 
@@ -71,10 +70,7 @@ namespace Fotografix.UI
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
-
-            var parameters = (ImageEditorPageParameters)e.Parameter;
-            this.workspace = parameters.Workspace;
-            this.createCommand = parameters.Command;
+            this.createCommand = (ICreateImageEditorCommand)e.Parameter;
         }
 
         private void Canvas_CreateResources(CanvasControl sender, CanvasCreateResourcesEventArgs args)
@@ -157,16 +153,6 @@ namespace Fotografix.UI
                 var items = await e.DataView.GetStorageItemsAsync();
                 await editor.ImportLayersAsync(items.OfType<StorageFile>());
             }
-        }
-
-        private async void NewImage_Click(object sender, RoutedEventArgs e)
-        {
-            await workspace.NewImageAsync();
-        }
-
-        private async void OpenImage_Click(object sender, RoutedEventArgs e)
-        {
-            await workspace.OpenFileAsync();
         }
 
         private async void Import_Click(object sender, RoutedEventArgs e)

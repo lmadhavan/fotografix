@@ -17,6 +17,11 @@
         AddTabButtonClick="OnNewTabRequested"
         TabCloseRequested="OnCloseTabRequested"
     >
+        <muxc:TabView.KeyboardAccelerators>
+            <KeyboardAccelerator Modifiers="Control" Key="N" Invoked="OnNewImageInvoked" />
+            <KeyboardAccelerator Modifiers="Control" Key="O" Invoked="OnOpenFileInvoked" />
+        </muxc:TabView.KeyboardAccelerators>
+        
         <muxc:TabView.TabStripHeader>
             <Grid x:Name="tabStripHeader" Background="Transparent" />
         </muxc:TabView.TabStripHeader>

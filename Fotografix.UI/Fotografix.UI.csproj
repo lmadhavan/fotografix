@@ -133,10 +133,11 @@
     <Compile Include="BlendModes\BlendModeListItem.cs" />
     <Compile Include="FileManagement\FilePickerFactory.cs" />
     <Compile Include="FileManagement\ICreateImageEditorCommand.cs" />
+    <Compile Include="FileManagement\IWorkspace.cs" />
     <Compile Include="FileManagement\NewImageParameters.cs" />
+    <Compile Include="Tab.cs" />
     <Compile Include="ImageEditorPageParameters.cs" />
     <Compile Include="ITitleBarLayoutMetrics.cs" />
-    <Compile Include="FileManagement\IWorkspace.cs" />
     <Compile Include="FileManagement\NewImageCommand.cs" />
     <Compile Include="FileManagement\NewImageDialog.xaml.cs">
       <DependentUpon>NewImageDialog.xaml</DependentUpon>
@@ -145,6 +146,9 @@
     <Compile Include="NumberFormatters.cs" />
     <Compile Include="ResizeImageDialog.xaml.cs">
       <DependentUpon>ResizeImageDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="StartPage.xaml.cs">
+      <DependentUpon>StartPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="TitleBar.cs" />
     <Compile Include="ICommandService.cs" />
@@ -213,6 +217,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="ResizeImageDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="StartPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
