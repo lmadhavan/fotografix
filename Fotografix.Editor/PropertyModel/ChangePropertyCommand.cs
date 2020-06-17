@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 
-namespace Fotografix.Editor
+namespace Fotografix.Editor.PropertyModel
 {
     public sealed class ChangePropertyCommand : Command
     {

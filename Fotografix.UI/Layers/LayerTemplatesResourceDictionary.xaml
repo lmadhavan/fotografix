@@ -13,7 +13,7 @@
 
     <local:OpacitySliderToolTipValueConverter x:Key="OpacitySliderToolTipValueConverter" />
 
-    <DataTemplate x:Key="LayerPropertiesTemplate" x:DataType="local:LayerViewModel">
+    <DataTemplate x:Key="LayerPropertiesTemplate" x:DataType="local:LayerPropertyEditor">
         <StackPanel Orientation="Vertical">
             <TextBox Text="{x:Bind Name, Mode=TwoWay}" />
 
@@ -42,7 +42,7 @@
                             ThumbToolTipValueConverter="{StaticResource OpacitySliderToolTipValueConverter}" />
             </Grid>
 
-            <ContentControl Margin="0,8,0,0" HorizontalContentAlignment="Stretch" ContentTemplateSelector="{StaticResource AdjustmentTemplateSelector}" Content="{x:Bind AdjustmentViewModel}" />
+            <ContentControl Margin="0,8,0,0" HorizontalContentAlignment="Stretch" ContentTemplateSelector="{StaticResource AdjustmentTemplateSelector}" Content="{x:Bind AdjustmentPropertyEditor}" />
         </StackPanel>
     </DataTemplate>
 </ResourceDictionary>

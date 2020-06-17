@@ -1,18 +1,25 @@
-﻿using Fotografix.UI.Adjustments;
+﻿using Fotografix.Editor.Adjustments;
+using Fotografix.Editor.PropertyModel;
 using Fotografix.UI.BlendModes;
 using System.ComponentModel;
 
 namespace Fotografix.UI.Layers
 {
-    public sealed class LayerViewModel : PropertyEditorViewModelBase<Layer>
+    public sealed class LayerPropertyEditor : PropertyEditor<Layer>
     {
         private static readonly BlendModeList BlendModeList = BlendModeList.Create();
 
-        private IAdjustmentViewModel adjustmentViewModel;
+        private IPropertyEditor adjustmentPropertyEditor;
 
-        public LayerViewModel(Layer layer, ICommandService commandService) : base(layer, commandService)
+        public LayerPropertyEditor(Layer layer, IPropertySetter propertySetter) : base(layer, propertySetter)
         {
             CreateAdjustmentViewModel();
+        }
+
+        public override void Dispose()
+        {
+            adjustmentPropertyEditor?.Dispose();
+            base.Dispose();
         }
 
         public string Name
@@ -35,21 +42,17 @@ namespace Fotografix.UI.Layers
             set => SetTargetProperty(value);
         }
 
-        public IAdjustmentViewModel AdjustmentViewModel
+        public IPropertyEditor AdjustmentPropertyEditor
         {
             get
             {
-                return adjustmentViewModel;
+                return adjustmentPropertyEditor;
             }
 
             private set
             {
-                var oldValue = adjustmentViewModel;
-
-                if (SetProperty(ref adjustmentViewModel, value))
-                {
-                    oldValue?.Dispose();
-                }
+                adjustmentPropertyEditor?.Dispose();
+                SetProperty(ref adjustmentPropertyEditor, value);
             }
         }
 
@@ -65,21 +68,21 @@ namespace Fotografix.UI.Layers
 
         private void CreateAdjustmentViewModel()
         {
-            Target.Accept(new AdjustmentViewModelFactoryVisitor(this));
+            Target.Accept(new AdjustmentPropertyEditorFactoryVisitor(this));
         }
 
-        private sealed class AdjustmentViewModelFactoryVisitor : LayerVisitor
+        private sealed class AdjustmentPropertyEditorFactoryVisitor : LayerVisitor
         {
-            private readonly LayerViewModel layerViewModel;
+            private readonly LayerPropertyEditor layerPropertyEditor;
 
-            public AdjustmentViewModelFactoryVisitor(LayerViewModel layerViewModel)
+            public AdjustmentPropertyEditorFactoryVisitor(LayerPropertyEditor layerViewModel)
             {
-                this.layerViewModel = layerViewModel;
+                this.layerPropertyEditor = layerViewModel;
             }
 
             public override void Visit(AdjustmentLayer layer)
             {
-                layerViewModel.AdjustmentViewModel = AdjustmentViewModelFactory.CreateAdjustmentViewModel(layer.Adjustment, layerViewModel.CommandService);
+                layerPropertyEditor.AdjustmentPropertyEditor = layer.Adjustment.CreatePropertyEditor(layerPropertyEditor.PropertySetter);
             }
         }
     }

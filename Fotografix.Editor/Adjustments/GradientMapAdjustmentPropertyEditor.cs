@@ -1,11 +1,12 @@
 ﻿using Fotografix.Adjustments;
+using Fotografix.Editor.PropertyModel;
 using System.Drawing;
 
-namespace Fotografix.UI.Adjustments
+namespace Fotografix.Editor.Adjustments
 {
-    public sealed class GradientMapAdjustmentViewModel : PropertyEditorViewModelBase<GradientMapAdjustment>, IAdjustmentViewModel
+    public sealed class GradientMapAdjustmentPropertyEditor : PropertyEditor<GradientMapAdjustment>
     {
-        public GradientMapAdjustmentViewModel(GradientMapAdjustment adjustment, ICommandService commandService) : base(adjustment, commandService)
+        public GradientMapAdjustmentPropertyEditor(GradientMapAdjustment adjustment, IPropertySetter propertySetter) : base(adjustment, propertySetter)
         {
         }
 

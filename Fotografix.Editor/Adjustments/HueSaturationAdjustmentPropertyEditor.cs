@@ -1,10 +1,11 @@
 ﻿using Fotografix.Adjustments;
+using Fotografix.Editor.PropertyModel;
 
-namespace Fotografix.UI.Adjustments
+namespace Fotografix.Editor.Adjustments
 {
-    public sealed class HueSaturationAdjustmentViewModel : PropertyEditorViewModelBase<HueSaturationAdjustment>, IAdjustmentViewModel
+    public sealed class HueSaturationAdjustmentPropertyEditor : PropertyEditor<HueSaturationAdjustment>
     {
-        public HueSaturationAdjustmentViewModel(HueSaturationAdjustment adjustment, ICommandService commandService) : base(adjustment, commandService)
+        public HueSaturationAdjustmentPropertyEditor(HueSaturationAdjustment adjustment, IPropertySetter propertySetter) : base(adjustment, propertySetter)
         {
         }
 

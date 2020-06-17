@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using Fotografix.Editor.PropertyModel;
+using NUnit.Framework;
 
 namespace Fotografix.Editor
 {

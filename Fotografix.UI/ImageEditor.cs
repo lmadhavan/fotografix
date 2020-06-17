@@ -1,6 +1,7 @@
 ﻿using Fotografix.Editor;
 using Fotografix.Editor.Collections;
 using Fotografix.Editor.Layers;
+using Fotografix.Editor.PropertyModel;
 using Fotografix.Editor.Tools;
 using Fotografix.UI.Adjustments;
 using Fotografix.UI.Layers;
@@ -23,10 +24,11 @@ namespace Fotografix.UI
         private readonly Win2DCompositor compositor;
         private readonly ReversedCollectionView<Layer> layers;
         private readonly History history;
+        private readonly IPropertySetter propertySetter;
         private readonly ITool tool;
 
         private Layer activeLayer;
-        private LayerViewModel activeLayerViewModel;
+        private LayerPropertyEditor activeLayerViewModel;
 
         private ImageEditor(Image image)
         {
@@ -39,6 +41,7 @@ namespace Fotografix.UI
 
             this.history = new History();
             history.PropertyChanged += OnHistoryPropertyChanged;
+            this.propertySetter = new UndoablePropertySetter(history);
 
             BrushTool tool = new BrushTool()
             {
@@ -116,14 +119,14 @@ namespace Fotografix.UI
                 if (value != null && SetProperty(ref activeLayer, value))
                 {
                     activeLayerViewModel?.Dispose();
-                    this.ActiveLayerViewModel = activeLayer == null ? null : new LayerViewModel(activeLayer, this);
+                    this.ActiveLayerPropertyEditor = activeLayer == null ? null : new LayerPropertyEditor(activeLayer, propertySetter);
                     RaisePropertyChanged(nameof(CanDeleteActiveLayer));
                     tool.LayerActivated(activeLayer);
                 }
             }
         }
 
-        public LayerViewModel ActiveLayerViewModel
+        public LayerPropertyEditor ActiveLayerPropertyEditor
         {
             get => activeLayerViewModel;
             private set => SetProperty(ref activeLayerViewModel, value);
