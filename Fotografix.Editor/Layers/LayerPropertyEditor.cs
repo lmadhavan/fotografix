@@ -1,14 +1,11 @@
 ﻿using Fotografix.Editor.Adjustments;
 using Fotografix.Editor.PropertyModel;
-using Fotografix.UI.BlendModes;
 using System.ComponentModel;
 
-namespace Fotografix.UI.Layers
+namespace Fotografix.Editor.Layers
 {
     public sealed class LayerPropertyEditor : PropertyEditor<Layer>
     {
-        private static readonly BlendModeList BlendModeList = BlendModeList.Create();
-
         private IPropertyEditor adjustmentPropertyEditor;
 
         public LayerPropertyEditor(Layer layer, IPropertySetter propertySetter) : base(layer, propertySetter)
@@ -28,12 +25,10 @@ namespace Fotografix.UI.Layers
             set => SetTargetProperty(value);
         }
 
-        public BlendModeList AvailableBlendModes => BlendModeList;
-
-        public BlendModeListItem BlendMode
+        public BlendMode BlendMode
         {
-            get => BlendModeList[Target.BlendMode];
-            set => SetTargetProperty(value.BlendMode);
+            get => Target.BlendMode;
+            set => SetTargetProperty(value);
         }
 
         public float Opacity

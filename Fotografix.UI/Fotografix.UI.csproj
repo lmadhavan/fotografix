@@ -126,6 +126,7 @@
     <Compile Include="BitmapLoader.cs" />
     <Compile Include="BlendModes\BlendModeList.cs" />
     <Compile Include="BlendModes\BlendModeListItem.cs" />
+    <Compile Include="BlendModes\BlendModeListItemConverter.cs" />
     <Compile Include="FileManagement\FilePickerFactory.cs" />
     <Compile Include="FileManagement\ICreateImageEditorCommand.cs" />
     <Compile Include="FileManagement\IWorkspace.cs" />
@@ -151,7 +152,6 @@
     <Compile Include="Layers\LayerTemplatesResourceDictionary.xaml.cs">
       <DependentUpon>LayerTemplatesResourceDictionary.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Layers\LayerPropertyEditor.cs" />
     <Compile Include="Layers\OpacitySliderToolTipValueConverter.cs" />
     <Compile Include="Adjustments\AdjustmentLayerFactory.cs" />
     <Compile Include="Adjustments\AdjustmentSliderToolTipValueConverter.cs" />

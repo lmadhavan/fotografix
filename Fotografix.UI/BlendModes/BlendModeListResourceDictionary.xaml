@@ -25,4 +25,5 @@
             </Style>
         </b:BlendModeListItemStyleSelector.SeparatorStyle>
     </b:BlendModeListItemStyleSelector>
+    
 </ResourceDictionary>
