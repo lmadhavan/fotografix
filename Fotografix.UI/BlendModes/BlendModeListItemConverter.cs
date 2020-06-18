@@ -1,9 +1,6 @@
-﻿using System;
-using Windows.UI.Xaml.Data;
-
-namespace Fotografix.UI.BlendModes
+﻿namespace Fotografix.UI.BlendModes
 {
-    public sealed class BlendModeListItemConverter : IValueConverter
+    public sealed class BlendModeListItemConverter : ValueConverter<BlendMode, BlendModeListItem>
     {
         private readonly BlendModeList blendModeList;
 
@@ -12,16 +9,14 @@ namespace Fotografix.UI.BlendModes
             this.blendModeList = blendModeList;
         }
 
-        public object Convert(object value, Type targetType, object parameter, string language)
+        public override BlendModeListItem Convert(BlendMode value)
         {
-            BlendMode blendMode = (BlendMode)value;
-            return blendModeList[blendMode];
+            return blendModeList[value];
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        public override BlendMode ConvertBack(BlendModeListItem value)
         {
-            BlendModeListItem item = (BlendModeListItem)value;
-            return item.BlendMode;
+            return value.BlendMode;
         }
     }
 }

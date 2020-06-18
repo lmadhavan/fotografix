@@ -1,26 +1,16 @@
-﻿using System;
-using Windows.UI.Xaml.Data;
-
-namespace Fotografix.UI.Adjustments
+﻿namespace Fotografix.UI.Adjustments
 {
-    public sealed class AdjustmentSliderToolTipValueConverter : IValueConverter
+    public sealed class AdjustmentSliderToolTipValueConverter : ValueConverter<double, string>
     {
-        public object Convert(object value, Type targetType, object parameter, string language)
+        public override string Convert(double value)
         {
-            double d = (double)value;
-
-            if (d == 0)
+            if (value == 0)
             {
                 return "0.00";
             }
 
-            string s = string.Format("{0:F2}", d);
-            return (d < 0) ? s : "+" + s;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, string language)
-        {
-            throw new NotImplementedException();
+            string s = string.Format("{0:F2}", value);
+            return (value < 0) ? s : "+" + s;
         }
     }
 }

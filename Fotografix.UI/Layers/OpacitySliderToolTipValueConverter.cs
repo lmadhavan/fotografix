@@ -1,18 +1,10 @@
-﻿using System;
-using Windows.UI.Xaml.Data;
-
-namespace Fotografix.UI.Layers
+﻿namespace Fotografix.UI.Layers
 {
-    public sealed class OpacitySliderToolTipValueConverter : IValueConverter
+    public sealed class OpacitySliderToolTipValueConverter : ValueConverter<double, string>
     {
-        public object Convert(object value, Type targetType, object parameter, string language)
+        public override string Convert(double value)
         {
             return string.Format("{0:P0}", value);
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, string language)
-        {
-            throw new NotImplementedException();
         }
     }
 }

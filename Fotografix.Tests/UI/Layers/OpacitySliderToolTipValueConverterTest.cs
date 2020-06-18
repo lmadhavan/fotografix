@@ -10,8 +10,8 @@ namespace Fotografix.Tests.UI.Layers
         public void FormatsOpacityValue()
         {
             OpacitySliderToolTipValueConverter converter = new OpacitySliderToolTipValueConverter();
-            Assert.AreEqual("0%", converter.Convert(0.0, null, null, null));
-            Assert.AreEqual("100%", converter.Convert(1.0, null, null, null));
+            Assert.AreEqual("0%", converter.Convert(0.0));
+            Assert.AreEqual("100%", converter.Convert(1.0));
         }
     }
 }

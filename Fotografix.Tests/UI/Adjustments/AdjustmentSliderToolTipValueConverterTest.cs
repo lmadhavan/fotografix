@@ -10,9 +10,9 @@ namespace Fotografix.Tests.UI.Adjustments
         public void FormatsAdjustmentValue()
         {
             AdjustmentSliderToolTipValueConverter converter = new AdjustmentSliderToolTipValueConverter();
-            Assert.AreEqual("0.00", converter.Convert(0.0, null, null, null));
-            Assert.AreEqual("+0.50", converter.Convert(0.5, null, null, null));
-            Assert.AreEqual("-0.50", converter.Convert(-0.5, null, null, null));
+            Assert.AreEqual("0.00", converter.Convert(0.0));
+            Assert.AreEqual("+0.50", converter.Convert(0.5));
+            Assert.AreEqual("-0.50", converter.Convert(-0.5));
         }
     }
 }

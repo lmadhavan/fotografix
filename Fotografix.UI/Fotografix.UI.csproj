@@ -176,6 +176,7 @@
     <Compile Include="TabViewContainer.xaml.cs">
       <DependentUpon>TabViewContainer.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ValueConverter.cs" />
     <EmbeddedResource Include="Properties\Fotografix.Editor.rd.xml" />
   </ItemGroup>
   <ItemGroup>
