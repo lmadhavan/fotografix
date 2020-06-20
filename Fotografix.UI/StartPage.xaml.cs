@@ -7,7 +7,7 @@ namespace Fotografix.UI
 {
     public sealed partial class StartPage : Page
     {
-        private IWorkspace workspace;
+        private Workspace workspace;
 
         public StartPage()
         {
@@ -17,7 +17,7 @@ namespace Fotografix.UI
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
-            this.workspace = (IWorkspace)e.Parameter;
+            this.workspace = (Workspace)e.Parameter;
         }
 
         private async void New_Click(object sender, RoutedEventArgs e)

@@ -1,47 +1,36 @@
 ﻿using Fotografix.UI.FileManagement;
 using Microsoft.UI.Xaml.Controls;
-using System;
-using System.Threading.Tasks;
-using Windows.Storage;
-using Windows.Storage.Pickers;
+using System.Collections;
+using System.Collections.Generic;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 
 namespace Fotografix.UI
 {
-    public sealed partial class TabViewContainer : UserControl, ICustomTitleBarProvider, IWorkspace
+    public sealed partial class TabViewContainer : UserControl, ICustomTitleBarProvider
     {
+        private readonly Workspace workspace;
+
         public TabViewContainer()
         {
             this.InitializeComponent();
+            this.Tabs = new TabCollection(tabView.TabItems);
+
+            this.workspace = new Workspace();
+            workspace.OpenImageEditorRequested += (s, e) => OpenImageEditor(e.Command);
         }
+
+        public IReadOnlyList<Tab> Tabs { get; }
 
         public void OpenStartPage()
         {
-            CreateEmptyTab().OpenStartPage();
+            CreateEmptyTab().OpenStartPage(workspace);
         }
 
-        public async Task NewImageAsync()
+        public void OpenImageEditor(ICreateImageEditorCommand command)
         {
-            NewImageParameters parameters = new NewImageParameters();
-
-            NewImageDialog dialog = new NewImageDialog(parameters);
-            if (await dialog.ShowAsync() == ContentDialogResult.Primary)
-            {
-                GetOrCreateEmptyTab().OpenImageEditor(new NewImageCommand(parameters.Size));
-            }
-        }
-
-        public async Task OpenFileAsync()
-        {
-            FileOpenPicker picker = FilePickerFactory.CreateFilePicker();
-
-            StorageFile file = await picker.PickSingleFileAsync();
-            if (file != null)
-            {
-                GetOrCreateEmptyTab().OpenImageEditor(new OpenFileCommand(file));
-            }
+            GetOrCreateEmptyTab().OpenImageEditor(command);
         }
 
         private Tab GetOrCreateEmptyTab()
@@ -58,16 +47,41 @@ namespace Fotografix.UI
 
         private Tab CreateEmptyTab()
         {
-            Tab tab = new Tab(workspace: this);
+            Tab tab = new Tab();
             tabView.TabItems.Add(tab);
-
-            if (IsLoaded)
-            {
-                tabView.SelectedItem = tab;
-            }
+            tabView.SelectedItem = tab;
 
             return tab;
         }
+
+        #region Tab collection wrapper
+        private sealed class TabCollection : IReadOnlyList<Tab>
+        {
+            private readonly IList<object> tabs;
+
+            public TabCollection(IList<object> tabs)
+            {
+                this.tabs = tabs;
+            }
+
+            public int Count => tabs.Count;
+
+            public Tab this[int index] => (Tab)tabs[index];
+
+            public IEnumerator<Tab> GetEnumerator()
+            {
+                for (int i = 0; i < Count; i++)
+                {
+                    yield return this[i];
+                }
+            }
+
+            IEnumerator IEnumerable.GetEnumerator()
+            {
+                return GetEnumerator();
+            }
+        }
+        #endregion
 
         #region TabView event handlers
 
@@ -90,13 +104,13 @@ namespace Fotografix.UI
         private async void OnNewImageInvoked(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
         {
             args.Handled = true;
-            await NewImageAsync();
+            await workspace.NewImageAsync();
         }
 
         private async void OnOpenFileInvoked(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
         {
             args.Handled = true;
-            await OpenFileAsync();
+            await workspace.OpenFileAsync();
         }
 
         #endregion

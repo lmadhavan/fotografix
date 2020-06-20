@@ -8,12 +8,10 @@ namespace Fotografix.UI
 {
     public class Tab : TabViewItem
     {
-        private readonly IWorkspace workspace;
         private readonly Frame frame;
 
-        public Tab(IWorkspace workspace)
+        public Tab()
         {
-            this.workspace = workspace;
             this.frame = new Frame();
             this.Header = " "; // TabView control blows up if this doesn't have at least one character
             this.Content = frame;
@@ -29,8 +27,9 @@ namespace Fotografix.UI
         }
 
         public bool IsEmpty { get; private set; }
+        public Type ContentType => frame.Content.GetType();
 
-        public void OpenStartPage()
+        public void OpenStartPage(Workspace workspace)
         {
             this.Header = "Start";
             frame.Navigate(typeof(StartPage), workspace, new SuppressNavigationTransitionInfo());
