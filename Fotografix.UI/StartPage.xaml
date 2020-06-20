@@ -55,9 +55,41 @@
             </Button>
         </StackPanel>
 
-        <StackPanel Grid.Column="2" Grid.Row="2" Orientation="Vertical" Margin="64,-6,0,0">
-            <TextBlock Style="{ThemeResource TitleTextBlockStyle}" Text="Recent files" />
-            <TextBlock Foreground="{ThemeResource SystemBaseMediumColor}" Text="You haven't opened any files yet." />
-        </StackPanel>
+        <Grid Grid.Column="2" Grid.Row="2"
+              Margin="64,-6,0,0"
+              Padding="16,8"
+              CornerRadius="2"
+              BorderThickness="1"
+              BorderBrush="{ThemeResource SystemBaseMediumLowColor}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            
+            <TextBlock Grid.Row="0" Grid.Column="0"
+                       Style="{ThemeResource TitleTextBlockStyle}"
+                       Text="Recent files" />
+            <HyperlinkButton Grid.Row="0" Grid.Column="1"
+                             Content="Clear"
+                             Click="{x:Bind RecentFiles.Clear}" />
+
+            <TextBlock Grid.Row="1" Grid.ColumnSpan="2"
+                       Visibility="{x:Bind VisibleWhenZero(RecentFiles.Count), Mode=OneWay}"
+                       Foreground="{ThemeResource SystemBaseMediumColor}"
+                       Margin="0,4,0,0"
+                       Text="Files that you have recently opened will show up here." />
+            
+            <ListView Grid.Row="1" Grid.ColumnSpan="2"
+                      ItemsSource="{x:Bind RecentFiles, Mode=OneWay}"
+                      DisplayMemberPath="DisplayName"
+                      SelectionMode="None"
+                      IsItemClickEnabled="True"
+                      ItemClick="RecentFileList_ItemClick" />
+        </Grid>
     </Grid>
 </Page>

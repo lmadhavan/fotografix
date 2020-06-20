@@ -131,6 +131,8 @@
     <Compile Include="FileManagement\ICreateImageEditorCommand.cs" />
     <Compile Include="FileManagement\NewImageParameters.cs" />
     <Compile Include="FileManagement\OpenImageEditorRequestedEventArgs.cs" />
+    <Compile Include="FileManagement\RecentFile.cs" />
+    <Compile Include="FileManagement\RecentFileList.cs" />
     <Compile Include="FileManagement\Workspace.cs" />
     <Compile Include="Tab.cs" />
     <Compile Include="ITitleBarLayoutMetrics.cs" />

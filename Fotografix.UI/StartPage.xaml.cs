@@ -14,10 +14,17 @@ namespace Fotografix.UI
             this.InitializeComponent();
         }
 
+        private RecentFileList RecentFiles => workspace.RecentFiles;
+
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
             this.workspace = (Workspace)e.Parameter;
+        }
+
+        private Visibility VisibleWhenZero(int count)
+        {
+            return count == 0 ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private async void New_Click(object sender, RoutedEventArgs e)
@@ -28,6 +35,11 @@ namespace Fotografix.UI
         private async void Open_Click(object sender, RoutedEventArgs e)
         {
             await workspace.OpenFileAsync();
+        }
+
+        private async void RecentFileList_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            await workspace.OpenRecentFileAsync((RecentFile)e.ClickedItem);
         }
     }
 }
