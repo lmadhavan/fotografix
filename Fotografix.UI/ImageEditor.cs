@@ -24,7 +24,6 @@ namespace Fotografix.UI
         private readonly ReversedCollectionView<Layer> layers;
         private readonly History history;
         private readonly IPropertySetter propertySetter;
-        private readonly ITool tool;
 
         private Layer activeLayer;
         private LayerPropertyEditor activeLayerViewModel;
@@ -42,14 +41,7 @@ namespace Fotografix.UI
             history.PropertyChanged += OnHistoryPropertyChanged;
             this.propertySetter = new UndoablePropertySetter(history);
 
-            BrushTool tool = new BrushTool()
-            {
-                Size = 5,
-                Color = Color.White
-            };
-            tool.BrushStrokeStarted += OnBrushStrokeStarted;
-            tool.BrushStrokeCompleted += OnBrushStrokeCompleted;
-            this.tool = tool;
+            InitializeTools();
 
             this.ActiveLayer = image.Layers.First();
 
@@ -120,7 +112,7 @@ namespace Fotografix.UI
                     activeLayerViewModel?.Dispose();
                     this.ActiveLayerPropertyEditor = activeLayer == null ? null : new LayerPropertyEditor(activeLayer, propertySetter);
                     RaisePropertyChanged(nameof(CanDeleteActiveLayer));
-                    tool.LayerActivated(activeLayer);
+                    activeTool.LayerActivated(activeLayer);
                 }
             }
         }
@@ -132,6 +124,12 @@ namespace Fotografix.UI
         }
 
         public event EventHandler Invalidated;
+
+        public event EventHandler<ViewportScrollRequestedEventArgs> ViewportScrollRequested
+        {
+            add => handTool.ViewportScrollRequested += value;
+            remove => handTool.ViewportScrollRequested -= value;
+        }
 
         public void Draw(CanvasDrawingSession ds)
         {
@@ -180,23 +178,86 @@ namespace Fotografix.UI
             Execute(new ResampleImageCommand(image, resizeImageParameters.Size));
         }
 
-        public object ToolSettings => tool.Settings;
-        public ToolCursor ToolCursor => tool.Cursor;
+        #region Tools
+
+        public IEnumerable<string> Tools => toolDictionary.Keys;
+        public object ToolSettings => activeTool.Settings;
+        public ToolCursor ToolCursor => activeTool.Cursor;
+
+        public string ActiveTool
+        {
+            get
+            {
+                return activeToolName;
+            }
+
+            set
+            {
+                if (SetProperty(ref activeToolName, value))
+                {
+                    this.activeTool = toolDictionary[activeToolName];
+                    activeTool.LayerActivated(activeLayer);
+                    RaisePropertyChanged(nameof(ToolSettings));
+                }
+            }
+        }
 
         public void PointerPressed(PointF pt)
         {
-            tool.PointerPressed(pt);
+            activeTool.PointerPressed(pt);
         }
 
         public void PointerMoved(PointF pt)
         {
-            tool.PointerMoved(pt);
+            activeTool.PointerMoved(pt);
         }
 
         public void PointerReleased(PointF pt)
         {
-            tool.PointerReleased(pt);
+            activeTool.PointerReleased(pt);
         }
+
+        private BrushTool brushTool;
+        private HandTool handTool;
+
+        private string activeToolName;
+        private ITool activeTool;
+        private Dictionary<string, ITool> toolDictionary;
+
+        private void InitializeTools()
+        {
+            this.brushTool = new BrushTool()
+            {
+                Size = 5,
+                Color = Color.White
+            };
+            brushTool.BrushStrokeStarted += OnBrushStrokeStarted;
+            brushTool.BrushStrokeCompleted += OnBrushStrokeCompleted;
+
+            this.handTool = new HandTool();
+
+            this.toolDictionary = new Dictionary<string, ITool>
+            {
+                ["Brush"] = brushTool,
+                ["Hand"] = handTool
+            };
+            this.ActiveTool = "Hand";
+        }
+
+        private void OnBrushStrokeStarted(object sender, BrushStrokeEventArgs e)
+        {
+            compositor.BeginBrushStrokePreview(e.Layer, e.BrushStroke);
+            e.BrushStroke.ContentChanged += OnContentChanged;
+        }
+
+        private void OnBrushStrokeCompleted(object sender, BrushStrokeEventArgs e)
+        {
+            e.BrushStroke.ContentChanged -= OnContentChanged;
+            compositor.EndBrushStrokePreview(e.Layer);
+            Execute(e.CreatePaintCommand());
+        }
+
+        #endregion
 
         private void OnImagePropertyChanged(object sender, PropertyChangedEventArgs e)
         {
@@ -249,19 +310,6 @@ namespace Fotografix.UI
         private void OnHistoryPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             RaisePropertyChanged(e.PropertyName);
-        }
-
-        private void OnBrushStrokeStarted(object sender, BrushStrokeEventArgs e)
-        {
-            compositor.BeginBrushStrokePreview(e.Layer, e.BrushStroke);
-            e.BrushStroke.ContentChanged += OnContentChanged;
-        }
-
-        private void OnBrushStrokeCompleted(object sender, BrushStrokeEventArgs e)
-        {
-            e.BrushStroke.ContentChanged -= OnContentChanged;
-            compositor.EndBrushStrokePreview(e.Layer);
-            Execute(e.CreatePaintCommand());
         }
 
         private void OnContentChanged(object sender, ContentChangedEventArgs e)

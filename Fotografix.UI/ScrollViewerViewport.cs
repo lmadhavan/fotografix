@@ -1,4 +1,5 @@
 ﻿using Fotografix.Editor;
+using System.Drawing;
 using Windows.UI.Xaml.Controls;
 
 namespace Fotografix.UI
@@ -19,6 +20,12 @@ namespace Fotografix.UI
         {
             get => scrollViewer.ZoomFactor;
             set => scrollViewer.ChangeView(null, null, value);
+        }
+
+        public override PointF ScrollOffset
+        {
+            get => new PointF((float)scrollViewer.HorizontalOffset, (float)scrollViewer.VerticalOffset);
+            set => scrollViewer.ChangeView(value.X, value.Y, null, true);
         }
     }
 }

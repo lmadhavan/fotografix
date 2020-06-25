@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 namespace Fotografix.Tests
 {
     [TestClass]
-    public class BrushToolAcceptanceTest : AcceptanceTestBase
+    public class BrushToolAcceptanceTest : ToolAcceptanceTestBase
     {
         [TestMethod]
         public async Task PaintsBrushStrokeFromPoints()
@@ -40,34 +40,9 @@ namespace Fotografix.Tests
 
         private void ConfigureBrushTool(float size, Color color)
         {
-            IBrushToolSettings settings = (IBrushToolSettings)Editor.ToolSettings;
+            IBrushToolSettings settings = SelectTool<IBrushToolSettings>("Brush");
             settings.Size = size;
             settings.Color = color;
-        }
-
-        private void AssertToolCursor(ToolCursor expected)
-        {
-            Assert.AreEqual(expected, Editor.ToolCursor);
-        }
-
-        private void PressAndDragPointer(PointF[] points)
-        {
-            Editor.PointerPressed(points[0]);
-
-            for (int i = 1; i < points.Length; i++)
-            {
-                Editor.PointerMoved(points[i]);
-            }
-        }
-
-        private void ContinueDraggingAndReleasePointer(PointF[] points)
-        {
-            for (int i = 0; i < points.Length; i++)
-            {
-                Editor.PointerMoved(points[i]);
-            }
-
-            Editor.PointerReleased(points[points.Length - 1]);
         }
     }
 }

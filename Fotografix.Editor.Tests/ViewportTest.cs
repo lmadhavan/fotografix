@@ -36,6 +36,20 @@ namespace Fotografix.Editor
             Assert.That(viewport.ZoomFactor, Is.EqualTo(1.0f));
         }
 
+        [Test]
+        public void AdjustsScrollOffsetForContentBasedOnZoomFactor()
+        {
+            Viewport viewport = new FakeViewport(100, 100)
+            {
+                ZoomFactor = 2,
+                ScrollOffset = new PointF(10, 10)
+            };
+
+            viewport.ScrollContentBy(new PointF(3, 3));
+
+            Assert.That(viewport.ScrollOffset, Is.EqualTo(new PointF(16, 16)));
+        }
+
         private sealed class FakeViewport : Viewport
         {
             public FakeViewport(int width, int height)
@@ -48,6 +62,7 @@ namespace Fotografix.Editor
             public override int Height { get; }
 
             public override float ZoomFactor { get; set; }
+            public override PointF ScrollOffset { get; set; }
         }
     }
 }

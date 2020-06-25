@@ -125,9 +125,11 @@
     <Compile Include="Composition\AdjustmentBlendingTest.cs" />
     <Compile Include="Composition\BlendModeMappingTest.cs" />
     <Compile Include="BrushToolAcceptanceTest.cs" />
+    <Compile Include="HandToolAcceptanceTest.cs" />
     <Compile Include="ResizeImageAcceptanceTest.cs" />
     <Compile Include="TestRenderer.cs" />
     <Compile Include="TestImages.cs" />
+    <Compile Include="ToolAcceptanceTestBase.cs" />
     <Compile Include="UI\Adjustments\AdjustmentSliderToolTipValueConverterTest.cs" />
     <Compile Include="UI\BlendModeListTest.cs" />
     <Compile Include="Composition\CompositionTestBase.cs" />

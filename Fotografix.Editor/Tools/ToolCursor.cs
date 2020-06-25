@@ -2,7 +2,8 @@
 {
     public enum ToolCursor
     {
+        Disabled,
         Crosshair,
-        Disabled
+        Hand
     }
 }

@@ -6,10 +6,9 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:canvas="using:Microsoft.Graphics.Canvas.UI.Xaml"
     xmlns:c="using:Fotografix"
-    xmlns:ui="using:Fotografix.UI"
-    xmlns:e="using:Fotografix.Editor"
     xmlns:layers="using:Fotografix.UI.Layers"
     xmlns:sys="using:System"
+    xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     mc:Ignorable="d"
     Background="{ThemeResource AppBarBackgroundThemeBrush}"
     AllowDrop="True">
@@ -29,11 +28,12 @@
         </Grid.RowDefinitions>
 
         <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="300" />
         </Grid.ColumnDefinitions>
 
-        <Grid Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" BorderThickness="0,1" BorderBrush="{ThemeResource ButtonBorderThemeBrush}" Background="{ThemeResource AppBarBackgroundThemeBrush}">
+        <Grid Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" BorderThickness="0,1" BorderBrush="{ThemeResource ButtonBorderThemeBrush}" Background="{ThemeResource AppBarBackgroundThemeBrush}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
@@ -82,7 +82,11 @@
             </StackPanel>
         </Grid>
 
-        <ScrollViewer x:Name="scrollViewer" Grid.Row="1" Grid.Column="0" HorizontalScrollBarVisibility="Auto" ZoomMode="Enabled">
+        <ListView Grid.Row="1" Grid.Column="0"
+                  ItemsSource="{x:Bind editor.Tools}"
+                  SelectedItem="{x:Bind editor.ActiveTool, Mode=TwoWay}" />
+
+        <ScrollViewer x:Name="scrollViewer" Grid.Row="1" Grid.Column="1" HorizontalScrollBarVisibility="Auto" ZoomMode="Enabled">
             <canvas:CanvasControl x:Name="canvas"
                                   CreateResources="Canvas_CreateResources"
                                   Draw="Canvas_Draw"
@@ -94,7 +98,7 @@
                                   />
         </ScrollViewer>
 
-        <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Vertical" Background="{ThemeResource AppBarBackgroundThemeBrush}" Padding="8" BorderThickness="1,0,0,0" BorderBrush="{ThemeResource ButtonBorderThemeBrush}">
+        <StackPanel Grid.Row="1" Grid.Column="2" Orientation="Vertical" Background="{ThemeResource AppBarBackgroundThemeBrush}" Padding="8" BorderThickness="1,0,0,0" BorderBrush="{ThemeResource ButtonBorderThemeBrush}">
             <StackPanel.Resources>
                 <ResourceDictionary>
                     <ResourceDictionary.MergedDictionaries>

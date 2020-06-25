@@ -26,8 +26,9 @@ namespace Fotografix.UI
     {
         private static readonly Dictionary<ToolCursor, CoreCursor> CursorMap = new Dictionary<ToolCursor, CoreCursor>
         {
+            [ToolCursor.Disabled] = new CoreCursor(CoreCursorType.UniversalNo, 0),
             [ToolCursor.Crosshair] = new CoreCursor(CoreCursorType.Cross, 0),
-            [ToolCursor.Disabled] = new CoreCursor(CoreCursorType.UniversalNo, 0)
+            [ToolCursor.Hand] = new CoreCursor(CoreCursorType.Arrow, 0)
         };
 
         private readonly CoreWindow window;
@@ -93,6 +94,7 @@ namespace Fotografix.UI
             this.editor = await createCommand.ExecuteAsync();
             editor.Invalidated += OnEditorInvalidated;
             editor.PropertyChanged += OnEditorPropertyChanged;
+            editor.ViewportScrollRequested += OnViewportScrollRequested;
 
             Bindings.Update();
             UpdateCanvasSize();
@@ -127,6 +129,11 @@ namespace Fotografix.UI
             {
                 UpdateCanvasSize();
             }
+        }
+
+        private void OnViewportScrollRequested(object sender, ViewportScrollRequestedEventArgs e)
+        {
+            viewport.ScrollContentBy(e.ScrollDelta);
         }
 
         protected override void OnDragEnter(DragEventArgs e)
