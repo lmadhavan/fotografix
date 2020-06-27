@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using Fotografix.Editor;
+using System.Threading.Tasks;
 using Windows.Storage;
 
 namespace Fotografix.UI.FileManagement
@@ -14,9 +15,9 @@ namespace Fotografix.UI.FileManagement
 
         public string Title => file.DisplayName;
 
-        public async Task<ImageEditor> ExecuteAsync()
+        public async Task<ImageEditor> ExecuteAsync(Viewport viewport)
         {
-            return await ImageEditor.CreateAsync(file);
+            return await ImageEditor.CreateAsync(file, viewport);
         }
     }
 }

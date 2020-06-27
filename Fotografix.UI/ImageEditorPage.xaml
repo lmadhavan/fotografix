@@ -86,15 +86,16 @@
                   ItemsSource="{x:Bind editor.Tools}"
                   SelectedItem="{x:Bind editor.ActiveTool, Mode=TwoWay}" />
 
-        <ScrollViewer x:Name="scrollViewer" Grid.Row="1" Grid.Column="1" HorizontalScrollBarVisibility="Auto" ZoomMode="Enabled">
-            <canvas:CanvasControl x:Name="canvas"
-                                  CreateResources="Canvas_CreateResources"
-                                  Draw="Canvas_Draw"
-                                  PointerEntered="Canvas_PointerEntered"
+        <ScrollViewer x:Name="scrollViewer" Grid.Row="1" Grid.Column="1" HorizontalScrollBarVisibility="Auto" ZoomMode="Enabled"
+                                                        PointerEntered="Canvas_PointerEntered"
                                   PointerPressed="Canvas_PointerPressed"
                                   PointerMoved="Canvas_PointerMoved"
                                   PointerReleased="Canvas_PointerReleased"
                                   PointerExited="Canvas_PointerExited"
+>
+            <canvas:CanvasControl x:Name="canvas"
+                                  CreateResources="Canvas_CreateResources"
+                                  Draw="Canvas_Draw"
                                   />
         </ScrollViewer>
 

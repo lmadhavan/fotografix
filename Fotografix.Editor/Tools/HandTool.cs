@@ -1,12 +1,17 @@
-﻿using System;
-using System.Drawing;
+﻿using System.Drawing;
 
 namespace Fotografix.Editor.Tools
 {
     public class HandTool : ITool
     {
-        private bool active;
-        private PointF lastPoint;
+        private readonly Viewport viewport;
+        private ScrollAnchor scrollAnchor;
+        private PointF start;
+
+        public HandTool(Viewport viewport)
+        {
+            this.viewport = viewport;
+        }
 
         object ITool.Settings => this;
 
@@ -16,28 +21,45 @@ namespace Fotografix.Editor.Tools
         {
         }
 
-        public void PointerPressed(PointF pt)
+        public void PointerPressed(IPointerEvent e)
         {
-            this.active = true;
-            this.lastPoint = pt;
+            this.scrollAnchor = new ScrollAnchor(viewport);
+            this.start = e.ViewportLocation;
         }
 
-        public void PointerMoved(PointF pt)
+        public void PointerMoved(IPointerEvent e)
         {
-            if (active)
+            if (scrollAnchor != null)
             {
-                PointF scrollDelta = new PointF(lastPoint.X - pt.X, lastPoint.Y - pt.Y);
-                this.lastPoint = pt;
-
-                ViewportScrollRequested?.Invoke(this, new ViewportScrollRequestedEventArgs(scrollDelta));
+                PointF current = e.ViewportLocation;
+                PointF delta = new PointF(start.X - current.X, start.Y - current.Y);
+                scrollAnchor.ScrollContentTo(delta);
             }
         }
 
-        public void PointerReleased(PointF pt)
+        public void PointerReleased(IPointerEvent e)
         {
-            this.active = false;
+            this.scrollAnchor = null;
         }
 
-        public event EventHandler<ViewportScrollRequestedEventArgs> ViewportScrollRequested;
+        private sealed class ScrollAnchor
+        {
+            private readonly Viewport viewport;
+            private readonly PointF anchorPoint;
+
+            public ScrollAnchor(Viewport viewport)
+            {
+                this.viewport = viewport;
+                this.anchorPoint = viewport.ScrollOffset;
+            }
+
+            public void ScrollContentTo(PointF distanceFromAnchor)
+            {
+                viewport.ScrollOffset = new PointF(
+                    anchorPoint.X + distanceFromAnchor.X,
+                    anchorPoint.Y + distanceFromAnchor.Y
+                );
+            }
+        }
     }
 }

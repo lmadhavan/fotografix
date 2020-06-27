@@ -17,7 +17,7 @@ using Windows.Storage;
 
 namespace Fotografix.UI
 {
-    public sealed class ImageEditor : NotifyPropertyChangedBase, ICommandService, IDisposable, IWin2DDrawable
+    public sealed class ImageEditor : NotifyPropertyChangedBase, ICommandService, IDisposable, IWin2DDrawable, IPointerEventListener
     {
         private readonly Image image;
         private readonly Win2DCompositor compositor;
@@ -28,7 +28,7 @@ namespace Fotografix.UI
         private Layer activeLayer;
         private LayerPropertyEditor activeLayerViewModel;
 
-        private ImageEditor(Image image)
+        private ImageEditor(Image image, Viewport viewport)
         {
             this.image = image;
             this.compositor = new Win2DCompositor(image);
@@ -41,7 +41,7 @@ namespace Fotografix.UI
             history.PropertyChanged += OnHistoryPropertyChanged;
             this.propertySetter = new UndoablePropertySetter(history);
 
-            InitializeTools();
+            InitializeTools(viewport);
 
             this.ActiveLayer = image.Layers.First();
 
@@ -50,24 +50,24 @@ namespace Fotografix.UI
             image.Layers.CollectionChanged += OnLayerCollectionChanged;
         }
 
-        public static ImageEditor Create(Size size)
+        public static ImageEditor Create(Size size, Viewport viewport)
         {
             BitmapLayer layer = BitmapLayerFactory.CreateBitmapLayer(1);
 
             Image image = new Image(size);
             image.Layers.Add(layer);
 
-            return new ImageEditor(image);
+            return new ImageEditor(image, viewport);
         }
 
-        public static async Task<ImageEditor> CreateAsync(StorageFile file)
+        public static async Task<ImageEditor> CreateAsync(StorageFile file, Viewport viewport)
         {
             BitmapLayer layer = await BitmapLayerFactory.LoadBitmapLayerAsync(file);
 
             Image image = new Image(layer.Bitmap.Size);
             image.Layers.Add(layer);
 
-            return new ImageEditor(image);
+            return new ImageEditor(image, viewport);
         }
 
         public void Dispose()
@@ -124,12 +124,6 @@ namespace Fotografix.UI
         }
 
         public event EventHandler Invalidated;
-
-        public event EventHandler<ViewportScrollRequestedEventArgs> ViewportScrollRequested
-        {
-            add => handTool.ViewportScrollRequested += value;
-            remove => handTool.ViewportScrollRequested -= value;
-        }
 
         public void Draw(CanvasDrawingSession ds)
         {
@@ -202,19 +196,19 @@ namespace Fotografix.UI
             }
         }
 
-        public void PointerPressed(PointF pt)
+        public void PointerPressed(IPointerEvent e)
         {
-            activeTool.PointerPressed(pt);
+            activeTool.PointerPressed(e);
         }
 
-        public void PointerMoved(PointF pt)
+        public void PointerMoved(IPointerEvent e)
         {
-            activeTool.PointerMoved(pt);
+            activeTool.PointerMoved(e);
         }
 
-        public void PointerReleased(PointF pt)
+        public void PointerReleased(IPointerEvent e)
         {
-            activeTool.PointerReleased(pt);
+            activeTool.PointerReleased(e);
         }
 
         private BrushTool brushTool;
@@ -224,7 +218,7 @@ namespace Fotografix.UI
         private ITool activeTool;
         private Dictionary<string, ITool> toolDictionary;
 
-        private void InitializeTools()
+        private void InitializeTools(Viewport viewport)
         {
             this.brushTool = new BrushTool()
             {
@@ -234,7 +228,7 @@ namespace Fotografix.UI
             brushTool.BrushStrokeStarted += OnBrushStrokeStarted;
             brushTool.BrushStrokeCompleted += OnBrushStrokeCompleted;
 
-            this.handTool = new HandTool();
+            this.handTool = new HandTool(viewport);
 
             this.toolDictionary = new Dictionary<string, ITool>
             {

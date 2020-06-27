@@ -13,8 +13,8 @@ namespace Fotografix.UI
             this.scrollViewer = scrollViewer;
         }
 
-        public override int Width => (int)scrollViewer.ActualWidth;
-        public override int Height => (int)scrollViewer.ActualHeight;
+        public override int Width => (int)scrollViewer.ViewportWidth;
+        public override int Height => (int)scrollViewer.ViewportHeight;
 
         public override float ZoomFactor
         {
@@ -25,7 +25,7 @@ namespace Fotografix.UI
         public override PointF ScrollOffset
         {
             get => new PointF((float)scrollViewer.HorizontalOffset, (float)scrollViewer.VerticalOffset);
-            set => scrollViewer.ChangeView(value.X, value.Y, null, true);
+            set => scrollViewer.ChangeView(value.X, value.Y, null);
         }
     }
 }

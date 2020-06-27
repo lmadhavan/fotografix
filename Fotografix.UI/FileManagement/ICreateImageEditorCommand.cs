@@ -1,10 +1,11 @@
-﻿using System.Threading.Tasks;
+﻿using Fotografix.Editor;
+using System.Threading.Tasks;
 
 namespace Fotografix.UI.FileManagement
 {
     public interface ICreateImageEditorCommand
     {
         string Title { get; }
-        Task<ImageEditor> ExecuteAsync();
+        Task<ImageEditor> ExecuteAsync(Viewport viewport);
     }
 }

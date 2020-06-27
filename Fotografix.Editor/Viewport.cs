@@ -11,14 +11,6 @@ namespace Fotografix.Editor
         public abstract float ZoomFactor { get; set; }
         public abstract PointF ScrollOffset { get; set; }
 
-        public void ScrollContentBy(PointF delta)
-        {
-            PointF offset = ScrollOffset;
-            offset.X += ZoomFactor * delta.X;
-            offset.Y += ZoomFactor * delta.Y;
-            this.ScrollOffset = offset;
-        }
-
         public void ZoomToFit(Size size)
         {
             float zx = (float)Width / size.Width;

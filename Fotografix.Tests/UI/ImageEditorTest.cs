@@ -1,4 +1,5 @@
-﻿using Fotografix.UI;
+﻿using Fotografix.Editor.Testing;
+using Fotografix.UI;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Drawing;
 using System.Threading.Tasks;
@@ -16,7 +17,7 @@ namespace Fotografix.Tests.UI
         [TestInitialize]
         public void Initialize()
         {
-            this.editor = ImageEditor.Create(ImageSize);
+            this.editor = ImageEditor.Create(ImageSize, new FakeViewport());
         }
 
         [TestCleanup]

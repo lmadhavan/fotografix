@@ -1,6 +1,5 @@
 ﻿using Fotografix.Editor;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
 using System.Drawing;
 using System.Threading.Tasks;
 
@@ -10,21 +9,19 @@ namespace Fotografix.Tests
     public class HandToolAcceptanceTest : ToolAcceptanceTestBase
     {
         [TestMethod]
-        public async Task RequestsViewportScroll()
+        public async Task ScrollsViewport()
         {
             await OpenImageAsync("flowers.jpg");
             SelectTool("Hand");
 
-            ViewportScrollRequestedEventArgs eventArgs = null;
-            Editor.ViewportScrollRequested += (s, e) => eventArgs = e;
+            Viewport.ScrollOffset = new PointF(10, 10);
 
-            PressAndDragPointer(new PointF[] {
-                new PointF(10, 10),
-                new PointF(20, 20)
+            PressAndDragPointer(new Point[] {
+                new Point(30, 30),
+                new Point(32, 32)
             });
 
-            Assert.IsNotNull(eventArgs);
-            Assert.AreEqual(new Point(-10, -10), eventArgs.ScrollDelta);
+            Assert.AreEqual(new PointF(8, 8), Viewport.ScrollOffset);
         }
     }
 }

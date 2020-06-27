@@ -1,4 +1,6 @@
-﻿using Fotografix.UI;
+﻿using Fotografix.Editor;
+using Fotografix.Editor.Testing;
+using Fotografix.UI;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Threading.Tasks;
@@ -10,13 +12,16 @@ namespace Fotografix.Tests
         private bool invalidated;
 
         protected ImageEditor Editor { get; private set; }
+        protected Viewport Viewport { get; private set; }
 
         protected async Task OpenImageAsync(string filename)
         {
             Editor?.Dispose();
 
+            this.Viewport = new FakeViewport();
+
             var file = await TestImages.GetFileAsync(filename);
-            this.Editor = await ImageEditor.CreateAsync(file);
+            this.Editor = await ImageEditor.CreateAsync(file, Viewport);
             Editor.Invalidated += OnEditorInvalidated;
         }
 

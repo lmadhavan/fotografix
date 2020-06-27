@@ -16,18 +16,18 @@ namespace Fotografix.Tests
 
             AssertToolCursor(ToolCursor.Crosshair);
 
-            PressAndDragPointer(new PointF[] {
-                new PointF(100, 100),
-                new PointF(250, 150),
-                new PointF(250, 350)
+            PressAndDragPointer(new Point[] {
+                new Point(100, 100),
+                new Point(250, 150),
+                new Point(250, 350)
             });
 
             await AssertImageAsync("flowers_brush_partial.png");
 
-            ContinueDraggingAndReleasePointer(new PointF[]
+            ContinueDraggingAndReleasePointer(new Point[]
             {
-                new PointF(75, 200),
-                new PointF(200, 50)
+                new Point(75, 200),
+                new Point(200, 50)
             });
 
             await AssertImageAsync("flowers_brush.png");

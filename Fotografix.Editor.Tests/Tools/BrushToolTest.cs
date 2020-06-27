@@ -1,4 +1,5 @@
 ﻿using Fotografix.Adjustments;
+using Fotografix.Editor.Testing;
 using Fotografix.Testing;
 using NUnit.Framework;
 using System.Drawing;
@@ -11,8 +12,8 @@ namespace Fotografix.Editor.Tools
         private const int BrushSize = 5;
         private static readonly Color BrushColor = Color.White;
 
-        private static readonly PointF Start = new PointF(10, 10);
-        private static readonly PointF End = new PointF(20, 20);
+        private static readonly IPointerEvent Start = new FakePointerEvent(10, 10);
+        private static readonly IPointerEvent End = new FakePointerEvent(20, 20);
 
         private BrushTool tool;
         private BrushStrokeEventArgs brushStrokeStartedEvent;
@@ -67,7 +68,7 @@ namespace Fotografix.Editor.Tools
             Assert.That(brushStrokeStartedEvent, Is.Not.Null);
             Assert.That(brushStrokeStartedEvent.BrushStroke.Size, Is.EqualTo(BrushSize));
             Assert.That(brushStrokeStartedEvent.BrushStroke.Color, Is.EqualTo(BrushColor));
-            Assert.That(brushStrokeStartedEvent.BrushStroke.Points, Is.EqualTo(new PointF[] { Start }));
+            Assert.That(brushStrokeStartedEvent.BrushStroke.Points, Is.EqualTo(new PointF[] { Start.Location }));
         }
 
         [Test]
@@ -80,7 +81,7 @@ namespace Fotografix.Editor.Tools
 
             Assert.That(brushStrokeCompletedEvent, Is.Not.Null);
             Assert.That(brushStrokeCompletedEvent.BrushStroke, Is.SameAs(brushStrokeStartedEvent.BrushStroke));
-            Assert.That(brushStrokeCompletedEvent.BrushStroke.Points, Is.EqualTo(new PointF[] { Start, End }));
+            Assert.That(brushStrokeCompletedEvent.BrushStroke.Points, Is.EqualTo(new PointF[] { Start.Location, End.Location }));
         }
 
         [Test]
@@ -90,7 +91,7 @@ namespace Fotografix.Editor.Tools
             tool.PointerPressed(Start);
             tool.PointerMoved(End);
             tool.PointerReleased(End);
-            tool.PointerMoved(PointF.Empty);
+            tool.PointerMoved(new FakePointerEvent());
 
             Assert.That(brushStrokeCompletedEvent.BrushStroke.Points, Has.Count.EqualTo(2));
         }

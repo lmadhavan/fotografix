@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using Fotografix.Editor;
+using System.Drawing;
 using System.Threading.Tasks;
 
 namespace Fotografix.UI.FileManagement
@@ -14,9 +15,9 @@ namespace Fotografix.UI.FileManagement
 
         public string Title => "Untitled";
 
-        public Task<ImageEditor> ExecuteAsync()
+        public Task<ImageEditor> ExecuteAsync(Viewport viewport)
         {
-            return Task.FromResult(ImageEditor.Create(size));
+            return Task.FromResult(ImageEditor.Create(size, viewport));
         }
     }
 }

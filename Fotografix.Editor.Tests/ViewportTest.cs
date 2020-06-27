@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using Fotografix.Editor.Testing;
+using NUnit.Framework;
 using System.Drawing;
 
 namespace Fotografix.Editor
@@ -34,35 +35,6 @@ namespace Fotografix.Editor
             viewport.ZoomToFit(new Size(50, 50));
 
             Assert.That(viewport.ZoomFactor, Is.EqualTo(1.0f));
-        }
-
-        [Test]
-        public void AdjustsScrollOffsetForContentBasedOnZoomFactor()
-        {
-            Viewport viewport = new FakeViewport(100, 100)
-            {
-                ZoomFactor = 2,
-                ScrollOffset = new PointF(10, 10)
-            };
-
-            viewport.ScrollContentBy(new PointF(3, 3));
-
-            Assert.That(viewport.ScrollOffset, Is.EqualTo(new PointF(16, 16)));
-        }
-
-        private sealed class FakeViewport : Viewport
-        {
-            public FakeViewport(int width, int height)
-            {
-                this.Width = width;
-                this.Height = height;
-            }
-
-            public override int Width { get; }
-            public override int Height { get; }
-
-            public override float ZoomFactor { get; set; }
-            public override PointF ScrollOffset { get; set; }
         }
     }
 }

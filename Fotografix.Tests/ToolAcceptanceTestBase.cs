@@ -1,4 +1,5 @@
-﻿using Fotografix.Editor.Tools;
+﻿using Fotografix.Editor.Testing;
+using Fotografix.Editor.Tools;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Drawing;
 
@@ -22,24 +23,24 @@ namespace Fotografix.Tests
             Assert.AreEqual(expected, Editor.ToolCursor);
         }
 
-        protected void PressAndDragPointer(PointF[] points)
+        protected void PressAndDragPointer(Point[] points)
         {
-            Editor.PointerPressed(points[0]);
+            Editor.PointerPressed(new FakePointerEvent(points[0]));
 
             for (int i = 1; i < points.Length; i++)
             {
-                Editor.PointerMoved(points[i]);
+                Editor.PointerMoved(new FakePointerEvent(points[i]));
             }
         }
 
-        protected void ContinueDraggingAndReleasePointer(PointF[] points)
+        protected void ContinueDraggingAndReleasePointer(Point[] points)
         {
             for (int i = 0; i < points.Length; i++)
             {
-                Editor.PointerMoved(points[i]);
+                Editor.PointerMoved(new FakePointerEvent(points[i]));
             }
 
-            Editor.PointerReleased(points[points.Length - 1]);
+            Editor.PointerReleased(new FakePointerEvent(points[points.Length - 1]));
         }
     }
 }

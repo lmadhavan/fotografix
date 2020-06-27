@@ -14,7 +14,6 @@ using Windows.ApplicationModel.DataTransfer;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.UI.Core;
-using Windows.UI.Input;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
@@ -91,10 +90,9 @@ namespace Fotografix.UI
         {
             editor?.Dispose();
 
-            this.editor = await createCommand.ExecuteAsync();
+            this.editor = await createCommand.ExecuteAsync(viewport);
             editor.Invalidated += OnEditorInvalidated;
             editor.PropertyChanged += OnEditorPropertyChanged;
-            editor.ViewportScrollRequested += OnViewportScrollRequested;
 
             Bindings.Update();
             UpdateCanvasSize();
@@ -129,11 +127,6 @@ namespace Fotografix.UI
             {
                 UpdateCanvasSize();
             }
-        }
-
-        private void OnViewportScrollRequested(object sender, ViewportScrollRequestedEventArgs e)
-        {
-            viewport.ScrollContentBy(e.ScrollDelta);
         }
 
         protected override void OnDragEnter(DragEventArgs e)
@@ -190,18 +183,18 @@ namespace Fotografix.UI
         private void Canvas_PointerPressed(object sender, PointerRoutedEventArgs e)
         {
             canvas.CapturePointer(e.Pointer);
-            editor?.PointerPressed(GetEditorPoint(e));
+            editor?.PointerPressed(PointerEventFor(e));
         }
 
         private void Canvas_PointerMoved(object sender, PointerRoutedEventArgs e)
         {
             window.PointerCursor = CursorMap[editor?.ToolCursor ?? ToolCursor.Disabled];
-            editor?.PointerMoved(GetEditorPoint(e));
+            editor?.PointerMoved(PointerEventFor(e));
         }
 
         private void Canvas_PointerReleased(object sender, PointerRoutedEventArgs e)
         {
-            editor?.PointerReleased(GetEditorPoint(e));
+            editor?.PointerReleased(PointerEventFor(e));
             canvas.ReleasePointerCapture(e.Pointer);
         }
 
@@ -210,10 +203,9 @@ namespace Fotografix.UI
             window.PointerCursor = originalCursor;
         }
 
-        private PointF GetEditorPoint(PointerRoutedEventArgs e)
+        private IPointerEvent PointerEventFor(PointerRoutedEventArgs e)
         {
-            PointerPoint pt = e.GetCurrentPoint(canvas);
-            return new PointF((float)pt.Position.X, (float)pt.Position.Y);
+            return new PointerEventAdapter(e, canvas, scrollViewer);
         }
     }
 }
