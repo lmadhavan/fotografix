@@ -15,7 +15,7 @@ namespace Fotografix.Editor.Tools
 
         object ITool.Settings => this;
 
-        public ToolCursor Cursor => ToolCursor.Hand;
+        public ToolCursor Cursor => scrollAnchor != null ? ToolCursor.ClosedHand : ToolCursor.OpenHand;
 
         public void LayerActivated(Layer layer)
         {

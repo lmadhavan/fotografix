@@ -27,7 +27,8 @@ namespace Fotografix.UI
         {
             [ToolCursor.Disabled] = new CoreCursor(CoreCursorType.UniversalNo, 0),
             [ToolCursor.Crosshair] = new CoreCursor(CoreCursorType.Cross, 0),
-            [ToolCursor.Hand] = new CoreCursor(CoreCursorType.Arrow, 0)
+            [ToolCursor.OpenHand] = new CoreCursor(CoreCursorType.Custom, 101),
+            [ToolCursor.ClosedHand] = new CoreCursor(CoreCursorType.Custom, 102)
         };
 
         private readonly CoreWindow window;
@@ -184,23 +185,30 @@ namespace Fotografix.UI
         {
             canvas.CapturePointer(e.Pointer);
             editor?.PointerPressed(PointerEventFor(e));
+            UpdateCursor();
         }
 
         private void Canvas_PointerMoved(object sender, PointerRoutedEventArgs e)
         {
-            window.PointerCursor = CursorMap[editor?.ToolCursor ?? ToolCursor.Disabled];
             editor?.PointerMoved(PointerEventFor(e));
+            UpdateCursor();
         }
 
         private void Canvas_PointerReleased(object sender, PointerRoutedEventArgs e)
         {
             editor?.PointerReleased(PointerEventFor(e));
+            UpdateCursor();
             canvas.ReleasePointerCapture(e.Pointer);
         }
 
         private void Canvas_PointerExited(object sender, PointerRoutedEventArgs e)
         {
             window.PointerCursor = originalCursor;
+        }
+
+        private void UpdateCursor()
+        {
+            window.PointerCursor = CursorMap[editor?.ToolCursor ?? ToolCursor.Disabled];
         }
 
         private IPointerEvent PointerEventFor(PointerRoutedEventArgs e)

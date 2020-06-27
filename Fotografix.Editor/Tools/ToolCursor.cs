@@ -4,6 +4,7 @@
     {
         Disabled,
         Crosshair,
-        Hand
+        OpenHand,
+        ClosedHand
     }
 }
