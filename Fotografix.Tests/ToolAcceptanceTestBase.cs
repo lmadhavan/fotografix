@@ -2,34 +2,37 @@
 using Fotografix.Editor.Tools;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Drawing;
+using System.Linq;
 
 namespace Fotografix.Tests
 {
     public abstract class ToolAcceptanceTestBase : AcceptanceTestBase
     {
+        private ITool ActiveTool => Editor.ActiveTool;
+
         protected void SelectTool(string name)
         {
-            Editor.ActiveTool = name;
+            Editor.ActiveTool = Editor.Tools.First(tool => tool.Name == name);
         }
 
         protected TSettings SelectTool<TSettings>(string name)
         {
             SelectTool(name);
-            return (TSettings)Editor.ToolSettings;
+            return (TSettings)ActiveTool.Settings;
         }
 
         protected void AssertToolCursor(ToolCursor expected)
         {
-            Assert.AreEqual(expected, Editor.ToolCursor);
+            Assert.AreEqual(expected, ActiveTool.Cursor);
         }
 
         protected void PressAndDragPointer(Point[] points)
         {
-            Editor.PointerPressed(new PointerState(points[0]));
+            ActiveTool.PointerPressed(new PointerState(points[0]));
 
             for (int i = 1; i < points.Length; i++)
             {
-                Editor.PointerMoved(new PointerState(points[i]));
+                ActiveTool.PointerMoved(new PointerState(points[i]));
             }
         }
 
@@ -37,10 +40,10 @@ namespace Fotografix.Tests
         {
             for (int i = 0; i < points.Length; i++)
             {
-                Editor.PointerMoved(new PointerState(points[i]));
+                ActiveTool.PointerMoved(new PointerState(points[i]));
             }
 
-            Editor.PointerReleased(new PointerState(points[points.Length - 1]));
+            ActiveTool.PointerReleased(new PointerState(points[points.Length - 1]));
         }
     }
 }

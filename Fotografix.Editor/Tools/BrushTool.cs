@@ -3,7 +3,7 @@ using System.Drawing;
 
 namespace Fotografix.Editor.Tools
 {
-    public sealed class BrushTool : ITool, IBrushToolSettings
+    public sealed class BrushTool : ITool, ILayerActivationListener, IBrushToolSettings
     {
         private Layer activeLayer;
         private BrushStroke brushStroke;
@@ -11,6 +11,7 @@ namespace Fotografix.Editor.Tools
         public float Size { get; set; }
         public Color Color { get; set; }
 
+        public string Name => "Brush";
         object ITool.Settings => this;
         public ToolCursor Cursor => Enabled ? ToolCursor.Crosshair : ToolCursor.Disabled;
 

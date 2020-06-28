@@ -1,12 +1,13 @@
-﻿using System.Drawing;
-
-namespace Fotografix.Editor.Tools
+﻿namespace Fotografix.Editor.Tools
 {
-    public interface ITool : IPointerEventListener
+    public interface ITool
     {
+        string Name { get; }
         object Settings { get; }
         ToolCursor Cursor { get; }
 
-        void LayerActivated(Layer layer);
+        void PointerPressed(PointerState p);
+        void PointerMoved(PointerState p);
+        void PointerReleased(PointerState p);
     }
 }

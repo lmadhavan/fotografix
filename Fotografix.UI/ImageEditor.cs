@@ -17,7 +17,7 @@ using Windows.Storage;
 
 namespace Fotografix.UI
 {
-    public sealed class ImageEditor : NotifyPropertyChangedBase, ICommandService, IDisposable, IWin2DDrawable, IPointerEventListener
+    public sealed class ImageEditor : NotifyPropertyChangedBase, ICommandService, IDisposable, IWin2DDrawable, IToolbox
     {
         private readonly Image image;
         private readonly Win2DCompositor compositor;
@@ -27,6 +27,7 @@ namespace Fotografix.UI
 
         private Layer activeLayer;
         private LayerPropertyEditor activeLayerViewModel;
+        private ILayerActivationListener layerActivationListener;
 
         private ImageEditor(Image image, Viewport viewport)
         {
@@ -112,7 +113,7 @@ namespace Fotografix.UI
                     activeLayerViewModel?.Dispose();
                     this.ActiveLayerPropertyEditor = activeLayer == null ? null : new LayerPropertyEditor(activeLayer, propertySetter);
                     RaisePropertyChanged(nameof(CanDeleteActiveLayer));
-                    activeTool.LayerActivated(activeLayer);
+                    layerActivationListener?.LayerActivated(activeLayer);
                 }
             }
         }
@@ -174,53 +175,21 @@ namespace Fotografix.UI
 
         #region Tools
 
-        public IEnumerable<string> Tools => toolDictionary.Keys;
-        public object ToolSettings => activeTool.Settings;
-        public ToolCursor ToolCursor => activeTool.Cursor;
-
-        public string ActiveTool
-        {
-            get
-            {
-                return activeToolName;
-            }
-
-            set
-            {
-                if (SetProperty(ref activeToolName, value))
-                {
-                    this.activeTool = toolDictionary[activeToolName];
-                    activeTool.LayerActivated(activeLayer);
-                    RaisePropertyChanged(nameof(ToolSettings));
-                }
-            }
-        }
-
-        public void PointerPressed(PointerState e)
-        {
-            activeTool.PointerPressed(e);
-        }
-
-        public void PointerMoved(PointerState e)
-        {
-            activeTool.PointerMoved(e);
-        }
-
-        public void PointerReleased(PointerState e)
-        {
-            activeTool.PointerReleased(e);
-        }
-
-        private BrushTool brushTool;
-        private HandTool handTool;
-
-        private string activeToolName;
         private ITool activeTool;
-        private Dictionary<string, ITool> toolDictionary;
+
+        public IList<ITool> Tools { get; private set; }
+
+        public ITool ActiveTool
+        {
+            get => activeTool;
+            set => SetProperty(ref activeTool, value);
+        }
 
         private void InitializeTools(Viewport viewport)
         {
-            this.brushTool = new BrushTool()
+            var handTool = new HandTool(viewport);
+
+            var brushTool = new BrushTool()
             {
                 Size = 5,
                 Color = Color.White
@@ -228,14 +197,9 @@ namespace Fotografix.UI
             brushTool.BrushStrokeStarted += OnBrushStrokeStarted;
             brushTool.BrushStrokeCompleted += OnBrushStrokeCompleted;
 
-            this.handTool = new HandTool(viewport);
-
-            this.toolDictionary = new Dictionary<string, ITool>
-            {
-                ["Brush"] = brushTool,
-                ["Hand"] = handTool
-            };
-            this.ActiveTool = "Hand";
+            this.Tools = new List<ITool> { handTool, brushTool };
+            this.activeTool = Tools.First();
+            this.layerActivationListener = brushTool;
         }
 
         private void OnBrushStrokeStarted(object sender, BrushStrokeEventArgs e)

@@ -134,6 +134,7 @@
     <Compile Include="FileManagement\RecentFile.cs" />
     <Compile Include="FileManagement\RecentFileList.cs" />
     <Compile Include="FileManagement\Workspace.cs" />
+    <Compile Include="IToolbox.cs" />
     <Compile Include="Tab.cs" />
     <Compile Include="ITitleBarLayoutMetrics.cs" />
     <Compile Include="FileManagement\NewImageCommand.cs" />
@@ -178,6 +179,7 @@
     <Compile Include="TabViewContainer.xaml.cs">
       <DependentUpon>TabViewContainer.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ToolAdapter.cs" />
     <Compile Include="ValueConverter.cs" />
     <EmbeddedResource Include="Properties\Fotografix.Editor.rd.xml" />
   </ItemGroup>

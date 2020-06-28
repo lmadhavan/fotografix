@@ -28,7 +28,7 @@
         </Grid.RowDefinitions>
 
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="96" />
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="300" />
         </Grid.ColumnDefinitions>
@@ -84,19 +84,19 @@
 
         <ListView Grid.Row="1" Grid.Column="0"
                   ItemsSource="{x:Bind editor.Tools}"
-                  SelectedItem="{x:Bind editor.ActiveTool, Mode=TwoWay}" />
+                  SelectedItem="{x:Bind editor.ActiveTool, Mode=TwoWay}"
+                  DisplayMemberPath="Name"
+        />
 
-        <ScrollViewer x:Name="scrollViewer" Grid.Row="1" Grid.Column="1" HorizontalScrollBarVisibility="Auto" ZoomMode="Enabled"
-                                                        PointerEntered="Canvas_PointerEntered"
-                                  PointerPressed="Canvas_PointerPressed"
-                                  PointerMoved="Canvas_PointerMoved"
-                                  PointerReleased="Canvas_PointerReleased"
-                                  PointerExited="Canvas_PointerExited"
->
-            <canvas:CanvasControl x:Name="canvas"
-                                  CreateResources="Canvas_CreateResources"
-                                  Draw="Canvas_Draw"
-                                  />
+        <ScrollViewer x:Name="scrollViewer"
+                      Grid.Row="1" Grid.Column="1"
+                      HorizontalScrollBarVisibility="Auto" ZoomMode="Enabled"
+                      PointerEntered="{x:Bind toolAdapter.PointerEntered}"
+                      PointerPressed="{x:Bind toolAdapter.PointerPressed}"
+                      PointerMoved="{x:Bind toolAdapter.PointerMoved}"
+                      PointerReleased="{x:Bind toolAdapter.PointerReleased}"
+                      PointerExited="{x:Bind toolAdapter.PointerExited}">
+            <canvas:CanvasControl x:Name="canvas" CreateResources="Canvas_CreateResources" Draw="Canvas_Draw" />
         </ScrollViewer>
 
         <StackPanel Grid.Row="1" Grid.Column="2" Orientation="Vertical" Background="{ThemeResource AppBarBackgroundThemeBrush}" Padding="8" BorderThickness="1,0,0,0" BorderBrush="{ThemeResource ButtonBorderThemeBrush}">

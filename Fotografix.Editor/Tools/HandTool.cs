@@ -13,13 +13,9 @@ namespace Fotografix.Editor.Tools
             this.viewport = viewport;
         }
 
-        object ITool.Settings => this;
-
+        public string Name => "Hand";
+        object ITool.Settings => null;
         public ToolCursor Cursor => scrollAnchor != null ? ToolCursor.ClosedHand : ToolCursor.OpenHand;
-
-        public void LayerActivated(Layer layer)
-        {
-        }
 
         public void PointerPressed(PointerState p)
         {
