@@ -1,5 +1,4 @@
 ﻿using Fotografix.Adjustments;
-using Fotografix.Editor.Testing;
 using Fotografix.Testing;
 using NUnit.Framework;
 using System.Drawing;
@@ -12,8 +11,8 @@ namespace Fotografix.Editor.Tools
         private const int BrushSize = 5;
         private static readonly Color BrushColor = Color.White;
 
-        private static readonly IPointerEvent Start = new FakePointerEvent(10, 10);
-        private static readonly IPointerEvent End = new FakePointerEvent(20, 20);
+        private static readonly PointerState Start = new PointerState(new Point(10, 10));
+        private static readonly PointerState End = new PointerState(new Point(20, 20));
 
         private BrushTool tool;
         private BrushStrokeEventArgs brushStrokeStartedEvent;
@@ -91,7 +90,7 @@ namespace Fotografix.Editor.Tools
             tool.PointerPressed(Start);
             tool.PointerMoved(End);
             tool.PointerReleased(End);
-            tool.PointerMoved(new FakePointerEvent());
+            tool.PointerMoved(PointerState.Empty);
 
             Assert.That(brushStrokeCompletedEvent.BrushStroke.Points, Has.Count.EqualTo(2));
         }

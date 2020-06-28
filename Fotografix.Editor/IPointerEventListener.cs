@@ -2,8 +2,8 @@
 {
     public interface IPointerEventListener
     {
-        void PointerPressed(IPointerEvent e);
-        void PointerMoved(IPointerEvent e);
-        void PointerReleased(IPointerEvent e);
+        void PointerPressed(PointerState p);
+        void PointerMoved(PointerState p);
+        void PointerReleased(PointerState p);
     }
 }

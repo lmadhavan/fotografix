@@ -21,23 +21,23 @@ namespace Fotografix.Editor.Tools
         {
         }
 
-        public void PointerPressed(IPointerEvent e)
+        public void PointerPressed(PointerState p)
         {
             this.scrollAnchor = new ScrollAnchor(viewport);
-            this.start = e.ViewportLocation;
+            this.start = p.ViewportLocation;
         }
 
-        public void PointerMoved(IPointerEvent e)
+        public void PointerMoved(PointerState p)
         {
             if (scrollAnchor != null)
             {
-                PointF current = e.ViewportLocation;
+                PointF current = p.ViewportLocation;
                 PointF delta = new PointF(start.X - current.X, start.Y - current.Y);
                 scrollAnchor.ScrollContentTo(delta);
             }
         }
 
-        public void PointerReleased(IPointerEvent e)
+        public void PointerReleased(PointerState p)
         {
             this.scrollAnchor = null;
         }

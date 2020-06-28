@@ -14,6 +14,7 @@ using Windows.ApplicationModel.DataTransfer;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.UI.Core;
+using Windows.UI.Input;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
@@ -211,9 +212,15 @@ namespace Fotografix.UI
             window.PointerCursor = CursorMap[editor?.ToolCursor ?? ToolCursor.Disabled];
         }
 
-        private IPointerEvent PointerEventFor(PointerRoutedEventArgs e)
+        private PointerState PointerEventFor(PointerRoutedEventArgs e)
         {
-            return new PointerEventAdapter(e, canvas, scrollViewer);
+            PointerPoint point = e.GetCurrentPoint(canvas);
+            PointerPoint viewportPoint = e.GetCurrentPoint(scrollViewer);
+
+            return new PointerState(
+                location: new Point((int)point.Position.X, (int)point.Position.Y),
+                viewportLocation: new PointF((float)viewportPoint.Position.X, (float)viewportPoint.Position.Y)
+            );
         }
     }
 }

@@ -52,9 +52,12 @@ namespace Fotografix.Editor.Tools
             Assert.That(viewport.ScrollOffset, Is.EqualTo(new PointF(10, 10)));
         }
 
-        private IPointerEvent ViewportLocation(float x, float y)
+        private PointerState ViewportLocation(float x, float y)
         {
-            return new FakePointerEvent { ViewportLocation = new PointF(x, y) };
+            return new PointerState(
+                location: Point.Empty,
+                viewportLocation: new PointF(x, y)
+            );
         }
     }
 }

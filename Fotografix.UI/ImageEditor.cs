@@ -196,17 +196,17 @@ namespace Fotografix.UI
             }
         }
 
-        public void PointerPressed(IPointerEvent e)
+        public void PointerPressed(PointerState e)
         {
             activeTool.PointerPressed(e);
         }
 
-        public void PointerMoved(IPointerEvent e)
+        public void PointerMoved(PointerState e)
         {
             activeTool.PointerMoved(e);
         }
 
-        public void PointerReleased(IPointerEvent e)
+        public void PointerReleased(PointerState e)
         {
             activeTool.PointerReleased(e);
         }

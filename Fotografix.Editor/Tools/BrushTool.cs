@@ -21,21 +21,21 @@ namespace Fotografix.Editor.Tools
             this.activeLayer = layer;
         }
 
-        public void PointerPressed(IPointerEvent e)
+        public void PointerPressed(PointerState p)
         {
             if (Enabled)
             {
-                this.brushStroke = new BrushStroke(e.Location, Size, Color);
+                this.brushStroke = new BrushStroke(p.Location, Size, Color);
                 BrushStrokeStarted?.Invoke(this, new BrushStrokeEventArgs(activeLayer, brushStroke));
             }
         }
 
-        public void PointerMoved(IPointerEvent e)
+        public void PointerMoved(PointerState p)
         {
-            brushStroke?.AddPoint(e.Location);
+            brushStroke?.AddPoint(p.Location);
         }
 
-        public void PointerReleased(IPointerEvent e)
+        public void PointerReleased(PointerState p)
         {
             if (brushStroke != null)
             {

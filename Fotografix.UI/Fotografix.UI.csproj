@@ -134,7 +134,6 @@
     <Compile Include="FileManagement\RecentFile.cs" />
     <Compile Include="FileManagement\RecentFileList.cs" />
     <Compile Include="FileManagement\Workspace.cs" />
-    <Compile Include="PointerEventAdapter.cs" />
     <Compile Include="Tab.cs" />
     <Compile Include="ITitleBarLayoutMetrics.cs" />
     <Compile Include="FileManagement\NewImageCommand.cs" />
