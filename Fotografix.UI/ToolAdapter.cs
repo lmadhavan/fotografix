@@ -23,6 +23,8 @@ namespace Fotografix.UI
         private readonly UIElement canvas;
         private readonly UIElement viewport;
 
+        private bool pointerInsideViewport;
+        private bool pointerCaptured;
         private CoreCursor originalCursor;
 
         public ToolAdapter(UIElement canvas, UIElement viewport)
@@ -37,12 +39,21 @@ namespace Fotografix.UI
 
         public void PointerEntered(object sender, PointerRoutedEventArgs e)
         {
-            this.originalCursor = window.PointerCursor;
+            this.pointerInsideViewport = true;
+
+            if (!pointerCaptured)
+            {
+                this.originalCursor = window.PointerCursor;
+            }
         }
 
         public void PointerPressed(object sender, PointerRoutedEventArgs e)
         {
-            canvas.CapturePointer(e.Pointer);
+            if (viewport.CapturePointer(e.Pointer))
+            {
+                this.pointerCaptured = true;
+            }
+
             ActiveTool?.PointerPressed(PointerStateFrom(e));
             UpdateCursor();
         }
@@ -56,11 +67,31 @@ namespace Fotografix.UI
         public void PointerReleased(object sender, PointerRoutedEventArgs e)
         {
             ActiveTool?.PointerReleased(PointerStateFrom(e));
-            UpdateCursor();
-            canvas.ReleasePointerCapture(e.Pointer);
+
+            viewport.ReleasePointerCapture(e.Pointer);
+            this.pointerCaptured = false;
+
+            if (pointerInsideViewport)
+            {
+                UpdateCursor();
+            }
+            else
+            {
+                RestoreCursor();
+            }
         }
 
         public void PointerExited(object sender, PointerRoutedEventArgs e)
+        {
+            if (!pointerCaptured)
+            {
+                RestoreCursor();
+            }
+
+            this.pointerInsideViewport = false;
+        }
+
+        private void RestoreCursor()
         {
             window.PointerCursor = originalCursor;
         }
