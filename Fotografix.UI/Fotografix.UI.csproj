@@ -127,6 +127,9 @@
     <Compile Include="BlendModes\BlendModeList.cs" />
     <Compile Include="BlendModes\BlendModeListItem.cs" />
     <Compile Include="BlendModes\BlendModeListItemConverter.cs" />
+    <Compile Include="ErrorDialog.xaml.cs">
+      <DependentUpon>ErrorDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="FileManagement\FilePickerFactory.cs" />
     <Compile Include="FileManagement\ICreateImageEditorCommand.cs" />
     <Compile Include="FileManagement\NewImageParameters.cs" />
@@ -202,6 +205,10 @@
     <Page Include="BlendModes\BlendModeListResourceDictionary.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ErrorDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="ImageEditorPage.xaml">
       <SubType>Designer</SubType>
