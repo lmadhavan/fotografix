@@ -2,10 +2,12 @@
 using Microsoft.UI.Xaml.Controls;
 using System;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Media.Animation;
 
 namespace Fotografix.UI
 {
+    [Bindable]
     public class Tab : TabViewItem
     {
         private readonly Frame frame;

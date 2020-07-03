@@ -127,6 +127,7 @@
     <Compile Include="BrushToolAcceptanceTest.cs" />
     <Compile Include="HandToolAcceptanceTest.cs" />
     <Compile Include="ResizeImageAcceptanceTest.cs" />
+    <Compile Include="SmokeTest.cs" />
     <Compile Include="TestRenderer.cs" />
     <Compile Include="TestImages.cs" />
     <Compile Include="ToolAcceptanceTestBase.cs" />
