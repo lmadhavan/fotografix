@@ -31,11 +31,6 @@ namespace Fotografix
 
         public override bool CanPaint => true;
 
-        public override void Accept(LayerVisitor visitor)
-        {
-            visitor.Visit(this);
-        }
-
         public override IUndoable Paint(BrushStroke brushStroke)
         {
             BitmapState bitmapState = new BitmapState(this);

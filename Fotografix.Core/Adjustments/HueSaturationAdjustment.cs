@@ -2,7 +2,7 @@
 
 namespace Fotografix.Adjustments
 {
-    public sealed class HueSaturationAdjustment : Adjustment
+    public sealed class HueSaturationAdjustment : NotifyPropertyChangedBase, IHueSaturationAdjustment
     {
         private float hue;
         private float saturation;
@@ -60,11 +60,6 @@ namespace Fotografix.Adjustments
 
                 SetProperty(ref lightness, value);
             }
-        }
-
-        public override void Accept(AdjustmentVisitor visitor)
-        {
-            visitor.Visit(this);
         }
     }
 }

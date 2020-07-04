@@ -1,5 +1,5 @@
 ﻿using Fotografix.Adjustments;
-using Fotografix.Editor.Adjustments;
+using System;
 using Windows.UI.Xaml.Controls;
 
 namespace Fotografix.UI.Adjustments
@@ -11,23 +11,23 @@ namespace Fotografix.UI.Adjustments
             InitializeComponent();
 
             // adjustment types
-            RegisterAdjustment<BlackAndWhiteAdjustment>("Black & White");
-            RegisterAdjustment<BrightnessContrastAdjustment>("Brightness/Contrast");
-            RegisterAdjustment<GradientMapAdjustment>("Gradient Map");
-            RegisterAdjustment<HueSaturationAdjustment>("Hue/Saturation");
+            RegisterAdjustment("Black & White", f => f.CreateBlackAndWhiteAdjustment());
+            RegisterAdjustment("Brightness/Contrast", f => f.CreateBrightnessContrastAdjustment());
+            RegisterAdjustment("Gradient Map", f => f.CreateGradientMapAdjustment());
+            RegisterAdjustment("Hue/Saturation", f => f.CreateHueSaturationAdjustment());
 
             // adjustment property templates
-            adjustmentTemplateSelector.SetTemplate<BrightnessContrastAdjustmentPropertyEditor>(brightnessContrastTemplate);
-            adjustmentTemplateSelector.SetTemplate<GradientMapAdjustmentPropertyEditor>(gradientMapTemplate);
-            adjustmentTemplateSelector.SetTemplate<HueSaturationAdjustmentPropertyEditor>(hueSaturationTemplate);
+            adjustmentTemplateSelector.SetTemplate<IBrightnessContrastAdjustment>(brightnessContrastTemplate);
+            adjustmentTemplateSelector.SetTemplate<IGradientMapAdjustment>(gradientMapTemplate);
+            adjustmentTemplateSelector.SetTemplate<IHueSaturationAdjustment>(hueSaturationTemplate);
         }
 
-        private void RegisterAdjustment<T>(string name) where T : Adjustment, new()
+        private void RegisterAdjustment(string name, Func<IAdjustmentFactory, IAdjustment> createFunc)
         {
             newAdjustmentMenuFlyout.Items.Add(new MenuFlyoutItem()
             {
                 Text = name,
-                Tag = new AdjustmentLayerFactory<T>(name)
+                Tag = new AdjustmentLayerFactory(name, createFunc)
             });
         }
     }

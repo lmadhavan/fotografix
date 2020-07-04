@@ -61,7 +61,7 @@ namespace Fotografix.Tests.Composition
             await AssertImageAsync("flowers_bc.png", image);
         }
 
-        private void AddAdjustment(Adjustment adjustment)
+        private void AddAdjustment(IAdjustment adjustment)
         {
             image.Layers.Add(new AdjustmentLayer(adjustment));
         }

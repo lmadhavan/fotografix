@@ -164,8 +164,7 @@
     <Compile Include="Adjustments\AdjustmentTemplatesResourceDictionary.xaml.cs">
       <DependentUpon>AdjustmentTemplatesResourceDictionary.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Adjustments\AdjustmentTemplateSelector.cs" />
-    <Compile Include="Adjustments\IAdjustmentLayerFactory.cs" />
+    <Compile Include="TypeBasedDataTemplateSelector.cs" />
     <Compile Include="BitmapLayerFactory.cs" />
     <Compile Include="BlendModes\BlendModeListItemStyleSelector.cs" />
     <Compile Include="BlendModes\BlendModeListItemTemplateSelector.cs" />
@@ -250,6 +249,10 @@
     <ProjectReference Include="..\Fotografix.Editor\Fotografix.Editor.csproj">
       <Project>{c2424398-29d9-4392-a0c0-c4699c7b913b}</Project>
       <Name>Fotografix.Editor</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Fotografix.History\Fotografix.History.csproj">
+      <Project>{2154ba4b-dc96-4187-8ac9-300b835943e6}</Project>
+      <Name>Fotografix.History</Name>
     </ProjectReference>
     <ProjectReference Include="..\Fotografix.Win2D\Fotografix.Win2D.csproj">
       <Project>{c40b3dd4-0747-48af-a67e-2bc88ebb9fcc}</Project>

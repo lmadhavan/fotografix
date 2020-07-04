@@ -1,19 +1,23 @@
 ﻿using Fotografix.Adjustments;
+using System;
 
 namespace Fotografix.UI.Adjustments
 {
-    public sealed class AdjustmentLayerFactory<T> : IAdjustmentLayerFactory where T : Adjustment, new()
+    public sealed class AdjustmentLayerFactory
     {
         private readonly string name;
+        private readonly Func<IAdjustmentFactory, IAdjustment> createFunc;
 
-        public AdjustmentLayerFactory(string name)
+        public AdjustmentLayerFactory(string name, Func<IAdjustmentFactory, IAdjustment> createFunc)
         {
             this.name = name;
+            this.createFunc = createFunc;
         }
 
-        public AdjustmentLayer CreateAdjustmentLayer()
+        public AdjustmentLayer CreateAdjustmentLayer(IAdjustmentFactory adjustmentFactory)
         {
-            return new AdjustmentLayer(new T()) { Name = name };
+            IAdjustment adjustment = createFunc(adjustmentFactory);
+            return new AdjustmentLayer(adjustment) { Name = name };
         }
     }
 }

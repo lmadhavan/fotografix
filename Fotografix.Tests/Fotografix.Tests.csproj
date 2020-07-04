@@ -143,6 +143,7 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\RecentFileListTest.cs" />
+    <Compile Include="UI\TypeBasedDataTemplateSelectorTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
@@ -203,6 +204,10 @@
     <ProjectReference Include="..\Fotografix.Editor\Fotografix.Editor.csproj">
       <Project>{c2424398-29d9-4392-a0c0-c4699c7b913b}</Project>
       <Name>Fotografix.Editor</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Fotografix.History\Fotografix.History.csproj">
+      <Project>{2154ba4b-dc96-4187-8ac9-300b835943e6}</Project>
+      <Name>Fotografix.History</Name>
     </ProjectReference>
     <ProjectReference Include="..\Fotografix.UI\Fotografix.UI.csproj">
       <Project>{319fa943-25c3-405e-97fc-02307cc817f0}</Project>

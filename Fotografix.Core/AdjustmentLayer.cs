@@ -5,18 +5,13 @@ namespace Fotografix
 {
     public sealed class AdjustmentLayer : Layer
     {
-        public AdjustmentLayer(Adjustment adjustment)
+        public AdjustmentLayer(IAdjustment adjustment)
         {
             this.Adjustment = adjustment;
             adjustment.PropertyChanged += OnAdjustmentPropertyChanged;
         }
 
-        public Adjustment Adjustment { get; }
-
-        public override void Accept(LayerVisitor visitor)
-        {
-            visitor.Visit(this);
-        }
+        public IAdjustment Adjustment { get; }
 
         private void OnAdjustmentPropertyChanged(object sender, PropertyChangedEventArgs e)
         {

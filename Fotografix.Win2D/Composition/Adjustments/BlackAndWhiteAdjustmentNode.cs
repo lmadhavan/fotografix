@@ -8,7 +8,7 @@ namespace Fotografix.Win2D.Composition.Adjustments
     {
         private readonly GrayscaleEffect grayscaleEffect;
 
-        public BlackAndWhiteAdjustmentNode(BlackAndWhiteAdjustment adjustment)
+        public BlackAndWhiteAdjustmentNode(IBlackAndWhiteAdjustment adjustment)
         {
             this.grayscaleEffect = new GrayscaleEffect();
         }

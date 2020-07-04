@@ -1,10 +1,6 @@
 ﻿namespace Fotografix.Adjustments
 {
-    public sealed class BlackAndWhiteAdjustment : Adjustment
+    public sealed class BlackAndWhiteAdjustment : NotifyPropertyChangedBase, IBlackAndWhiteAdjustment
     {
-        public override void Accept(AdjustmentVisitor visitor)
-        {
-            visitor.Visit(this);
-        }
     }
 }

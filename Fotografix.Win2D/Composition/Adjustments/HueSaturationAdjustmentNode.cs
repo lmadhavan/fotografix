@@ -8,10 +8,10 @@ namespace Fotografix.Win2D.Composition.Adjustments
 {
     internal sealed class HueSaturationAdjustmentNode : ColorMatrixAdjustmentNode
     {
-        private readonly HueSaturationAdjustment adjustment;
+        private readonly IHueSaturationAdjustment adjustment;
         private readonly HueRotationEffect hueEffect;
 
-        public HueSaturationAdjustmentNode(HueSaturationAdjustment adjustment)
+        public HueSaturationAdjustmentNode(IHueSaturationAdjustment adjustment)
         {
             this.adjustment = adjustment;
             adjustment.PropertyChanged += OnAdjustmentPropertyChanged;
