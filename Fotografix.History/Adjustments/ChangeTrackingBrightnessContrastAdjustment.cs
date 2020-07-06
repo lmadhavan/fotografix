@@ -2,7 +2,7 @@
 
 namespace Fotografix.History.Adjustments
 {
-    public sealed class ChangeTrackingBrightnessContrastAdjustment : PropertyChangeTrackingBase<IBrightnessContrastAdjustment>, IBrightnessContrastAdjustment
+    public sealed class ChangeTrackingBrightnessContrastAdjustment : ChangeTrackingAdjustment<IBrightnessContrastAdjustment>, IBrightnessContrastAdjustment
     {
         public ChangeTrackingBrightnessContrastAdjustment(IBrightnessContrastAdjustment adjustment, IChangeTracker changeTracker)
             : base(adjustment, changeTracker)

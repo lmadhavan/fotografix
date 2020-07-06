@@ -3,7 +3,7 @@ using System.Drawing;
 
 namespace Fotografix.History.Adjustments
 {
-    public sealed class ChangeTrackingGradientMapAdjustment : PropertyChangeTrackingBase<IGradientMapAdjustment>, IGradientMapAdjustment
+    public sealed class ChangeTrackingGradientMapAdjustment : ChangeTrackingAdjustment<IGradientMapAdjustment>, IGradientMapAdjustment
     {
         public ChangeTrackingGradientMapAdjustment(IGradientMapAdjustment adjustment, IChangeTracker changeTracker)
             : base(adjustment, changeTracker)

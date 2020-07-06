@@ -123,17 +123,18 @@
     <Compile Include="..\SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="Adjustments\ColorMatrix.cs" />
+    <Compile Include="Adjustments\Win2DAdjustmentContext.cs" />
+    <Compile Include="Adjustments\Win2DAdjustmentFactory.cs" />
+    <Compile Include="Adjustments\Win2DBlackAndWhiteAdjustment.cs" />
+    <Compile Include="Adjustments\Win2DBrightnessContrastAdjustment.cs" />
+    <Compile Include="Adjustments\Win2DGradientMapAdjustment.cs" />
+    <Compile Include="Adjustments\Win2DHueSaturationAdjustment.cs" />
     <Compile Include="BrushStrokePainter.cs" />
     <Compile Include="Composition\AdjustmentLayerNode.cs" />
-    <Compile Include="Composition\Adjustments\AdjustmentNode.cs" />
-    <Compile Include="Composition\Adjustments\BrightnessContrastAdjustmentNode.cs" />
     <Compile Include="Composition\BrushStrokeNode.cs" />
     <Compile Include="Composition\CompositeEffectNode.cs" />
     <Compile Include="Composition\NodeFactory.cs" />
-    <Compile Include="Composition\Adjustments\BlackAndWhiteAdjustmentNode.cs" />
-    <Compile Include="Composition\Adjustments\ColorMatrixAdjustmentNode.cs" />
-    <Compile Include="Composition\Adjustments\GradientMapAdjustmentNode.cs" />
-    <Compile Include="Composition\Adjustments\HueSaturationAdjustmentNode.cs" />
     <Compile Include="Composition\BitmapLayerNode.cs" />
     <Compile Include="Composition\ImageNode.cs" />
     <Compile Include="Composition\LayerNode.cs" />
@@ -159,6 +160,7 @@
       <Name>Fotografix.Core</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>

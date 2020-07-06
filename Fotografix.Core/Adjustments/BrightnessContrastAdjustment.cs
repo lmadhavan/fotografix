@@ -2,7 +2,7 @@
 
 namespace Fotografix.Adjustments
 {
-    public sealed class BrightnessContrastAdjustment : NotifyPropertyChangedBase, IBrightnessContrastAdjustment
+    public abstract class BrightnessContrastAdjustment : Adjustment, IBrightnessContrastAdjustment
     {
         private float brightness;
         private float contrast;
@@ -21,7 +21,10 @@ namespace Fotografix.Adjustments
                     throw new ArgumentOutOfRangeException();
                 }
 
-                SetProperty(ref brightness, value);
+                if (SetProperty(ref brightness, value))
+                {
+                    OnBrightnessChanged();
+                }
             }
         }
 
@@ -39,8 +42,19 @@ namespace Fotografix.Adjustments
                     throw new ArgumentOutOfRangeException();
                 }
 
-                SetProperty(ref contrast, value);
+                if (SetProperty(ref contrast, value))
+                {
+                    OnContrastChanged();
+                }
             }
+        }
+
+        protected virtual void OnBrightnessChanged()
+        {
+        }
+
+        protected virtual void OnContrastChanged()
+        {
         }
     }
 }

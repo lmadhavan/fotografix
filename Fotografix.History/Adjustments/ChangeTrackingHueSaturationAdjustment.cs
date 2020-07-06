@@ -2,7 +2,7 @@
 
 namespace Fotografix.History.Adjustments
 {
-    public sealed class ChangeTrackingHueSaturationAdjustment : PropertyChangeTrackingBase<IHueSaturationAdjustment>, IHueSaturationAdjustment
+    public sealed class ChangeTrackingHueSaturationAdjustment : ChangeTrackingAdjustment<IHueSaturationAdjustment>, IHueSaturationAdjustment
     {
         public ChangeTrackingHueSaturationAdjustment(IHueSaturationAdjustment adjustment, IChangeTracker changeTracker)
             : base(adjustment, changeTracker)

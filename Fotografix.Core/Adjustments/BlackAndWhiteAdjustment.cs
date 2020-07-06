@@ -1,6 +1,6 @@
 ﻿namespace Fotografix.Adjustments
 {
-    public sealed class BlackAndWhiteAdjustment : NotifyPropertyChangedBase, IBlackAndWhiteAdjustment
+    public abstract class BlackAndWhiteAdjustment : Adjustment, IBlackAndWhiteAdjustment
     {
     }
 }

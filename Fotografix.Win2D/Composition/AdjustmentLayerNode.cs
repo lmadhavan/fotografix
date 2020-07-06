@@ -1,7 +1,6 @@
-﻿using Fotografix.Win2D.Composition.Adjustments;
+﻿using Fotografix.Win2D.Adjustments;
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Effects;
-using System;
 
 namespace Fotografix.Win2D.Composition
 {
@@ -9,19 +8,16 @@ namespace Fotografix.Win2D.Composition
     {
         private readonly AdjustmentLayer layer;
         private readonly CrossFadeEffect crossFadeEffect;
-        private AdjustmentNode adjustmentNode;
 
         public AdjustmentLayerNode(AdjustmentLayer layer) : base(layer)
         {
             this.layer = layer;
             this.crossFadeEffect = new CrossFadeEffect();
-            RegisterAdjustment();
             UpdateOutput();
         }
 
         public override void Dispose()
         {
-            UnregisterAdjustment();
             crossFadeEffect.Dispose();
             base.Dispose();
         }
@@ -48,29 +44,15 @@ namespace Fotografix.Win2D.Composition
 
         private ICanvasImage BlendAdjustment(ICanvasImage background)
         {
-            ICanvasImage adjustmentOutput = adjustmentNode.GetOutput(background);
+            Win2DAdjustmentContext ac = new Win2DAdjustmentContext(background);
+            layer.Adjustment.Apply(ac);
 
             if (layer.BlendMode == BlendMode.Normal)
             {
-                return adjustmentOutput;
+                return ac.Output;
             }
 
-            return Blend(adjustmentOutput, background);
-        }
-
-        private void RegisterAdjustment()
-        {
-            this.adjustmentNode = NodeFactory.Adjustment.Create(layer.Adjustment);
-        }
-
-        private void UnregisterAdjustment()
-        {
-            adjustmentNode.Dispose();
-        }
-
-        private void OnAdjustmentOutputChanged(object sender, EventArgs e)
-        {
-            UpdateOutput();
+            return Blend(ac.Output, background);
         }
     }
 }

@@ -2,7 +2,7 @@
 
 namespace Fotografix.Adjustments
 {
-    public sealed class HueSaturationAdjustment : NotifyPropertyChangedBase, IHueSaturationAdjustment
+    public abstract class HueSaturationAdjustment : Adjustment, IHueSaturationAdjustment
     {
         private float hue;
         private float saturation;
@@ -22,7 +22,10 @@ namespace Fotografix.Adjustments
                     throw new ArgumentOutOfRangeException();
                 }
 
-                SetProperty(ref hue, value);
+                if (SetProperty(ref hue, value))
+                {
+                    OnHueChanged();
+                }
             }
         }
 
@@ -40,7 +43,10 @@ namespace Fotografix.Adjustments
                     throw new ArgumentOutOfRangeException();
                 }
 
-                SetProperty(ref saturation, value);
+                if (SetProperty(ref saturation, value))
+                {
+                    OnSaturationChanged();
+                }
             }
         }
 
@@ -58,8 +64,23 @@ namespace Fotografix.Adjustments
                     throw new ArgumentOutOfRangeException();
                 }
 
-                SetProperty(ref lightness, value);
+                if (SetProperty(ref lightness, value))
+                {
+                    OnLightnessChanged();
+                }
             }
+        }
+
+        protected virtual void OnHueChanged()
+        {
+        }
+
+        protected virtual void OnSaturationChanged()
+        {
+        }
+
+        protected virtual void OnLightnessChanged()
+        {
         }
     }
 }

@@ -2,7 +2,7 @@
 
 namespace Fotografix.Adjustments
 {
-    public sealed class GradientMapAdjustment : NotifyPropertyChangedBase, IGradientMapAdjustment
+    public abstract class GradientMapAdjustment : Adjustment, IGradientMapAdjustment
     {
         private Color shadows = Color.Black;
         private Color highlights = Color.White;
@@ -10,13 +10,35 @@ namespace Fotografix.Adjustments
         public Color Shadows
         {
             get => shadows;
-            set => SetProperty(ref shadows, value);
+
+            set
+            {
+                if (SetProperty(ref shadows, value))
+                {
+                    OnShadowsChanged();
+                }
+            }
         }
 
         public Color Highlights
         {
             get => highlights;
-            set => SetProperty(ref highlights, value);
+
+            set
+            {
+                if (SetProperty(ref highlights, value))
+                {
+                    OnHighlightsChanged();
+                }
+            }
+        }
+
+        protected virtual void OnShadowsChanged()
+        {
+        }
+
+        protected virtual void OnHighlightsChanged()
+        {
         }
     }
 }

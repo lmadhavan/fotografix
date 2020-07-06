@@ -1,5 +1,4 @@
-﻿using Fotografix.Adjustments;
-using Fotografix.Testing;
+﻿using Fotografix.Testing;
 using NUnit.Framework;
 using System.Drawing;
 
@@ -52,7 +51,7 @@ namespace Fotografix.Editor
             Size originalImageSize = new Size(50, 25);
             Image image = new Image(originalImageSize);
 
-            AdjustmentLayer layer = new AdjustmentLayer(new BlackAndWhiteAdjustment());
+            AdjustmentLayer layer = new AdjustmentLayer(new FakeAdjustment());
             image.Layers.Add(layer);
 
             Size newImageSize = new Size(100, 50);
