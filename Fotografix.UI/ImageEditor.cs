@@ -7,7 +7,6 @@ using Fotografix.Editor.Tools;
 using Fotografix.History.Adjustments;
 using Fotografix.UI.Adjustments;
 using Fotografix.Win2D;
-using Fotografix.Win2D.Adjustments;
 using Microsoft.Graphics.Canvas;
 using System;
 using System.Collections.Generic;
@@ -46,7 +45,7 @@ namespace Fotografix.UI
             history.PropertyChanged += OnHistoryPropertyChanged;
             this.propertySetter = new UndoablePropertySetter(history);
 
-            this.adjustmentFactory = new ChangeTrackingAdjustmentFactory(new Win2DAdjustmentFactory(), history);
+            this.adjustmentFactory = new ChangeTrackingAdjustmentFactory(new AdjustmentFactory(), history);
 
             InitializeTools(viewport);
 

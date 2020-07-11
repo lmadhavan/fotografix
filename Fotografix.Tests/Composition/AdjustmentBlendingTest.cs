@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Fotografix.Adjustments;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Threading.Tasks;
 
 namespace Fotografix.Tests.Composition
@@ -15,7 +16,7 @@ namespace Fotografix.Tests.Composition
         {
             this.image = await LoadImageAsync("flowers.jpg");
             this.background = image.Layers[0];
-            this.foreground = new AdjustmentLayer(AdjustmentFactory.CreateBlackAndWhiteAdjustment());
+            this.foreground = new AdjustmentLayer(new BlackAndWhiteAdjustment());
             image.Layers.Add(foreground);
         }
 

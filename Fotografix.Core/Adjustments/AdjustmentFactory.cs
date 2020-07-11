@@ -1,27 +1,25 @@
-﻿using Fotografix.Adjustments;
-
-namespace Fotografix.Win2D.Adjustments
+﻿namespace Fotografix.Adjustments
 {
-    public sealed class Win2DAdjustmentFactory : IAdjustmentFactory
+    public sealed class AdjustmentFactory : IAdjustmentFactory
     {
         public IBlackAndWhiteAdjustment CreateBlackAndWhiteAdjustment()
         {
-            return new Win2DBlackAndWhiteAdjustment();
+            return new BlackAndWhiteAdjustment();
         }
 
         public IBrightnessContrastAdjustment CreateBrightnessContrastAdjustment()
         {
-            return new Win2DBrightnessContrastAdjustment();
+            return new BrightnessContrastAdjustment();
         }
 
         public IGradientMapAdjustment CreateGradientMapAdjustment()
         {
-            return new Win2DGradientMapAdjustment();
+            return new GradientMapAdjustment();
         }
 
         public IHueSaturationAdjustment CreateHueSaturationAdjustment()
         {
-            return new Win2DHueSaturationAdjustment();
+            return new HueSaturationAdjustment();
         }
     }
 }

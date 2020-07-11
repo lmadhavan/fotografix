@@ -1,10 +1,8 @@
-﻿using System;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 
 namespace Fotografix.Adjustments
 {
-    public interface IAdjustment : INotifyPropertyChanged, IDisposable
+    public interface IAdjustment : INotifyPropertyChanged
     {
-        void Apply(IAdjustmentContext adjustmentContext);
     }
 }

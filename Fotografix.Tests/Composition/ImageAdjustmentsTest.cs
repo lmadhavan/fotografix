@@ -19,7 +19,7 @@ namespace Fotografix.Tests.Composition
         [TestMethod]
         public async Task BlackAndWhiteAdjustment()
         {
-            AddAdjustment(AdjustmentFactory.CreateBlackAndWhiteAdjustment());
+            AddAdjustment(new BlackAndWhiteAdjustment());
 
             await AssertImageAsync("flowers_bw.png", image);
         }
@@ -27,12 +27,12 @@ namespace Fotografix.Tests.Composition
         [TestMethod]
         public async Task HueSaturationAdjustment()
         {
-            var adjustment = AdjustmentFactory.CreateHueSaturationAdjustment();
-            AddAdjustment(adjustment);
-
-            adjustment.Hue = 0.5f;
-            adjustment.Saturation = 0.25f;
-            adjustment.Lightness = 0.25f;
+            AddAdjustment(new HueSaturationAdjustment()
+            {
+                Hue = 0.5f,
+                Saturation = 0.25f,
+                Lightness = 0.25f
+            });
 
             await AssertImageAsync("flowers_hsl.png", image);
         }
@@ -40,11 +40,11 @@ namespace Fotografix.Tests.Composition
         [TestMethod]
         public async Task GradientMapAdjustment()
         {
-            var adjustment = AdjustmentFactory.CreateGradientMapAdjustment();
-            AddAdjustment(adjustment);
-
-            adjustment.Shadows = Color.FromArgb(255, 12, 16, 68);
-            adjustment.Highlights = Color.FromArgb(255, 233, 88, 228);
+            AddAdjustment(new GradientMapAdjustment()
+            {
+                Shadows = Color.FromArgb(255, 12, 16, 68),
+                Highlights = Color.FromArgb(255, 233, 88, 228)
+            });
 
             await AssertImageAsync("flowers_gm.png", image);
         }
@@ -52,11 +52,11 @@ namespace Fotografix.Tests.Composition
         [TestMethod]
         public async Task BrightnessContrastAdjustment()
         {
-            var adjustment = AdjustmentFactory.CreateBrightnessContrastAdjustment();
-            AddAdjustment(adjustment);
-
-            adjustment.Brightness = 0.5f;
-            adjustment.Contrast = 0.5f;
+            AddAdjustment(new BrightnessContrastAdjustment()
+            {
+                Brightness = 0.5f,
+                Contrast = 0.5f
+            });
 
             await AssertImageAsync("flowers_bc.png", image);
         }

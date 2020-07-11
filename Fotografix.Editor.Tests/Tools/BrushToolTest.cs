@@ -1,4 +1,5 @@
-﻿using Fotografix.Testing;
+﻿using Fotografix.Adjustments;
+using Fotografix.Testing;
 using NUnit.Framework;
 using System.Drawing;
 
@@ -101,7 +102,7 @@ namespace Fotografix.Editor.Tools
 
         private void ActivateNonBitmapLayer()
         {
-            tool.LayerActivated(new AdjustmentLayer(new FakeAdjustment()));
+            tool.LayerActivated(new AdjustmentLayer(new BlackAndWhiteAdjustment()));
         }
     }
 }

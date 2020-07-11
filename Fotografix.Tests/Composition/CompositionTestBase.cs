@@ -1,15 +1,11 @@
-﻿using Fotografix.Adjustments;
-using Fotografix.UI;
+﻿using Fotografix.UI;
 using Fotografix.Win2D;
-using Fotografix.Win2D.Adjustments;
 using System.Threading.Tasks;
 
 namespace Fotografix.Tests.Composition
 {
     public abstract class CompositionTestBase
     {
-        protected IAdjustmentFactory AdjustmentFactory { get; } = new Win2DAdjustmentFactory();
-
         protected async Task<Image> LoadImageAsync(string filename)
         {
             var layer = await LoadLayerAsync(filename);
