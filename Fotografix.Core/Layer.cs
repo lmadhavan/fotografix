@@ -86,6 +86,8 @@ namespace Fotografix
 
         public virtual bool CanPaint => false;
 
+        public abstract void Accept(LayerVisitor visitor);
+
         public virtual IUndoable Paint(BrushStroke brushStroke)
         {
             throw new NotSupportedException();

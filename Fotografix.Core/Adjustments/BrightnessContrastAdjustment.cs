@@ -2,7 +2,7 @@
 
 namespace Fotografix.Adjustments
 {
-    public sealed class BrightnessContrastAdjustment : NotifyPropertyChangedBase, IBrightnessContrastAdjustment
+    public sealed class BrightnessContrastAdjustment : Adjustment
     {
         private float brightness;
         private float contrast;
@@ -41,6 +41,11 @@ namespace Fotografix.Adjustments
 
                 SetProperty(ref contrast, value);
             }
+        }
+
+        public override void Accept(AdjustmentVisitor visitor)
+        {
+            visitor.Visit(this);
         }
     }
 }

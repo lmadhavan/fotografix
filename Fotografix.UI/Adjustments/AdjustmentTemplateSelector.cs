@@ -3,28 +3,15 @@ using System.Collections.Generic;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
-namespace Fotografix.UI
+namespace Fotografix.UI.Adjustments
 {
-    public sealed class TypeBasedDataTemplateSelector : DataTemplateSelector
+    public sealed class AdjustmentTemplateSelector : DataTemplateSelector
     {
         private readonly Dictionary<Type, DataTemplate> templates = new Dictionary<Type, DataTemplate>();
 
         protected override DataTemplate SelectTemplateCore(object item)
         {
-            if (item == null)
-            {
-                return null;
-            }
-
-            foreach (var e in templates)
-            {
-                if (e.Key.IsInstanceOfType(item))
-                {
-                    return e.Value;
-                }
-            }
-
-            throw new ArgumentException("No template found for object of type " + item.GetType());
+            return item == null ? null : templates[item.GetType()];
         }
 
         protected override DataTemplate SelectTemplateCore(object item, DependencyObject container)

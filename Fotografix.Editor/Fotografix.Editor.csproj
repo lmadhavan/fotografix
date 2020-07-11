@@ -6,7 +6,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Fotografix.Core\Fotografix.Core.csproj" />
-    <ProjectReference Include="..\Fotografix.History\Fotografix.History.csproj" />
   </ItemGroup>
 
 </Project>

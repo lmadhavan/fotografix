@@ -6,9 +6,9 @@ namespace Fotografix.Win2D.Composition.Adjustments
 {
     internal sealed class GradientMapAdjustmentNode : ColorMatrixAdjustmentNode
     {
-        private readonly IGradientMapAdjustment adjustment;
+        private readonly GradientMapAdjustment adjustment;
 
-        public GradientMapAdjustmentNode(IGradientMapAdjustment adjustment)
+        public GradientMapAdjustmentNode(GradientMapAdjustment adjustment)
         {
             this.adjustment = adjustment;
             adjustment.PropertyChanged += OnAdjustmentPropertyChanged;

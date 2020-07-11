@@ -41,7 +41,7 @@
                             ThumbToolTipValueConverter="{StaticResource OpacitySliderToolTipValueConverter}" />
             </Grid>
 
-            <ContentControl Margin="0,8,0,0" HorizontalContentAlignment="Stretch" ContentTemplateSelector="{StaticResource AdjustmentTemplateSelector}" Content="{x:Bind Adjustment}" />
+            <ContentControl Margin="0,8,0,0" HorizontalContentAlignment="Stretch" ContentTemplateSelector="{StaticResource AdjustmentTemplateSelector}" Content="{x:Bind AdjustmentPropertyEditor}" />
         </StackPanel>
     </DataTemplate>
 </ResourceDictionary>

@@ -1,5 +1,4 @@
-﻿using Fotografix.History;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 
 namespace Fotografix.Editor
 {
@@ -96,11 +95,11 @@ namespace Fotografix.Editor
                 UndoCount++;
             }
 
-            public override bool TryMergeInto(Change change)
+            public override bool TryMergeInto(Command command)
             {
                 if (CanMerge)
                 {
-                    ((FakeCommand)change).MergeCount++;
+                    ((FakeCommand)command).MergeCount++;
                     return true;
                 }
 

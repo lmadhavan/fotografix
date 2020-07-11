@@ -1,5 +1,4 @@
-﻿using Fotografix.History;
-using System.Reflection;
+﻿using System.Reflection;
 
 namespace Fotografix.Editor.PropertyModel
 {
@@ -32,9 +31,9 @@ namespace Fotografix.Editor.PropertyModel
             propertyInfo.SetValue(target, oldValue);
         }
 
-        public override bool TryMergeInto(Change change)
+        public override bool TryMergeInto(Command command)
         {
-            if (change is ChangePropertyCommand cpc &&
+            if (command is ChangePropertyCommand cpc &&
                 cpc.target == this.target &&
                 cpc.propertyInfo == this.propertyInfo)
             {

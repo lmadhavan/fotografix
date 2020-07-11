@@ -1,10 +1,8 @@
-﻿using Fotografix.Adjustments;
-using Fotografix.Editor;
+﻿using Fotografix.Editor;
 using Fotografix.Editor.Collections;
 using Fotografix.Editor.Layers;
 using Fotografix.Editor.PropertyModel;
 using Fotografix.Editor.Tools;
-using Fotografix.History.Adjustments;
 using Fotografix.UI.Adjustments;
 using Fotografix.Win2D;
 using Microsoft.Graphics.Canvas;
@@ -24,9 +22,8 @@ namespace Fotografix.UI
         private readonly Image image;
         private readonly Win2DCompositor compositor;
         private readonly ReversedCollectionView<Layer> layers;
-        private readonly Editor.History history;
+        private readonly History history;
         private readonly IPropertySetter propertySetter;
-        private readonly IAdjustmentFactory adjustmentFactory;
 
         private Layer activeLayer;
         private LayerPropertyEditor activeLayerViewModel;
@@ -41,11 +38,9 @@ namespace Fotografix.UI
             reorderAwareCollectionView.ItemReordered += OnLayerReordered;
             this.layers = new ReversedCollectionView<Layer>(reorderAwareCollectionView);
 
-            this.history = new Editor.History();
+            this.history = new History();
             history.PropertyChanged += OnHistoryPropertyChanged;
             this.propertySetter = new UndoablePropertySetter(history);
-
-            this.adjustmentFactory = new ChangeTrackingAdjustmentFactory(new AdjustmentFactory(), history);
 
             InitializeTools(viewport);
 
@@ -142,9 +137,9 @@ namespace Fotografix.UI
             Execute(new AddLayerCommand(image, layer));
         }
 
-        public void AddAdjustmentLayer(AdjustmentLayerFactory adjustmentLayerFactory)
+        public void AddAdjustmentLayer(IAdjustmentLayerFactory adjustmentLayerFactory)
         {
-            Layer layer = adjustmentLayerFactory.CreateAdjustmentLayer(adjustmentFactory);
+            Layer layer = adjustmentLayerFactory.CreateAdjustmentLayer();
             Execute(new AddLayerCommand(image, layer));
         }
 

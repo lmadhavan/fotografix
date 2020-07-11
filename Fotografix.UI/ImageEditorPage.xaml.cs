@@ -51,7 +51,7 @@ namespace Fotografix.UI
         private void NewAdjustmentMenuItem_Click(object sender, RoutedEventArgs e)
         {
             var item = (MenuFlyoutItem)sender;
-            var adjustmentLayerFactory = (AdjustmentLayerFactory)item.Tag;
+            var adjustmentLayerFactory = (IAdjustmentLayerFactory)item.Tag;
             editor.AddAdjustmentLayer(adjustmentLayerFactory);
         }
 

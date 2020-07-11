@@ -1,8 +1,6 @@
-﻿using Fotografix.History;
-
-namespace Fotografix.Editor
+﻿namespace Fotografix.Editor
 {
-    public abstract class Command : Change
+    public abstract class Command
     {
         /// <summary>
         /// Gets a value indicating whether executing the command in its current state has an observable effect.
@@ -14,9 +12,17 @@ namespace Fotografix.Editor
         /// </summary>
         public abstract void Execute();
 
-        public override void Redo()
+        /// <summary>
+        /// Undoes the command.
+        /// </summary>
+        public abstract void Undo();
+
+        /// <summary>
+        /// Attempts to merge this command into the specified command.
+        /// </summary>
+        public virtual bool TryMergeInto(Command command)
         {
-            Execute();
+            return false;
         }
     }
 }

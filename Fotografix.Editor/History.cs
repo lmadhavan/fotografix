@@ -1,46 +1,45 @@
-﻿using Fotografix.History;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Fotografix.Editor
 {
-    public sealed class History : NotifyPropertyChangedBase, IChangeTracker
+    public sealed class History : NotifyPropertyChangedBase
     {
-        private readonly Stack<Change> undoStack = new Stack<Change>();
-        private readonly Stack<Change> redoStack = new Stack<Change>();
+        private readonly Stack<Command> undoStack = new Stack<Command>();
+        private readonly Stack<Command> redoStack = new Stack<Command>();
 
         public bool CanUndo => undoStack.Count > 0;
         public bool CanRedo => redoStack.Count > 0;
 
-        public void Add(Change change)
+        public void Add(Command command)
         {
-            if (!TryMergeIntoPreviousCommand(change))
+            if (!TryMergeIntoPreviousCommand(command))
             {
-                undoStack.Push(change);
+                undoStack.Push(command);
             }
 
             redoStack.Clear();
             RaiseEvents();
         }
 
-        private bool TryMergeIntoPreviousCommand(Change change)
+        private bool TryMergeIntoPreviousCommand(Command command)
         {
             return undoStack.Count > 0
-                && change.TryMergeInto(undoStack.Peek());
+                && command.TryMergeInto(undoStack.Peek());
         }
 
         public void Undo()
         {
-            Change change = undoStack.Pop();
-            change.Undo();
-            redoStack.Push(change);
+            Command command = undoStack.Pop();
+            command.Undo();
+            redoStack.Push(command);
             RaiseEvents();
         }
 
         public void Redo()
         {
-            Change change = redoStack.Pop();
-            change.Redo();
-            undoStack.Push(change);
+            Command command = redoStack.Pop();
+            command.Execute();
+            undoStack.Push(command);
             RaiseEvents();
         }
 

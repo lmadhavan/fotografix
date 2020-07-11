@@ -7,11 +7,11 @@ namespace Fotografix.Win2D.Composition.Adjustments
 {
     internal sealed class BrightnessContrastAdjustmentNode : AdjustmentNode
     {
-        private readonly IBrightnessContrastAdjustment adjustment;
+        private readonly BrightnessContrastAdjustment adjustment;
         private readonly GammaTransferEffect gammaEffect;
         private readonly ContrastEffect contrastEffect;
 
-        public BrightnessContrastAdjustmentNode(IBrightnessContrastAdjustment adjustment)
+        public BrightnessContrastAdjustmentNode(BrightnessContrastAdjustment adjustment)
         {
             this.adjustment = adjustment;
             adjustment.PropertyChanged += OnAdjustmentPropertyChanged;
