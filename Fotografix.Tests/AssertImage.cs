@@ -15,7 +15,7 @@ namespace Fotografix.Tests
         {
             var file = await TestImages.GetFileAsync(fileWithExpectedOutput);
 
-            using (Bitmap expectedBitmap = await BitmapLoader.LoadBitmapAsync(file, BitmapFactory))
+            using (Bitmap expectedBitmap = await BitmapCodec.LoadBitmapAsync(file, BitmapFactory))
             using (CanvasBitmap actualBitmap = TestRenderer.Render(actual))
             {
                 AssertBytesAreEqual(expectedBitmap.GetPixelBytes(), actualBitmap.GetPixelBytes(), 3, fileWithExpectedOutput);

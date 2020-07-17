@@ -144,7 +144,7 @@ namespace Fotografix.UI
 
         private async void Import_Click(object sender, RoutedEventArgs e)
         {
-            FileOpenPicker picker = FilePickerFactory.CreateFilePicker();
+            FileOpenPicker picker = FilePickerFactory.CreateFileOpenPicker();
             picker.CommitButtonText = "Import";
 
             var files = await picker.PickMultipleFilesAsync();
@@ -159,6 +159,17 @@ namespace Fotografix.UI
             if (await dialog.ShowAsync(ContentDialogPlacement.InPlace) == ContentDialogResult.Primary)
             {
                 editor.ResizeImage(parameters);
+            }
+        }
+
+        private async void Save_Click(object sender, RoutedEventArgs e)
+        {
+            FileSavePicker picker = FilePickerFactory.CreateFileSavePicker();
+
+            var file = await picker.PickSaveFileAsync();
+            if (file != null)
+            {
+                await editor.SaveAsync(file);
             }
         }
     }

@@ -6,6 +6,8 @@ namespace Fotografix.Tests.Composition
 {
     public abstract class CompositionTestBase
     {
+        private static readonly IBitmapFactory BitmapFactory = new Win2DBitmapFactory();
+     
         protected async Task<Image> LoadImageAsync(string filename)
         {
             var layer = await LoadLayerAsync(filename);
@@ -18,7 +20,7 @@ namespace Fotografix.Tests.Composition
         protected async Task<BitmapLayer> LoadLayerAsync(string filename)
         {
             var file = await TestImages.GetFileAsync(filename);
-            return await BitmapLayerFactory.LoadBitmapLayerAsync(file);
+            return await BitmapLayerFactory.LoadBitmapLayerAsync(file, BitmapFactory);
         }
 
         protected async Task AssertImageAsync(string fileWithExpectedOutput, Image actualImage)

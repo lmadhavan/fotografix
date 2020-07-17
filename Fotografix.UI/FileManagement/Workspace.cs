@@ -26,7 +26,7 @@ namespace Fotografix.UI.FileManagement
 
         public async Task OpenFileAsync()
         {
-            FileOpenPicker picker = FilePickerFactory.CreateFilePicker();
+            FileOpenPicker picker = FilePickerFactory.CreateFileOpenPicker();
 
             StorageFile file = await picker.PickSingleFileAsync();
             if (file != null)

@@ -19,6 +19,8 @@ namespace Fotografix.UI
 {
     public sealed class ImageEditor : NotifyPropertyChangedBase, ICommandService, IDisposable, IWin2DDrawable, IToolbox
     {
+        private static readonly IBitmapFactory BitmapFactory = new Win2DBitmapFactory();
+
         private readonly Image image;
         private readonly Win2DCompositor compositor;
         private readonly ReversedCollectionView<Layer> layers;
@@ -53,7 +55,7 @@ namespace Fotografix.UI
 
         public static ImageEditor Create(Size size, Viewport viewport)
         {
-            BitmapLayer layer = BitmapLayerFactory.CreateBitmapLayer(1);
+            BitmapLayer layer = BitmapLayerFactory.CreateBitmapLayer(1, BitmapFactory);
 
             Image image = new Image(size);
             image.Layers.Add(layer);
@@ -63,7 +65,7 @@ namespace Fotografix.UI
 
         public static async Task<ImageEditor> CreateAsync(StorageFile file, Viewport viewport)
         {
-            BitmapLayer layer = await BitmapLayerFactory.LoadBitmapLayerAsync(file);
+            BitmapLayer layer = await BitmapLayerFactory.LoadBitmapLayerAsync(file, BitmapFactory);
 
             Image image = new Image(layer.Bitmap.Size);
             image.Layers.Add(layer);
@@ -133,7 +135,7 @@ namespace Fotografix.UI
 
         public void AddLayer()
         {
-            Layer layer = BitmapLayerFactory.CreateBitmapLayer(image.Layers.Count + 1);
+            Layer layer = BitmapLayerFactory.CreateBitmapLayer(image.Layers.Count + 1, BitmapFactory);
             Execute(new AddLayerCommand(image, layer));
         }
 
@@ -156,7 +158,7 @@ namespace Fotografix.UI
 
             foreach (var file in files)
             {
-                BitmapLayer layer = await BitmapLayerFactory.LoadBitmapLayerAsync(file);
+                BitmapLayer layer = await BitmapLayerFactory.LoadBitmapLayerAsync(file, BitmapFactory);
                 commands.Add(new AddLayerCommand(image, layer));
             }
 
@@ -171,6 +173,15 @@ namespace Fotografix.UI
         public void ResizeImage(ResizeImageParameters resizeImageParameters)
         {
             Execute(new ResampleImageCommand(image, resizeImageParameters.Size));
+        }
+
+        public async Task SaveAsync(StorageFile file)
+        {
+            using (Bitmap bitmap = BitmapFactory.CreateBitmap(Size))
+            {
+                bitmap.Draw(image);
+                await BitmapCodec.SaveBitmapAsync(file, bitmap);
+            }
         }
 
         #region Tools

@@ -32,5 +32,9 @@ namespace Fotografix.Testing
         public override void Paint(BrushStroke brushStroke)
         {
         }
+
+        public override void Draw(Image image)
+        {
+        }
     }
 }

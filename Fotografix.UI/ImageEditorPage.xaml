@@ -42,6 +42,16 @@
 
             <StackPanel Grid.Column="0" Orientation="Horizontal">
                 <Button Style="{StaticResource CommandButtonStyle}"
+                        Click="Save_Click"
+                        ToolTipService.ToolTip="Save">
+                    <Button.KeyboardAccelerators>
+                        <KeyboardAccelerator Modifiers="Control" Key="S" />
+                    </Button.KeyboardAccelerators>
+                    
+                    <SymbolIcon Symbol="Save" />
+                </Button>
+
+                <Button Style="{StaticResource CommandButtonStyle}"
                         Click="{x:Bind editor.Undo}"
                         IsEnabled="{x:Bind editor.CanUndo, Mode=OneWay}"
                         ToolTipService.ToolTip="Undo">
