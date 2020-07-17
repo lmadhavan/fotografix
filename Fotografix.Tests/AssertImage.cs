@@ -1,6 +1,5 @@
 ﻿using Fotografix.UI;
 using Fotografix.Win2D;
-using Microsoft.Graphics.Canvas;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Threading.Tasks;
@@ -11,14 +10,13 @@ namespace Fotografix.Tests
     {
         private static readonly IBitmapFactory BitmapFactory = new Win2DBitmapFactory();
 
-        public static async Task IsEquivalentAsync(string fileWithExpectedOutput, IWin2DDrawable actual)
+        public static async Task IsEquivalentAsync(string fileWithExpectedOutput, Bitmap actual)
         {
             var file = await TestImages.GetFileAsync(fileWithExpectedOutput);
 
-            using (Bitmap expectedBitmap = await BitmapCodec.LoadBitmapAsync(file, BitmapFactory))
-            using (CanvasBitmap actualBitmap = TestRenderer.Render(actual))
+            using (Bitmap expected = await BitmapCodec.LoadBitmapAsync(file, BitmapFactory))
             {
-                AssertBytesAreEqual(expectedBitmap.GetPixelBytes(), actualBitmap.GetPixelBytes(), 3, fileWithExpectedOutput);
+                AssertBytesAreEqual(expected.GetPixelBytes(), actual.GetPixelBytes(), 3, fileWithExpectedOutput);
             }
         }
 

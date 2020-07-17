@@ -11,10 +11,7 @@ namespace Fotografix.Tests.Composition
         protected async Task<Image> LoadImageAsync(string filename)
         {
             var layer = await LoadLayerAsync(filename);
-
-            Image image = new Image(layer.Bitmap.Size);
-            image.Layers.Add(layer);
-            return image;
+            return new Image(layer);
         }
 
         protected async Task<BitmapLayer> LoadLayerAsync(string filename)
@@ -23,11 +20,19 @@ namespace Fotografix.Tests.Composition
             return await BitmapLayerFactory.LoadBitmapLayerAsync(file, BitmapFactory);
         }
 
-        protected async Task AssertImageAsync(string fileWithExpectedOutput, Image actualImage)
+        protected async Task AssertImageAsync(string fileWithExpectedOutput, Image image)
         {
-            using (Win2DCompositor compositor = new Win2DCompositor(actualImage))
+            using (Bitmap bitmap = image.ToBitmap(BitmapFactory))
             {
-                await AssertImage.IsEquivalentAsync(fileWithExpectedOutput, compositor);
+                await AssertImage.IsEquivalentAsync(fileWithExpectedOutput, bitmap);
+            }
+        }
+
+        protected async Task CaptureToTempFolderAsync(Image image, string filename)
+        {
+            using (Bitmap bitmap = image.ToBitmap(BitmapFactory))
+            {
+                await bitmap.CaptureToTempFolderAsync(filename);
             }
         }
     }

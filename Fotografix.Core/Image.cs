@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Drawing;
 
 namespace Fotografix
@@ -12,6 +11,11 @@ namespace Fotografix
         {
             this.size = size;
             this.Layers = new LayerList(this);
+        }
+
+        public Image(BitmapLayer layer) : this(layer.Bitmap.Size)
+        {
+            Layers.Add(layer);
         }
 
         public Size Size
@@ -31,6 +35,13 @@ namespace Fotografix
         }
 
         public ObservableCollection<Layer> Layers { get; }
+
+        public Bitmap ToBitmap(IBitmapFactory bitmapFactory)
+        {
+            Bitmap bitmap = bitmapFactory.CreateBitmap(size);
+            bitmap.Draw(this);
+            return bitmap;
+        }
 
         private void OnLayerContentChanged(object sender, ContentChangedEventArgs e)
         {

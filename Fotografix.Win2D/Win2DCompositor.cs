@@ -1,34 +1,35 @@
 ﻿using Fotografix.Win2D.Composition;
 using Microsoft.Graphics.Canvas;
 using System;
-using System.Drawing;
 
 namespace Fotografix.Win2D
 {
-    public sealed class Win2DCompositor : IDisposable, IWin2DDrawable
+    public sealed class Win2DCompositor : IDisposable
     {
         private readonly Image image;
         private readonly ImageNode imageNode;
         private readonly TransparencyGridNode transparencyGrid;
 
-        public Win2DCompositor(Image image)
+        public Win2DCompositor(Image image) : this(image, 0)
+        {
+        }
+
+        public Win2DCompositor(Image image, int transparencyGridSize)
         {
             this.image = image;
             this.imageNode = new ImageNode(image);
-            this.transparencyGrid = new TransparencyGridNode(8);
+            this.transparencyGrid = transparencyGridSize > 0 ? new TransparencyGridNode(transparencyGridSize) : null;
         }
 
         public void Dispose()
         {
-            transparencyGrid.Dispose();
+            transparencyGrid?.Dispose();
             imageNode.Dispose();
         }
 
-        public Size Size => image.Size;
-
         public void Draw(CanvasDrawingSession ds)
         {
-            transparencyGrid.Draw(ds);
+            transparencyGrid?.Draw(ds);
             imageNode.Draw(ds);
         }
 
@@ -40,6 +41,13 @@ namespace Fotografix.Win2D
         public void EndBrushStrokePreview(Layer layer)
         {
             imageNode.EndBrushStrokePreview(layer);
+        }
+
+        public Bitmap ToBitmap()
+        {
+            Win2DBitmap bitmap = new Win2DBitmap(image.Size, CanvasDevice.GetSharedDevice());
+            bitmap.Draw(this);
+            return bitmap;
         }
     }
 }

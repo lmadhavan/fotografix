@@ -17,7 +17,7 @@ using Windows.Storage;
 
 namespace Fotografix.UI
 {
-    public sealed class ImageEditor : NotifyPropertyChangedBase, ICommandService, IDisposable, IWin2DDrawable, IToolbox
+    public sealed class ImageEditor : NotifyPropertyChangedBase, ICommandService, IDisposable, IToolbox
     {
         private static readonly IBitmapFactory BitmapFactory = new Win2DBitmapFactory();
 
@@ -34,7 +34,7 @@ namespace Fotografix.UI
         private ImageEditor(Image image, Viewport viewport)
         {
             this.image = image;
-            this.compositor = new Win2DCompositor(image);
+            this.compositor = new Win2DCompositor(image, 8);
 
             ReorderAwareCollectionView<Layer> reorderAwareCollectionView = new ReorderAwareCollectionView<Layer>(image.Layers);
             reorderAwareCollectionView.ItemReordered += OnLayerReordered;
@@ -66,10 +66,7 @@ namespace Fotografix.UI
         public static async Task<ImageEditor> CreateAsync(StorageFile file, Viewport viewport)
         {
             BitmapLayer layer = await BitmapLayerFactory.LoadBitmapLayerAsync(file, BitmapFactory);
-
-            Image image = new Image(layer.Bitmap.Size);
-            image.Layers.Add(layer);
-
+            Image image = new Image(layer);
             return new ImageEditor(image, viewport);
         }
 
@@ -177,11 +174,15 @@ namespace Fotografix.UI
 
         public async Task SaveAsync(StorageFile file)
         {
-            using (Bitmap bitmap = BitmapFactory.CreateBitmap(Size))
+            using (Bitmap bitmap = image.ToBitmap(BitmapFactory))
             {
-                bitmap.Draw(image);
                 await BitmapCodec.SaveBitmapAsync(file, bitmap);
             }
+        }
+
+        public Bitmap ToBitmap()
+        {
+            return compositor.ToBitmap();
         }
 
         #region Tools

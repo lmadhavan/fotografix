@@ -61,8 +61,15 @@ namespace Fotografix.Win2D
 
         public override void Draw(Image image)
         {
-            using (CanvasDrawingSession ds = renderTarget.CreateDrawingSession())
             using (Win2DCompositor compositor = new Win2DCompositor(image))
+            {
+                Draw(compositor);
+            }
+        }
+
+        internal void Draw(Win2DCompositor compositor)
+        {
+            using (CanvasDrawingSession ds = renderTarget.CreateDrawingSession())
             {
                 compositor.Draw(ds);
             }
