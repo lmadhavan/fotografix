@@ -1,11 +1,10 @@
-﻿using System;
-using System.Drawing;
+﻿using System.Drawing;
 
 namespace Fotografix.Editor.Tools
 {
-    public sealed class BrushTool : ITool, ILayerActivationListener, IBrushToolSettings
+    public sealed class BrushTool : ITool, IBrushToolSettings, IDrawingSurfaceListener
     {
-        private Layer activeLayer;
+        private IDrawingSurface drawingSurface;
         private BrushStroke brushStroke;
 
         public float Size { get; set; }
@@ -15,11 +14,11 @@ namespace Fotografix.Editor.Tools
         object ITool.Settings => this;
         public ToolCursor Cursor => Enabled ? ToolCursor.Crosshair : ToolCursor.Disabled;
 
-        private bool Enabled => activeLayer.CanPaint;
+        private bool Enabled => drawingSurface != null;
 
-        public void LayerActivated(Layer layer)
+        public void DrawingSurfaceActivated(IDrawingSurface drawingSurface)
         {
-            this.activeLayer = layer;
+            this.drawingSurface = drawingSurface;
         }
 
         public void PointerPressed(PointerState p)
@@ -27,7 +26,7 @@ namespace Fotografix.Editor.Tools
             if (Enabled)
             {
                 this.brushStroke = new BrushStroke(p.Location, Size, Color);
-                BrushStrokeStarted?.Invoke(this, new BrushStrokeEventArgs(activeLayer, brushStroke));
+                drawingSurface.BeginDrawing(brushStroke);
             }
         }
 
@@ -40,12 +39,9 @@ namespace Fotografix.Editor.Tools
         {
             if (brushStroke != null)
             {
-                BrushStrokeCompleted?.Invoke(this, new BrushStrokeEventArgs(activeLayer, brushStroke));
+                drawingSurface.EndDrawing(brushStroke);
                 this.brushStroke = null;
             }
         }
-
-        public event EventHandler<BrushStrokeEventArgs> BrushStrokeStarted;
-        public event EventHandler<BrushStrokeEventArgs> BrushStrokeCompleted;
     }
 }

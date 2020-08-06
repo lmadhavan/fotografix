@@ -29,7 +29,7 @@ namespace Fotografix.UI
 
         private Layer activeLayer;
         private LayerPropertyEditor activeLayerViewModel;
-        private ILayerActivationListener layerActivationListener;
+        private IDrawingSurfaceListener drawingSurfaceListener;
 
         private ImageEditor(Image image, Viewport viewport)
         {
@@ -112,7 +112,7 @@ namespace Fotografix.UI
                     activeLayerViewModel?.Dispose();
                     this.ActiveLayerPropertyEditor = activeLayer == null ? null : new LayerPropertyEditor(activeLayer, propertySetter);
                     RaisePropertyChanged(nameof(CanDeleteActiveLayer));
-                    layerActivationListener?.LayerActivated(activeLayer);
+                    NotifyDrawingSurfaceListener();
                 }
             }
         }
@@ -206,25 +206,10 @@ namespace Fotografix.UI
                 Size = 5,
                 Color = Color.White
             };
-            brushTool.BrushStrokeStarted += OnBrushStrokeStarted;
-            brushTool.BrushStrokeCompleted += OnBrushStrokeCompleted;
 
             this.Tools = new List<ITool> { handTool, brushTool };
             this.activeTool = Tools.First();
-            this.layerActivationListener = brushTool;
-        }
-
-        private void OnBrushStrokeStarted(object sender, BrushStrokeEventArgs e)
-        {
-            compositor.BeginBrushStrokePreview(e.Layer, e.BrushStroke);
-            e.BrushStroke.ContentChanged += OnContentChanged;
-        }
-
-        private void OnBrushStrokeCompleted(object sender, BrushStrokeEventArgs e)
-        {
-            e.BrushStroke.ContentChanged -= OnContentChanged;
-            compositor.EndBrushStrokePreview(e.Layer);
-            Execute(e.CreatePaintCommand());
+            this.drawingSurfaceListener = brushTool;
         }
 
         #endregion
@@ -285,6 +270,39 @@ namespace Fotografix.UI
         private void OnContentChanged(object sender, ContentChangedEventArgs e)
         {
             Invalidated?.Invoke(this, EventArgs.Empty);
+        }
+
+        private void NotifyDrawingSurfaceListener()
+        {
+            if (activeLayer is BitmapLayer bitmapLayer)
+            {
+                drawingSurfaceListener.DrawingSurfaceActivated(new BitmapDrawingSurface(bitmapLayer, this));
+            }
+        }
+
+        private sealed class BitmapDrawingSurface : IDrawingSurface
+        {
+            private readonly BitmapLayer bitmapLayer;
+            private readonly ImageEditor editor;
+
+            public BitmapDrawingSurface(BitmapLayer bitmapLayer, ImageEditor editor)
+            {
+                this.bitmapLayer = bitmapLayer;
+                this.editor = editor;
+            }
+
+            public void BeginDrawing(BrushStroke brushStroke)
+            {
+                editor.compositor.BeginBrushStrokePreview(bitmapLayer, brushStroke);
+                brushStroke.ContentChanged += editor.OnContentChanged;
+            }
+
+            public void EndDrawing(BrushStroke brushStroke)
+            {
+                brushStroke.ContentChanged -= editor.OnContentChanged;
+                editor.compositor.EndBrushStrokePreview(bitmapLayer);
+                editor.Execute(new PaintBrushStrokeCommand(bitmapLayer, brushStroke));
+            }
         }
     }
 }

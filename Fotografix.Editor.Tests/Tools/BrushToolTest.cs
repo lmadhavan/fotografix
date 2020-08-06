@@ -1,5 +1,4 @@
-﻿using Fotografix.Adjustments;
-using Fotografix.Testing;
+﻿using Moq;
 using NUnit.Framework;
 using System.Drawing;
 
@@ -15,8 +14,8 @@ namespace Fotografix.Editor.Tools
         private static readonly PointerState End = new PointerState(new Point(20, 20));
 
         private BrushTool tool;
-        private BrushStrokeEventArgs brushStrokeStartedEvent;
-        private BrushStrokeEventArgs brushStrokeCompletedEvent;
+        private Mock<IDrawingSurface> drawingSurface;
+        private BrushStroke capturedBrushStroke;
 
         [SetUp]
         public void SetUp()
@@ -26,83 +25,80 @@ namespace Fotografix.Editor.Tools
                 Size = BrushSize,
                 Color = BrushColor
             };
-            tool.BrushStrokeStarted += (s, e) => this.brushStrokeStartedEvent = e;
-            tool.BrushStrokeCompleted += (s, e) => this.brushStrokeCompletedEvent = e;
+
+            this.drawingSurface = new Mock<IDrawingSurface>();
+            var captureMatch = new CaptureMatch<BrushStroke>(d => this.capturedBrushStroke = d);
+            drawingSurface.Setup(ds => ds.BeginDrawing(Capture.With(captureMatch)));
         }
 
         [Test]
-        public void EnabledOnBitmapLayer()
+        public void DisabledWhenNoDrawingSurfaceIsActive()
         {
-            ActivateBitmapLayer();
+            Assert.That(tool.Cursor, Is.EqualTo(ToolCursor.Disabled));
+        }
+
+        [Test]
+        public void EnabledWhenDrawingSurfaceIsActive()
+        {
+            tool.DrawingSurfaceActivated(drawingSurface.Object);
 
             Assert.That(tool.Cursor, Is.EqualTo(ToolCursor.Crosshair));
         }
 
         [Test]
-        public void DisabledOnNonBitmapLayer()
-        {
-            ActivateNonBitmapLayer();
-
-            Assert.That(tool.Cursor, Is.EqualTo(ToolCursor.Disabled));
-        }
-
-        [Test]
         public void IgnoresPointerEventsWhenDisabled()
         {
-            ActivateNonBitmapLayer();
             tool.PointerPressed(Start);
             tool.PointerMoved(End);
             tool.PointerReleased(End);
 
-            Assert.That(brushStrokeStartedEvent, Is.Null);
-            Assert.That(brushStrokeCompletedEvent, Is.Null);
+            Assert.Pass();
         }
 
         [Test]
-        public void PointerPressStartsBrushStroke()
+        public void BeginsDrawingWhenPointerPressed()
         {
-            ActivateBitmapLayer();
+            tool.DrawingSurfaceActivated(drawingSurface.Object);
             tool.PointerPressed(Start);
 
-            Assert.That(brushStrokeStartedEvent, Is.Not.Null);
-            Assert.That(brushStrokeStartedEvent.BrushStroke.Size, Is.EqualTo(BrushSize));
-            Assert.That(brushStrokeStartedEvent.BrushStroke.Color, Is.EqualTo(BrushColor));
-            Assert.That(brushStrokeStartedEvent.BrushStroke.Points, Is.EqualTo(new PointF[] { Start.Location }));
+            drawingSurface.Verify(ds => ds.BeginDrawing(It.IsAny<BrushStroke>()));
+
+            Assert.That(capturedBrushStroke.Size, Is.EqualTo(BrushSize));
+            Assert.That(capturedBrushStroke.Color, Is.EqualTo(BrushColor));
+            Assert.That(capturedBrushStroke.Points, Is.EqualTo(new PointF[] { Start.Location }));
         }
 
         [Test]
-        public void PointerDragAndReleaseCompletesBrushStroke()
+        public void UpdatesDrawingWhenPointerMoved()
         {
-            ActivateBitmapLayer();
+            tool.DrawingSurfaceActivated(drawingSurface.Object);
+            tool.PointerPressed(Start);
+            tool.PointerMoved(End);
+
+            Assert.That(capturedBrushStroke.Points, Is.EqualTo(new PointF[] { Start.Location, End.Location }));
+        }
+
+        [Test]
+        public void EndsDrawingWhenPointerReleased()
+        {
+            tool.DrawingSurfaceActivated(drawingSurface.Object);
             tool.PointerPressed(Start);
             tool.PointerMoved(End);
             tool.PointerReleased(End);
 
-            Assert.That(brushStrokeCompletedEvent, Is.Not.Null);
-            Assert.That(brushStrokeCompletedEvent.BrushStroke, Is.SameAs(brushStrokeStartedEvent.BrushStroke));
-            Assert.That(brushStrokeCompletedEvent.BrushStroke.Points, Is.EqualTo(new PointF[] { Start.Location, End.Location }));
+            drawingSurface.Verify(ds => ds.EndDrawing(capturedBrushStroke));
         }
 
         [Test]
-        public void StopsUpdatingBrushStrokeAfterPointerIsReleased()
+        public void DoesNotUpdateDrawingAfterPointerReleased()
         {
-            ActivateBitmapLayer();
+            tool.DrawingSurfaceActivated(drawingSurface.Object);
             tool.PointerPressed(Start);
             tool.PointerMoved(End);
             tool.PointerReleased(End);
             tool.PointerMoved(PointerState.Empty);
 
-            Assert.That(brushStrokeCompletedEvent.BrushStroke.Points, Has.Count.EqualTo(2));
-        }
-
-        private void ActivateBitmapLayer()
-        {
-            tool.LayerActivated(new BitmapLayer(new FakeBitmap()));
-        }
-
-        private void ActivateNonBitmapLayer()
-        {
-            tool.LayerActivated(new AdjustmentLayer(new BlackAndWhiteAdjustment()));
+            Assert.That(capturedBrushStroke.Points, Has.Count.EqualTo(2));
         }
     }
 }
