@@ -126,6 +126,7 @@
     <Compile Include="Composition\AdjustmentBlendingTest.cs" />
     <Compile Include="Composition\BlendModeMappingTest.cs" />
     <Compile Include="BrushToolAcceptanceTest.cs" />
+    <Compile Include="GradientToolAcceptanceTest.cs" />
     <Compile Include="HandToolAcceptanceTest.cs" />
     <Compile Include="ResizeImageAcceptanceTest.cs" />
     <Compile Include="SmokeTest.cs" />

@@ -207,7 +207,9 @@ namespace Fotografix.UI
                 Color = Color.White
             };
 
-            this.Tools = new List<ITool> { handTool, brushTool };
+            var gradientTool = new GradientTool();
+
+            this.Tools = new List<ITool> { handTool, brushTool, gradientTool };
             this.activeTool = Tools.First();
             this.drawingSurfaceListener = brushTool;
         }

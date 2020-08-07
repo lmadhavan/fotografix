@@ -12,7 +12,14 @@ namespace Fotografix.Tests
 
         protected void SelectTool(string name)
         {
-            Editor.ActiveTool = Editor.Tools.First(tool => tool.Name == name);
+            ITool tool = Editor.Tools.FirstOrDefault(t => t.Name == name);
+
+            if (tool == null)
+            {
+                Assert.Fail($"Could not find a tool named {name}");
+            }
+            
+            Editor.ActiveTool = tool;
         }
 
         protected TSettings SelectTool<TSettings>(string name)
