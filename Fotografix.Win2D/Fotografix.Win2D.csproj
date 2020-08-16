@@ -123,11 +123,10 @@
     <Compile Include="..\SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="BrushStrokePainter.cs" />
     <Compile Include="Composition\AdjustmentLayerNode.cs" />
     <Compile Include="Composition\Adjustments\AdjustmentNode.cs" />
     <Compile Include="Composition\Adjustments\BrightnessContrastAdjustmentNode.cs" />
-    <Compile Include="Composition\BrushStrokeNode.cs" />
+    <Compile Include="Composition\DrawableNode.cs" />
     <Compile Include="Composition\CompositeEffectNode.cs" />
     <Compile Include="Composition\NodeFactory.cs" />
     <Compile Include="Composition\Adjustments\BlackAndWhiteAdjustmentNode.cs" />
@@ -137,10 +136,13 @@
     <Compile Include="Composition\BitmapLayerNode.cs" />
     <Compile Include="Composition\ImageNode.cs" />
     <Compile Include="Composition\LayerNode.cs" />
+    <Compile Include="IWin2DDrawable.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Composition\TransparencyGridNode.cs" />
     <Compile Include="Win2DBitmap.cs" />
     <Compile Include="Win2DBitmapFactory.cs" />
+    <Compile Include="Win2DBrushStroke.cs" />
+    <Compile Include="Win2DBrushStrokeFactory.cs" />
     <Compile Include="Win2DCompositor.cs" />
     <EmbeddedResource Include="Properties\Fotografix.Win2D.rd.xml" />
   </ItemGroup>

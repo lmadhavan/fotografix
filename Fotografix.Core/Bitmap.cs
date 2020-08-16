@@ -26,7 +26,7 @@ namespace Fotografix
         }
 
         public abstract Bitmap Scale(Size newSize);
-        public abstract void Paint(BrushStroke brushStroke);
+        public abstract void Draw(IDrawable drawable);
         public abstract void Draw(Image image);
     }
 }

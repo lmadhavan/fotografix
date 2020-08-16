@@ -38,7 +38,7 @@ namespace Fotografix.Tests
             await AssertImageAsync("flowers.jpg");
         }
 
-        private void ConfigureBrushTool(float size, Color color)
+        private void ConfigureBrushTool(int size, Color color)
         {
             IBrushToolSettings settings = SelectTool<IBrushToolSettings>("Brush");
             settings.Size = size;

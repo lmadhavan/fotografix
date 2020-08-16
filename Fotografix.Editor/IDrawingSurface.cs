@@ -2,7 +2,7 @@
 {
     public interface IDrawingSurface
     {
-        void BeginDrawing(BrushStroke brushStroke);
-        void EndDrawing(BrushStroke brushStroke);
+        void BeginDrawing(IDrawable drawable);
+        void EndDrawing(IDrawable drawable);
     }
 }

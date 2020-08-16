@@ -1,20 +1,20 @@
 ﻿namespace Fotografix.Editor
 {
-    public sealed class PaintBrushStrokeCommand : Command
+    public sealed class DrawCommand : Command
     {
         private readonly Layer layer;
-        private readonly BrushStroke brushStroke;
+        private readonly IDrawable drawable;
         private IUndoable undoable;
 
-        public PaintBrushStrokeCommand(Layer layer, BrushStroke brushStroke)
+        public DrawCommand(Layer layer, IDrawable drawable)
         {
             this.layer = layer;
-            this.brushStroke = brushStroke;
+            this.drawable = drawable;
         }
 
         public override void Execute()
         {
-            this.undoable = layer.Paint(brushStroke);
+            this.undoable = layer.Draw(drawable);
         }
 
         public override void Undo()

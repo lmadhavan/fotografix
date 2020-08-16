@@ -29,7 +29,7 @@ namespace Fotografix.Testing
             return new FakeBitmap(newSize);
         }
 
-        public override void Paint(BrushStroke brushStroke)
+        public override void Draw(IDrawable drawable)
         {
         }
 

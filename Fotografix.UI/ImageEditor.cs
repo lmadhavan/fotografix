@@ -201,7 +201,7 @@ namespace Fotografix.UI
         {
             var handTool = new HandTool(viewport);
 
-            var brushTool = new BrushTool()
+            var brushTool = new BrushTool(new Win2DBrushStrokeFactory())
             {
                 Size = 5,
                 Color = Color.White
@@ -293,17 +293,17 @@ namespace Fotografix.UI
                 this.editor = editor;
             }
 
-            public void BeginDrawing(BrushStroke brushStroke)
+            public void BeginDrawing(IDrawable drawable)
             {
-                editor.compositor.BeginBrushStrokePreview(bitmapLayer, brushStroke);
-                brushStroke.ContentChanged += editor.OnContentChanged;
+                editor.compositor.BeginPreview(bitmapLayer, drawable);
+                drawable.ContentChanged += editor.OnContentChanged;
             }
 
-            public void EndDrawing(BrushStroke brushStroke)
+            public void EndDrawing(IDrawable drawable)
             {
-                brushStroke.ContentChanged -= editor.OnContentChanged;
-                editor.compositor.EndBrushStrokePreview(bitmapLayer);
-                editor.Execute(new PaintBrushStrokeCommand(bitmapLayer, brushStroke));
+                drawable.ContentChanged -= editor.OnContentChanged;
+                editor.compositor.EndPreview(bitmapLayer);
+                editor.Execute(new DrawCommand(bitmapLayer, drawable));
             }
         }
     }

@@ -15,20 +15,23 @@ namespace Fotografix.Editor.Tools
 
         private BrushTool tool;
         private Mock<IDrawingSurface> drawingSurface;
-        private BrushStroke capturedBrushStroke;
+        private Mock<IBrushStrokeFactory> brushStrokeFactory;
+        private Mock<IBrushStroke> brushStroke;
 
         [SetUp]
         public void SetUp()
         {
-            this.tool = new BrushTool()
+            this.drawingSurface = new Mock<IDrawingSurface>();
+            this.brushStrokeFactory = new Mock<IBrushStrokeFactory>();
+            this.brushStroke = new Mock<IBrushStroke>();
+
+            brushStrokeFactory.Setup(f => f.CreateBrushStroke(It.IsAny<Point>(), It.IsAny<int>(), It.IsAny<Color>())).Returns(brushStroke.Object);
+
+            this.tool = new BrushTool(brushStrokeFactory.Object)
             {
                 Size = BrushSize,
                 Color = BrushColor
             };
-
-            this.drawingSurface = new Mock<IDrawingSurface>();
-            var captureMatch = new CaptureMatch<BrushStroke>(d => this.capturedBrushStroke = d);
-            drawingSurface.Setup(ds => ds.BeginDrawing(Capture.With(captureMatch)));
         }
 
         [Test]
@@ -52,7 +55,7 @@ namespace Fotografix.Editor.Tools
             tool.PointerMoved(End);
             tool.PointerReleased(End);
 
-            Assert.Pass();
+            brushStrokeFactory.VerifyNoOtherCalls();
         }
 
         [Test]
@@ -61,11 +64,8 @@ namespace Fotografix.Editor.Tools
             tool.DrawingSurfaceActivated(drawingSurface.Object);
             tool.PointerPressed(Start);
 
-            drawingSurface.Verify(ds => ds.BeginDrawing(It.IsAny<BrushStroke>()));
-
-            Assert.That(capturedBrushStroke.Size, Is.EqualTo(BrushSize));
-            Assert.That(capturedBrushStroke.Color, Is.EqualTo(BrushColor));
-            Assert.That(capturedBrushStroke.Points, Is.EqualTo(new PointF[] { Start.Location }));
+            brushStrokeFactory.Verify(f => f.CreateBrushStroke(Start.Location, BrushSize, BrushColor));
+            drawingSurface.Verify(ds => ds.BeginDrawing(brushStroke.Object));
         }
 
         [Test]
@@ -75,7 +75,7 @@ namespace Fotografix.Editor.Tools
             tool.PointerPressed(Start);
             tool.PointerMoved(End);
 
-            Assert.That(capturedBrushStroke.Points, Is.EqualTo(new PointF[] { Start.Location, End.Location }));
+            brushStroke.Verify(bs => bs.AddPoint(End.Location));
         }
 
         [Test]
@@ -86,7 +86,7 @@ namespace Fotografix.Editor.Tools
             tool.PointerMoved(End);
             tool.PointerReleased(End);
 
-            drawingSurface.Verify(ds => ds.EndDrawing(capturedBrushStroke));
+            drawingSurface.Verify(ds => ds.EndDrawing(brushStroke.Object));
         }
 
         [Test]
@@ -98,7 +98,7 @@ namespace Fotografix.Editor.Tools
             tool.PointerReleased(End);
             tool.PointerMoved(PointerState.Empty);
 
-            Assert.That(capturedBrushStroke.Points, Has.Count.EqualTo(2));
+            brushStroke.Verify(bs => bs.AddPoint(It.IsAny<Point>()), Times.Once());
         }
     }
 }

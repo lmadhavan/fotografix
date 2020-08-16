@@ -33,14 +33,14 @@ namespace Fotografix.Win2D
             imageNode.Draw(ds);
         }
 
-        public void BeginBrushStrokePreview(Layer layer, BrushStroke brushStroke)
+        public void BeginPreview(Layer layer, IDrawable drawable)
         {
-            imageNode.BeginBrushStrokePreview(layer, brushStroke);
+            imageNode.BeginPreview(layer, drawable);
         }
 
-        public void EndBrushStrokePreview(Layer layer)
+        public void EndPreview(Layer layer)
         {
-            imageNode.EndBrushStrokePreview(layer);
+            imageNode.EndPreview(layer);
         }
 
         public Bitmap ToBitmap()

@@ -36,10 +36,10 @@ namespace Fotografix
             visitor.Visit(this);
         }
 
-        public override IUndoable Paint(BrushStroke brushStroke)
+        public override IUndoable Draw(IDrawable drawable)
         {
             BitmapState bitmapState = new BitmapState(this);
-            bitmap.Paint(brushStroke);
+            bitmap.Draw(drawable);
             RaiseContentChanged();
             return bitmapState;
         }

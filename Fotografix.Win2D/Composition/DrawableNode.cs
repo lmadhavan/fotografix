@@ -3,24 +3,22 @@ using System;
 
 namespace Fotografix.Win2D.Composition
 {
-    internal sealed class BrushStrokeNode : IDisposable
+    internal sealed class DrawableNode : IDisposable
     {
-        private readonly BrushStroke brushStroke;
+        private readonly IWin2DDrawable drawable;
         private readonly ICanvasResourceCreator resourceCreator;
         private readonly CompositeEffectNode compositeEffectNode;
-        private readonly BrushStrokePainter brushStrokePainter;
 
         private CanvasCommandList commandList;
 
-        internal BrushStrokeNode(BrushStroke brushStroke)
+        internal DrawableNode(IDrawable drawable)
         {
-            this.brushStroke = brushStroke;
+            this.drawable = (IWin2DDrawable)drawable;
             this.resourceCreator = CanvasDevice.GetSharedDevice();
-            brushStroke.ContentChanged += OnContentChanged;
+            drawable.ContentChanged += OnContentChanged;
 
             this.compositeEffectNode = new CompositeEffectNode();
 
-            this.brushStrokePainter = new BrushStrokePainter(brushStroke);
             UpdateCommandList();
         }
 
@@ -28,7 +26,7 @@ namespace Fotografix.Win2D.Composition
         {
             commandList?.Dispose();
             compositeEffectNode.Dispose();
-            brushStroke.ContentChanged -= OnContentChanged;
+            drawable.ContentChanged -= OnContentChanged;
         }
 
         public event EventHandler OutputChanged;
@@ -50,7 +48,7 @@ namespace Fotografix.Win2D.Composition
             this.commandList = new CanvasCommandList(resourceCreator);
             using (CanvasDrawingSession ds = commandList.CreateDrawingSession())
             {
-                brushStrokePainter.Paint(ds);
+                drawable.Draw(ds);
             }
 
             OutputChanged?.Invoke(this, EventArgs.Empty);

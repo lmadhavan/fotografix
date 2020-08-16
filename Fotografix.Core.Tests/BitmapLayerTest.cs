@@ -1,6 +1,5 @@
 ﻿using Fotografix.Testing;
 using NUnit.Framework;
-using System.Drawing;
 
 namespace Fotografix.Core.Tests
 {
@@ -12,7 +11,7 @@ namespace Fotografix.Core.Tests
 
         private PaintableFakeBitmap bitmap;
         private BitmapLayer layer;
-        private BrushStroke brushStroke;
+        private IDrawable drawable;
 
         [SetUp]
         public void SetUp()
@@ -22,37 +21,37 @@ namespace Fotografix.Core.Tests
             bitmap.SetPixelBytesOnPaint(PaintedBytes);
 
             this.layer = new BitmapLayer(bitmap);
-            this.brushStroke = new BrushStroke(new PointF(10, 10), 5, Color.White);
+            this.drawable = new FakeDrawable();
         }
 
         [Test]
-        public void PaintsBrushStrokeOnBitmap()
+        public void DrawsDrawableOnBitmap()
         {
-            layer.Paint(brushStroke);
+            layer.Draw(drawable);
 
-            Assert.That(bitmap.LastBrushStroke, Is.SameAs(brushStroke));
+            Assert.That(bitmap.LastDrawable, Is.SameAs(drawable));
             Assert.That(bitmap.GetPixelBytes(), Is.EqualTo(PaintedBytes));
         }
 
         [Test]
-        public void PaintingBrushStrokeIsUndoable()
+        public void DrawingIsUndoable()
         {
-            IUndoable undoable = layer.Paint(brushStroke);
+            IUndoable undoable = layer.Draw(drawable);
             undoable.Undo();
 
             Assert.That(bitmap.GetPixelBytes(), Is.EqualTo(OriginalBytes));
         }
 
         [Test]
-        public void PaintingBrushStrokeRaisesContentChanged()
+        public void DrawingRaisesContentChanged()
         {
-            Assert.That(layer, Raises.ContentChanged.When(() => layer.Paint(brushStroke)));
+            Assert.That(layer, Raises.ContentChanged.When(() => layer.Draw(drawable)));
         }
 
         [Test]
-        public void UndoingBrushStrokeRaisesContentChanged()
+        public void UndoingDrawingRaisesContentChanged()
         {
-            IUndoable undoable = layer.Paint(brushStroke);
+            IUndoable undoable = layer.Draw(drawable);
             Assert.That(layer, Raises.ContentChanged.When(() => undoable.Undo()));
         }
 
@@ -60,17 +59,24 @@ namespace Fotografix.Core.Tests
         {
             private byte[] paintedBytes;
 
-            public BrushStroke LastBrushStroke { get; private set; }
+            public IDrawable LastDrawable { get; private set; }
 
-            public override void Paint(BrushStroke brushStroke)
+            public override void Draw(IDrawable drawable)
             {
-                this.LastBrushStroke = brushStroke;
+                this.LastDrawable = drawable;
                 SetPixelBytes(paintedBytes);
             }
 
             internal void SetPixelBytesOnPaint(byte[] paintedBytes)
             {
                 this.paintedBytes = paintedBytes;
+            }
+        }
+
+        private class FakeDrawable : NotifyContentChangedBase, IDrawable
+        {
+            public void Dispose()
+            {
             }
         }
     }

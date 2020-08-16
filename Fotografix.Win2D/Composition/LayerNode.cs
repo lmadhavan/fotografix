@@ -11,7 +11,7 @@ namespace Fotografix.Win2D.Composition
 
         private ICanvasImage background;
         private ICanvasImage output;
-        private BrushStrokeNode brushStrokeNode;
+        private DrawableNode drawableNode;
 
         protected LayerNode(Layer layer)
         {
@@ -62,17 +62,17 @@ namespace Fotografix.Win2D.Composition
 
         public event EventHandler OutputChanged;
 
-        public void BeginBrushStrokePreview(BrushStroke brushStroke)
+        public void BeginPreview(IDrawable drawable)
         {
-            this.brushStrokeNode = new BrushStrokeNode(brushStroke);
-            brushStrokeNode.OutputChanged += OnContentChanged;
+            this.drawableNode = new DrawableNode(drawable);
+            drawableNode.OutputChanged += OnContentChanged;
             UpdateOutput();
         }
 
-        public void EndBrushStrokePreview()
+        public void EndPreview()
         {
-            brushStrokeNode.Dispose();
-            this.brushStrokeNode = null;
+            drawableNode.Dispose();
+            this.drawableNode = null;
             UpdateOutput();
         }
 
@@ -80,9 +80,9 @@ namespace Fotografix.Win2D.Composition
         {
             ICanvasImage output = ResolveOutput(background);
             
-            if (brushStrokeNode != null)
+            if (drawableNode != null)
             {
-                output = brushStrokeNode.ResolveOutput(output);
+                output = drawableNode.ResolveOutput(output);
             }
             
             this.Output = output;

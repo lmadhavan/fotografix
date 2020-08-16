@@ -4,10 +4,17 @@ namespace Fotografix.Editor.Tools
 {
     public sealed class BrushTool : ITool, IBrushToolSettings, IDrawingSurfaceListener
     {
-        private IDrawingSurface drawingSurface;
-        private BrushStroke brushStroke;
+        private readonly IBrushStrokeFactory brushStrokeFactory;
 
-        public float Size { get; set; }
+        private IDrawingSurface drawingSurface;
+        private IBrushStroke brushStroke;
+
+        public BrushTool(IBrushStrokeFactory brushStrokeFactory)
+        {
+            this.brushStrokeFactory = brushStrokeFactory;
+        }
+
+        public int Size { get; set; }
         public Color Color { get; set; }
 
         public string Name => "Brush";
@@ -25,7 +32,7 @@ namespace Fotografix.Editor.Tools
         {
             if (Enabled)
             {
-                this.brushStroke = new BrushStroke(p.Location, Size, Color);
+                this.brushStroke = brushStrokeFactory.CreateBrushStroke(p.Location, Size, Color);
                 drawingSurface.BeginDrawing(brushStroke);
             }
         }

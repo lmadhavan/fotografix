@@ -50,12 +50,11 @@ namespace Fotografix.Win2D
             return result;
         }
 
-        public override void Paint(BrushStroke brushStroke)
+        public override void Draw(IDrawable drawable)
         {
             using (CanvasDrawingSession ds = renderTarget.CreateDrawingSession())
             {
-                BrushStrokePainter painter = new BrushStrokePainter(brushStroke);
-                painter.Paint(ds);
+                ((IWin2DDrawable)drawable).Draw(ds);
             }
         }
 

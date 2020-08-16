@@ -88,7 +88,7 @@ namespace Fotografix
 
         public abstract void Accept(LayerVisitor visitor);
 
-        public virtual IUndoable Paint(BrushStroke brushStroke)
+        public virtual IUndoable Draw(IDrawable drawable)
         {
             throw new NotSupportedException();
         }
