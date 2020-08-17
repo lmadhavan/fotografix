@@ -1,6 +1,7 @@
 ﻿using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Effects;
 using System.ComponentModel;
+using System.Drawing;
 
 namespace Fotografix.Win2D.Composition
 {
@@ -29,6 +30,8 @@ namespace Fotografix.Win2D.Composition
             layer.PropertyChanged -= OnLayerPropertyChanged;
             base.Dispose();
         }
+
+        protected override Rectangle Bounds => new Rectangle(Point.Empty, layer.Bitmap.Size);
 
         protected override ICanvasImage ResolveOutput(ICanvasImage background)
         {

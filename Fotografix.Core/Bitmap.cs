@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Fotografix.Drawing;
+using System;
 using System.Drawing;
 
 namespace Fotografix

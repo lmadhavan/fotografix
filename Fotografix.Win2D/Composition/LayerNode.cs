@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Drawing;
+using Fotografix.Drawing;
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Effects;
 
@@ -64,7 +66,7 @@ namespace Fotografix.Win2D.Composition
 
         public void BeginPreview(IDrawable drawable)
         {
-            this.drawableNode = new DrawableNode(drawable);
+            this.drawableNode = new DrawableNode(drawable, Bounds);
             drawableNode.OutputChanged += OnContentChanged;
             UpdateOutput();
         }
@@ -75,6 +77,8 @@ namespace Fotografix.Win2D.Composition
             this.drawableNode = null;
             UpdateOutput();
         }
+
+        protected abstract Rectangle Bounds { get; }
 
         protected void UpdateOutput()
         {

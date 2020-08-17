@@ -1,8 +1,9 @@
-﻿using Microsoft.Graphics.Canvas;
+﻿using Fotografix.Drawing;
+using Microsoft.Graphics.Canvas;
 using System.Collections.Generic;
 using System.Drawing;
 
-namespace Fotografix.Win2D
+namespace Fotografix.Win2D.Drawing
 {
     public sealed class Win2DBrushStroke : NotifyContentChangedBase, IBrushStroke, IWin2DDrawable
     {
@@ -14,7 +15,7 @@ namespace Fotografix.Win2D
         {
             this.points = new List<Point> { start };
             this.size = size;
-            this.color = Windows.UI.Color.FromArgb(color.A, color.R, color.G, color.B);
+            this.color = color.ToWindowsColor();
         }
 
         public void Dispose()
@@ -27,7 +28,7 @@ namespace Fotografix.Win2D
             RaiseContentChanged();
         }
 
-        public void Draw(CanvasDrawingSession ds)
+        public void Draw(CanvasDrawingSession ds, Rectangle bounds)
         {
             FillCircle(ds, points[0]);
 

@@ -1,24 +1,29 @@
-﻿using Microsoft.Graphics.Canvas;
+﻿using Fotografix.Drawing;
+using Fotografix.Win2D.Drawing;
+using Microsoft.Graphics.Canvas;
 using System;
+using System.Drawing;
 
 namespace Fotografix.Win2D.Composition
 {
     internal sealed class DrawableNode : IDisposable
     {
         private readonly IWin2DDrawable drawable;
+        private readonly Rectangle bounds;
+
         private readonly ICanvasResourceCreator resourceCreator;
         private readonly CompositeEffectNode compositeEffectNode;
-
         private CanvasCommandList commandList;
 
-        internal DrawableNode(IDrawable drawable)
+        internal DrawableNode(IDrawable drawable, Rectangle bounds)
         {
             this.drawable = (IWin2DDrawable)drawable;
-            this.resourceCreator = CanvasDevice.GetSharedDevice();
             drawable.ContentChanged += OnContentChanged;
 
-            this.compositeEffectNode = new CompositeEffectNode();
+            this.bounds = bounds;
 
+            this.resourceCreator = CanvasDevice.GetSharedDevice();
+            this.compositeEffectNode = new CompositeEffectNode();
             UpdateCommandList();
         }
 
@@ -48,7 +53,7 @@ namespace Fotografix.Win2D.Composition
             this.commandList = new CanvasCommandList(resourceCreator);
             using (CanvasDrawingSession ds = commandList.CreateDrawingSession())
             {
-                drawable.Draw(ds);
+                drawable.Draw(ds, bounds);
             }
 
             OutputChanged?.Invoke(this, EventArgs.Empty);

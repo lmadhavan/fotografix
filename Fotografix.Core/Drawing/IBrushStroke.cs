@@ -1,6 +1,6 @@
 ﻿using System.Drawing;
 
-namespace Fotografix
+namespace Fotografix.Drawing
 {
     public interface IBrushStroke : IDrawable
     {

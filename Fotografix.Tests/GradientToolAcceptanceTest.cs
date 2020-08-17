@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 
 namespace Fotografix.Tests
 {
-    [Ignore]
     [TestClass]
     public class GradientToolAcceptanceTest : ToolAcceptanceTestBase
     {
@@ -22,11 +21,11 @@ namespace Fotografix.Tests
                 new Point(200, 200)
             });
 
-            await AssertImageAsync("gradient.png");
+            await AssertImageAsync("gradient_preview.png");
 
             ContinueDraggingAndReleasePointer(new Point[]
             {
-                new Point(200, 200)
+                new Point(300, 300)
             });
 
             await AssertImageAsync("gradient.png");

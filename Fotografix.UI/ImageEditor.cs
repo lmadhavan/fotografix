@@ -1,10 +1,13 @@
-﻿using Fotografix.Editor;
+﻿using Fotografix.Drawing;
+using Fotografix.Editor;
 using Fotografix.Editor.Collections;
+using Fotografix.Editor.Drawing;
 using Fotografix.Editor.Layers;
 using Fotografix.Editor.PropertyModel;
 using Fotografix.Editor.Tools;
 using Fotografix.UI.Adjustments;
 using Fotografix.Win2D;
+using Fotografix.Win2D.Drawing;
 using Microsoft.Graphics.Canvas;
 using System;
 using System.Collections.Generic;
@@ -29,7 +32,7 @@ namespace Fotografix.UI
 
         private Layer activeLayer;
         private LayerPropertyEditor activeLayerViewModel;
-        private IDrawingSurfaceListener drawingSurfaceListener;
+        private List<IDrawingSurfaceListener> drawingSurfaceListeners;
 
         private ImageEditor(Image image, Viewport viewport)
         {
@@ -201,17 +204,23 @@ namespace Fotografix.UI
         {
             var handTool = new HandTool(viewport);
 
-            var brushTool = new BrushTool(new Win2DBrushStrokeFactory())
+            Win2DDrawableFactory drawableFactory = new Win2DDrawableFactory();
+
+            var brushTool = new BrushTool(drawableFactory)
             {
                 Size = 5,
                 Color = Color.White
             };
 
-            var gradientTool = new GradientTool();
+            var gradientTool = new GradientTool(drawableFactory)
+            {
+                StartColor = Color.Black,
+                EndColor = Color.White
+            };
 
             this.Tools = new List<ITool> { handTool, brushTool, gradientTool };
             this.activeTool = Tools.First();
-            this.drawingSurfaceListener = brushTool;
+            this.drawingSurfaceListeners = new List<IDrawingSurfaceListener> { brushTool, gradientTool };
         }
 
         #endregion
@@ -278,7 +287,10 @@ namespace Fotografix.UI
         {
             if (activeLayer is BitmapLayer bitmapLayer)
             {
-                drawingSurfaceListener.DrawingSurfaceActivated(new BitmapDrawingSurface(bitmapLayer, this));
+                foreach (IDrawingSurfaceListener listener in drawingSurfaceListeners)
+                {
+                    listener.DrawingSurfaceActivated(new BitmapDrawingSurface(bitmapLayer, this));
+                }
             }
         }
 

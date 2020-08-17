@@ -1,4 +1,5 @@
-﻿using Fotografix.Win2D.Composition;
+﻿using Fotografix.Drawing;
+using Fotografix.Win2D.Composition;
 using Microsoft.Graphics.Canvas;
 using System;
 

@@ -2,6 +2,7 @@
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Effects;
 using System;
+using System.Drawing;
 
 namespace Fotografix.Win2D.Composition
 {
@@ -25,6 +26,8 @@ namespace Fotografix.Win2D.Composition
             crossFadeEffect.Dispose();
             base.Dispose();
         }
+
+        protected override Rectangle Bounds => Rectangle.Empty;
 
         protected override ICanvasImage ResolveOutput(ICanvasImage background)
         {

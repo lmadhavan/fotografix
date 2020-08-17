@@ -1,4 +1,5 @@
-﻿using Microsoft.Graphics.Canvas;
+﻿using Fotografix.Drawing;
+using Microsoft.Graphics.Canvas;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;

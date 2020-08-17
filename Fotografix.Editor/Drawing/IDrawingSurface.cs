@@ -1,4 +1,6 @@
-﻿namespace Fotografix.Editor
+﻿using Fotografix.Drawing;
+
+namespace Fotografix.Editor.Drawing
 {
     public interface IDrawingSurface
     {

@@ -1,4 +1,4 @@
-﻿namespace Fotografix.Editor
+﻿namespace Fotografix.Editor.Drawing
 {
     public interface IDrawingSurfaceListener
     {

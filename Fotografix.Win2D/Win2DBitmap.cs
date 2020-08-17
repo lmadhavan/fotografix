@@ -1,4 +1,6 @@
-﻿using Microsoft.Graphics.Canvas;
+﻿using Fotografix.Drawing;
+using Fotografix.Win2D.Drawing;
+using Microsoft.Graphics.Canvas;
 using System.Drawing;
 using Windows.Graphics.DirectX;
 
@@ -54,7 +56,7 @@ namespace Fotografix.Win2D
         {
             using (CanvasDrawingSession ds = renderTarget.CreateDrawingSession())
             {
-                ((IWin2DDrawable)drawable).Draw(ds);
+                ((IWin2DDrawable)drawable).Draw(ds, new Rectangle(Point.Empty, Size));
             }
         }
 

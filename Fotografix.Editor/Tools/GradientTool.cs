@@ -1,30 +1,32 @@
-﻿using System;
+﻿using Fotografix.Drawing;
 using System.Drawing;
 
 namespace Fotografix.Editor.Tools
 {
-    public sealed class GradientTool : ITool, IGradientToolSettings
+    public sealed class GradientTool : DrawingTool<IGradient>, IGradientToolSettings
     {
+        private readonly IGradientFactory gradientFactory;
+
+        public GradientTool(IGradientFactory gradientFactory)
+        {
+            this.gradientFactory = gradientFactory;
+        }
+
         public Color StartColor { get; set; }
         public Color EndColor { get; set; }
 
-        public string Name => "Gradient";
-        public object Settings => this;
-        public ToolCursor Cursor => throw new NotImplementedException();
+        public override string Name => "Gradient";
 
-        public void PointerMoved(PointerState p)
+        protected override object Settings => this;
+
+        protected override IGradient CreateDrawable(PointerState p)
         {
-            throw new NotImplementedException();
+            return gradientFactory.CreateLinearGradient(StartColor, EndColor, p.Location);
         }
 
-        public void PointerPressed(PointerState p)
+        protected override void UpdateDrawable(IGradient gradient, PointerState p)
         {
-            throw new NotImplementedException();
-        }
-
-        public void PointerReleased(PointerState p)
-        {
-            throw new NotImplementedException();
+            gradient.SetEndPoint(p.Location);
         }
     }
 }

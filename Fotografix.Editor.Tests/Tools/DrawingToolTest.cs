@@ -1,37 +1,31 @@
-﻿using Moq;
+﻿using Fotografix.Drawing;
+using Fotografix.Editor.Drawing;
+using Moq;
 using NUnit.Framework;
 using System.Drawing;
 
 namespace Fotografix.Editor.Tools
 {
     [TestFixture]
-    public class BrushToolTest
+    public class DrawingToolTest
     {
-        private const int BrushSize = 5;
-        private static readonly Color BrushColor = Color.White;
-
         private static readonly PointerState Start = new PointerState(new Point(10, 10));
         private static readonly PointerState End = new PointerState(new Point(20, 20));
 
-        private BrushTool tool;
+        private FakeDrawingTool tool;
         private Mock<IDrawingSurface> drawingSurface;
-        private Mock<IBrushStrokeFactory> brushStrokeFactory;
-        private Mock<IBrushStroke> brushStroke;
+        private Mock<IFakeDrawableFactory> drawableFactory;
+        private Mock<IFakeDrawable> drawable;
 
         [SetUp]
         public void SetUp()
         {
             this.drawingSurface = new Mock<IDrawingSurface>();
-            this.brushStrokeFactory = new Mock<IBrushStrokeFactory>();
-            this.brushStroke = new Mock<IBrushStroke>();
+            this.drawableFactory = new Mock<IFakeDrawableFactory>();
+            this.drawable = new Mock<IFakeDrawable>();
+            drawableFactory.Setup(f => f.Create(It.IsAny<Point>())).Returns(drawable.Object);
 
-            brushStrokeFactory.Setup(f => f.CreateBrushStroke(It.IsAny<Point>(), It.IsAny<int>(), It.IsAny<Color>())).Returns(brushStroke.Object);
-
-            this.tool = new BrushTool(brushStrokeFactory.Object)
-            {
-                Size = BrushSize,
-                Color = BrushColor
-            };
+            this.tool = new FakeDrawingTool(drawableFactory.Object);
         }
 
         [Test]
@@ -55,7 +49,7 @@ namespace Fotografix.Editor.Tools
             tool.PointerMoved(End);
             tool.PointerReleased(End);
 
-            brushStrokeFactory.VerifyNoOtherCalls();
+            drawableFactory.VerifyNoOtherCalls();
         }
 
         [Test]
@@ -64,8 +58,8 @@ namespace Fotografix.Editor.Tools
             tool.DrawingSurfaceActivated(drawingSurface.Object);
             tool.PointerPressed(Start);
 
-            brushStrokeFactory.Verify(f => f.CreateBrushStroke(Start.Location, BrushSize, BrushColor));
-            drawingSurface.Verify(ds => ds.BeginDrawing(brushStroke.Object));
+            drawableFactory.Verify(f => f.Create(Start.Location));
+            drawingSurface.Verify(ds => ds.BeginDrawing(drawable.Object));
         }
 
         [Test]
@@ -75,7 +69,7 @@ namespace Fotografix.Editor.Tools
             tool.PointerPressed(Start);
             tool.PointerMoved(End);
 
-            brushStroke.Verify(bs => bs.AddPoint(End.Location));
+            drawable.Verify(d => d.Update(End.Location));
         }
 
         [Test]
@@ -86,7 +80,7 @@ namespace Fotografix.Editor.Tools
             tool.PointerMoved(End);
             tool.PointerReleased(End);
 
-            drawingSurface.Verify(ds => ds.EndDrawing(brushStroke.Object));
+            drawingSurface.Verify(ds => ds.EndDrawing(drawable.Object));
         }
 
         [Test]
@@ -98,7 +92,41 @@ namespace Fotografix.Editor.Tools
             tool.PointerReleased(End);
             tool.PointerMoved(PointerState.Empty);
 
-            brushStroke.Verify(bs => bs.AddPoint(It.IsAny<Point>()), Times.Once());
+            drawable.Verify(d => d.Update(It.IsAny<Point>()), Times.Once());
+        }
+
+        private class FakeDrawingTool : DrawingTool<IFakeDrawable>
+        {
+            private readonly IFakeDrawableFactory factory;
+
+            public FakeDrawingTool(IFakeDrawableFactory factory)
+            {
+                this.factory = factory;
+            }
+
+            public override string Name => "Test";
+
+            protected override object Settings => this;
+
+            protected override IFakeDrawable CreateDrawable(PointerState p)
+            {
+                return factory.Create(p.Location);
+            }
+
+            protected override void UpdateDrawable(IFakeDrawable drawable, PointerState p)
+            {
+                drawable.Update(p.Location);
+            }
+        }
+
+        public interface IFakeDrawableFactory
+        {
+            IFakeDrawable Create(Point p);
+        }
+
+        public interface IFakeDrawable : IDrawable
+        {
+            void Update(Point p);
         }
     }
 }

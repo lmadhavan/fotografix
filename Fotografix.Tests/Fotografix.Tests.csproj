@@ -159,7 +159,7 @@
   <ItemGroup>
     <Content Include="Images\flowers_bc.png" />
     <Content Include="Images\flowers_brush.png" />
-    <Content Include="Images\flowers_brush_partial.png" />
+    <Content Include="Images\flowers_brush_preview.png" />
     <Content Include="Images\flowers_bw_multiply_opacity50.png" />
     <Content Include="Images\flowers_bw_opacity50.png" />
     <Content Include="Images\flowers_gm.png" />
@@ -174,6 +174,8 @@
     <Content Include="Images\flowers_stars_screen.png" />
     <Content Include="Images\flowers_stars_screen_opacity50.png" />
     <Content Include="Images\flowers_stars_small.png" />
+    <Content Include="Images\gradient.png" />
+    <Content Include="Images\gradient_preview.png" />
     <Content Include="Images\stars.jpg" />
     <Content Include="Images\stars_small.jpg" />
     <Content Include="Properties\Default.rd.xml" />

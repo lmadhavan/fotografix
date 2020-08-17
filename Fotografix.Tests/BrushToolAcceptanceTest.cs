@@ -9,7 +9,7 @@ namespace Fotografix.Tests
     public class BrushToolAcceptanceTest : ToolAcceptanceTestBase
     {
         [TestMethod]
-        public async Task PaintsBrushStrokeFromPoints()
+        public async Task DrawsBrushStroke()
         {
             await OpenImageAsync("flowers.jpg");
             ConfigureBrushTool(size: 15, Color.White);
@@ -22,7 +22,7 @@ namespace Fotografix.Tests
                 new Point(250, 350)
             });
 
-            await AssertImageAsync("flowers_brush_partial.png");
+            await AssertImageAsync("flowers_brush_preview.png");
 
             ContinueDraggingAndReleasePointer(new Point[]
             {

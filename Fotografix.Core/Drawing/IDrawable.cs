@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Fotografix
+namespace Fotografix.Drawing
 {
     public interface IDrawable : IDisposable, INotifyContentChanged
     {

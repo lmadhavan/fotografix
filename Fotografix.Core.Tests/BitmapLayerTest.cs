@@ -1,4 +1,5 @@
-﻿using Fotografix.Testing;
+﻿using Fotografix.Drawing;
+using Fotografix.Testing;
 using NUnit.Framework;
 
 namespace Fotografix.Core.Tests
