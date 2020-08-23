@@ -12,6 +12,10 @@
     DefaultButton="Primary">
 
     <Grid>
+        <Grid.Resources>
+            <ResourceDictionary Source="../Styles.xaml" />
+        </Grid.Resources>
+        
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="3*" />
             <ColumnDefinition Width="*" />
@@ -21,10 +25,9 @@
         
         <muxc:NumberBox
             Grid.Column="0"
+            Style="{StaticResource DimensionNumberBox}"
             Header="Width"
-            Minimum="1"
             Value="{x:Bind parameters.Width, Mode=TwoWay}"
-            NumberFormatter="{x:Bind numberFormatter}" 
         />
         
         <TextBlock
@@ -38,10 +41,9 @@
 
         <muxc:NumberBox
             Grid.Column="2"
+            Style="{StaticResource DimensionNumberBox}"
             Header="Height"
-            Minimum="1"
             Value="{x:Bind parameters.Height, Mode=TwoWay}"
-            NumberFormatter="{x:Bind numberFormatter}" 
         />
 
         <TextBlock

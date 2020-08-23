@@ -1,7 +1,20 @@
 ﻿<ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:nf="using:Windows.Globalization.NumberFormatting"
+    xmlns:muxc="using:Microsoft.UI.Xaml.Controls">
+
+    <nf:DecimalFormatter x:Key="DimensionFormatter" FractionDigits="0">
+        <nf:DecimalFormatter.NumberRounder>
+            <nf:IncrementNumberRounder />
+        </nf:DecimalFormatter.NumberRounder>
+    </nf:DecimalFormatter>
+
+    <Style x:Key="DimensionNumberBox" TargetType="muxc:NumberBox">
+        <Setter Property="Minimum" Value="1" />
+        <Setter Property="NumberFormatter" Value="{StaticResource DimensionFormatter}" />
+    </Style>
+
     <Style x:Key="CommandButtonStyle" TargetType="Button">
         <Setter Property="BorderThickness" Value="0" />
         <Setter Property="Padding" Value="10" />

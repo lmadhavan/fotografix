@@ -145,7 +145,6 @@
       <DependentUpon>NewImageDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="FileManagement\OpenFileCommand.cs" />
-    <Compile Include="NumberFormatters.cs" />
     <Compile Include="ResizeImageDialog.xaml.cs">
       <DependentUpon>ResizeImageDialog.xaml</DependentUpon>
     </Compile>
