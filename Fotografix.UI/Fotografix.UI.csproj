@@ -166,7 +166,7 @@
     <Compile Include="Adjustments\AdjustmentTemplatesResourceDictionary.xaml.cs">
       <DependentUpon>AdjustmentTemplatesResourceDictionary.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Adjustments\AdjustmentTemplateSelector.cs" />
+    <Compile Include="TypeBasedTemplateSelector.cs" />
     <Compile Include="Adjustments\IAdjustmentLayerFactory.cs" />
     <Compile Include="BitmapLayerFactory.cs" />
     <Compile Include="BlendModes\BlendModeListItemStyleSelector.cs" />
@@ -185,6 +185,9 @@
       <DependentUpon>TabViewContainer.xaml</DependentUpon>
     </Compile>
     <Compile Include="ToolAdapter.cs" />
+    <Compile Include="Tools\ToolTemplatesResourceDictionary.xaml.cs">
+      <DependentUpon>ToolTemplatesResourceDictionary.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ValueConverter.cs" />
     <EmbeddedResource Include="Properties\Fotografix.Editor.rd.xml" />
   </ItemGroup>
@@ -244,6 +247,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Tools\ToolTemplatesResourceDictionary.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <PRIResource Include="Strings\en-US\Resources.resw" />
@@ -262,9 +269,7 @@
       <Name>Fotografix.Win2D</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Tools\" />
-  </ItemGroup>
+  <ItemGroup />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>

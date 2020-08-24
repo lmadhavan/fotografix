@@ -8,7 +8,7 @@
     d:DesignHeight="300"
     d:DesignWidth="400">
 
-    <Button HorizontalAlignment="Stretch" VerticalAlignment="Stretch" BorderThickness="2" BorderBrush="{ThemeResource ButtonBackgroundThemeBrush}">
+    <Button Width="32" Height="32" BorderThickness="2" BorderBrush="{ThemeResource ButtonBackgroundThemeBrush}">
         <Button.Background>
             <SolidColorBrush Color="{x:Bind Color, Mode=OneWay}" />
         </Button.Background>

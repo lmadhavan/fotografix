@@ -7,8 +7,8 @@
     xmlns:canvas="using:Microsoft.Graphics.Canvas.UI.Xaml"
     xmlns:c="using:Fotografix"
     xmlns:layers="using:Fotografix.UI.Layers"
+    xmlns:tools="using:Fotografix.UI.Tools"
     xmlns:sys="using:System"
-    xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     mc:Ignorable="d"
     Background="{ThemeResource AppBarBackgroundThemeBrush}"
     AllowDrop="True">
@@ -74,6 +74,34 @@
                     <SymbolIcon Symbol="Redo" />
                 </Button>
             </StackPanel>
+
+            <Grid Grid.Column="1"
+                  Margin="4,0" Padding="8,0"
+                  BorderThickness="1,0" BorderBrush="{ThemeResource ButtonBorderThemeBrush}">
+                <Grid.Resources>
+                    <ResourceDictionary>
+                        <ResourceDictionary.MergedDictionaries>
+                            <tools:ToolTemplatesResourceDictionary />
+                        </ResourceDictionary.MergedDictionaries>
+                    </ResourceDictionary>
+                </Grid.Resources>
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="0"
+                           FontWeight="SemiBold"
+                           VerticalAlignment="Center"
+                           Text="{x:Bind editor.ActiveTool.Name, Mode=OneWay}" />
+
+                <ContentControl Grid.Column="1"
+                                Margin="8,0"
+                                VerticalAlignment="Center"
+                                ContentTemplateSelector="{StaticResource ToolSettingsTemplateSelector}"
+                                Content="{x:Bind editor.ActiveTool.Settings, Mode=OneWay}" />
+            </Grid>
 
             <StackPanel Grid.Column="2" Orientation="Horizontal">
                 <Button Click="ResizeImage_Click" Style="{StaticResource CommandButtonStyle}">
