@@ -18,19 +18,6 @@
         <Setter Property="ThumbToolTipValueConverter" Value="{StaticResource AdjustmentSliderToolTipValueConverter}" />
     </Style>
 
-    <Style x:Key="ColorPickerButtonStyle" TargetType="Button">
-        <Setter Property="HorizontalAlignment" Value="Stretch" />
-        <Setter Property="Height" Value="32" />
-        <Setter Property="BorderBrush" Value="{ThemeResource CheckBoxBorderThemeBrush}" />
-        <Setter Property="BorderThickness" Value="2" />
-        <Setter Property="Margin" Value="8,4" />
-    </Style>
-
-    <Style x:Key="GradientMapColorPickerStyle" TargetType="ColorPicker">
-        <Setter Property="ColorSpectrumComponents" Value="SaturationValue" />
-        <Setter Property="IsColorPreviewVisible" Value="False" />
-    </Style>
-
     <DataTemplate x:Name="hueSaturationTemplate" x:DataType="ea:HueSaturationAdjustmentPropertyEditor">
         <StackPanel Orientation="Vertical">
             <TextBlock Text="Hue:" />
@@ -44,6 +31,13 @@
 
     <DataTemplate x:Name="gradientMapTemplate" x:DataType="ea:GradientMapAdjustmentPropertyEditor">
         <Grid>
+            <Grid.Resources>
+                <Style TargetType="ui:ColorPickerButton">
+                    <Setter Property="Height" Value="32" />
+                    <Setter Property="Margin" Value="8,4" />
+                </Style>
+            </Grid.Resources>
+            
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />
                 <RowDefinition Height="*" />
@@ -55,30 +49,12 @@
             </Grid.ColumnDefinitions>
 
             <TextBlock Grid.Row="0" Grid.Column="0" Text="Shadows:" VerticalAlignment="Center" />
-            <Button Grid.Row="0" Grid.Column="1" Style="{StaticResource ColorPickerButtonStyle}">
-                <Button.Background>
-                    <SolidColorBrush Color="{x:Bind Shadows, Converter={StaticResource ColorConverter}, Mode=OneWay}" />
-                </Button.Background>
-
-                <Button.Flyout>
-                    <Flyout>
-                        <ColorPicker Style="{StaticResource GradientMapColorPickerStyle}" Color="{x:Bind Shadows, Converter={StaticResource ColorConverter}, Mode=TwoWay}" />
-                    </Flyout>
-                </Button.Flyout>
-            </Button>
+            <ui:ColorPickerButton Grid.Row="0" Grid.Column="1"
+                                  Color="{x:Bind Shadows, Converter={StaticResource ColorConverter}, Mode=TwoWay}" />
 
             <TextBlock Grid.Row="1" Grid.Column="0" Text="Highlights:" VerticalAlignment="Center" />
-            <Button Grid.Row="1" Grid.Column="1" Style="{StaticResource ColorPickerButtonStyle}">
-                <Button.Background>
-                    <SolidColorBrush Color="{x:Bind Highlights, Converter={StaticResource ColorConverter}, Mode=OneWay}" />
-                </Button.Background>
-
-                <Button.Flyout>
-                    <Flyout>
-                        <ColorPicker Style="{StaticResource GradientMapColorPickerStyle}" Color="{x:Bind Highlights, Converter={StaticResource ColorConverter}, Mode=TwoWay}" />
-                    </Flyout>
-                </Button.Flyout>
-            </Button>
+            <ui:ColorPickerButton Grid.Row="1" Grid.Column="1"
+                                  Color="{x:Bind Highlights, Converter={StaticResource ColorConverter}, Mode=TwoWay}" />
         </Grid>
     </DataTemplate>
 
