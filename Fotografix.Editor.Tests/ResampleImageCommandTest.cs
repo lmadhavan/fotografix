@@ -1,5 +1,5 @@
-﻿using Fotografix.Adjustments;
-using Fotografix.Testing;
+﻿using Fotografix.Testing;
+using Moq;
 using NUnit.Framework;
 using System.Drawing;
 
@@ -8,58 +8,53 @@ namespace Fotografix.Editor
     [TestFixture]
     public class ResampleImageCommandTest
     {
+        private const int ScalingFactor = 2;
+        private static readonly Size OriginalImageSize = new Size(50, 25);
+        private static readonly Size NewImageSize = OriginalImageSize * ScalingFactor;
+
+        private Image image;
+        private Mock<IBitmapResamplingStrategy> resamplingStrategy;
+
+        [SetUp]
+        public void SetUp()
+        {
+            this.image = new Image(OriginalImageSize);
+            this.resamplingStrategy = new Mock<IBitmapResamplingStrategy>();
+        }
+
         [Test]
         public void ChangesImageSize()
         {
-            Size originalImageSize = new Size(50, 25);
-            Image image = new Image(originalImageSize);
-
-            Size newImageSize = new Size(100, 50);
-            Command command = new ResampleImageCommand(image, newImageSize);
+            Command command = new ResampleImageCommand(image, NewImageSize, resamplingStrategy.Object);
 
             command.Execute();
-            Assert.That(image.Size, Is.EqualTo(newImageSize));
+            Assert.That(image.Size, Is.EqualTo(NewImageSize));
 
             command.Undo();
-            Assert.That(image.Size, Is.EqualTo(originalImageSize));
+            Assert.That(image.Size, Is.EqualTo(OriginalImageSize));
         }
 
         [Test]
         public void ResamplesBitmapsProportionalToImageSize()
         {
-            Size originalImageSize = new Size(50, 25);
-            Image image = new Image(originalImageSize);
-
             Size originalBitmapSize = new Size(10, 20);
-            BitmapLayer layer = new BitmapLayer(new FakeBitmap(originalBitmapSize));
+            FakeBitmap originalBitmap = new FakeBitmap(originalBitmapSize);
+
+            BitmapLayer layer = new BitmapLayer(originalBitmap);
             image.Layers.Add(layer);
 
-            Size newImageSize = new Size(100, 50); // 200% of original image size
-            Command command = new ResampleImageCommand(image, newImageSize);
+            Command command = new ResampleImageCommand(image, NewImageSize, resamplingStrategy.Object);
 
-            Size expectedNewBitmapSize = new Size(20, 40); // 200% of original bitmap size
+            Size expectedNewBitmapSize = originalBitmapSize * ScalingFactor;
+            FakeBitmap newBitmap = new FakeBitmap(expectedNewBitmapSize);
+
+            resamplingStrategy.Setup(rs => rs.Resample(originalBitmap, expectedNewBitmapSize)).Returns(newBitmap);
 
             command.Execute();
-            Assert.That(layer.Bitmap.Size, Is.EqualTo(expectedNewBitmapSize));
+            Assert.That(layer.Bitmap, Is.EqualTo(newBitmap));
 
             command.Undo();
-            Assert.That(layer.Bitmap.Size, Is.EqualTo(originalBitmapSize));
-        }
-
-        [Test]
-        public void DoesNotAffectAdjustmentLayers()
-        {
-            Size originalImageSize = new Size(50, 25);
-            Image image = new Image(originalImageSize);
-
-            AdjustmentLayer layer = new AdjustmentLayer(new BlackAndWhiteAdjustment());
-            image.Layers.Add(layer);
-
-            Size newImageSize = new Size(100, 50);
-            Command command = new ResampleImageCommand(image, newImageSize);
-
-            command.Execute();
-            Assert.That(image.Layers[0], Is.EqualTo(layer));
+            Assert.That(layer.Bitmap, Is.EqualTo(originalBitmap));
         }
     }
 }

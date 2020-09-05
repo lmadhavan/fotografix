@@ -172,7 +172,7 @@ namespace Fotografix.UI
 
         public void ResizeImage(ResizeImageParameters resizeImageParameters)
         {
-            Execute(new ResampleImageCommand(image, resizeImageParameters.Size));
+            Execute(new ResampleImageCommand(image, resizeImageParameters.Size, new Win2DBitmapResamplingStrategy()));
         }
 
         public async Task SaveAsync(StorageFile file)

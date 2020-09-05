@@ -38,7 +38,7 @@ namespace Fotografix.Win2D
             renderTarget.SetPixelBytes(pixels);
         }
 
-        public override Bitmap Scale(Size newSize)
+        public Bitmap Scale(Size newSize)
         {
             Win2DBitmap result = new Win2DBitmap(newSize, resourceCreator: renderTarget);
 

@@ -144,6 +144,7 @@
     <Compile Include="Win2DBitmapFactory.cs" />
     <Compile Include="Drawing\Win2DBrushStroke.cs" />
     <Compile Include="Drawing\Win2DDrawableFactory.cs" />
+    <Compile Include="Win2DBitmapResamplingStrategy.cs" />
     <Compile Include="Win2DCompositor.cs" />
     <Compile Include="Drawing\Win2DLinearGradient.cs" />
     <EmbeddedResource Include="Properties\Fotografix.Win2D.rd.xml" />

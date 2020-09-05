@@ -25,11 +25,6 @@ namespace Fotografix.Testing
             this.pixels = pixels;
         }
 
-        public override Bitmap Scale(Size newSize)
-        {
-            return new FakeBitmap(newSize);
-        }
-
         public override void Draw(IDrawable drawable)
         {
         }
