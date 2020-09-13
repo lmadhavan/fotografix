@@ -7,7 +7,6 @@ using Fotografix.Editor.PropertyModel;
 using Fotografix.Editor.Tools;
 using Fotografix.UI.Adjustments;
 using Fotografix.Win2D;
-using Fotografix.Win2D.Drawing;
 using Microsoft.Graphics.Canvas;
 using System;
 using System.Collections.Generic;
@@ -23,6 +22,7 @@ namespace Fotografix.UI
     public sealed class ImageEditor : NotifyPropertyChangedBase, ICommandService, IDisposable, IToolbox
     {
         private static readonly IBitmapFactory BitmapFactory = new Win2DBitmapFactory();
+        private static readonly IDrawingContextFactory DrawingContextFactory = new Win2DDrawingContextFactory();
 
         private readonly Image image;
         private readonly Win2DCompositor compositor;
@@ -177,7 +177,7 @@ namespace Fotografix.UI
 
         public async Task SaveAsync(StorageFile file)
         {
-            using (Bitmap bitmap = image.ToBitmap(BitmapFactory))
+            using (Bitmap bitmap = image.ToBitmap(BitmapFactory, DrawingContextFactory))
             {
                 await BitmapCodec.SaveBitmapAsync(file, bitmap);
             }
@@ -204,15 +204,13 @@ namespace Fotografix.UI
         {
             var handTool = new HandTool(viewport);
 
-            Win2DDrawableFactory drawableFactory = new Win2DDrawableFactory();
-
-            var brushTool = new BrushTool(drawableFactory)
+            var brushTool = new BrushTool()
             {
                 Size = 5,
                 Color = Color.White
             };
 
-            var gradientTool = new GradientTool(drawableFactory)
+            var gradientTool = new GradientTool()
             {
                 StartColor = Color.Black,
                 EndColor = Color.White
@@ -315,7 +313,7 @@ namespace Fotografix.UI
             {
                 drawable.ContentChanged -= editor.OnContentChanged;
                 editor.compositor.EndPreview(bitmapLayer);
-                editor.Execute(new DrawCommand(bitmapLayer, drawable));
+                editor.Execute(new DrawCommand(bitmapLayer, DrawingContextFactory, drawable));
             }
         }
     }

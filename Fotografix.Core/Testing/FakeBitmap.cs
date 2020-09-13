@@ -1,5 +1,4 @@
-﻿using Fotografix.Drawing;
-using System.Drawing;
+﻿using System.Drawing;
 
 namespace Fotografix.Testing
 {
@@ -23,14 +22,6 @@ namespace Fotografix.Testing
         public override void SetPixelBytes(byte[] pixels)
         {
             this.pixels = pixels;
-        }
-
-        public override void Draw(IDrawable drawable)
-        {
-        }
-
-        public override void Draw(Image image)
-        {
         }
     }
 }

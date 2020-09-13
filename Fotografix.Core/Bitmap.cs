@@ -1,5 +1,4 @@
-﻿using Fotografix.Drawing;
-using System;
+﻿using System;
 using System.Drawing;
 
 namespace Fotografix
@@ -19,9 +18,6 @@ namespace Fotografix
 
         public abstract byte[] GetPixelBytes();
         public abstract void SetPixelBytes(byte[] pixels);
-
-        public abstract void Draw(IDrawable drawable);
-        public abstract void Draw(Image image);
 
         public override string ToString()
         {

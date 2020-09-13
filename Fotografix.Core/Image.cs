@@ -1,9 +1,10 @@
-﻿using System.Collections.ObjectModel;
+﻿using Fotografix.Drawing;
+using System.Collections.ObjectModel;
 using System.Drawing;
 
 namespace Fotografix
 {
-    public sealed class Image : NotifyContentChangedBase
+    public sealed class Image : NotifyContentChangedBase, IDrawable
     {
         private Size size;
 
@@ -36,10 +37,18 @@ namespace Fotografix
 
         public ObservableCollection<Layer> Layers { get; }
 
-        public Bitmap ToBitmap(IBitmapFactory bitmapFactory)
+        public void Draw(IDrawingContext drawingContext)
+        {
+            drawingContext.Draw(this);
+        }
+
+        public Bitmap ToBitmap(IBitmapFactory bitmapFactory, IDrawingContextFactory drawingContextFactory)
         {
             Bitmap bitmap = bitmapFactory.CreateBitmap(size);
-            bitmap.Draw(this);
+            using (IDrawingContext dc = drawingContextFactory.CreateDrawingContext(bitmap))
+            {
+                dc.Draw(this);
+            }
             return bitmap;
         }
 

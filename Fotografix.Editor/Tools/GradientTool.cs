@@ -3,15 +3,8 @@ using System.Drawing;
 
 namespace Fotografix.Editor.Tools
 {
-    public sealed class GradientTool : DrawingTool<IGradient>, IGradientToolSettings
+    public sealed class GradientTool : DrawingTool<LinearGradient>, IGradientToolSettings
     {
-        private readonly IGradientFactory gradientFactory;
-
-        public GradientTool(IGradientFactory gradientFactory)
-        {
-            this.gradientFactory = gradientFactory;
-        }
-
         public Color StartColor { get; set; }
         public Color EndColor { get; set; }
 
@@ -19,12 +12,12 @@ namespace Fotografix.Editor.Tools
 
         protected override object Settings => this;
 
-        protected override IGradient CreateDrawable(PointerState p)
+        protected override LinearGradient CreateDrawable(PointerState p)
         {
-            return gradientFactory.CreateLinearGradient(StartColor, EndColor, p.Location);
+            return new LinearGradient(StartColor, EndColor, p.Location);
         }
 
-        protected override void UpdateDrawable(IGradient gradient, PointerState p)
+        protected override void UpdateDrawable(LinearGradient gradient, PointerState p)
         {
             gradient.SetEndPoint(p.Location);
         }

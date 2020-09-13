@@ -1,5 +1,4 @@
 ﻿using Fotografix.Drawing;
-using Fotografix.Win2D.Drawing;
 using Microsoft.Graphics.Canvas;
 using System;
 using System.Drawing;
@@ -8,7 +7,7 @@ namespace Fotografix.Win2D.Composition
 {
     internal sealed class DrawableNode : IDisposable
     {
-        private readonly IWin2DDrawable drawable;
+        private readonly IDrawable drawable;
         private readonly Rectangle bounds;
 
         private readonly ICanvasResourceCreator resourceCreator;
@@ -17,7 +16,7 @@ namespace Fotografix.Win2D.Composition
 
         internal DrawableNode(IDrawable drawable, Rectangle bounds)
         {
-            this.drawable = (IWin2DDrawable)drawable;
+            this.drawable = drawable;
             drawable.ContentChanged += OnContentChanged;
 
             this.bounds = bounds;
@@ -51,9 +50,9 @@ namespace Fotografix.Win2D.Composition
             commandList?.Dispose();
 
             this.commandList = new CanvasCommandList(resourceCreator);
-            using (CanvasDrawingSession ds = commandList.CreateDrawingSession())
+            using (var dc = new Win2DDrawingContext(commandList.CreateDrawingSession(), bounds))
             {
-                drawable.Draw(ds, bounds);
+                drawable.Draw(dc);
             }
 
             OutputChanged?.Invoke(this, EventArgs.Empty);

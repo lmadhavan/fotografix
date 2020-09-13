@@ -1,8 +1,7 @@
-﻿using System;
-
-namespace Fotografix.Drawing
+﻿namespace Fotografix.Drawing
 {
-    public interface IDrawable : IDisposable, INotifyContentChanged
+    public interface IDrawable : INotifyContentChanged
     {
+        void Draw(IDrawingContext drawingContext);
     }
 }

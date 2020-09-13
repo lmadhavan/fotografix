@@ -37,10 +37,13 @@ namespace Fotografix
             visitor.Visit(this);
         }
 
-        public override IUndoable Draw(IDrawable drawable)
+        public override IUndoable Draw(IDrawingContextFactory drawingContextFactory, IDrawable drawable)
         {
             BitmapState bitmapState = new BitmapState(this);
-            bitmap.Draw(drawable);
+            using (IDrawingContext dc = drawingContextFactory.CreateDrawingContext(bitmap))
+            {
+                drawable.Draw(dc);
+            }
             RaiseContentChanged();
             return bitmapState;
         }

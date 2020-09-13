@@ -1,5 +1,4 @@
 ﻿using Fotografix.Drawing;
-using Fotografix.Win2D.Drawing;
 using Microsoft.Graphics.Canvas;
 using System.Drawing;
 using Windows.Graphics.DirectX;
@@ -52,28 +51,17 @@ namespace Fotografix.Win2D
             return result;
         }
 
-        public override void Draw(IDrawable drawable)
-        {
-            using (CanvasDrawingSession ds = renderTarget.CreateDrawingSession())
-            {
-                ((IWin2DDrawable)drawable).Draw(ds, new Rectangle(Point.Empty, Size));
-            }
-        }
-
-        public override void Draw(Image image)
-        {
-            using (Win2DCompositor compositor = new Win2DCompositor(image))
-            {
-                Draw(compositor);
-            }
-        }
-
         internal void Draw(Win2DCompositor compositor)
         {
             using (CanvasDrawingSession ds = renderTarget.CreateDrawingSession())
             {
                 compositor.Draw(ds);
             }
+        }
+
+        internal IDrawingContext CreateDrawingContext()
+        {
+            return new Win2DDrawingContext(renderTarget.CreateDrawingSession(), new Rectangle(Point.Empty, Size));
         }
     }
 }

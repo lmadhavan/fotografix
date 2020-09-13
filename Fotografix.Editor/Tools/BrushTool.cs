@@ -3,27 +3,20 @@ using System.Drawing;
 
 namespace Fotografix.Editor.Tools
 {
-    public sealed class BrushTool : DrawingTool<IBrushStroke>, IBrushToolSettings
+    public sealed class BrushTool : DrawingTool<BrushStroke>, IBrushToolSettings
     {
-        private readonly IBrushStrokeFactory brushStrokeFactory;
-
-        public BrushTool(IBrushStrokeFactory brushStrokeFactory)
-        {
-            this.brushStrokeFactory = brushStrokeFactory;
-        }
-
         public int Size { get; set; }
         public Color Color { get; set; }
 
         public override string Name => "Brush";
         protected override object Settings => this;
 
-        protected override IBrushStroke CreateDrawable(PointerState p)
+        protected override BrushStroke CreateDrawable(PointerState p)
         {
-            return brushStrokeFactory.CreateBrushStroke(p.Location, Size, Color);
+            return new BrushStroke(p.Location, Size, Color);
         }
 
-        protected override void UpdateDrawable(IBrushStroke brushStroke, PointerState p)
+        protected override void UpdateDrawable(BrushStroke brushStroke, PointerState p)
         {
             brushStroke.AddPoint(p.Location);
         }

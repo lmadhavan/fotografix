@@ -89,7 +89,7 @@ namespace Fotografix
 
         public abstract void Accept(LayerVisitor visitor);
 
-        public virtual IUndoable Draw(IDrawable drawable)
+        public virtual IUndoable Draw(IDrawingContextFactory drawingContextFactory, IDrawable drawable)
         {
             throw new NotSupportedException();
         }
