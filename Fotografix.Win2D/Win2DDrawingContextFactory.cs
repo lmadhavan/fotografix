@@ -6,7 +6,7 @@ namespace Fotografix.Win2D
     {
         public IDrawingContext CreateDrawingContext(Bitmap bitmap)
         {
-            return ((Win2DBitmap)bitmap).CreateDrawingContext();
+            return new Win2DBitmapDrawingContext(bitmap);
         }
     }
 }

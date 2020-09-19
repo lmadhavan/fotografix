@@ -1,5 +1,4 @@
-﻿using Fotografix.Testing;
-using Moq;
+﻿using Moq;
 using NUnit.Framework;
 using System.Drawing;
 
@@ -38,7 +37,7 @@ namespace Fotografix.Editor
         public void ResamplesBitmapsProportionalToImageSize()
         {
             Size originalBitmapSize = new Size(10, 20);
-            FakeBitmap originalBitmap = new FakeBitmap(originalBitmapSize);
+            Bitmap originalBitmap = new Bitmap(originalBitmapSize);
 
             BitmapLayer layer = new BitmapLayer(originalBitmap);
             image.Layers.Add(layer);
@@ -46,7 +45,7 @@ namespace Fotografix.Editor
             Command command = new ResampleImageCommand(image, NewImageSize, resamplingStrategy.Object);
 
             Size expectedNewBitmapSize = originalBitmapSize * ScalingFactor;
-            FakeBitmap newBitmap = new FakeBitmap(expectedNewBitmapSize);
+            Bitmap newBitmap = new Bitmap(expectedNewBitmapSize);
 
             resamplingStrategy.Setup(rs => rs.Resample(originalBitmap, expectedNewBitmapSize)).Returns(newBitmap);
 

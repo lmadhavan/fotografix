@@ -5,7 +5,7 @@ using System.Drawing;
 
 namespace Fotografix.Win2D
 {
-    public sealed class Win2DDrawingContext : IDrawingContext
+    public class Win2DDrawingContext : IDrawingContext
     {
         private readonly CanvasDrawingSession ds;
         private readonly Rectangle bounds;
@@ -16,7 +16,7 @@ namespace Fotografix.Win2D
             this.bounds = bounds;
         }
 
-        public void Dispose()
+        public virtual void Dispose()
         {
             ds.Dispose();
         }

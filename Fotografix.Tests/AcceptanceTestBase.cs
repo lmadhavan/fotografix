@@ -27,20 +27,13 @@ namespace Fotografix.Tests
 
         protected async Task SaveToTempFolderAsync(string filename)
         {
-            using (Bitmap bitmap = Editor.ToBitmap())
-            {
-                await bitmap.CaptureToTempFolderAsync(filename);
-            }
+            await Editor.ToBitmap().CaptureToTempFolderAsync(filename);
         }
 
         protected async Task AssertImageAsync(string fileWithExpectedImage)
         {
             AssertInvalidated($"Displayed image was not updated (expecting {fileWithExpectedImage})");
-
-            using (Bitmap bitmap = Editor.ToBitmap())
-            {
-                await AssertImage.IsEquivalentAsync(fileWithExpectedImage, bitmap);
-            }
+            await AssertImage.IsEquivalentAsync(fileWithExpectedImage, Editor.ToBitmap());
         }
 
         protected void AssertCanUndo()

@@ -48,7 +48,7 @@ namespace Fotografix.Win2D
         {
             Win2DBitmap bitmap = new Win2DBitmap(image.Size, CanvasDevice.GetSharedDevice());
             bitmap.Draw(this);
-            return bitmap;
+            return bitmap.Source;
         }
     }
 }

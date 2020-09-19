@@ -21,7 +21,6 @@ namespace Fotografix.UI
 {
     public sealed class ImageEditor : NotifyPropertyChangedBase, ICommandService, IDisposable, IToolbox
     {
-        private static readonly IBitmapFactory BitmapFactory = new Win2DBitmapFactory();
         private static readonly IDrawingContextFactory DrawingContextFactory = new Win2DDrawingContextFactory();
 
         private readonly Image image;
@@ -58,7 +57,7 @@ namespace Fotografix.UI
 
         public static ImageEditor Create(Size size, Viewport viewport)
         {
-            BitmapLayer layer = BitmapLayerFactory.CreateBitmapLayer(1, BitmapFactory);
+            BitmapLayer layer = BitmapLayerFactory.CreateBitmapLayer(1);
 
             Image image = new Image(size);
             image.Layers.Add(layer);
@@ -68,7 +67,7 @@ namespace Fotografix.UI
 
         public static async Task<ImageEditor> CreateAsync(StorageFile file, Viewport viewport)
         {
-            BitmapLayer layer = await BitmapLayerFactory.LoadBitmapLayerAsync(file, BitmapFactory);
+            BitmapLayer layer = await BitmapLayerFactory.LoadBitmapLayerAsync(file);
             Image image = new Image(layer);
             return new ImageEditor(image, viewport);
         }
@@ -135,7 +134,7 @@ namespace Fotografix.UI
 
         public void AddLayer()
         {
-            Layer layer = BitmapLayerFactory.CreateBitmapLayer(image.Layers.Count + 1, BitmapFactory);
+            Layer layer = BitmapLayerFactory.CreateBitmapLayer(image.Layers.Count + 1);
             Execute(new AddLayerCommand(image, layer));
         }
 
@@ -158,7 +157,7 @@ namespace Fotografix.UI
 
             foreach (var file in files)
             {
-                BitmapLayer layer = await BitmapLayerFactory.LoadBitmapLayerAsync(file, BitmapFactory);
+                BitmapLayer layer = await BitmapLayerFactory.LoadBitmapLayerAsync(file);
                 commands.Add(new AddLayerCommand(image, layer));
             }
 
@@ -177,10 +176,8 @@ namespace Fotografix.UI
 
         public async Task SaveAsync(StorageFile file)
         {
-            using (Bitmap bitmap = image.ToBitmap(BitmapFactory, DrawingContextFactory))
-            {
-                await BitmapCodec.SaveBitmapAsync(file, bitmap);
-            }
+            Bitmap bitmap = image.ToBitmap(DrawingContextFactory);
+            await BitmapCodec.SaveBitmapAsync(file, bitmap);
         }
 
         public Bitmap ToBitmap()

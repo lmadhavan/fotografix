@@ -1,43 +1,50 @@
 ﻿using Fotografix.Drawing;
 using Microsoft.Graphics.Canvas;
+using System;
 using System.Drawing;
+using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Graphics.DirectX;
 
 namespace Fotografix.Win2D
 {
-    public sealed class Win2DBitmap : Bitmap
+    internal sealed class Win2DBitmap : IDisposable
     {
         private readonly CanvasRenderTarget renderTarget;
+        private bool updating;
 
-        public Win2DBitmap(Size size, ICanvasResourceCreator resourceCreator) : base(size)
+        public Win2DBitmap(Size size, ICanvasResourceCreator resourceCreator) : this(new Bitmap(size), resourceCreator)
         {
+        }
+
+        public Win2DBitmap(Bitmap source, ICanvasResourceCreator resourceCreator)
+        {
+            this.Source = source;
+            Source.ContentChanged += OnSourceContentChanged;
+
             this.renderTarget = new CanvasRenderTarget(resourceCreator,
-                                                       size.Width,
-                                                       size.Height,
+                                                       Size.Width,
+                                                       Size.Height,
                                                        96,
                                                        DirectXPixelFormat.B8G8R8A8UIntNormalized,
                                                        CanvasAlphaMode.Premultiplied);
+
+            if (source.Size != Size.Empty)
+            {
+                renderTarget.SetPixelBytes(source.Pixels);
+            }
         }
 
-        public override void Dispose()
+        public void Dispose()
         {
+            Source.ContentChanged -= OnSourceContentChanged;
             renderTarget.Dispose();
-            base.Dispose();
         }
 
+        public Size Size => Source.Size;
+        public Bitmap Source { get; }
         internal ICanvasImage Output => renderTarget;
 
-        public override byte[] GetPixelBytes()
-        {
-            return renderTarget.GetPixelBytes();
-        }
-
-        public override void SetPixelBytes(byte[] pixels)
-        {
-            renderTarget.SetPixelBytes(pixels);
-        }
-
-        public Bitmap Scale(Size newSize)
+        public Win2DBitmap Scale(Size newSize)
         {
             Win2DBitmap result = new Win2DBitmap(newSize, resourceCreator: renderTarget);
 
@@ -48,20 +55,41 @@ namespace Fotografix.Win2D
                              new Windows.Foundation.Rect(0, 0, Size.Width, Size.Height));
             }
 
+            result.UpdateSource();
             return result;
         }
 
-        internal void Draw(Win2DCompositor compositor)
+        public void Draw(Win2DCompositor compositor)
         {
             using (CanvasDrawingSession ds = renderTarget.CreateDrawingSession())
             {
                 compositor.Draw(ds);
             }
+
+            UpdateSource();
         }
 
         internal IDrawingContext CreateDrawingContext()
         {
-            return new Win2DDrawingContext(renderTarget.CreateDrawingSession(), new Rectangle(Point.Empty, Size));
+            return new Win2DDrawingContext(renderTarget.CreateDrawingSession(), new Rectangle(Point.Empty, Source.Size));
+        }
+
+        public void UpdateSource()
+        {
+            this.updating = true;
+
+            renderTarget.GetPixelBytes(Source.Pixels.AsBuffer());
+            Source.Invalidate();
+
+            this.updating = false;
+        }
+
+        private void OnSourceContentChanged(object sender, ContentChangedEventArgs e)
+        {
+            if (!updating)
+            {
+                renderTarget.SetPixelBytes(Source.Pixels);
+            }
         }
     }
 }

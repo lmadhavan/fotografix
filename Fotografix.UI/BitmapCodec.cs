@@ -8,7 +8,7 @@ namespace Fotografix.UI
 {
     public static class BitmapCodec
     {
-        public static async Task<Bitmap> LoadBitmapAsync(StorageFile file, IBitmapFactory bitmapFactory)
+        public static async Task<Bitmap> LoadBitmapAsync(StorageFile file)
         {
             using (var stream = await file.OpenReadAsync())
             {
@@ -21,9 +21,7 @@ namespace Fotografix.UI
                                                                         ColorManagementMode.ColorManageToSRgb);
 
                 Size size = new Size((int)decoder.OrientedPixelWidth, (int)decoder.OrientedPixelHeight);
-                Bitmap bitmap = bitmapFactory.CreateBitmap(size);
-                bitmap.SetPixelBytes(pixelDataProvider.DetachPixelData());
-                return bitmap;
+                return new Bitmap(size, pixelDataProvider.DetachPixelData());
             }
         }
 
@@ -38,7 +36,7 @@ namespace Fotografix.UI
                                      (uint)bitmap.Size.Height,
                                      96,
                                      96,
-                                     bitmap.GetPixelBytes());
+                                     bitmap.Pixels);
                 await encoder.FlushAsync();
             }
         }

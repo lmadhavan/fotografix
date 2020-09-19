@@ -56,12 +56,12 @@ namespace Fotografix
             public BitmapState(BitmapLayer layer)
             {
                 this.layer = layer;
-                this.pixels = layer.bitmap.GetPixelBytes();
+                this.pixels = layer.bitmap.ClonePixels();
             }
 
             public void Undo()
             {
-                layer.bitmap.SetPixelBytes(pixels);
+                layer.bitmap.SetPixels(pixels);
                 layer.RaiseContentChanged();
             }
         }

@@ -7,7 +7,6 @@ namespace Fotografix.Tests.Composition
 {
     public abstract class CompositionTestBase
     {
-        private static readonly IBitmapFactory BitmapFactory = new Win2DBitmapFactory();
         private static readonly IDrawingContextFactory DrawingContextFactory = new Win2DDrawingContextFactory();
      
         protected async Task<Image> LoadImageAsync(string filename)
@@ -19,23 +18,19 @@ namespace Fotografix.Tests.Composition
         protected async Task<BitmapLayer> LoadLayerAsync(string filename)
         {
             var file = await TestImages.GetFileAsync(filename);
-            return await BitmapLayerFactory.LoadBitmapLayerAsync(file, BitmapFactory);
+            return await BitmapLayerFactory.LoadBitmapLayerAsync(file);
         }
 
         protected async Task AssertImageAsync(string fileWithExpectedOutput, Image image)
         {
-            using (Bitmap bitmap = image.ToBitmap(BitmapFactory, DrawingContextFactory))
-            {
-                await AssertImage.IsEquivalentAsync(fileWithExpectedOutput, bitmap);
-            }
+            Bitmap bitmap = image.ToBitmap(DrawingContextFactory);
+            await AssertImage.IsEquivalentAsync(fileWithExpectedOutput, bitmap);
         }
 
         protected async Task CaptureToTempFolderAsync(Image image, string filename)
         {
-            using (Bitmap bitmap = image.ToBitmap(BitmapFactory, DrawingContextFactory))
-            {
-                await bitmap.CaptureToTempFolderAsync(filename);
-            }
+            Bitmap bitmap = image.ToBitmap(DrawingContextFactory);
+            await bitmap.CaptureToTempFolderAsync(filename);
         }
     }
 }

@@ -1,5 +1,4 @@
 using Fotografix.Editor.Layers;
-using Fotografix.Testing;
 using NUnit.Framework;
 using System.Drawing;
 
@@ -61,7 +60,7 @@ namespace Fotografix.Editor
 
         private static Layer CreateLayer()
         {
-            return new BitmapLayer(new FakeBitmap());
+            return new BitmapLayer(Bitmap.Empty);
         }
     }
 }

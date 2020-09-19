@@ -42,9 +42,9 @@ namespace Fotografix
             drawingContext.Draw(this);
         }
 
-        public Bitmap ToBitmap(IBitmapFactory bitmapFactory, IDrawingContextFactory drawingContextFactory)
+        public Bitmap ToBitmap(IDrawingContextFactory drawingContextFactory)
         {
-            Bitmap bitmap = bitmapFactory.CreateBitmap(size);
+            Bitmap bitmap = new Bitmap(Size);
             using (IDrawingContext dc = drawingContextFactory.CreateDrawingContext(bitmap))
             {
                 dc.Draw(this);

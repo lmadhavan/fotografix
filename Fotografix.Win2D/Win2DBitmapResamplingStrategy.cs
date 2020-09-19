@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using Microsoft.Graphics.Canvas;
+using System.Drawing;
 
 namespace Fotografix.Win2D
 {
@@ -6,7 +7,12 @@ namespace Fotografix.Win2D
     {
         public Bitmap Resample(Bitmap bitmap, Size newSize)
         {
-            return ((Win2DBitmap)bitmap).Scale(newSize);
+            if (newSize == Size.Empty)
+            {
+                return Bitmap.Empty;
+            }
+
+            return new Win2DBitmap(bitmap, CanvasDevice.GetSharedDevice()).Scale(newSize).Source;
         }
     }
 }

@@ -28,6 +28,7 @@ namespace Fotografix.Win2D.Composition
             compositeEffectNode.Dispose();
             opacityEffect.Dispose();
             layer.PropertyChanged -= OnLayerPropertyChanged;
+            bitmap.Dispose();
             base.Dispose();
         }
 
@@ -77,7 +78,8 @@ namespace Fotografix.Win2D.Composition
 
         private void UpdateBitmap()
         {
-            this.bitmap = (Win2DBitmap)layer.Bitmap;
+            bitmap?.Dispose();
+            this.bitmap = new Win2DBitmap(layer.Bitmap, CanvasDevice.GetSharedDevice());
             UpdateOutput();
         }
     }
