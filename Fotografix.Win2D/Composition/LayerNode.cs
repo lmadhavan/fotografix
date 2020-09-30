@@ -19,12 +19,12 @@ namespace Fotografix.Win2D.Composition
         {
             this.layer = layer;
             this.blendEffect = new BlendEffect();
-            layer.ContentChanged += OnContentChanged;
+            layer.PropertyChanged += OnContentChanged;
         }
 
         public virtual void Dispose()
         {
-            layer.ContentChanged -= OnContentChanged;
+            layer.PropertyChanged -= OnContentChanged;
             blendEffect.Dispose();
         }
 

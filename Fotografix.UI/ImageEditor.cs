@@ -24,6 +24,8 @@ namespace Fotografix.UI
         private static readonly IDrawingContextFactory DrawingContextFactory = new Win2DDrawingContextFactory();
 
         private readonly Image image;
+        private readonly ImageChangeTracker contentChangeTracker;
+
         private readonly Win2DCompositor compositor;
         private readonly ReversedCollectionView<Layer> layers;
         private readonly History history;
@@ -36,6 +38,7 @@ namespace Fotografix.UI
         private ImageEditor(Image image, Viewport viewport)
         {
             this.image = image;
+
             this.compositor = new Win2DCompositor(image, 8);
 
             ReorderAwareCollectionView<Layer> reorderAwareCollectionView = new ReorderAwareCollectionView<Layer>(image.Layers);
@@ -50,8 +53,10 @@ namespace Fotografix.UI
 
             this.ActiveLayer = image.Layers.First();
 
+            this.contentChangeTracker = new ImageChangeTracker(image);
+            contentChangeTracker.ContentChanged += OnContentChanged;
+
             image.PropertyChanged += OnImagePropertyChanged;
-            image.ContentChanged += OnContentChanged;
             image.Layers.CollectionChanged += OnLayerCollectionChanged;
         }
 
@@ -77,6 +82,7 @@ namespace Fotografix.UI
             activeLayerViewModel?.Dispose();
             layers.Dispose();
             compositor.Dispose();
+            contentChangeTracker.Dispose();
         }
 
         #region Undo/Redo

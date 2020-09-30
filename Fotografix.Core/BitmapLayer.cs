@@ -39,30 +39,28 @@ namespace Fotografix
 
         public override IUndoable Draw(IDrawingContextFactory drawingContextFactory, IDrawable drawable)
         {
-            BitmapState bitmapState = new BitmapState(this);
+            BitmapState bitmapState = new BitmapState(bitmap);
             using (IDrawingContext dc = drawingContextFactory.CreateDrawingContext(bitmap))
             {
                 drawable.Draw(dc);
             }
-            RaiseContentChanged();
             return bitmapState;
         }
 
         private sealed class BitmapState : IUndoable
         {
-            private readonly BitmapLayer layer;
+            private readonly Bitmap bitmap;
             private readonly byte[] pixels;
 
-            public BitmapState(BitmapLayer layer)
+            public BitmapState(Bitmap bitmap)
             {
-                this.layer = layer;
-                this.pixels = layer.bitmap.ClonePixels();
+                this.bitmap = bitmap;
+                this.pixels = bitmap.ClonePixels();
             }
 
             public void Undo()
             {
-                layer.bitmap.SetPixels(pixels);
-                layer.RaiseContentChanged();
+                bitmap.SetPixels(pixels);
             }
         }
     }

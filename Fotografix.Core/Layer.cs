@@ -3,7 +3,7 @@ using System;
 
 namespace Fotografix
 {
-    public abstract class Layer : NotifyContentChangedBase
+    public abstract class Layer : NotifyPropertyChangedBase
     {
         private string name = "";
         private bool visible = true;
@@ -41,10 +41,7 @@ namespace Fotografix
 
             set
             {
-                if (SetProperty(ref visible, value))
-                {
-                    RaiseContentChanged();
-                }
+                SetProperty(ref visible, value);
             }
         }
 
@@ -57,10 +54,7 @@ namespace Fotografix
 
             set
             {
-                if (SetProperty(ref blendMode, value))
-                {
-                    RaiseContentChanged();
-                }
+                SetProperty(ref blendMode, value);
             }
         }
 
@@ -78,10 +72,7 @@ namespace Fotografix
                     throw new ArgumentOutOfRangeException();
                 }
 
-                if (SetProperty(ref opacity, value))
-                {
-                    RaiseContentChanged();
-                }
+                SetProperty(ref opacity, value);
             }
         }
 
