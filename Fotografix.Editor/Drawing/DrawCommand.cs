@@ -4,26 +4,31 @@ namespace Fotografix.Editor.Drawing
 {
     public sealed class DrawCommand : Command
     {
-        private readonly Layer layer;
+        private readonly Bitmap bitmap;
         private readonly IDrawingContextFactory drawingContextFactory;
         private readonly IDrawable drawable;
-        private IUndoable undoable;
+        private byte[] oldPixels;
 
-        public DrawCommand(Layer layer, IDrawingContextFactory drawingContextFactory, IDrawable drawable)
+        public DrawCommand(Bitmap bitmap, IDrawingContextFactory drawingContextFactory, IDrawable drawable)
         {
-            this.layer = layer;
+            this.bitmap = bitmap;
             this.drawingContextFactory = drawingContextFactory;
             this.drawable = drawable;
         }
 
         public override void Execute()
         {
-            this.undoable = layer.Draw(drawingContextFactory, drawable);
+            this.oldPixels = bitmap.ClonePixels();
+
+            using (IDrawingContext dc = drawingContextFactory.CreateDrawingContext(bitmap))
+            {
+                drawable.Draw(dc);
+            }
         }
 
         public override void Undo()
         {
-            undoable.Undo();
+            bitmap.SetPixels(oldPixels);
         }
     }
 }

@@ -1,5 +1,4 @@
-﻿using Fotografix.Drawing;
-using System;
+﻿using System;
 
 namespace Fotografix
 {
@@ -30,38 +29,9 @@ namespace Fotografix
             }
         }
 
-        public override bool CanPaint => true;
-
         public override void Accept(LayerVisitor visitor)
         {
             visitor.Visit(this);
-        }
-
-        public override IUndoable Draw(IDrawingContextFactory drawingContextFactory, IDrawable drawable)
-        {
-            BitmapState bitmapState = new BitmapState(bitmap);
-            using (IDrawingContext dc = drawingContextFactory.CreateDrawingContext(bitmap))
-            {
-                drawable.Draw(dc);
-            }
-            return bitmapState;
-        }
-
-        private sealed class BitmapState : IUndoable
-        {
-            private readonly Bitmap bitmap;
-            private readonly byte[] pixels;
-
-            public BitmapState(Bitmap bitmap)
-            {
-                this.bitmap = bitmap;
-                this.pixels = bitmap.ClonePixels();
-            }
-
-            public void Undo()
-            {
-                bitmap.SetPixels(pixels);
-            }
         }
     }
 }

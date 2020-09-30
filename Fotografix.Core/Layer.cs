@@ -1,5 +1,4 @@
-﻿using Fotografix.Drawing;
-using System;
+﻿using System;
 
 namespace Fotografix
 {
@@ -76,13 +75,6 @@ namespace Fotografix
             }
         }
 
-        public virtual bool CanPaint => false;
-
         public abstract void Accept(LayerVisitor visitor);
-
-        public virtual IUndoable Draw(IDrawingContextFactory drawingContextFactory, IDrawable drawable)
-        {
-            throw new NotSupportedException();
-        }
     }
 }

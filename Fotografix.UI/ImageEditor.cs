@@ -316,7 +316,7 @@ namespace Fotografix.UI
             {
                 drawable.ContentChanged -= editor.OnContentChanged;
                 editor.compositor.EndPreview(bitmapLayer);
-                editor.Execute(new DrawCommand(bitmapLayer, DrawingContextFactory, drawable));
+                editor.Execute(new DrawCommand(bitmapLayer.Bitmap, DrawingContextFactory, drawable));
             }
         }
     }
