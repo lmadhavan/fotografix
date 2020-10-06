@@ -137,6 +137,7 @@
     <Compile Include="Composition\CompositionTestBase.cs" />
     <Compile Include="Composition\ImageAdjustmentsTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UI\FakeImageDecoder.cs" />
     <Compile Include="UI\ImageEditorTest.cs" />
     <Compile Include="UI\Layers\OpacitySliderToolTipValueConverterTest.cs" />
     <Compile Include="UI\TabViewContainerTest.cs" />
@@ -144,6 +145,7 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\RecentFileListTest.cs" />
+    <Compile Include="WindowsImageDecoderTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">

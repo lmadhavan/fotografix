@@ -21,7 +21,7 @@ namespace Fotografix.Tests
             this.Viewport = new FakeViewport();
 
             var file = await TestImages.GetFileAsync(filename);
-            this.Editor = await ImageEditor.CreateAsync(file, Viewport);
+            this.Editor = await ImageEditor.CreateAsync(new StorageFileAdapter(file), Viewport, new WindowsImageDecoder());
             Editor.Invalidated += OnEditorInvalidated;
         }
 

@@ -5,6 +5,7 @@ using Fotografix.Editor.Drawing;
 using Fotografix.Editor.Layers;
 using Fotografix.Editor.PropertyModel;
 using Fotografix.Editor.Tools;
+using Fotografix.IO;
 using Fotografix.UI.Adjustments;
 using Fotografix.Win2D;
 using Microsoft.Graphics.Canvas;
@@ -24,6 +25,7 @@ namespace Fotografix.UI
         private static readonly IDrawingContextFactory DrawingContextFactory = new Win2DDrawingContextFactory();
 
         private readonly Image image;
+        private readonly IImageDecoder imageDecoder;
         private readonly ImageChangeTracker contentChangeTracker;
 
         private readonly Win2DCompositor compositor;
@@ -35,10 +37,10 @@ namespace Fotografix.UI
         private LayerPropertyEditor activeLayerViewModel;
         private List<IDrawingSurfaceListener> drawingSurfaceListeners;
 
-        private ImageEditor(Image image, Viewport viewport)
+        private ImageEditor(Image image, Viewport viewport, IImageDecoder imageDecoder)
         {
             this.image = image;
-
+            this.imageDecoder = imageDecoder;
             this.compositor = new Win2DCompositor(image, 8);
 
             ReorderAwareCollectionView<Layer> reorderAwareCollectionView = new ReorderAwareCollectionView<Layer>(image.Layers);
@@ -60,21 +62,20 @@ namespace Fotografix.UI
             image.Layers.CollectionChanged += OnLayerCollectionChanged;
         }
 
-        public static ImageEditor Create(Size size, Viewport viewport)
+        public static ImageEditor Create(Size size, Viewport viewport, IImageDecoder imageDecoder)
         {
             BitmapLayer layer = BitmapLayerFactory.CreateBitmapLayer(1);
 
             Image image = new Image(size);
             image.Layers.Add(layer);
 
-            return new ImageEditor(image, viewport);
+            return new ImageEditor(image, viewport, imageDecoder);
         }
 
-        public static async Task<ImageEditor> CreateAsync(StorageFile file, Viewport viewport)
+        public static async Task<ImageEditor> CreateAsync(IFile file, Viewport viewport, IImageDecoder imageDecoder)
         {
-            BitmapLayer layer = await BitmapLayerFactory.LoadBitmapLayerAsync(file);
-            Image image = new Image(layer);
-            return new ImageEditor(image, viewport);
+            Image image = await imageDecoder.ReadImageAsync(file);
+            return new ImageEditor(image, viewport, imageDecoder);
         }
 
         public void Dispose()
@@ -84,6 +85,8 @@ namespace Fotografix.UI
             compositor.Dispose();
             contentChangeTracker.Dispose();
         }
+
+        public IEnumerable<FileFormat> SupportedImportFormats => imageDecoder.SupportedFileFormats;
 
         #region Undo/Redo
 
@@ -157,14 +160,17 @@ namespace Fotografix.UI
             Execute(new RemoveLayerCommand(image, activeLayer));
         }
 
-        public async Task ImportLayersAsync(IEnumerable<StorageFile> files)
+        public async Task ImportLayersAsync(IEnumerable<IFile> files)
         {
             List<Command> commands = new List<Command>();
 
             foreach (var file in files)
             {
-                BitmapLayer layer = await BitmapLayerFactory.LoadBitmapLayerAsync(file);
-                commands.Add(new AddLayerCommand(image, layer));
+                Image importedImage = await imageDecoder.ReadImageAsync(file);
+                foreach (Layer layer in importedImage.Layers)
+                {
+                    commands.Add(new AddLayerCommand(image, layer));
+                }
             }
 
             Execute(new CompositeCommand(commands));

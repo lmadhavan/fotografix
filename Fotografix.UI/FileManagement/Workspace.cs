@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Fotografix.IO;
+using System;
 using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.Storage.AccessCache;
@@ -9,6 +10,8 @@ namespace Fotografix.UI.FileManagement
 {
     public sealed class Workspace
     {
+        private readonly IImageDecoder imageDecoder = new WindowsImageDecoder();
+
         public RecentFileList RecentFiles { get; } = new RecentFileList(StorageApplicationPermissions.MostRecentlyUsedList);
         
         public event EventHandler<OpenImageEditorRequestedEventArgs> OpenImageEditorRequested;
@@ -20,13 +23,13 @@ namespace Fotografix.UI.FileManagement
             NewImageDialog dialog = new NewImageDialog(parameters);
             if (await dialog.ShowAsync() == ContentDialogResult.Primary)
             {
-                OpenImageEditor(new NewImageCommand(parameters.Size));
+                OpenImageEditor(new NewImageCommand(parameters.Size, imageDecoder));
             }
         }
 
         public async Task OpenFileAsync()
         {
-            FileOpenPicker picker = FilePickerFactory.CreateFileOpenPicker();
+            FileOpenPicker picker = FilePickerFactory.CreateFileOpenPicker(imageDecoder.SupportedFileFormats);
 
             StorageFile file = await picker.PickSingleFileAsync();
             if (file != null)
@@ -43,7 +46,7 @@ namespace Fotografix.UI.FileManagement
 
         public void OpenFile(StorageFile file)
         {
-            OpenImageEditor(new OpenFileCommand(file));
+            OpenImageEditor(new OpenFileCommand(new StorageFileAdapter(file), imageDecoder));
             RecentFiles.Add(file);
         }
 

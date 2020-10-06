@@ -4,6 +4,7 @@ using Fotografix.UI.FileManagement;
 using Microsoft.Graphics.Canvas.UI;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
@@ -138,17 +139,22 @@ namespace Fotografix.UI
             if (e.DataView.Contains(StandardDataFormats.StorageItems))
             {
                 var items = await e.DataView.GetStorageItemsAsync();
-                await editor.ImportLayersAsync(items.OfType<StorageFile>());
+                await ImportLayersAsync(items.OfType<StorageFile>());
             }
         }
 
         private async void Import_Click(object sender, RoutedEventArgs e)
         {
-            FileOpenPicker picker = FilePickerFactory.CreateFileOpenPicker();
+            FileOpenPicker picker = FilePickerFactory.CreateFileOpenPicker(editor.SupportedImportFormats);
             picker.CommitButtonText = "Import";
 
             var files = await picker.PickMultipleFilesAsync();
-            await editor.ImportLayersAsync(files);
+            await ImportLayersAsync(files);
+        }
+
+        private Task ImportLayersAsync(IEnumerable<StorageFile> files)
+        {
+            return editor.ImportLayersAsync(files.Select(f => new StorageFileAdapter(f)));
         }
 
         private async void ResizeImage_Click(object sender, RoutedEventArgs e)

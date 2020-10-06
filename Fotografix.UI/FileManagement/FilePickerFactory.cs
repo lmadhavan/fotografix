@@ -1,19 +1,25 @@
-﻿using System.Collections.Generic;
+﻿using Fotografix.IO;
+using System.Collections.Generic;
+using System.Linq;
 using Windows.Storage.Pickers;
 
 namespace Fotografix.UI.FileManagement
 {
     public static class FilePickerFactory
     {
-        public static FileOpenPicker CreateFileOpenPicker()
+        public static FileOpenPicker CreateFileOpenPicker(IEnumerable<FileFormat> fileFormats)
         {
             FileOpenPicker picker = new FileOpenPicker()
             {
                 SuggestedStartLocation = PickerLocationId.PicturesLibrary,
                 ViewMode = PickerViewMode.Thumbnail
             };
-            picker.FileTypeFilter.Add(".jpg");
-            picker.FileTypeFilter.Add(".png");
+
+            foreach (string fileExtension in fileFormats.SelectMany(f => f.FileExtensions))
+            {
+                picker.FileTypeFilter.Add(fileExtension);
+            }
+
             return picker;
         }
 

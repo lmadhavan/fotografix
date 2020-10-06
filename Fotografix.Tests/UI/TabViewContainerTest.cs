@@ -9,7 +9,7 @@ namespace Fotografix.Tests.UI
     [TestClass]
     public class TabViewContainerTest
     {
-        private readonly ICreateImageEditorCommand command = new NewImageCommand(new Size(100, 100));
+        private readonly ICreateImageEditorCommand command = new NewImageCommand(new Size(100, 100), new FakeImageDecoder());
 
         [UITestMethod]
         public void OpensStartPage()

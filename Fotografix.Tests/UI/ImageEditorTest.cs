@@ -1,9 +1,9 @@
 ﻿using Fotografix.Editor.Testing;
+using Fotografix.IO;
 using Fotografix.UI;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Drawing;
 using System.Threading.Tasks;
-using Windows.Storage;
 
 namespace Fotografix.Tests.UI
 {
@@ -17,7 +17,7 @@ namespace Fotografix.Tests.UI
         [TestInitialize]
         public void Initialize()
         {
-            this.editor = ImageEditor.Create(ImageSize, new FakeViewport());
+            this.editor = ImageEditor.Create(ImageSize, new FakeViewport(), new FakeImageDecoder());
         }
 
         [TestCleanup]
@@ -61,9 +61,9 @@ namespace Fotografix.Tests.UI
             const string filename1 = "flowers_bw.png";
             const string filename2 = "flowers_hsl.png";
 
-            var files = new StorageFile[] {
-                await TestImages.GetFileAsync(filename1),
-                await TestImages.GetFileAsync(filename2)
+            var files = new IFile[] {
+                new InMemoryFile(filename1),
+                new InMemoryFile(filename2)
             };
 
             await editor.ImportLayersAsync(files);
