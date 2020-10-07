@@ -16,7 +16,6 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
-using Windows.Storage;
 
 namespace Fotografix.UI
 {
@@ -26,6 +25,7 @@ namespace Fotografix.UI
 
         private readonly Image image;
         private readonly IImageDecoder imageDecoder;
+        private readonly IImageEncoder imageEncoder;
         private readonly ImageChangeTracker contentChangeTracker;
 
         private readonly Win2DCompositor compositor;
@@ -37,10 +37,11 @@ namespace Fotografix.UI
         private LayerPropertyEditor activeLayerViewModel;
         private List<IDrawingSurfaceListener> drawingSurfaceListeners;
 
-        private ImageEditor(Image image, Viewport viewport, IImageDecoder imageDecoder)
+        private ImageEditor(Image image, Viewport viewport, IImageDecoder imageDecoder, IImageEncoder imageEncoder)
         {
             this.image = image;
             this.imageDecoder = imageDecoder;
+            this.imageEncoder = imageEncoder;
             this.compositor = new Win2DCompositor(image, 8);
 
             ReorderAwareCollectionView<Layer> reorderAwareCollectionView = new ReorderAwareCollectionView<Layer>(image.Layers);
@@ -62,20 +63,20 @@ namespace Fotografix.UI
             image.Layers.CollectionChanged += OnLayerCollectionChanged;
         }
 
-        public static ImageEditor Create(Size size, Viewport viewport, IImageDecoder imageDecoder)
+        public static ImageEditor Create(Size size, Viewport viewport, IImageDecoder imageDecoder, IImageEncoder imageEncoder)
         {
             BitmapLayer layer = BitmapLayerFactory.CreateBitmapLayer(1);
 
             Image image = new Image(size);
             image.Layers.Add(layer);
 
-            return new ImageEditor(image, viewport, imageDecoder);
+            return new ImageEditor(image, viewport, imageDecoder, imageEncoder);
         }
 
-        public static async Task<ImageEditor> CreateAsync(IFile file, Viewport viewport, IImageDecoder imageDecoder)
+        public static async Task<ImageEditor> CreateAsync(IFile file, Viewport viewport, IImageDecoder imageDecoder, IImageEncoder imageEncoder)
         {
             Image image = await imageDecoder.ReadImageAsync(file);
-            return new ImageEditor(image, viewport, imageDecoder);
+            return new ImageEditor(image, viewport, imageDecoder, imageEncoder);
         }
 
         public void Dispose()
@@ -87,6 +88,7 @@ namespace Fotografix.UI
         }
 
         public IEnumerable<FileFormat> SupportedImportFormats => imageDecoder.SupportedFileFormats;
+        public IEnumerable<FileFormat> SupportedSaveFormats => imageEncoder.SupportedFileFormats;
 
         #region Undo/Redo
 
@@ -186,10 +188,9 @@ namespace Fotografix.UI
             Execute(new ResampleImageCommand(image, resizeImageParameters.Size, new Win2DBitmapResamplingStrategy()));
         }
 
-        public async Task SaveAsync(StorageFile file)
+        public Task SaveAsync(IFile file)
         {
-            Bitmap bitmap = image.ToBitmap(DrawingContextFactory);
-            await BitmapCodec.SaveBitmapAsync(file, bitmap);
+            return imageEncoder.WriteImageAsync(image, file);
         }
 
         public Bitmap ToBitmap()

@@ -190,7 +190,9 @@
       <DependentUpon>ToolTemplatesResourceDictionary.xaml</DependentUpon>
     </Compile>
     <Compile Include="ValueConverter.cs" />
+    <Compile Include="BitmapCodecInformationExtensions.cs" />
     <Compile Include="WindowsImageDecoder.cs" />
+    <Compile Include="WindowsImageEncoder.cs" />
     <EmbeddedResource Include="Properties\Fotografix.Editor.rd.xml" />
   </ItemGroup>
   <ItemGroup>

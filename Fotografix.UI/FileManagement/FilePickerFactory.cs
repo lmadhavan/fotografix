@@ -23,14 +23,18 @@ namespace Fotografix.UI.FileManagement
             return picker;
         }
 
-        public static FileSavePicker CreateFileSavePicker()
+        public static FileSavePicker CreateFileSavePicker(IEnumerable<FileFormat> fileFormats)
         {
             FileSavePicker picker = new FileSavePicker()
             {
                 SuggestedStartLocation = PickerLocationId.PicturesLibrary
             };
-            picker.FileTypeChoices.Add("JPEG", new List<string> { ".jpg" });
-            picker.FileTypeChoices.Add("PNG", new List<string> { ".png" });
+
+            foreach (FileFormat format in fileFormats)
+            {
+                picker.FileTypeChoices.Add(format.Name, format.FileExtensions.ToList());
+            }
+            
             return picker;
         }
     }

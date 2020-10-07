@@ -1,6 +1,7 @@
 ﻿using Fotografix.Editor;
 using Fotografix.Editor.Testing;
 using Fotografix.UI;
+using Fotografix.Win2D;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Threading.Tasks;
@@ -21,7 +22,7 @@ namespace Fotografix.Tests
             this.Viewport = new FakeViewport();
 
             var file = await TestImages.GetFileAsync(filename);
-            this.Editor = await ImageEditor.CreateAsync(new StorageFileAdapter(file), Viewport, new WindowsImageDecoder());
+            this.Editor = await ImageEditor.CreateAsync(new StorageFileAdapter(file), Viewport, new WindowsImageDecoder(), new WindowsImageEncoder(new Win2DImageRenderer()));
             Editor.Invalidated += OnEditorInvalidated;
         }
 

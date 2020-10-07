@@ -5,8 +5,10 @@ using System.Threading.Tasks;
 
 namespace Fotografix.Tests.UI
 {
-    public class FakeImageDecoder : IImageDecoder
+    public class FakeImageCodec : IImageDecoder, IImageEncoder
     {
+        public static readonly FakeImageCodec Instance = new FakeImageCodec();
+
         public IEnumerable<FileFormat> SupportedFileFormats => Enumerable.Empty<FileFormat>();
 
         public Task<Image> ReadImageAsync(IFile file)
@@ -14,6 +16,11 @@ namespace Fotografix.Tests.UI
             BitmapLayer layer = new BitmapLayer(Bitmap.Empty) { Name = file.Name };
             Image image = new Image(layer);
             return Task.FromResult(image);
+        }
+
+        public Task WriteImageAsync(Image image, IFile file, FileFormat fileFormat)
+        {
+            return Task.CompletedTask;
         }
     }
 }

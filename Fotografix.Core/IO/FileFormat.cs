@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace Fotografix.IO
@@ -14,8 +15,9 @@ namespace Fotografix.IO
         public string Name { get; }
         public IEnumerable<string> FileExtensions { get; }
 
-        public bool SupportsFileExtension(string fileExtension)
+        public bool Matches(IFile file)
         {
+            string fileExtension = Path.GetExtension(file.Name);
             return FileExtensions.Contains(fileExtension);
         }
 

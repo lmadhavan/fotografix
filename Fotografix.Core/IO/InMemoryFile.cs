@@ -19,5 +19,10 @@ namespace Fotografix.IO
         {
             return Task.FromResult(stream);
         }
+
+        public Task<Stream> OpenWriteAsync()
+        {
+            return Task.FromResult(stream);
+        }
     }
 }

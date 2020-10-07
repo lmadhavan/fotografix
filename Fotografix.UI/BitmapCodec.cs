@@ -19,15 +19,8 @@ namespace Fotografix.UI
         {
             using (var stream = await file.OpenAsync(FileAccessMode.ReadWrite))
             {
-                BitmapEncoder encoder = await BitmapEncoder.CreateAsync(file.Name.ToLower().EndsWith("png") ? BitmapEncoder.PngEncoderId : BitmapEncoder.JpegEncoderId, stream);
-                encoder.SetPixelData(BitmapPixelFormat.Bgra8,
-                                     BitmapAlphaMode.Premultiplied,
-                                     (uint)bitmap.Size.Width,
-                                     (uint)bitmap.Size.Height,
-                                     96,
-                                     96,
-                                     bitmap.Pixels);
-                await encoder.FlushAsync();
+                Guid encoderId = file.Name.ToLower().EndsWith("png") ? BitmapEncoder.PngEncoderId : BitmapEncoder.JpegEncoderId;
+                await WindowsImageEncoder.WriteBitmapAsync(encoderId, stream, bitmap);
             }
         }
     }

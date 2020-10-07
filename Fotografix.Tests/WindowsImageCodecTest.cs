@@ -1,19 +1,32 @@
 ﻿using Fotografix.IO;
 using Fotografix.UI;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Fotografix.Tests
 {
     [TestClass]
-    public class WindowsImageDecoderTest
+    public class WindowsImageCodecTest
     {
-        private IImageDecoder decoder;
+        private IEnumerable<FileFormat> fileFormats;
 
         [TestMethod]
-        public void SupportsStandardFileFormats()
+        public void DecoderSupportsStandardFileFormats()
         {
-            this.decoder = new WindowsImageDecoder();
+            this.fileFormats = new WindowsImageDecoder().SupportedFileFormats;
+            AssertStandardFileFormats();
+        }
+
+        [TestMethod]
+        public void EncoderSupportsStandardFileFormats()
+        {
+            this.fileFormats = new WindowsImageEncoder(new NullImageRenderer()).SupportedFileFormats;
+            AssertStandardFileFormats();
+        }
+
+        private void AssertStandardFileFormats()
+        {
             AssertFileFormat("JPEG", ".jpg");
             AssertFileFormat("PNG", ".png");
             AssertFileFormat("GIF", ".gif");
@@ -23,7 +36,7 @@ namespace Fotografix.Tests
 
         private void AssertFileFormat(string name, string fileExtension)
         {
-            foreach (FileFormat format in decoder.SupportedFileFormats)
+            foreach (FileFormat format in fileFormats)
             {
                 if (format.Name == name)
                 {

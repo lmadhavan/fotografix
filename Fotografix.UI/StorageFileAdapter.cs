@@ -22,5 +22,11 @@ namespace Fotografix.UI
             var randomAccessStream = await file.OpenReadAsync();
             return randomAccessStream.AsStream();
         }
+
+        public async Task<Stream> OpenWriteAsync()
+        {
+            var randomAccessStream = await file.OpenAsync(FileAccessMode.ReadWrite);
+            return randomAccessStream.AsStream();
+        }
     }
 }

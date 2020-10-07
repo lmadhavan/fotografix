@@ -17,7 +17,7 @@ namespace Fotografix.Tests.UI
         [TestInitialize]
         public void Initialize()
         {
-            this.editor = ImageEditor.Create(ImageSize, new FakeViewport(), new FakeImageDecoder());
+            this.editor = ImageEditor.Create(ImageSize, new FakeViewport(), FakeImageCodec.Instance, FakeImageCodec.Instance);
         }
 
         [TestCleanup]

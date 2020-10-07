@@ -9,18 +9,20 @@ namespace Fotografix.UI.FileManagement
     {
         private readonly Size size;
         private readonly IImageDecoder imageDecoder;
+        private readonly IImageEncoder imageEncoder;
 
-        public NewImageCommand(Size size, IImageDecoder imageDecoder)
+        public NewImageCommand(Size size, IImageDecoder imageDecoder, IImageEncoder imageEncoder)
         {
             this.size = size;
             this.imageDecoder = imageDecoder;
+            this.imageEncoder = imageEncoder;
         }
 
         public string Title => "Untitled";
 
         public Task<ImageEditor> ExecuteAsync(Viewport viewport)
         {
-            return Task.FromResult(ImageEditor.Create(size, viewport, imageDecoder));
+            return Task.FromResult(ImageEditor.Create(size, viewport, imageDecoder, imageEncoder));
         }
     }
 }

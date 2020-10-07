@@ -7,5 +7,6 @@ namespace Fotografix.IO
     {
         string Name { get; }
         Task<Stream> OpenReadAsync();
+        Task<Stream> OpenWriteAsync();
     }
 }

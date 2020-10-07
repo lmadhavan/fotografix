@@ -170,12 +170,12 @@ namespace Fotografix.UI
 
         private async void Save_Click(object sender, RoutedEventArgs e)
         {
-            FileSavePicker picker = FilePickerFactory.CreateFileSavePicker();
+            FileSavePicker picker = FilePickerFactory.CreateFileSavePicker(editor.SupportedSaveFormats);
 
             var file = await picker.PickSaveFileAsync();
             if (file != null)
             {
-                await editor.SaveAsync(file);
+                await editor.SaveAsync(new StorageFileAdapter(file));
             }
         }
     }

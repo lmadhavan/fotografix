@@ -8,18 +8,20 @@ namespace Fotografix.UI.FileManagement
     {
         private readonly IFile file;
         private readonly IImageDecoder imageDecoder;
+        private readonly IImageEncoder imageEncoder;
 
-        public OpenFileCommand(IFile file, IImageDecoder imageDecoder)
+        public OpenFileCommand(IFile file, IImageDecoder imageDecoder, IImageEncoder imageEncoder)
         {
             this.file = file;
             this.imageDecoder = imageDecoder;
+            this.imageEncoder = imageEncoder;
         }
 
         public string Title => file.Name;
 
         public async Task<ImageEditor> ExecuteAsync(Viewport viewport)
         {
-            return await ImageEditor.CreateAsync(file, viewport, imageDecoder);
+            return await ImageEditor.CreateAsync(file, viewport, imageDecoder, imageEncoder);
         }
     }
 }

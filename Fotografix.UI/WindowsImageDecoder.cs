@@ -14,7 +14,8 @@ namespace Fotografix.UI
     {
         public WindowsImageDecoder()
         {
-            this.SupportedFileFormats = BitmapDecoder.GetDecoderInformationEnumerator().Select(ParseFileFormat);
+            this.SupportedFileFormats = BitmapDecoder.GetDecoderInformationEnumerator()
+                                                     .Select(bci => bci.ToFileFormat(suffixToStrip: " Decoder"));
         }
 
         public IEnumerable<FileFormat> SupportedFileFormats { get; }
@@ -41,19 +42,6 @@ namespace Fotografix.UI
 
             Size size = new Size((int)decoder.OrientedPixelWidth, (int)decoder.OrientedPixelHeight);
             return new Bitmap(size, pixelDataProvider.DetachPixelData());
-        }
-
-        private static FileFormat ParseFileFormat(BitmapCodecInformation bci)
-        {
-            const string SuffixToStrip = " Decoder";
-
-            string name = bci.FriendlyName;
-            if (name.EndsWith(SuffixToStrip))
-            {
-                name = name.Substring(0, name.Length - SuffixToStrip.Length);
-            }
-
-            return new FileFormat(name, bci.FileExtensions);
         }
     }
 }
