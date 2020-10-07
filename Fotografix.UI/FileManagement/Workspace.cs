@@ -1,6 +1,4 @@
-﻿using Fotografix.IO;
-using Fotografix.Win2D;
-using System;
+﻿using System;
 using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.Storage.AccessCache;
@@ -11,8 +9,7 @@ namespace Fotografix.UI.FileManagement
 {
     public sealed class Workspace
     {
-        private readonly IImageDecoder imageDecoder = new WindowsImageDecoder();
-        private readonly IImageEncoder imageEncoder = new WindowsImageEncoder(new Win2DImageRenderer());
+        private readonly ImageEditorFactory imageEditorFactory = new ImageEditorFactory();
 
         public RecentFileList RecentFiles { get; } = new RecentFileList(StorageApplicationPermissions.MostRecentlyUsedList);
         
@@ -25,13 +22,13 @@ namespace Fotografix.UI.FileManagement
             NewImageDialog dialog = new NewImageDialog(parameters);
             if (await dialog.ShowAsync() == ContentDialogResult.Primary)
             {
-                OpenImageEditor(new NewImageCommand(parameters.Size, imageDecoder, imageEncoder));
+                OpenImageEditor(new NewImageCommand(parameters.Size, imageEditorFactory));
             }
         }
 
         public async Task OpenFileAsync()
         {
-            FileOpenPicker picker = FilePickerFactory.CreateFileOpenPicker(imageDecoder.SupportedFileFormats);
+            FileOpenPicker picker = FilePickerFactory.CreateFileOpenPicker(imageEditorFactory.SupportedOpenFormats);
 
             StorageFile file = await picker.PickSingleFileAsync();
             if (file != null)
@@ -48,7 +45,7 @@ namespace Fotografix.UI.FileManagement
 
         public void OpenFile(StorageFile file)
         {
-            OpenImageEditor(new OpenFileCommand(new StorageFileAdapter(file), imageDecoder, imageEncoder));
+            OpenImageEditor(new OpenFileCommand(new StorageFileAdapter(file), imageEditorFactory));
             RecentFiles.Add(file);
         }
 

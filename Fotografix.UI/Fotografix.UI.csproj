@@ -123,7 +123,6 @@
     <Compile Include="..\SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="BitmapCodec.cs" />
     <Compile Include="BlendModes\BlendModeList.cs" />
     <Compile Include="BlendModes\BlendModeListItem.cs" />
     <Compile Include="BlendModes\BlendModeListItemConverter.cs" />
@@ -140,6 +139,7 @@
     <Compile Include="FileManagement\RecentFile.cs" />
     <Compile Include="FileManagement\RecentFileList.cs" />
     <Compile Include="FileManagement\Workspace.cs" />
+    <Compile Include="ImageEditorFactory.cs" />
     <Compile Include="IToolbox.cs" />
     <Compile Include="StorageFileAdapter.cs" />
     <Compile Include="Tab.cs" />

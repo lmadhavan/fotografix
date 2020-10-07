@@ -1,5 +1,4 @@
-﻿using Fotografix.UI;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Threading.Tasks;
 
@@ -9,8 +8,7 @@ namespace Fotografix.Tests
     {
         public static async Task IsEquivalentAsync(string fileWithExpectedOutput, Bitmap actual)
         {
-            var file = await TestImages.GetFileAsync(fileWithExpectedOutput);
-            Bitmap expected = await BitmapCodec.LoadBitmapAsync(file);
+            Bitmap expected = await TestImages.LoadBitmapAsync(fileWithExpectedOutput);
             AssertBytesAreEqual(expected.Pixels, actual.Pixels, 3, fileWithExpectedOutput);
         }
 

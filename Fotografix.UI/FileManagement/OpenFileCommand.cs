@@ -7,21 +7,19 @@ namespace Fotografix.UI.FileManagement
     public sealed class OpenFileCommand : ICreateImageEditorCommand
     {
         private readonly IFile file;
-        private readonly IImageDecoder imageDecoder;
-        private readonly IImageEncoder imageEncoder;
+        private readonly ImageEditorFactory imageEditorFactory;
 
-        public OpenFileCommand(IFile file, IImageDecoder imageDecoder, IImageEncoder imageEncoder)
+        public OpenFileCommand(IFile file, ImageEditorFactory imageEditorFactory)
         {
             this.file = file;
-            this.imageDecoder = imageDecoder;
-            this.imageEncoder = imageEncoder;
+            this.imageEditorFactory = imageEditorFactory;
         }
 
         public string Title => file.Name;
 
         public async Task<ImageEditor> ExecuteAsync(Viewport viewport)
         {
-            return await ImageEditor.CreateAsync(file, viewport, imageDecoder, imageEncoder);
+            return await imageEditorFactory.OpenImageAsync(viewport, file);
         }
     }
 }

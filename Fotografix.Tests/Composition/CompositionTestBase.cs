@@ -1,5 +1,4 @@
 ﻿using Fotografix.Drawing;
-using Fotografix.UI;
 using Fotografix.Win2D;
 using System.Threading.Tasks;
 
@@ -17,8 +16,8 @@ namespace Fotografix.Tests.Composition
 
         protected async Task<BitmapLayer> LoadLayerAsync(string filename)
         {
-            var file = await TestImages.GetFileAsync(filename);
-            return await BitmapLayerFactory.LoadBitmapLayerAsync(file);
+            Bitmap bitmap = await TestImages.LoadBitmapAsync(filename);
+            return new BitmapLayer(bitmap);
         }
 
         protected async Task AssertImageAsync(string fileWithExpectedOutput, Image image)

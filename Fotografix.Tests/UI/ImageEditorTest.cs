@@ -17,7 +17,13 @@ namespace Fotografix.Tests.UI
         [TestInitialize]
         public void Initialize()
         {
-            this.editor = ImageEditor.Create(ImageSize, new FakeViewport(), FakeImageCodec.Instance, FakeImageCodec.Instance);
+            Image image = new Image(ImageSize);
+            image.Layers.Add(BitmapLayerFactory.CreateBitmapLayer(id: 1));
+
+            this.editor = new ImageEditor(image, new FakeViewport())
+            {
+                ImageDecoder = new FakeImageCodec()
+            };
         }
 
         [TestCleanup]
