@@ -22,6 +22,11 @@ namespace Fotografix.UI
             this.workspace = (Workspace)e.Parameter;
         }
 
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            newButton.Focus(FocusState.Programmatic);
+        }
+
         private Visibility VisibleWhenZero(int count)
         {
             return count == 0 ? Visibility.Visible : Visibility.Collapsed;
