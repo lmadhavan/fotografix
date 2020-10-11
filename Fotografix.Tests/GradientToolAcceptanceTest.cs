@@ -29,7 +29,6 @@ namespace Fotografix.Tests
             });
 
             await AssertImageAsync("gradient.png");
-            AssertCanUndo();
 
             Undo();
 

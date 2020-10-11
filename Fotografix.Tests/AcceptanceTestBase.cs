@@ -43,9 +43,13 @@ namespace Fotografix.Tests
             Assert.IsTrue(Editor.CanUndo);
         }
 
-        protected void Undo()
+        protected void Undo(int times = 1)
         {
-            Editor.Undo();
+            for (int i = 1; i <= times; i++)
+            {
+                Assert.IsTrue(Editor.CanUndo, $"Undo not available (${i} of ${times})");
+                Editor.Undo();
+            }
         }
 
         private void OnEditorInvalidated(object sender, EventArgs e)

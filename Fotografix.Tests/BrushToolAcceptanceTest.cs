@@ -31,7 +31,6 @@ namespace Fotografix.Tests
             });
 
             await AssertImageAsync("flowers_brush.png");
-            AssertCanUndo();
 
             Undo();
 
