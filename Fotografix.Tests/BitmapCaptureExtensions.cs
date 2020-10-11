@@ -1,4 +1,4 @@
-﻿using Fotografix.UI;
+﻿using Fotografix.Uwp.Codecs;
 using System;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Core;

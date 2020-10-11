@@ -1,0 +1,29 @@
+﻿<ResourceDictionary
+    x:Class="Fotografix.Uwp.BlendModes.BlendModeListResourceDictionary"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:b="using:Fotografix.Uwp.BlendModes">
+
+    <b:BlendModeListItemTemplateSelector x:Key="BlendModeListItemTemplateSelector">
+        <b:BlendModeListItemTemplateSelector.BlendModeTemplate>
+            <DataTemplate x:DataType="b:BlendModeListItem">
+                <TextBlock Text="{x:Bind Name}" />
+            </DataTemplate>
+        </b:BlendModeListItemTemplateSelector.BlendModeTemplate>
+
+        <b:BlendModeListItemTemplateSelector.SeparatorTemplate>
+            <DataTemplate>
+                <Rectangle Margin="0,9" Height="1" Fill="{ThemeResource MenuFlyoutSeparatorThemeBrush}" />
+            </DataTemplate>
+        </b:BlendModeListItemTemplateSelector.SeparatorTemplate>
+    </b:BlendModeListItemTemplateSelector>
+
+    <b:BlendModeListItemStyleSelector x:Key="BlendModeListItemStyleSelector">
+        <b:BlendModeListItemStyleSelector.SeparatorStyle>
+            <Style TargetType="ComboBoxItem">
+                <Setter Property="IsEnabled" Value="False" />
+            </Style>
+        </b:BlendModeListItemStyleSelector.SeparatorStyle>
+    </b:BlendModeListItemStyleSelector>
+    
+</ResourceDictionary>

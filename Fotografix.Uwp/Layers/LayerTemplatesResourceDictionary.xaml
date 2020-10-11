@@ -1,0 +1,47 @@
+﻿<ResourceDictionary
+    x:Class="Fotografix.Uwp.Layers.LayerTemplatesResourceDictionary"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:el="using:Fotografix.Editor.Layers"
+    xmlns:uil="using:Fotografix.Uwp.Layers"
+    xmlns:adjustments="using:Fotografix.Uwp.Adjustments"
+    xmlns:blend="using:Fotografix.Uwp.BlendModes">
+
+    <ResourceDictionary.MergedDictionaries>
+        <adjustments:AdjustmentTemplatesResourceDictionary />
+        <blend:BlendModeListResourceDictionary />
+    </ResourceDictionary.MergedDictionaries>
+
+    <uil:OpacitySliderToolTipValueConverter x:Key="OpacitySliderToolTipValueConverter" />
+
+    <DataTemplate x:Key="LayerPropertiesTemplate" x:DataType="el:LayerPropertyEditor">
+        <StackPanel Orientation="Vertical">
+            <TextBox Text="{x:Bind Name, Mode=TwoWay}" />
+
+            <Grid Margin="0,4">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="100" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <ComboBox
+                    Grid.Column="0"
+                    HorizontalAlignment="Stretch"
+                    ItemsSource="{StaticResource BlendModeList}"
+                    SelectedItem="{x:Bind BlendMode, Mode=TwoWay, Converter={StaticResource BlendModeListItemConverter}}"
+                    ItemTemplateSelector="{StaticResource BlendModeListItemTemplateSelector}"
+                    ItemContainerStyleSelector="{StaticResource BlendModeListItemStyleSelector}">
+                </ComboBox>
+                <TextBlock Grid.Column="1" Margin="12,4" Text="Opacity:" />
+                <Slider Grid.Column="2"
+                            Style="{StaticResource AdjustmentSliderStyle}"
+                            Minimum="0"
+                            Value="{x:Bind Opacity, Mode=TwoWay}"
+                            ThumbToolTipValueConverter="{StaticResource OpacitySliderToolTipValueConverter}" />
+            </Grid>
+
+            <ContentControl Margin="0,8,0,0" HorizontalContentAlignment="Stretch" ContentTemplateSelector="{StaticResource AdjustmentTemplateSelector}" Content="{x:Bind AdjustmentPropertyEditor}" />
+        </StackPanel>
+    </DataTemplate>
+</ResourceDictionary>

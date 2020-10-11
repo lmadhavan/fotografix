@@ -1,0 +1,201 @@
+﻿<Page
+    x:Class="Fotografix.Uwp.ImageEditorPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:canvas="using:Microsoft.Graphics.Canvas.UI.Xaml"
+    xmlns:c="using:Fotografix"
+    xmlns:layers="using:Fotografix.Uwp.Layers"
+    xmlns:tools="using:Fotografix.Uwp.Tools"
+    xmlns:sys="using:System"
+    mc:Ignorable="d"
+    Background="{ThemeResource AppBarBackgroundThemeBrush}"
+    AllowDrop="True">
+
+    <Page.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Styles.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Page.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="96" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="300" />
+        </Grid.ColumnDefinitions>
+
+        <Grid Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" BorderThickness="0,1" BorderBrush="{ThemeResource ButtonBorderThemeBrush}" Background="{ThemeResource AppBarBackgroundThemeBrush}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Grid.Column="0" Orientation="Horizontal">
+                <Button Style="{StaticResource CommandButtonStyle}"
+                        Click="Save_Click"
+                        ToolTipService.ToolTip="Save">
+                    <Button.KeyboardAccelerators>
+                        <KeyboardAccelerator Modifiers="Control" Key="S" />
+                    </Button.KeyboardAccelerators>
+                    
+                    <SymbolIcon Symbol="Save" />
+                </Button>
+
+                <Button Style="{StaticResource CommandButtonStyle}"
+                        Click="{x:Bind editor.Undo}"
+                        IsEnabled="{x:Bind editor.CanUndo, Mode=OneWay}"
+                        ToolTipService.ToolTip="Undo">
+                    <Button.KeyboardAccelerators>
+                        <KeyboardAccelerator Modifiers="Control" Key="Z" />
+                    </Button.KeyboardAccelerators>
+                    
+                    <SymbolIcon Symbol="Undo" />
+                </Button>
+
+                <Button Style="{StaticResource CommandButtonStyle}"
+                        Click="{x:Bind editor.Redo}"
+                        IsEnabled="{x:Bind editor.CanRedo, Mode=OneWay}"
+                        ToolTipService.ToolTip="Redo">
+                    <Button.KeyboardAccelerators>
+                        <KeyboardAccelerator Modifiers="Control,Shift" Key="Z" />
+                        <KeyboardAccelerator Modifiers="Control" Key="Y" />
+                    </Button.KeyboardAccelerators>
+
+                    <SymbolIcon Symbol="Redo" />
+                </Button>
+            </StackPanel>
+
+            <Grid Grid.Column="1"
+                  Margin="4,0" Padding="8,0"
+                  BorderThickness="1,0" BorderBrush="{ThemeResource ButtonBorderThemeBrush}">
+                <Grid.Resources>
+                    <ResourceDictionary>
+                        <ResourceDictionary.MergedDictionaries>
+                            <tools:ToolTemplatesResourceDictionary />
+                        </ResourceDictionary.MergedDictionaries>
+                    </ResourceDictionary>
+                </Grid.Resources>
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="0"
+                           FontWeight="SemiBold"
+                           VerticalAlignment="Center"
+                           Text="{x:Bind editor.ActiveTool.Name, Mode=OneWay}" />
+
+                <ContentControl Grid.Column="1"
+                                Margin="8,0"
+                                VerticalAlignment="Center"
+                                ContentTemplateSelector="{StaticResource ToolSettingsTemplateSelector}"
+                                Content="{x:Bind editor.ActiveTool.Settings, Mode=OneWay}" />
+            </Grid>
+
+            <StackPanel Grid.Column="2" Orientation="Horizontal">
+                <Button Click="ResizeImage_Click" Style="{StaticResource CommandButtonStyle}">
+                    <StackPanel Orientation="Horizontal">
+                        <SymbolIcon Symbol="FullScreen" />
+                        <TextBlock Margin="4,0,0,0" HorizontalTextAlignment="Center" MinWidth="80" Text="{x:Bind FormatSize(editor.Size), Mode=OneWay}" />
+                    </StackPanel>
+                </Button>
+
+                <Button Style="{StaticResource CommandButtonStyle}">
+                    <StackPanel Orientation="Horizontal">
+                        <SymbolIcon Symbol="Zoom" />
+                        <TextBlock Margin="4,0,0,0" HorizontalTextAlignment="Center" MinWidth="40" Text="{x:Bind sys:String.Format('{0:P0}', scrollViewer.ZoomFactor), Mode=OneWay}" />
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+        </Grid>
+
+        <ListView Grid.Row="1" Grid.Column="0"
+                  ItemsSource="{x:Bind editor.Tools}"
+                  SelectedItem="{x:Bind editor.ActiveTool, Mode=TwoWay}"
+                  DisplayMemberPath="Name"
+        />
+
+        <ScrollViewer x:Name="scrollViewer"
+                      Grid.Row="1" Grid.Column="1"
+                      HorizontalScrollBarVisibility="Auto" ZoomMode="Enabled"
+                      PointerEntered="{x:Bind toolAdapter.PointerEntered}"
+                      PointerPressed="{x:Bind toolAdapter.PointerPressed}"
+                      PointerMoved="{x:Bind toolAdapter.PointerMoved}"
+                      PointerReleased="{x:Bind toolAdapter.PointerReleased}"
+                      PointerExited="{x:Bind toolAdapter.PointerExited}">
+            <canvas:CanvasControl x:Name="canvas" CreateResources="Canvas_CreateResources" Draw="Canvas_Draw" />
+        </ScrollViewer>
+
+        <StackPanel Grid.Row="1" Grid.Column="2" Orientation="Vertical" Background="{ThemeResource AppBarBackgroundThemeBrush}" Padding="8" BorderThickness="1,0,0,0" BorderBrush="{ThemeResource ButtonBorderThemeBrush}">
+            <StackPanel.Resources>
+                <ResourceDictionary>
+                    <ResourceDictionary.MergedDictionaries>
+                        <layers:LayerTemplatesResourceDictionary />
+                    </ResourceDictionary.MergedDictionaries>
+                </ResourceDictionary>
+            </StackPanel.Resources>
+
+            <Grid Margin="0,0,0,8">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                
+                <TextBlock Grid.Column="0" Margin="0,4,0,0" Style="{StaticResource PanelTitleTextBlockStyle}" Text="Layers" />
+
+                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                    <Button x:Name="newAdjustmentButton" Style="{StaticResource CommandButtonStyle}"
+                            Flyout="{StaticResource NewAdjustmentMenuFlyout}">
+                        <SymbolIcon Symbol="Add" />
+                    </Button>
+
+                    <Button Style="{StaticResource CommandButtonStyle}" Click="Import_Click" ToolTipService.ToolTip="Import">
+                        <SymbolIcon Symbol="Import" />
+                    </Button>
+
+                    <Button Style="{StaticResource CommandButtonStyle}" Margin="4,0,0,0"
+                            IsEnabled="{x:Bind editor.CanDeleteActiveLayer, Mode=OneWay}"
+                            Click="{x:Bind editor.DeleteActiveLayer}">
+                        <SymbolIcon Symbol="Delete" />
+                    </Button>
+                </StackPanel>
+            </Grid>
+
+            <ListView ItemsSource="{x:Bind editor.Layers}" SelectedItem="{x:Bind editor.ActiveLayer, Mode=TwoWay}"
+                      CanReorderItems="True" AllowDrop="True">
+                <ListView.ItemTemplate>
+                    <DataTemplate x:DataType="c:Layer">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+
+                            <CheckBox Grid.Column="0" MinWidth="0" IsChecked="{x:Bind Visible, Mode=TwoWay}" />
+                            <TextBlock Grid.Column="1" VerticalAlignment="Center" Text="{x:Bind Name, Mode=OneWay}" />
+                        </Grid>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+
+            <Border Margin="0,16,0,0" Background="{ThemeResource NavigationViewExpandedPaneBackground}">
+                <ContentControl
+                    Padding="6"
+                    HorizontalContentAlignment="Stretch"
+                    ContentTemplate="{StaticResource LayerPropertiesTemplate}"
+                    Content="{x:Bind editor.ActiveLayerPropertyEditor, Mode=OneWay}" />
+            </Border>
+        </StackPanel>
+    </Grid>
+</Page>

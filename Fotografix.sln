@@ -8,7 +8,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fotografix", "Fotografix\Fo
 		{A01D0E9B-D162-448B-8278-34264EDDC68A} = {A01D0E9B-D162-448B-8278-34264EDDC68A}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fotografix.UI", "Fotografix.UI\Fotografix.UI.csproj", "{319FA943-25C3-405E-97FC-02307CC817F0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fotografix.Uwp", "Fotografix.Uwp\Fotografix.Uwp.csproj", "{319FA943-25C3-405E-97FC-02307CC817F0}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fotografix.Tests", "Fotografix.Tests\Fotografix.Tests.csproj", "{19AB42B2-9F06-4E27-8988-8BBB4F1D85E8}"
 EndProject

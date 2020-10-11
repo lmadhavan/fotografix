@@ -187,9 +187,9 @@
       <Project>{c2424398-29d9-4392-a0c0-c4699c7b913b}</Project>
       <Name>Fotografix.Editor</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Fotografix.UI\Fotografix.UI.csproj">
+    <ProjectReference Include="..\Fotografix.Uwp\Fotografix.Uwp.csproj">
       <Project>{319fa943-25c3-405e-97fc-02307cc817f0}</Project>
-      <Name>Fotografix.UI</Name>
+      <Name>Fotografix.Uwp</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />

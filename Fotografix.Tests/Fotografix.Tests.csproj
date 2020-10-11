@@ -119,34 +119,34 @@
     <SDKReference Include="TestPlatform.Universal, Version=$(UnitTestPlatformVersion)" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AcceptanceTestBase.cs" />
-    <Compile Include="AdjustmentsAcceptanceTest.cs" />
+    <Compile Include="Acceptance\AcceptanceTestBase.cs" />
+    <Compile Include="Acceptance\AdjustmentsAcceptanceTest.cs" />
     <Compile Include="AssertImage.cs" />
     <Compile Include="BitmapCaptureExtensions.cs" />
     <Compile Include="Composition\BitmapBlendingTest.cs" />
     <Compile Include="Composition\AdjustmentBlendingTest.cs" />
     <Compile Include="Composition\BlendModeMappingTest.cs" />
-    <Compile Include="BrushToolAcceptanceTest.cs" />
-    <Compile Include="GradientToolAcceptanceTest.cs" />
-    <Compile Include="HandToolAcceptanceTest.cs" />
-    <Compile Include="ResizeImageAcceptanceTest.cs" />
-    <Compile Include="SmokeTest.cs" />
+    <Compile Include="Acceptance\BrushToolAcceptanceTest.cs" />
+    <Compile Include="Acceptance\GradientToolAcceptanceTest.cs" />
+    <Compile Include="Acceptance\HandToolAcceptanceTest.cs" />
+    <Compile Include="Acceptance\ResizeImageAcceptanceTest.cs" />
+    <Compile Include="Uwp\SmokeTest.cs" />
     <Compile Include="TestImages.cs" />
-    <Compile Include="ToolAcceptanceTestBase.cs" />
-    <Compile Include="UI\Adjustments\AdjustmentSliderToolTipValueConverterTest.cs" />
-    <Compile Include="UI\BlendModeListTest.cs" />
+    <Compile Include="Acceptance\ToolAcceptanceTestBase.cs" />
+    <Compile Include="Uwp\Adjustments\AdjustmentSliderToolTipValueConverterTest.cs" />
+    <Compile Include="Uwp\BlendModeListTest.cs" />
     <Compile Include="Composition\CompositionTestBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="UI\FakeCreateImageEditorCommand.cs" />
-    <Compile Include="UI\FakeImageCodec.cs" />
-    <Compile Include="UI\ImageEditorTest.cs" />
-    <Compile Include="UI\Layers\OpacitySliderToolTipValueConverterTest.cs" />
-    <Compile Include="UI\TabViewContainerTest.cs" />
+    <Compile Include="Uwp\FakeCreateImageEditorCommand.cs" />
+    <Compile Include="Uwp\FakeImageCodec.cs" />
+    <Compile Include="Uwp\ImageEditorTest.cs" />
+    <Compile Include="Uwp\Layers\OpacitySliderToolTipValueConverterTest.cs" />
+    <Compile Include="Uwp\TabViewContainerTest.cs" />
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\RecentFileListTest.cs" />
-    <Compile Include="WindowsImageCodecTest.cs" />
+    <Compile Include="Uwp\RecentFileListTest.cs" />
+    <Compile Include="Uwp\WindowsImageCodecTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
@@ -210,9 +210,9 @@
       <Project>{c2424398-29d9-4392-a0c0-c4699c7b913b}</Project>
       <Name>Fotografix.Editor</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Fotografix.UI\Fotografix.UI.csproj">
+    <ProjectReference Include="..\Fotografix.Uwp\Fotografix.Uwp.csproj">
       <Project>{319fa943-25c3-405e-97fc-02307cc817f0}</Project>
-      <Name>Fotografix.UI</Name>
+      <Name>Fotografix.Uwp</Name>
     </ProjectReference>
     <ProjectReference Include="..\Fotografix.Win2D\Fotografix.Win2D.csproj">
       <Project>{c40b3dd4-0747-48af-a67e-2bc88ebb9fcc}</Project>
