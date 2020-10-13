@@ -38,9 +38,10 @@ namespace Fotografix.Win2D.Composition
             Layer.Register<BitmapLayer, BitmapLayerNode>();
 
             Adjustment.Register<BlackAndWhiteAdjustment, BlackAndWhiteAdjustmentNode>();
+            Adjustment.Register<BrightnessContrastAdjustment, BrightnessContrastAdjustmentNode>();
             Adjustment.Register<GradientMapAdjustment, GradientMapAdjustmentNode>();
             Adjustment.Register<HueSaturationAdjustment, HueSaturationAdjustmentNode>();
-            Adjustment.Register<BrightnessContrastAdjustment, BrightnessContrastAdjustmentNode>();
+            Adjustment.Register<LevelsAdjustment, LevelsAdjustmentNode>();
         }
     }
 }

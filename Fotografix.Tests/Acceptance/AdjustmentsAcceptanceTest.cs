@@ -85,6 +85,28 @@ namespace Fotografix.Tests.Acceptance
             await AssertImageAsync("flowers.jpg");
         }
 
+        [TestMethod]
+        public async Task LevelsAdjustment()
+        {
+            await OpenImageAsync("flowers.jpg");
+
+            AddAdjustmentLayer<LevelsAdjustment>();
+            SetAdjustmentProperties<LevelsAdjustmentPropertyEditor>(p =>
+            {
+                p.InputBlackPoint = 0.2f;
+                p.InputWhitePoint = 0.8f;
+                p.InputGamma = 2f;
+                p.OutputBlackPoint = 0.1f;
+                p.OutputWhitePoint = 0.9f;
+            });
+
+            await AssertImageAsync("flowers_levels.png");
+
+            Undo(times: 5);
+
+            await AssertImageAsync("flowers.jpg");
+        }
+
         private void AddAdjustmentLayer<T>() where T : Adjustment, new()
         {
             Editor.AddAdjustmentLayer(new AdjustmentLayerFactory<T>(""));
@@ -92,7 +114,9 @@ namespace Fotografix.Tests.Acceptance
 
         private void SetAdjustmentProperties<T>(Action<T> action) where T : IPropertyEditor
         {
-            action((T)Editor.ActiveLayerPropertyEditor.AdjustmentPropertyEditor);
+            T propertyEditor = (T)Editor.ActiveLayerPropertyEditor.AdjustmentPropertyEditor;
+            Assert.IsNotNull(propertyEditor, typeof(T).Name);
+            action(propertyEditor);
         }
     }
 }

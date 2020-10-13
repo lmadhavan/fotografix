@@ -15,11 +15,13 @@ namespace Fotografix.Uwp.Adjustments
             RegisterAdjustment<BrightnessContrastAdjustment>("Brightness/Contrast");
             RegisterAdjustment<GradientMapAdjustment>("Gradient Map");
             RegisterAdjustment<HueSaturationAdjustment>("Hue/Saturation");
+            RegisterAdjustment<LevelsAdjustment>("Levels");
 
             // adjustment property templates
             adjustmentTemplateSelector.SetTemplate<BrightnessContrastAdjustmentPropertyEditor>(brightnessContrastTemplate);
             adjustmentTemplateSelector.SetTemplate<GradientMapAdjustmentPropertyEditor>(gradientMapTemplate);
             adjustmentTemplateSelector.SetTemplate<HueSaturationAdjustmentPropertyEditor>(hueSaturationTemplate);
+            adjustmentTemplateSelector.SetTemplate<LevelsAdjustmentPropertyEditor>(levelsTemplate);
         }
 
         private void RegisterAdjustment<T>(string name) where T : Adjustment, new()

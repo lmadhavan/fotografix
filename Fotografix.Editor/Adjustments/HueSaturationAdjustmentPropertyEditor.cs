@@ -23,7 +23,7 @@ namespace Fotografix.Editor.Adjustments
 
         public float Lightness
         {
-            get => Target.Saturation;
+            get => Target.Lightness;
             set => SetTargetProperty(value);
         }
     }

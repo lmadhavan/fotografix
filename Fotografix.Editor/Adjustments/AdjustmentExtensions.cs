@@ -37,6 +37,11 @@ namespace Fotografix.Editor.Adjustments
             {
                 this.PropertyEditor = new HueSaturationAdjustmentPropertyEditor(adjustment, propertySetter);
             }
+
+            public override void Visit(LevelsAdjustment adjustment)
+            {
+                this.PropertyEditor = new LevelsAdjustmentPropertyEditor(adjustment, propertySetter);
+            }
         }
     }
 }

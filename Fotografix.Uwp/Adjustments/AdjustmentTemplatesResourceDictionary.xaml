@@ -48,6 +48,18 @@
         </StackPanel>
     </DataTemplate>
 
+    <DataTemplate x:Name="levelsTemplate" x:DataType="ea:LevelsAdjustmentPropertyEditor">
+        <StackPanel Orientation="Vertical">
+            <TextBlock Margin="0,0,0,16" FontWeight="Bold" Text="Input levels" />
+            <Slider Style="{StaticResource AdjustmentSliderStyle}" Header="Black point" Minimum="0" Value="{x:Bind InputBlackPoint, Mode=TwoWay}" />
+            <Slider Style="{StaticResource AdjustmentSliderStyle}" Header="White point" Minimum="0" Value="{x:Bind InputWhitePoint, Mode=TwoWay}" />
+            <Slider Style="{StaticResource AdjustmentSliderStyle}" Header="Gamma" Minimum="0" Maximum="10" Value="{x:Bind InputGamma, Mode=TwoWay}" />
+            <TextBlock Margin="0,16,0,16" FontWeight="Bold" Text="Output levels" />
+            <Slider Style="{StaticResource AdjustmentSliderStyle}" Header="Black point" Minimum="0" Value="{x:Bind OutputBlackPoint, Mode=TwoWay}" />
+            <Slider Style="{StaticResource AdjustmentSliderStyle}" Header="White point" Minimum="0" Value="{x:Bind OutputWhitePoint, Mode=TwoWay}" />
+        </StackPanel>
+    </DataTemplate>
+
     <ui:TypeBasedTemplateSelector x:Key="AdjustmentTemplateSelector" x:Name="adjustmentTemplateSelector" />
     <MenuFlyout x:Key="NewAdjustmentMenuFlyout" x:Name="newAdjustmentMenuFlyout" />
 </ResourceDictionary>

@@ -171,6 +171,7 @@
     <Content Include="Images\flowers.jpg" />
     <Content Include="Images\flowers_bw.png" />
     <Content Include="Images\empty.png" />
+    <Content Include="Images\flowers_levels.png" />
     <Content Include="Images\flowers_opacity50_bw.png" />
     <Content Include="Images\flowers_scale50.png" />
     <Content Include="Images\flowers_stars_opacity50.png" />
