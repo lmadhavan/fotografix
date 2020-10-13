@@ -1,3 +1,3 @@
 ﻿using System.Reflection;
 
-[assembly: AssemblyTitle("Fotografix.UI")]
+[assembly: AssemblyTitle("Fotografix.Uwp")]

@@ -7,8 +7,8 @@
     <ProjectGuid>{319FA943-25C3-405E-97FC-02307CC817F0}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Fotografix.UI</RootNamespace>
-    <AssemblyName>Fotografix.UI</AssemblyName>
+    <RootNamespace>Fotografix.Uwp</RootNamespace>
+    <AssemblyName>Fotografix.Uwp</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
     <TargetPlatformVersion Condition=" '$(TargetPlatformVersion)' == '' ">10.0.18362.0</TargetPlatformVersion>

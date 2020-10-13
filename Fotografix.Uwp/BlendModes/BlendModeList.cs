@@ -59,7 +59,7 @@ namespace Fotografix.Uwp.BlendModes
         /// </summary>
         public static BlendModeList Create()
         {
-            var resourceLoader = ResourceLoader.GetForViewIndependentUse("Fotografix.UI/Resources/BlendMode");
+            var resourceLoader = ResourceLoader.GetForViewIndependentUse("Fotografix.Uwp/Resources/BlendMode");
             var items = new List<BlendModeListItem>();
 
             foreach (BlendMode blendMode in Enum.GetValues(typeof(BlendMode)))
