@@ -14,7 +14,6 @@ namespace Fotografix.Editor.Tools
         }
 
         public string Name => "Hand";
-        object ITool.Settings => null;
         public ToolCursor Cursor => scrollAnchor != null ? ToolCursor.ClosedHand : ToolCursor.OpenHand;
 
         public void PointerPressed(PointerState p)

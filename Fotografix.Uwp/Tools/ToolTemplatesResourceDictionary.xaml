@@ -12,7 +12,9 @@
 
     <ui:ColorConverter x:Key="ColorConverter" />
 
-    <DataTemplate x:Name="brushToolSettingsTemplate" x:DataType="et:BrushTool">
+    <DataTemplate x:Name="emptyControlsTemplate" />
+
+    <DataTemplate x:Name="brushControlsTemplate" x:DataType="et:IBrushToolControls">
         <StackPanel Orientation="Horizontal">
             <TextBlock Text="Size:" VerticalAlignment="Center" Margin="8,0" />
             <muxc:NumberBox
@@ -27,7 +29,7 @@
         </StackPanel>
     </DataTemplate>
 
-    <DataTemplate x:Name="gradientToolSettingsTemplate" x:DataType="et:GradientTool">
+    <DataTemplate x:Name="gradientControlsTemplate" x:DataType="et:IGradientToolControls">
         <StackPanel Orientation="Horizontal">
             <TextBlock Text="Start:" VerticalAlignment="Center" Margin="8,0" />
             <ui:ColorPickerButton Margin="0,0,8,0" Width="32" Color="{x:Bind StartColor, Converter={StaticResource ColorConverter}, Mode=TwoWay}" />
@@ -37,5 +39,5 @@
         </StackPanel>
     </DataTemplate>
 
-    <ui:TypeBasedTemplateSelector x:Key="ToolSettingsTemplateSelector" x:Name="toolSettingsTemplateSelector" />
+    <ui:TypeBasedTemplateSelector x:Key="ToolControlsTemplateSelector" x:Name="toolControlsTemplateSelector" />
 </ResourceDictionary>

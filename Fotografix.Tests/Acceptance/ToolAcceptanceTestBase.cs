@@ -22,10 +22,10 @@ namespace Fotografix.Tests.Acceptance
             Editor.ActiveTool = tool;
         }
 
-        protected TSettings SelectTool<TSettings>(string name)
+        protected TControls SelectTool<TControls>(string name)
         {
             SelectTool(name);
-            return (TSettings)ActiveTool.Settings;
+            return (TControls)ActiveTool;
         }
 
         protected void AssertToolCursor(ToolCursor expected)
@@ -33,24 +33,30 @@ namespace Fotografix.Tests.Acceptance
             Assert.AreEqual(expected, ActiveTool.Cursor);
         }
 
-        protected void PressAndDragPointer(Point[] points)
+        protected void DragAndReleasePointer(Point start, params Point[] points)
         {
-            ActiveTool.PointerPressed(new PointerState(points[0]));
+            PressAndDragPointer(start);
+            ContinueDraggingAndReleasePointer(points);
+        }
 
-            for (int i = 1; i < points.Length; i++)
+        protected void PressAndDragPointer(Point start, params Point[] points)
+        {
+            ActiveTool.PointerPressed(new PointerState(start));
+
+            foreach (Point pt in points)
             {
-                ActiveTool.PointerMoved(new PointerState(points[i]));
+                ActiveTool.PointerMoved(new PointerState(pt));
             }
         }
 
-        protected void ContinueDraggingAndReleasePointer(Point[] points)
+        protected void ContinueDraggingAndReleasePointer(params Point[] points)
         {
-            for (int i = 0; i < points.Length; i++)
+            foreach (Point pt in points)
             {
-                ActiveTool.PointerMoved(new PointerState(points[i]));
+                ActiveTool.PointerMoved(new PointerState(pt));
             }
 
-            ActiveTool.PointerReleased(new PointerState(points[points.Length - 1]));
+            ActiveTool.PointerReleased(new PointerState(points.Last()));
         }
     }
 }

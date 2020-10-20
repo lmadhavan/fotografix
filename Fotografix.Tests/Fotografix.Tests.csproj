@@ -121,6 +121,7 @@
   <ItemGroup>
     <Compile Include="Acceptance\AcceptanceTestBase.cs" />
     <Compile Include="Acceptance\AdjustmentsAcceptanceTest.cs" />
+    <Compile Include="Acceptance\CropToolAcceptanceTest.cs" />
     <Compile Include="AssertImage.cs" />
     <Compile Include="BitmapCaptureExtensions.cs" />
     <Compile Include="Composition\BitmapBlendingTest.cs" />

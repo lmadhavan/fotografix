@@ -19,10 +19,10 @@ namespace Fotografix.Tests.Acceptance
 
             Viewport.ScrollOffset = new PointF(10, 10);
 
-            PressAndDragPointer(new Point[] {
+            PressAndDragPointer(
                 new Point(30, 30),
                 new Point(32, 32)
-            });
+            );
 
             AssertToolCursor(ToolCursor.ClosedHand);
             Assert.AreEqual(new PointF(8, 8), Viewport.ScrollOffset);

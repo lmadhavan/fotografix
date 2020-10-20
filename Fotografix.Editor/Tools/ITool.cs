@@ -3,7 +3,6 @@
     public interface ITool
     {
         string Name { get; }
-        object Settings { get; }
         ToolCursor Cursor { get; }
 
         void PointerPressed(PointerState p);

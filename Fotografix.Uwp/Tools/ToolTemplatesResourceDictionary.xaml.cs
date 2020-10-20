@@ -8,8 +8,9 @@ namespace Fotografix.Uwp.Tools
         {
             InitializeComponent();
 
-            toolSettingsTemplateSelector.SetTemplate<BrushTool>(brushToolSettingsTemplate);
-            toolSettingsTemplateSelector.SetTemplate<GradientTool>(gradientToolSettingsTemplate);
+            toolControlsTemplateSelector.SetTemplate<BrushTool>(brushControlsTemplate);
+            toolControlsTemplateSelector.SetTemplate<GradientTool>(gradientControlsTemplate);
+            toolControlsTemplateSelector.SetTemplate<HandTool>(emptyControlsTemplate);
         }
     }
 }

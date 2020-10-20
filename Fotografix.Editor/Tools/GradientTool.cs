@@ -3,14 +3,12 @@ using System.Drawing;
 
 namespace Fotografix.Editor.Tools
 {
-    public sealed class GradientTool : DrawingTool<LinearGradient>, IGradientToolSettings
+    public sealed class GradientTool : DrawingTool<LinearGradient>, IGradientToolControls
     {
         public Color StartColor { get; set; }
         public Color EndColor { get; set; }
 
         public override string Name => "Gradient";
-
-        protected override object Settings => this;
 
         protected override LinearGradient CreateDrawable(PointerState p)
         {

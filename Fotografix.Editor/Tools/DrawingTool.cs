@@ -9,7 +9,6 @@ namespace Fotografix.Editor.Tools
         private T drawable;
 
         public abstract string Name { get; }
-        object ITool.Settings => Settings;
         public ToolCursor Cursor => Enabled ? ToolCursor.Crosshair : ToolCursor.Disabled;
 
         private bool Enabled => drawingSurface != null;
@@ -45,8 +44,6 @@ namespace Fotografix.Editor.Tools
             }
         }
         
-        protected abstract object Settings { get; }
-
         protected abstract T CreateDrawable(PointerState p);
         protected abstract void UpdateDrawable(T drawable, PointerState p);
     }

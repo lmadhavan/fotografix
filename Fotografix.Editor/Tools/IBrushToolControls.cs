@@ -2,7 +2,7 @@
 
 namespace Fotografix.Editor.Tools
 {
-    public interface IBrushToolSettings
+    public interface IBrushToolControls
     {
         int Size { get; set; }
         Color Color { get; set; }

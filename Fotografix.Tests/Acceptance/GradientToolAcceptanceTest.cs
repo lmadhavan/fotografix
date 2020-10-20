@@ -16,17 +16,14 @@ namespace Fotografix.Tests.Acceptance
 
             AssertToolCursor(ToolCursor.Crosshair);
 
-            PressAndDragPointer(new Point[] {
+            PressAndDragPointer(
                 new Point(100, 100),
                 new Point(200, 200)
-            });
+            );
 
             await AssertImageAsync("gradient_preview.png");
 
-            ContinueDraggingAndReleasePointer(new Point[]
-            {
-                new Point(300, 300)
-            });
+            ContinueDraggingAndReleasePointer(new Point(300, 300));
 
             await AssertImageAsync("gradient.png");
 
@@ -37,9 +34,9 @@ namespace Fotografix.Tests.Acceptance
 
         private void ConfigureGradientTool(Color startColor, Color endColor)
         {
-            IGradientToolSettings settings = SelectTool<IGradientToolSettings>("Gradient");
-            settings.StartColor = startColor;
-            settings.EndColor = endColor;
+            var gradientControls = SelectTool<IGradientToolControls>("Gradient");
+            gradientControls.StartColor = startColor;
+            gradientControls.EndColor = endColor;
         }
     }
 }

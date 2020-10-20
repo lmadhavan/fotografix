@@ -99,8 +99,8 @@
                 <ContentControl Grid.Column="1"
                                 Margin="8,0"
                                 VerticalAlignment="Center"
-                                ContentTemplateSelector="{StaticResource ToolSettingsTemplateSelector}"
-                                Content="{x:Bind editor.ActiveTool.Settings, Mode=OneWay}" />
+                                ContentTemplateSelector="{StaticResource ToolControlsTemplateSelector}"
+                                Content="{x:Bind editor.ActiveTool, Mode=OneWay}" />
             </Grid>
 
             <StackPanel Grid.Column="2" Orientation="Horizontal">

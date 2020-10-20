@@ -106,8 +106,6 @@ namespace Fotografix.Editor.Tools
 
             public override string Name => "Test";
 
-            protected override object Settings => this;
-
             protected override IFakeDrawable CreateDrawable(PointerState p)
             {
                 return factory.Create(p.Location);
