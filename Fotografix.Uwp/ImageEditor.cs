@@ -33,9 +33,8 @@ namespace Fotografix.Uwp
 
         private Layer activeLayer;
         private LayerPropertyEditor activeLayerViewModel;
-        private List<IDrawingSurfaceListener> drawingSurfaceListeners;
 
-        public ImageEditor(Image image, Viewport viewport)
+        public ImageEditor(Image image)
         {
             this.image = image;
             this.compositor = new Win2DCompositor(image, 8);
@@ -48,8 +47,7 @@ namespace Fotografix.Uwp
             history.PropertyChanged += OnHistoryPropertyChanged;
             this.propertySetter = new UndoablePropertySetter(history);
 
-            InitializeTools(viewport);
-
+            this.Tools = new List<ITool>();
             this.ActiveLayer = image.Layers.First();
 
             this.contentChangeTracker = new ImageChangeTracker(image);
@@ -183,35 +181,35 @@ namespace Fotografix.Uwp
 
         #region Tools
 
+        private IList<ITool> tools;
         private ITool activeTool;
+        private List<IDrawingSurfaceListener> drawingSurfaceListeners;
 
-        public IList<ITool> Tools { get; private set; }
+        public IList<ITool> Tools
+        {
+            get => tools;
+
+            set
+            {
+                if (SetProperty(ref tools, value))
+                {
+                    this.drawingSurfaceListeners = tools.OfType<IDrawingSurfaceListener>().ToList();
+                    this.ActiveTool = Tools.FirstOrDefault();
+                }
+            }
+        }
 
         public ITool ActiveTool
         {
             get => activeTool;
-            set => SetProperty(ref activeTool, value);
-        }
 
-        private void InitializeTools(Viewport viewport)
-        {
-            var handTool = new HandTool(viewport);
-
-            var brushTool = new BrushTool()
+            set
             {
-                Size = 5,
-                Color = Color.White
-            };
-
-            var gradientTool = new GradientTool()
-            {
-                StartColor = Color.Black,
-                EndColor = Color.White
-            };
-
-            this.Tools = new List<ITool> { handTool, brushTool, gradientTool };
-            this.activeTool = Tools.First();
-            this.drawingSurfaceListeners = new List<IDrawingSurfaceListener> { brushTool, gradientTool };
+                if (SetProperty(ref activeTool, value))
+                {
+                    NotifyDrawingSurfaceListener();
+                }
+            }
         }
 
         #endregion

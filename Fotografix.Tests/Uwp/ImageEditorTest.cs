@@ -20,7 +20,7 @@ namespace Fotografix.Tests.Uwp
             Image image = new Image(ImageSize);
             image.Layers.Add(BitmapLayerFactory.CreateBitmapLayer(id: 1));
 
-            this.editor = new ImageEditor(image, new FakeViewport())
+            this.editor = new ImageEditor(image)
             {
                 ImageDecoder = new FakeImageCodec()
             };

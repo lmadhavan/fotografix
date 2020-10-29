@@ -1,4 +1,5 @@
 ﻿using Fotografix.Editor;
+using Fotografix.Editor.Tools;
 using Fotografix.IO;
 using Fotografix.Uwp.Codecs;
 using Fotografix.Win2D;
@@ -32,10 +33,21 @@ namespace Fotografix.Uwp
 
         private ImageEditor CreateEditor(Viewport viewport, Image image)
         {
-            return new ImageEditor(image, viewport)
+            return new ImageEditor(image)
             {
                 ImageDecoder = imageDecoder,
-                ImageEncoder = imageEncoder
+                ImageEncoder = imageEncoder,
+                Tools = CreateTools(viewport)
+            };
+        }
+
+        private IList<ITool> CreateTools(Viewport viewport)
+        {
+            return new List<ITool>
+            {
+                new HandTool(viewport),
+                new BrushTool() { Size = 5, Color = Color.White },
+                new GradientTool { StartColor = Color.Black, EndColor = Color.White }
             };
         }
     }

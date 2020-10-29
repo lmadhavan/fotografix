@@ -12,7 +12,7 @@ namespace Fotografix.Tests.Uwp
 
         public Task<ImageEditor> ExecuteAsync(Viewport viewport)
         {
-            ImageEditor editor = new ImageEditor(new Image(Size.Empty), viewport);
+            ImageEditor editor = new ImageEditor(new Image(Size.Empty));
             return Task.FromResult(editor);
         }
     }
