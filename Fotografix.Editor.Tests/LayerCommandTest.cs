@@ -13,8 +13,8 @@ namespace Fotografix.Editor
         [SetUp]
         public void SetUp()
         {
-            this.existingLayer = CreateLayer();
-            this.newLayer = CreateLayer();
+            this.existingLayer = new BitmapLayer();
+            this.newLayer = new BitmapLayer();
 
             this.image = new Image(new Size(10, 10));
             image.Layers.Add(existingLayer);
@@ -56,11 +56,6 @@ namespace Fotografix.Editor
 
             command.Undo();
             Assert.That(image.Layers, Is.EqualTo(new Layer[] { existingLayer, newLayer }));
-        }
-
-        private static Layer CreateLayer()
-        {
-            return new BitmapLayer(Bitmap.Empty);
         }
     }
 }

@@ -3,10 +3,8 @@ using System.Drawing;
 
 namespace Fotografix
 {
-    public sealed class Bitmap : INotifyContentChanged
+    public sealed class Bitmap : ImageElement
     {
-        public static readonly Bitmap Empty = new Bitmap(Size.Empty);
-
         public Bitmap(Size size)
         {
             this.Size = size;
@@ -23,8 +21,6 @@ namespace Fotografix
         public Size Size { get; }
         public byte[] Pixels { get; }
 
-        public event EventHandler<ContentChangedEventArgs> ContentChanged;
-
         public byte[] ClonePixels()
         {
             return (byte[])Pixels.Clone();
@@ -39,7 +35,7 @@ namespace Fotografix
 
         public void Invalidate()
         {
-            ContentChanged?.Invoke(this, new ContentChangedEventArgs());
+            RaiseContentChanged(null);
         }
 
         public override string ToString()

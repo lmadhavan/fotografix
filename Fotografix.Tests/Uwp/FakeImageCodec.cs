@@ -13,7 +13,7 @@ namespace Fotografix.Tests.Uwp
 
         public Task<Image> ReadImageAsync(IFile file)
         {
-            BitmapLayer layer = new BitmapLayer(Bitmap.Empty) { Name = file.Name };
+            BitmapLayer layer = new BitmapLayer { Name = file.Name };
             Image image = new Image(layer);
             return Task.FromResult(image);
         }

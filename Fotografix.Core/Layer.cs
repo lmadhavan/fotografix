@@ -2,7 +2,7 @@
 
 namespace Fotografix
 {
-    public abstract class Layer : NotifyPropertyChangedBase
+    public abstract class Layer : ImageElement
     {
         private string name = "";
         private bool visible = true;

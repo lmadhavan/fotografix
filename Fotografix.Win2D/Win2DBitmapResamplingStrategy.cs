@@ -9,7 +9,7 @@ namespace Fotografix.Win2D
         {
             if (newSize == Size.Empty)
             {
-                return Bitmap.Empty;
+                return new Bitmap(Size.Empty);
             }
 
             return new Win2DBitmap(bitmap, CanvasDevice.GetSharedDevice()).Scale(newSize).Source;

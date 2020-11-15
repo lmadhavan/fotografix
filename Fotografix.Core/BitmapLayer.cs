@@ -1,10 +1,15 @@
 ﻿using System;
+using System.Drawing;
 
 namespace Fotografix
 {
     public sealed class BitmapLayer : Layer
     {
         private Bitmap bitmap;
+
+        public BitmapLayer() : this(new Bitmap(Size.Empty))
+        {
+        }
 
         public BitmapLayer(Bitmap bitmap)
         {
@@ -25,7 +30,7 @@ namespace Fotografix
                     throw new ArgumentNullException();
                 }
 
-                SetProperty(ref bitmap, value);
+                SetChild(ref bitmap, value);
             }
         }
 

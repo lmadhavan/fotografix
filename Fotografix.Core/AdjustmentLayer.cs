@@ -6,6 +6,7 @@ namespace Fotografix
     {
         public AdjustmentLayer(Adjustment adjustment)
         {
+            AddChild(adjustment);
             this.Adjustment = adjustment;
         }
 

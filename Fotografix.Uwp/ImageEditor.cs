@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
@@ -24,7 +25,6 @@ namespace Fotografix.Uwp
         private static readonly IDrawingContextFactory DrawingContextFactory = new Win2DDrawingContextFactory();
 
         private readonly Image image;
-        private readonly ImageChangeTracker contentChangeTracker;
 
         private readonly Win2DCompositor compositor;
         private readonly ReversedCollectionView<Layer> layers;
@@ -50,9 +50,7 @@ namespace Fotografix.Uwp
             this.Tools = new List<ITool>();
             this.ActiveLayer = image.Layers.First();
 
-            this.contentChangeTracker = new ImageChangeTracker(image);
-            contentChangeTracker.ContentChanged += OnContentChanged;
-
+            image.ContentChanged += OnContentChanged;
             image.PropertyChanged += OnImagePropertyChanged;
             image.Layers.CollectionChanged += OnLayerCollectionChanged;
         }
@@ -62,7 +60,6 @@ namespace Fotografix.Uwp
             activeLayerViewModel?.Dispose();
             layers.Dispose();
             compositor.Dispose();
-            contentChangeTracker.Dispose();
         }
 
         public IImageDecoder ImageDecoder { get; set; } = NullImageCodec.Instance;
@@ -150,7 +147,7 @@ namespace Fotografix.Uwp
             foreach (var file in files)
             {
                 Image importedImage = await ImageDecoder.ReadImageAsync(file);
-                foreach (Layer layer in importedImage.Layers)
+                foreach (Layer layer in importedImage.DetachLayers())
                 {
                     commands.Add(new AddLayerCommand(image, layer));
                 }
