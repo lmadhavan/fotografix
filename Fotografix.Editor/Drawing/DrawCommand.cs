@@ -18,7 +18,7 @@ namespace Fotografix.Editor.Drawing
 
         public override void Execute()
         {
-            this.oldPixels = bitmap.ClonePixels();
+            this.oldPixels = bitmap.Pixels;
 
             using (IDrawingContext dc = drawingContextFactory.CreateDrawingContext(bitmap))
             {
@@ -28,7 +28,7 @@ namespace Fotografix.Editor.Drawing
 
         public override void Undo()
         {
-            bitmap.SetPixels(oldPixels);
+            bitmap.Pixels = oldPixels;
         }
     }
 }

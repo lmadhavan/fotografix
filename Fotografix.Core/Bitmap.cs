@@ -5,37 +5,32 @@ namespace Fotografix
 {
     public sealed class Bitmap : ImageElement
     {
+        private byte[] pixels;
+
         public Bitmap(Size size)
         {
             this.Size = size;
-            this.Pixels = new byte[BufferLength(size)];
+            this.pixels = new byte[BufferLength(size)];
         }
 
         public Bitmap(Size size, byte[] pixels)
         {
             this.Size = size;
             ValidateBufferLength(pixels);
-            this.Pixels = pixels;
+            this.pixels = pixels;
         }
 
         public Size Size { get; }
-        public byte[] Pixels { get; }
 
-        public byte[] ClonePixels()
+        public byte[] Pixels
         {
-            return (byte[])Pixels.Clone();
-        }
+            get => pixels;
 
-        public void SetPixels(byte[] pixels)
-        {
-            ValidateBufferLength(pixels);
-            Array.Copy(pixels, Pixels, Pixels.Length);
-            Invalidate();
-        }
-
-        public void Invalidate()
-        {
-            RaiseContentChanged(null);
+            set
+            {
+                ValidateBufferLength(value);
+                SetProperty(ref pixels, value);
+            }
         }
 
         public override string ToString()

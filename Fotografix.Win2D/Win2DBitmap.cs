@@ -77,10 +77,7 @@ namespace Fotografix.Win2D
         public void UpdateSource()
         {
             this.updating = true;
-
-            renderTarget.GetPixelBytes(Source.Pixels.AsBuffer());
-            Source.Invalidate();
-
+            Source.Pixels = renderTarget.GetPixelBytes();
             this.updating = false;
         }
 
