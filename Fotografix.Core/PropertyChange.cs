@@ -1,26 +1,52 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection;
 
 namespace Fotografix
 {
-    public sealed class PropertyChange : IChange, IEquatable<PropertyChange>
+    public sealed class PropertyChange : Change, IEquatable<PropertyChange>
     {
-        private readonly object target;
-        private readonly string propertyName;
-        private readonly object oldValue;
-        private readonly object newValue;
-
         public PropertyChange(object target, string propertyName, object oldValue, object newValue)
         {
-            this.target = target;
-            this.propertyName = propertyName;
-            this.oldValue = oldValue;
-            this.newValue = newValue;
+            this.Target = target;
+            this.PropertyName = propertyName;
+            this.OldValue = oldValue;
+            this.NewValue = newValue;
+        }
+
+        public object Target { get; }
+        public string PropertyName { get; }
+        public object OldValue { get; }
+        public object NewValue { get; }
+
+        private PropertyInfo PropertyInfo => Target.GetType().GetProperty(PropertyName);
+
+        public override void Undo()
+        {
+            PropertyInfo.SetValue(Target, OldValue);
+        }
+
+        public override void Redo()
+        {
+            PropertyInfo.SetValue(Target, NewValue);
+        }
+
+        public override bool TryMergeWith(Change previous, out Change result)
+        {
+            if (previous is PropertyChange pc &&
+                pc.Target == this.Target &&
+                pc.PropertyName == this.PropertyName)
+            {
+                result = new PropertyChange(Target, PropertyName, pc.OldValue, this.NewValue);
+                return true;
+            }
+
+            return base.TryMergeWith(previous, out result);
         }
 
         public override string ToString()
         {
-            return $"PropertyChange [{target.GetType().Name}.{propertyName}, oldValue={oldValue}, newValue={newValue}]";
+            return $"PropertyChange [{Target.GetType().Name}.{PropertyName}, oldValue={OldValue}, newValue={NewValue}]";
         }
 
         #region Equals / GetHashCode
@@ -33,19 +59,19 @@ namespace Fotografix
         public bool Equals(PropertyChange other)
         {
             return other != null &&
-                   EqualityComparer<object>.Default.Equals(this.target, other.target) &&
-                   this.propertyName == other.propertyName &&
-                   EqualityComparer<object>.Default.Equals(this.oldValue, other.oldValue) &&
-                   EqualityComparer<object>.Default.Equals(this.newValue, other.newValue);
+                   EqualityComparer<object>.Default.Equals(this.Target, other.Target) &&
+                   this.PropertyName == other.PropertyName &&
+                   EqualityComparer<object>.Default.Equals(this.OldValue, other.OldValue) &&
+                   EqualityComparer<object>.Default.Equals(this.NewValue, other.NewValue);
         }
 
         public override int GetHashCode()
         {
             int hashCode = 1962993936;
-            hashCode = hashCode * -1521134295 + EqualityComparer<object>.Default.GetHashCode(this.target);
-            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(this.propertyName);
-            hashCode = hashCode * -1521134295 + EqualityComparer<object>.Default.GetHashCode(this.oldValue);
-            hashCode = hashCode * -1521134295 + EqualityComparer<object>.Default.GetHashCode(this.newValue);
+            hashCode = hashCode * -1521134295 + EqualityComparer<object>.Default.GetHashCode(this.Target);
+            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(this.PropertyName);
+            hashCode = hashCode * -1521134295 + EqualityComparer<object>.Default.GetHashCode(this.OldValue);
+            hashCode = hashCode * -1521134295 + EqualityComparer<object>.Default.GetHashCode(this.NewValue);
             return hashCode;
         }
 

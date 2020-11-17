@@ -8,11 +8,11 @@ namespace Fotografix
         {
         }
 
-        public ContentChangedEventArgs(IChange change)
+        public ContentChangedEventArgs(Change change)
         {
             this.Change = change;
         }
 
-        public IChange Change { get; }
+        public Change Change { get; }
     }
 }

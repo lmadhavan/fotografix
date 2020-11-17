@@ -12,7 +12,7 @@ namespace Fotografix
         public event PropertyChangedEventHandler PropertyChanged;
         public event EventHandler<ContentChangedEventArgs> ContentChanged;
 
-        protected void RaiseContentChanged(IChange change)
+        protected void RaiseContentChanged(Change change)
         {
             ContentChangedEventArgs args = new ContentChangedEventArgs(change);
             ImageElement element = this;

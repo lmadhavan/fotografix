@@ -3,24 +3,34 @@ using System.Collections.Generic;
 
 namespace Fotografix.Collections
 {
-    public sealed class ReplaceItemChange<T> : IChange, IEquatable<ReplaceItemChange<T>>
+    public sealed class ReplaceItemChange<T> : Change, IEquatable<ReplaceItemChange<T>>
     {
-        private readonly IList<T> list;
-        private readonly int index;
-        private readonly T oldItem;
-        private readonly T newItem;
-
         public ReplaceItemChange(IList<T> list, int index, T oldItem, T newItem)
         {
-            this.list = list;
-            this.index = index;
-            this.oldItem = oldItem;
-            this.newItem = newItem;
+            this.List = list;
+            this.Index = index;
+            this.OldItem = oldItem;
+            this.NewItem = newItem;
+        }
+
+        public IList<T> List { get; }
+        public int Index { get; }
+        public T OldItem { get; }
+        public T NewItem { get; }
+
+        public override void Undo()
+        {
+            List[Index] = OldItem;
+        }
+
+        public override void Redo()
+        {
+            List[Index] = NewItem;
         }
 
         public override string ToString()
         {
-            return $"ReplaceItemChange [list={list}, index={index}, oldItem={oldItem}, newItem={newItem}]";
+            return $"ReplaceItemChange [list={List}, index={Index}, oldItem={OldItem}, newItem={NewItem}]";
         }
 
         #region Equals / GetHashCode
@@ -33,19 +43,19 @@ namespace Fotografix.Collections
         public bool Equals(ReplaceItemChange<T> other)
         {
             return other != null &&
-                   EqualityComparer<IList<T>>.Default.Equals(list, other.list) &&
-                   index == other.index &&
-                   EqualityComparer<T>.Default.Equals(oldItem, other.oldItem) &&
-                   EqualityComparer<T>.Default.Equals(newItem, other.newItem);
+                   EqualityComparer<IList<T>>.Default.Equals(List, other.List) &&
+                   Index == other.Index &&
+                   EqualityComparer<T>.Default.Equals(OldItem, other.OldItem) &&
+                   EqualityComparer<T>.Default.Equals(NewItem, other.NewItem);
         }
 
         public override int GetHashCode()
         {
             int hashCode = -1451364037;
-            hashCode = hashCode * -1521134295 + EqualityComparer<IList<T>>.Default.GetHashCode(list);
-            hashCode = hashCode * -1521134295 + index.GetHashCode();
-            hashCode = hashCode * -1521134295 + EqualityComparer<T>.Default.GetHashCode(oldItem);
-            hashCode = hashCode * -1521134295 + EqualityComparer<T>.Default.GetHashCode(newItem);
+            hashCode = hashCode * -1521134295 + EqualityComparer<IList<T>>.Default.GetHashCode(List);
+            hashCode = hashCode * -1521134295 + Index.GetHashCode();
+            hashCode = hashCode * -1521134295 + EqualityComparer<T>.Default.GetHashCode(OldItem);
+            hashCode = hashCode * -1521134295 + EqualityComparer<T>.Default.GetHashCode(NewItem);
             return hashCode;
         }
 

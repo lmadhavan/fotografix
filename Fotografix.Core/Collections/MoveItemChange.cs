@@ -3,22 +3,36 @@ using System.Collections.Generic;
 
 namespace Fotografix.Collections
 {
-    public sealed class MoveItemChange<T> : IChange, IEquatable<MoveItemChange<T>>
+    public sealed class MoveItemChange<T> : Change, IEquatable<MoveItemChange<T>>
     {
-        private readonly IList<T> list;
-        private readonly int oldIndex;
-        private readonly int newIndex;
-
         public MoveItemChange(IList<T> list, int oldIndex, int newIndex)
         {
-            this.list = list;
-            this.oldIndex = oldIndex;
-            this.newIndex = newIndex;
+            this.List = list;
+            this.OldIndex = oldIndex;
+            this.NewIndex = newIndex;
+        }
+
+        public IList<T> List { get; }
+        public int OldIndex { get; }
+        public int NewIndex { get; }
+
+        public override void Undo()
+        {
+            T item = List[NewIndex];
+            List.RemoveAt(NewIndex);
+            List.Insert(OldIndex, item);
+        }
+
+        public override void Redo()
+        {
+            T item = List[OldIndex];
+            List.RemoveAt(OldIndex);
+            List.Insert(NewIndex, item);
         }
 
         public override string ToString()
         {
-            return $"MoveItemChange [list={list}, oldIndex={oldIndex}, newIndex={newIndex}]";
+            return $"MoveItemChange [list={List}, oldIndex={OldIndex}, newIndex={NewIndex}]";
         }
 
         #region Equals / GetHashCode
@@ -31,17 +45,17 @@ namespace Fotografix.Collections
         public bool Equals(MoveItemChange<T> other)
         {
             return other != null &&
-                   EqualityComparer<IList<T>>.Default.Equals(list, other.list) &&
-                   oldIndex == other.oldIndex &&
-                   newIndex == other.newIndex;
+                   EqualityComparer<IList<T>>.Default.Equals(List, other.List) &&
+                   OldIndex == other.OldIndex &&
+                   NewIndex == other.NewIndex;
         }
 
         public override int GetHashCode()
         {
             int hashCode = 1015106722;
-            hashCode = hashCode * -1521134295 + EqualityComparer<IList<T>>.Default.GetHashCode(list);
-            hashCode = hashCode * -1521134295 + oldIndex.GetHashCode();
-            hashCode = hashCode * -1521134295 + newIndex.GetHashCode();
+            hashCode = hashCode * -1521134295 + EqualityComparer<IList<T>>.Default.GetHashCode(List);
+            hashCode = hashCode * -1521134295 + OldIndex.GetHashCode();
+            hashCode = hashCode * -1521134295 + NewIndex.GetHashCode();
             return hashCode;
         }
 
