@@ -7,7 +7,6 @@ namespace Fotografix.Editor.Drawing
         private readonly Bitmap bitmap;
         private readonly IDrawingContextFactory drawingContextFactory;
         private readonly IDrawable drawable;
-        private byte[] oldPixels;
 
         public DrawCommand(Bitmap bitmap, IDrawingContextFactory drawingContextFactory, IDrawable drawable)
         {
@@ -18,17 +17,10 @@ namespace Fotografix.Editor.Drawing
 
         public override void Execute()
         {
-            this.oldPixels = bitmap.Pixels;
-
             using (IDrawingContext dc = drawingContextFactory.CreateDrawingContext(bitmap))
             {
                 drawable.Draw(dc);
             }
-        }
-
-        public override void Undo()
-        {
-            bitmap.Pixels = oldPixels;
         }
     }
 }

@@ -194,7 +194,7 @@
                     Padding="6"
                     HorizontalContentAlignment="Stretch"
                     ContentTemplate="{StaticResource LayerPropertiesTemplate}"
-                    Content="{x:Bind editor.ActiveLayerPropertyEditor, Mode=OneWay}" />
+                    Content="{x:Bind editor.ActiveLayer, Mode=OneWay}" />
             </Border>
         </StackPanel>
     </Grid>

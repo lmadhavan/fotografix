@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Drawing;
+﻿using System.Drawing;
 
 namespace Fotografix.Editor
 {
@@ -9,9 +8,6 @@ namespace Fotografix.Editor
         private readonly Size newSize;
         private readonly IBitmapResamplingStrategy resamplingStrategy;
 
-        private Size oldSize;
-        private List<Bitmap> oldBitmaps;
-
         public ResampleImageCommand(Image image, Size newSize, IBitmapResamplingStrategy resamplingStrategy)
         {
             this.image = image;
@@ -19,12 +15,9 @@ namespace Fotografix.Editor
             this.resamplingStrategy = resamplingStrategy;
         }
 
-        public override bool IsEffective => image.Size != newSize;
-
         public override void Execute()
         {
-            this.oldSize = image.Size;
-            this.oldBitmaps = new List<Bitmap>();
+            Size oldSize = image.Size;
 
             PointF ratio = new PointF((float)newSize.Width / oldSize.Width,
                                       (float)newSize.Height / oldSize.Height);
@@ -37,30 +30,11 @@ namespace Fotografix.Editor
 
                     Size newSize = new Size((int)(oldBitmap.Size.Width * ratio.X), (int)(oldBitmap.Size.Height * ratio.Y));
                     Bitmap newBitmap = resamplingStrategy.Resample(oldBitmap, newSize);
-
-                    oldBitmaps.Add(oldBitmap);
                     bitmapLayer.Bitmap = newBitmap;
                 }
             }
 
             image.Size = newSize;
         }
-
-        public override void Undo()
-        {
-            IEnumerator<Bitmap> e = oldBitmaps.GetEnumerator();
-
-            foreach (Layer layer in image.Layers)
-            {
-                if (layer is BitmapLayer bitmapLayer)
-                {
-                    e.MoveNext();
-                    bitmapLayer.Bitmap = e.Current;
-                }
-            }
-
-            image.Size = oldSize;
-        }
-
     }
 }

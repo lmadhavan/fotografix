@@ -12,6 +12,8 @@ namespace Fotografix
 
         public Adjustment Adjustment { get; }
 
+        public override ImageElement Content => Adjustment;
+
         public override void Accept(LayerVisitor visitor)
         {
             visitor.Visit(this);

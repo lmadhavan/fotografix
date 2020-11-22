@@ -2,7 +2,7 @@
     x:Class="Fotografix.Uwp.Adjustments.AdjustmentTemplatesResourceDictionary"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:ea="using:Fotografix.Editor.Adjustments"
+    xmlns:a="using:Fotografix.Adjustments"
     xmlns:ui="using:Fotografix.Uwp"
     xmlns:aui="using:Fotografix.Uwp.Adjustments">
 
@@ -18,7 +18,7 @@
         <Setter Property="ThumbToolTipValueConverter" Value="{StaticResource AdjustmentSliderToolTipValueConverter}" />
     </Style>
 
-    <DataTemplate x:Name="hueSaturationTemplate" x:DataType="ea:HueSaturationAdjustmentPropertyEditor">
+    <DataTemplate x:Name="hueSaturationTemplate" x:DataType="a:HueSaturationAdjustment">
         <StackPanel Orientation="Vertical">
             <TextBlock Text="Hue:" />
             <Slider Style="{StaticResource AdjustmentSliderStyle}" Value="{x:Bind Hue, Mode=TwoWay}" />
@@ -29,7 +29,7 @@
         </StackPanel>
     </DataTemplate>
 
-    <DataTemplate x:Name="gradientMapTemplate" x:DataType="ea:GradientMapAdjustmentPropertyEditor">
+    <DataTemplate x:Name="gradientMapTemplate" x:DataType="a:GradientMapAdjustment">
         <StackPanel Orientation="Horizontal">
             <TextBlock Margin="4,0" Text="Shadows:" VerticalAlignment="Center" />
             <ui:ColorPickerButton Margin="0,0,8,0" Color="{x:Bind Shadows, Converter={StaticResource ColorConverter}, Mode=TwoWay}" />
@@ -39,7 +39,7 @@
         </StackPanel>
     </DataTemplate>
 
-    <DataTemplate x:Name="brightnessContrastTemplate" x:DataType="ea:BrightnessContrastAdjustmentPropertyEditor">
+    <DataTemplate x:Name="brightnessContrastTemplate" x:DataType="a:BrightnessContrastAdjustment">
         <StackPanel Orientation="Vertical">
             <TextBlock Text="Brightness:" />
             <Slider Style="{StaticResource AdjustmentSliderStyle}" Value="{x:Bind Brightness, Mode=TwoWay}" />
@@ -48,7 +48,7 @@
         </StackPanel>
     </DataTemplate>
 
-    <DataTemplate x:Name="levelsTemplate" x:DataType="ea:LevelsAdjustmentPropertyEditor">
+    <DataTemplate x:Name="levelsTemplate" x:DataType="a:LevelsAdjustment">
         <StackPanel Orientation="Vertical">
             <TextBlock Margin="0,0,0,16" FontWeight="Bold" Text="Input levels" />
             <Slider Style="{StaticResource AdjustmentSliderStyle}" Header="Black point" Minimum="0" Value="{x:Bind InputBlackPoint, Mode=TwoWay}" />

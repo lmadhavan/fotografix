@@ -4,43 +4,45 @@ namespace Fotografix.Editor
 {
     public sealed class History : NotifyPropertyChangedBase
     {
-        private readonly Stack<Command> undoStack = new Stack<Command>();
-        private readonly Stack<Command> redoStack = new Stack<Command>();
+        private readonly Stack<Change> undoStack = new Stack<Change>();
+        private readonly Stack<Change> redoStack = new Stack<Change>();
 
         public bool CanUndo => undoStack.Count > 0;
         public bool CanRedo => redoStack.Count > 0;
 
-        public void Add(Command command)
+        public void Add(Change change)
         {
-            if (!TryMergeIntoPreviousCommand(command))
-            {
-                undoStack.Push(command);
-            }
-
+            undoStack.Push(GetEffectiveChange(change));
             redoStack.Clear();
             RaiseEvents();
         }
 
-        private bool TryMergeIntoPreviousCommand(Command command)
-        {
-            return undoStack.Count > 0
-                && command.TryMergeInto(undoStack.Peek());
-        }
-
         public void Undo()
         {
-            Command command = undoStack.Pop();
-            command.Undo();
-            redoStack.Push(command);
+            Change change = undoStack.Pop();
+            change.Undo();
+            redoStack.Push(change);
             RaiseEvents();
         }
 
         public void Redo()
         {
-            Command command = redoStack.Pop();
-            command.Execute();
-            undoStack.Push(command);
+            Change change = redoStack.Pop();
+            change.Redo();
+            undoStack.Push(change);
             RaiseEvents();
+        }
+
+        private Change GetEffectiveChange(Change change)
+        {
+            if (undoStack.Count > 0 &&
+                change.TryMergeWith(undoStack.Peek(), out Change result))
+            {
+                undoStack.Pop();
+                return result;
+            }
+
+            return change;
         }
 
         private void RaiseEvents()

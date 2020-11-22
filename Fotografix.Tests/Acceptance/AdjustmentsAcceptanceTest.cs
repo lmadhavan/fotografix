@@ -1,6 +1,4 @@
 ﻿using Fotografix.Adjustments;
-using Fotografix.Editor.Adjustments;
-using Fotografix.Editor.PropertyModel;
 using Fotografix.Uwp.Adjustments;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
@@ -20,10 +18,6 @@ namespace Fotografix.Tests.Acceptance
             AddAdjustmentLayer<BlackAndWhiteAdjustment>();
 
             await AssertImageAsync("flowers_bw.png");
-
-            Undo();
-
-            await AssertImageAsync("flowers.jpg");
         }
 
         [TestMethod]
@@ -32,17 +26,13 @@ namespace Fotografix.Tests.Acceptance
             await OpenImageAsync("flowers.jpg");
 
             AddAdjustmentLayer<BrightnessContrastAdjustment>();
-            SetAdjustmentProperties<BrightnessContrastAdjustmentPropertyEditor>(p =>
+            SetAdjustmentProperties<BrightnessContrastAdjustment>(p =>
             {
                 p.Brightness = 0.5f;
                 p.Contrast = 0.5f;
             });
 
             await AssertImageAsync("flowers_bc.png");
-
-            Undo(times: 2);
-
-            await AssertImageAsync("flowers.jpg");
         }
 
         [TestMethod]
@@ -51,18 +41,13 @@ namespace Fotografix.Tests.Acceptance
             await OpenImageAsync("flowers.jpg");
 
             AddAdjustmentLayer<GradientMapAdjustment>();
-            SetAdjustmentProperties<GradientMapAdjustmentPropertyEditor>(p =>
+            SetAdjustmentProperties<GradientMapAdjustment>(p =>
             {
                 p.Shadows = Color.FromArgb(255, 12, 16, 68);
                 p.Highlights = Color.FromArgb(255, 233, 88, 228);
             });
 
             await AssertImageAsync("flowers_gm.png");
-
-            Undo(times: 2);
-
-            //FIXME (issue #17)
-            //await AssertImageAsync("flowers.jpg");
         }
 
         [TestMethod]
@@ -71,7 +56,7 @@ namespace Fotografix.Tests.Acceptance
             await OpenImageAsync("flowers.jpg");
 
             AddAdjustmentLayer<HueSaturationAdjustment>();
-            SetAdjustmentProperties<HueSaturationAdjustmentPropertyEditor>(p =>
+            SetAdjustmentProperties<HueSaturationAdjustment>(p =>
             {
                 p.Hue = 0.5f;
                 p.Saturation = 0.25f;
@@ -79,10 +64,6 @@ namespace Fotografix.Tests.Acceptance
             });
 
             await AssertImageAsync("flowers_hsl.png");
-
-            Undo(times: 3);
-
-            await AssertImageAsync("flowers.jpg");
         }
 
         [TestMethod]
@@ -91,7 +72,7 @@ namespace Fotografix.Tests.Acceptance
             await OpenImageAsync("flowers.jpg");
 
             AddAdjustmentLayer<LevelsAdjustment>();
-            SetAdjustmentProperties<LevelsAdjustmentPropertyEditor>(p =>
+            SetAdjustmentProperties<LevelsAdjustment>(p =>
             {
                 p.InputBlackPoint = 0.2f;
                 p.InputWhitePoint = 0.8f;
@@ -101,10 +82,6 @@ namespace Fotografix.Tests.Acceptance
             });
 
             await AssertImageAsync("flowers_levels.png");
-
-            Undo(times: 5);
-
-            await AssertImageAsync("flowers.jpg");
         }
 
         private void AddAdjustmentLayer<T>() where T : Adjustment, new()
@@ -112,11 +89,11 @@ namespace Fotografix.Tests.Acceptance
             Editor.AddAdjustmentLayer(new AdjustmentLayerFactory<T>(""));
         }
 
-        private void SetAdjustmentProperties<T>(Action<T> action) where T : IPropertyEditor
+        private void SetAdjustmentProperties<T>(Action<T> action) where T : Adjustment
         {
-            T propertyEditor = (T)Editor.ActiveLayerPropertyEditor.AdjustmentPropertyEditor;
-            Assert.IsNotNull(propertyEditor, typeof(T).Name);
-            action(propertyEditor);
+            T adjustment = (T)Editor.ActiveLayer.Content;
+            Assert.IsNotNull(adjustment, typeof(T).Name);
+            action(adjustment);
         }
     }
 }

@@ -26,10 +26,6 @@ namespace Fotografix.Tests.Acceptance
             ContinueDraggingAndReleasePointer(new Point(300, 300));
 
             await AssertImageAsync("gradient.png");
-
-            Undo();
-
-            await AssertImageAsync("flowers.jpg");
         }
 
         private void ConfigureGradientTool(Color startColor, Color endColor)

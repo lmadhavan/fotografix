@@ -1,4 +1,5 @@
-﻿using Fotografix.IO;
+﻿using Fotografix.Editor;
+using Fotografix.IO;
 using Fotografix.Uwp;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Drawing;
@@ -11,12 +12,13 @@ namespace Fotografix.Tests.Uwp
     {
         private static readonly Size ImageSize = new Size(10, 10);
 
+        private Image image;
         private ImageEditor editor;
 
         [TestInitialize]
         public void Initialize()
         {
-            Image image = new Image(ImageSize);
+            this.image = new Image(ImageSize);
             image.Layers.Add(BitmapLayerFactory.CreateBitmapLayer(id: 1));
 
             this.editor = new ImageEditor(image)
@@ -92,6 +94,36 @@ namespace Fotografix.Tests.Uwp
             editor.ResizeImage(parameters);
 
             Assert.AreEqual(newImageSize, editor.Size, "Image should have new size after resizing");
+        }
+
+        [TestMethod]
+        public void GroupsChangesProducedByCommand()
+        {
+            editor.Execute(new FakeCommand(image, numberOfChanges: 3));
+
+            editor.Undo();
+
+            Assert.IsFalse(editor.CanUndo);
+        }
+
+        private sealed class FakeCommand : Command
+        {
+            private readonly Image image;
+            private readonly int numberOfChanges;
+
+            public FakeCommand(Image image, int numberOfChanges)
+            {
+                this.image = image;
+                this.numberOfChanges = numberOfChanges;
+            }
+
+            public override void Execute()
+            {
+                for (int i = 0; i < numberOfChanges; i++)
+                {
+                    image.Layers.Add(new BitmapLayer());
+                }
+            }
         }
     }
 }

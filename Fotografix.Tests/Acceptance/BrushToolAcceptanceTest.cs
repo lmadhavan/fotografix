@@ -30,10 +30,6 @@ namespace Fotografix.Tests.Acceptance
             );
 
             await AssertImageAsync("flowers_brush.png");
-
-            Undo();
-
-            await AssertImageAsync("flowers.jpg");
         }
 
         private void ConfigureBrushTool(int size, Color color)

@@ -27,10 +27,8 @@ namespace Fotografix.Editor
             Command command = new ResampleImageCommand(image, NewImageSize, resamplingStrategy.Object);
 
             command.Execute();
-            Assert.That(image.Size, Is.EqualTo(NewImageSize));
 
-            command.Undo();
-            Assert.That(image.Size, Is.EqualTo(OriginalImageSize));
+            Assert.That(image.Size, Is.EqualTo(NewImageSize));
         }
 
         [Test]
@@ -50,10 +48,8 @@ namespace Fotografix.Editor
             resamplingStrategy.Setup(rs => rs.Resample(originalBitmap, expectedNewBitmapSize)).Returns(newBitmap);
 
             command.Execute();
-            Assert.That(layer.Bitmap, Is.EqualTo(newBitmap));
 
-            command.Undo();
-            Assert.That(layer.Bitmap, Is.EqualTo(originalBitmap));
+            Assert.That(layer.Bitmap, Is.EqualTo(newBitmap));
         }
     }
 }

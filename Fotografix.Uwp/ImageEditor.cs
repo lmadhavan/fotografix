@@ -2,8 +2,6 @@
 using Fotografix.Editor;
 using Fotografix.Editor.Collections;
 using Fotografix.Editor.Drawing;
-using Fotografix.Editor.Layers;
-using Fotografix.Editor.PropertyModel;
 using Fotografix.Editor.Tools;
 using Fotografix.IO;
 using Fotografix.Uwp.Adjustments;
@@ -13,7 +11,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
@@ -29,23 +26,21 @@ namespace Fotografix.Uwp
         private readonly Win2DCompositor compositor;
         private readonly ReversedCollectionView<Layer> layers;
         private readonly History history;
-        private readonly IPropertySetter propertySetter;
 
         private Layer activeLayer;
-        private LayerPropertyEditor activeLayerViewModel;
+
+        private List<Change> changeGroup;
+        private bool ignoreChanges;
 
         public ImageEditor(Image image)
         {
             this.image = image;
             this.compositor = new Win2DCompositor(image, 8);
 
-            ReorderAwareCollectionView<Layer> reorderAwareCollectionView = new ReorderAwareCollectionView<Layer>(image.Layers);
-            reorderAwareCollectionView.ItemReordered += OnLayerReordered;
-            this.layers = new ReversedCollectionView<Layer>(reorderAwareCollectionView);
+            this.layers = new ReversedCollectionView<Layer>(image.Layers);
 
             this.history = new History();
             history.PropertyChanged += OnHistoryPropertyChanged;
-            this.propertySetter = new UndoablePropertySetter(history);
 
             this.Tools = new List<ITool>();
             this.ActiveLayer = image.Layers.First();
@@ -57,7 +52,6 @@ namespace Fotografix.Uwp
 
         public void Dispose()
         {
-            activeLayerViewModel?.Dispose();
             layers.Dispose();
             compositor.Dispose();
         }
@@ -75,12 +69,28 @@ namespace Fotografix.Uwp
 
         public void Undo()
         {
-            history.Undo();
+            try
+            {
+                this.ignoreChanges = true;
+                history.Undo();
+            }
+            finally
+            {
+                this.ignoreChanges = false;
+            }
         }
 
         public void Redo()
         {
-            history.Redo();
+            try
+            {
+                this.ignoreChanges = true;
+                history.Redo();
+            }
+            finally
+            {
+                this.ignoreChanges = false;
+            }
         }
 
         #endregion
@@ -100,18 +110,10 @@ namespace Fotografix.Uwp
             {
                 if (value != null && SetProperty(ref activeLayer, value))
                 {
-                    activeLayerViewModel?.Dispose();
-                    this.ActiveLayerPropertyEditor = activeLayer == null ? null : new LayerPropertyEditor(activeLayer, propertySetter);
                     RaisePropertyChanged(nameof(CanDeleteActiveLayer));
                     NotifyDrawingSurfaceListener();
                 }
             }
-        }
-
-        public LayerPropertyEditor ActiveLayerPropertyEditor
-        {
-            get => activeLayerViewModel;
-            private set => SetProperty(ref activeLayerViewModel, value);
         }
 
         public event EventHandler Invalidated;
@@ -124,20 +126,20 @@ namespace Fotografix.Uwp
         public void AddLayer()
         {
             Layer layer = BitmapLayerFactory.CreateBitmapLayer(id: image.Layers.Count + 1);
-            Execute(new AddLayerCommand(image, layer));
+            image.Layers.Add(layer);
         }
 
         public void AddAdjustmentLayer(IAdjustmentLayerFactory adjustmentLayerFactory)
         {
             Layer layer = adjustmentLayerFactory.CreateAdjustmentLayer();
-            Execute(new AddLayerCommand(image, layer));
+            image.Layers.Add(layer);
         }
 
         public bool CanDeleteActiveLayer => activeLayer != image.Layers[0];
 
         public void DeleteActiveLayer()
         {
-            Execute(new RemoveLayerCommand(image, activeLayer));
+            image.Layers.Remove(activeLayer);
         }
 
         public async Task ImportLayersAsync(IEnumerable<IFile> files)
@@ -149,11 +151,9 @@ namespace Fotografix.Uwp
                 Image importedImage = await ImageDecoder.ReadImageAsync(file);
                 foreach (Layer layer in importedImage.DetachLayers())
                 {
-                    commands.Add(new AddLayerCommand(image, layer));
+                    image.Layers.Add(layer);
                 }
             }
-
-            Execute(new CompositeCommand(commands));
         }
 
         public ResizeImageParameters CreateResizeImageParameters()
@@ -247,16 +247,16 @@ namespace Fotografix.Uwp
 
         public void Execute(Command command)
         {
-            if (command.IsEffective)
+            try
             {
+                this.changeGroup = new List<Change>();
                 command.Execute();
-                history.Add(command);
             }
-        }
-
-        private void OnLayerReordered(object sender, ItemReorderedEventArgs args)
-        {
-            history.Add(new ReorderLayerCommand(image, args.OldIndex, args.NewIndex));
+            finally
+            {
+                history.Add(new CompositeChange(changeGroup));
+                this.changeGroup = null;
+            }
         }
 
         private void OnHistoryPropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -266,6 +266,18 @@ namespace Fotografix.Uwp
 
         private void OnContentChanged(object sender, ContentChangedEventArgs e)
         {
+            if (e.Change != null && !ignoreChanges)
+            {
+                if (changeGroup != null)
+                {
+                    changeGroup.Add(e.Change);
+                }
+                else
+                {
+                    history.Add(e.Change);
+                }
+            }
+
             Invalidated?.Invoke(this, EventArgs.Empty);
         }
 

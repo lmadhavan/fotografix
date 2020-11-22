@@ -1,5 +1,4 @@
 ﻿using Fotografix.Adjustments;
-using Fotografix.Editor.Adjustments;
 using Windows.UI.Xaml.Controls;
 
 namespace Fotografix.Uwp.Adjustments
@@ -18,10 +17,10 @@ namespace Fotografix.Uwp.Adjustments
             RegisterAdjustment<LevelsAdjustment>("Levels");
 
             // adjustment property templates
-            adjustmentTemplateSelector.SetTemplate<BrightnessContrastAdjustmentPropertyEditor>(brightnessContrastTemplate);
-            adjustmentTemplateSelector.SetTemplate<GradientMapAdjustmentPropertyEditor>(gradientMapTemplate);
-            adjustmentTemplateSelector.SetTemplate<HueSaturationAdjustmentPropertyEditor>(hueSaturationTemplate);
-            adjustmentTemplateSelector.SetTemplate<LevelsAdjustmentPropertyEditor>(levelsTemplate);
+            adjustmentTemplateSelector.SetTemplate<BrightnessContrastAdjustment>(brightnessContrastTemplate);
+            adjustmentTemplateSelector.SetTemplate<GradientMapAdjustment>(gradientMapTemplate);
+            adjustmentTemplateSelector.SetTemplate<HueSaturationAdjustment>(hueSaturationTemplate);
+            adjustmentTemplateSelector.SetTemplate<LevelsAdjustment>(levelsTemplate);
         }
 
         private void RegisterAdjustment<T>(string name) where T : Adjustment, new()

@@ -7,11 +7,18 @@ namespace Fotografix.Uwp
 {
     public sealed class TypeBasedTemplateSelector : DataTemplateSelector
     {
+        private static readonly DataTemplate EmptyTemplate = new DataTemplate();
+
         private readonly Dictionary<Type, DataTemplate> templates = new Dictionary<Type, DataTemplate>();
 
         protected override DataTemplate SelectTemplateCore(object item)
         {
-            return item == null ? null : templates[item.GetType()];
+            if (item == null)
+            {
+                return null;
+            }
+
+            return templates.GetValueOrDefault(item.GetType(), EmptyTemplate);
         }
 
         protected override DataTemplate SelectTemplateCore(object item, DependencyObject container)

@@ -1,4 +1,5 @@
 ﻿using NUnit.Framework;
+using System.Collections.Generic;
 
 namespace Fotografix.Editor
 {
@@ -14,55 +15,57 @@ namespace Fotografix.Editor
         }
 
         [Test]
-        public void UndoesAndRedoesCommand()
+        public void UndoesAndRedoesChange()
         {
-            FakeCommand command = new FakeCommand();
+            FakeChange change = new FakeChange();
 
             AssertHistoryState(history, canUndo: false, canRedo: false);
 
-            history.Add(command);
+            history.Add(change);
 
             AssertHistoryState(history, canUndo: true, canRedo: false);
-            AssertCommandState(command, undoCount: 0, executeCount: 0);
+            AssertChangeState(change, undoCount: 0, redoCount: 0);
 
             history.Undo();
 
             AssertHistoryState(history, canUndo: false, canRedo: true);
-            AssertCommandState(command, undoCount: 1, executeCount: 0);
+            AssertChangeState(change, undoCount: 1, redoCount: 0);
 
             history.Redo();
 
             AssertHistoryState(history, canUndo: true, canRedo: false);
-            AssertCommandState(command, undoCount: 1, executeCount: 1);
+            AssertChangeState(change, undoCount: 1, redoCount: 1);
         }
 
         [Test]
-        public void AddingNewCommandClearsRedoStack()
+        public void ClearsRedoStackWhenAddingNewChange()
         {
-            history.Add(new FakeCommand());
+            history.Add(new FakeChange());
             history.Undo();
-            history.Add(new FakeCommand());
+            history.Add(new FakeChange());
 
             AssertHistoryState(history, canUndo: true, canRedo: false);
         }
 
         [Test]
-        public void MergesNewCommandIntoExistingCommandIfPossible()
+        public void MergesChangesIfPossible()
         {
-            FakeCommand existingCommand = new FakeCommand();
-            history.Add(existingCommand);
+            FakeChange existingChange = new FakeChange();
+            FakeChange newChange = new FakeChange();
+            FakeChange mergedChange = new FakeChange();
+            newChange.MergeResult = mergedChange;
 
-            FakeCommand newCommand = new FakeCommand() { CanMerge = true };
-            history.Add(newCommand);
+            history.Add(existingChange);
+            history.Add(newChange);
 
-            AssertHistoryState(history, canUndo: true, canRedo: false);
-            AssertCommandState(existingCommand, undoCount: 0, executeCount: 0, mergeCount: 1);
+            Assert.That(newChange.MergedChanges, Is.EqualTo(new List<Change> { existingChange }));
 
             history.Undo();
 
             AssertHistoryState(history, canUndo: false, canRedo: true);
-            AssertCommandState(existingCommand, undoCount: 1, executeCount: 0, mergeCount: 1);
-            AssertCommandState(newCommand, undoCount: 0, executeCount: 0, mergeCount: 0);
+            AssertChangeState(mergedChange, undoCount: 1, redoCount: 0);
+            AssertChangeState(existingChange, undoCount: 0, redoCount: 0);
+            AssertChangeState(newChange, undoCount: 0, redoCount: 0);
         }
 
         private void AssertHistoryState(History history, bool canUndo, bool canRedo)
@@ -71,39 +74,35 @@ namespace Fotografix.Editor
             Assert.AreEqual(canRedo, history.CanRedo, "CanRedo");
         }
 
-        private void AssertCommandState(FakeCommand command, int undoCount, int executeCount, int mergeCount = 0)
+        private void AssertChangeState(FakeChange change, int undoCount, int redoCount)
         {
-            Assert.AreEqual(undoCount, command.UndoCount, "UndoCount");
-            Assert.AreEqual(executeCount, command.ExecuteCount, "ExecuteCount");
-            Assert.AreEqual(mergeCount, command.MergeCount, "MergeCount");
+            Assert.AreEqual(undoCount, change.UndoCount, "UndoCount");
+            Assert.AreEqual(redoCount, change.RedoCount, "RedoCount");
         }
 
-        private sealed class FakeCommand : Command
+        private sealed class FakeChange : Change
         {
-            public int ExecuteCount { get; private set; }
             public int UndoCount { get; private set; }
-            public int MergeCount { get; private set; }
-            public bool CanMerge { get; set; }
+            public int RedoCount { get; private set; }
 
-            public override void Execute()
-            {
-                ExecuteCount++;
-            }
+            public List<Change> MergedChanges { get; } = new List<Change>();
+            public Change MergeResult { get; set; }
 
             public override void Undo()
             {
                 UndoCount++;
             }
 
-            public override bool TryMergeInto(Command command)
+            public override void Redo()
             {
-                if (CanMerge)
-                {
-                    ((FakeCommand)command).MergeCount++;
-                    return true;
-                }
+                RedoCount++;
+            }
 
-                return false;
+            public override bool TryMergeWith(Change previous, out Change result)
+            {
+                MergedChanges.Add(previous);
+                result = MergeResult;
+                return result != null;
             }
         }
     }
