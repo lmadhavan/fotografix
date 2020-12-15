@@ -5,6 +5,11 @@
         Disabled,
         Crosshair,
         OpenHand,
-        ClosedHand
+        ClosedHand,
+        Move,
+        SizeNortheastSouthwest,
+        SizeNorthSouth,
+        SizeNorthwestSoutheast,
+        SizeWestEast
     }
 }
