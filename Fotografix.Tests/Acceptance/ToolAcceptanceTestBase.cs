@@ -10,7 +10,7 @@ namespace Fotografix.Tests.Acceptance
     {
         private ITool ActiveTool => Editor.ActiveTool;
 
-        protected void SelectTool(string name)
+        protected ITool SelectTool(string name)
         {
             ITool tool = Editor.Tools.FirstOrDefault(t => t.Name == name);
 
@@ -20,17 +20,22 @@ namespace Fotografix.Tests.Acceptance
             }
             
             Editor.ActiveTool = tool;
+            return tool;
         }
 
         protected TControls SelectTool<TControls>(string name)
         {
-            SelectTool(name);
-            return (TControls)ActiveTool;
+            return (TControls)SelectTool(name);
         }
 
-        protected void AssertToolCursor(ToolCursor expected)
+        protected void AssertToolCursor(ToolCursor expected, string message = "")
         {
-            Assert.AreEqual(expected, ActiveTool.Cursor);
+            Assert.AreEqual(expected, ActiveTool.Cursor, message);
+        }
+
+        protected void MovePointer(Point pt)
+        {
+            ActiveTool.PointerMoved(new PointerState(pt));
         }
 
         protected void DragAndReleasePointer(Point start, params Point[] points)

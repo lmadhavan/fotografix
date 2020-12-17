@@ -2,6 +2,6 @@
 {
     public interface ICropToolControls
     {
-        void Apply();
+        void Commit();
     }
 }

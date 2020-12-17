@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 
 namespace Fotografix
 {
@@ -8,6 +9,7 @@ namespace Fotografix
         private bool visible = true;
         private BlendMode blendMode = BlendMode.Normal;
         private float opacity = 1;
+        private Point position = Point.Empty;
 
         internal Layer()
         {
@@ -72,6 +74,19 @@ namespace Fotografix
                 }
 
                 SetProperty(ref opacity, value);
+            }
+        }
+
+        public Point Position
+        {
+            get
+            {
+                return position;
+            }
+
+            set
+            {
+                SetProperty(ref position, value);
             }
         }
 

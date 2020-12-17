@@ -166,6 +166,7 @@
     <Content Include="Images\flowers_brush_preview.png" />
     <Content Include="Images\flowers_bw_multiply_opacity50.png" />
     <Content Include="Images\flowers_bw_opacity50.png" />
+    <Content Include="Images\flowers_crop.png" />
     <Content Include="Images\flowers_gm.png" />
     <Content Include="Images\flowers_hsl.png" />
     <Content Include="Images\flowers_bw_multiply.png" />

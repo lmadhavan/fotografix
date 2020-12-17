@@ -14,7 +14,7 @@ namespace Fotografix.Tests
         public static async Task CaptureToTempFolderAsync(this Bitmap bitmap, string filename)
         {
             var folder = ApplicationData.Current.TemporaryFolder;
-            var file = await folder.CreateFileAsync(filename, CreationCollisionOption.GenerateUniqueName);
+            var file = await folder.CreateFileAsync(filename, CreationCollisionOption.ReplaceExisting);
 
             using (var stream = await file.OpenAsync(FileAccessMode.ReadWrite))
             {

@@ -1,4 +1,5 @@
 ﻿using Fotografix.Editor;
+using Fotografix.Editor.Crop;
 using Fotografix.Editor.Drawing;
 using Fotografix.Editor.Tools;
 using Fotografix.IO;
@@ -20,6 +21,7 @@ namespace Fotografix.Uwp
         {
             handlerCollection.Register(new ResampleImageCommandHandler(new Win2DBitmapResamplingStrategy()));
             handlerCollection.Register(new DrawCommandHandler(new Win2DDrawingContextFactory()));
+            handlerCollection.Register(new CropCommandHandler());
         }
 
         public IEnumerable<FileFormat> SupportedOpenFormats => imageDecoder.SupportedFileFormats;
@@ -57,7 +59,8 @@ namespace Fotografix.Uwp
             {
                 new HandTool(viewport),
                 new BrushTool() { Size = 5, Color = Color.White },
-                new GradientTool { StartColor = Color.Black, EndColor = Color.White }
+                new GradientTool { StartColor = Color.Black, EndColor = Color.White },
+                new CropTool()
             };
         }
     }

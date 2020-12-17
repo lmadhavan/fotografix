@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 
 namespace Fotografix.Tests.Acceptance
 {
-    [Ignore]
     [TestClass]
     public class CropToolAcceptanceTest : ToolAcceptanceTestBase
     {
@@ -16,23 +15,21 @@ namespace Fotografix.Tests.Acceptance
             
             var cropControls = SelectTool<ICropToolControls>("Crop");
 
-            // move top-left handle inwards
+            // drag top-left handle inwards
             DragAndReleasePointer(
                 new Point(0, 0),
                 new Point(100, 100)
             );
 
-            // move bottom-right handle inwards
+            // drag bottom-right handle inwards
             DragAndReleasePointer(
                 new Point(320, 480),
                 new Point(200, 200)
             );
 
-            await SaveToTempFolderAsync("flowers_crop_preview.png");
+            cropControls.Commit();
 
-            cropControls.Apply();
-
-            await SaveToTempFolderAsync("flowers_crop.png");
+            await AssertImageAsync("flowers_crop.png");
         }
     }
 }

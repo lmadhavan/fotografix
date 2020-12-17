@@ -2,6 +2,7 @@
 using Microsoft.Graphics.Canvas.Effects;
 using System.ComponentModel;
 using System.Drawing;
+using System.Numerics;
 
 namespace Fotografix.Win2D.Composition
 {
@@ -9,25 +10,29 @@ namespace Fotografix.Win2D.Composition
     {
         private readonly BitmapLayer layer;
         private readonly OpacityEffect opacityEffect;
+        private readonly Transform2DEffect transformEffect;
         private readonly CompositeEffectNode compositeEffectNode;
         private Win2DBitmap bitmap;
 
         public BitmapLayerNode(BitmapLayer layer, ICompositionRoot root) : base(layer, root)
         {
             this.layer = layer;
-            layer.PropertyChanged += OnLayerPropertyChanged;
+            layer.PropertyChanged += Layer_PropertyChanged;
 
             this.opacityEffect = new OpacityEffect();
-
+            this.transformEffect = new Transform2DEffect();
             this.compositeEffectNode = new CompositeEffectNode();
+
             UpdateBitmap();
+            UpdateTransform();
         }
 
         public override void Dispose()
         {
             compositeEffectNode.Dispose();
+            transformEffect.Dispose();
             opacityEffect.Dispose();
-            layer.PropertyChanged -= OnLayerPropertyChanged;
+            layer.PropertyChanged -= Layer_PropertyChanged;
             bitmap.Dispose();
             base.Dispose();
         }
@@ -41,19 +46,19 @@ namespace Fotografix.Win2D.Composition
                 return background;
             }
 
-            ICanvasImage bitmapWithOpacity = ApplyOpacityToBitmap();
+            transformEffect.Source = ApplyOpacityToBitmap();
 
             if (background == null)
             {
-                return bitmapWithOpacity;
+                return transformEffect;
             }
 
             if (layer.BlendMode == BlendMode.Normal)
             {
-                return compositeEffectNode.ResolveOutput(bitmapWithOpacity, background);
+                return compositeEffectNode.ResolveOutput(transformEffect, background);
             }
 
-            return Blend(bitmapWithOpacity, background);
+            return Blend(transformEffect, background);
         }
 
         private ICanvasImage ApplyOpacityToBitmap()
@@ -68,11 +73,17 @@ namespace Fotografix.Win2D.Composition
             return opacityEffect;
         }
 
-        private void OnLayerPropertyChanged(object sender, PropertyChangedEventArgs e)
+        private void Layer_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == nameof(BitmapLayer.Bitmap))
+            switch (e.PropertyName)
             {
-                UpdateBitmap();
+                case nameof(BitmapLayer.Bitmap):
+                    UpdateBitmap();
+                    break;
+
+                case nameof(Layer.Position):
+                    UpdateTransform();
+                    break;
             }
         }
 
@@ -81,6 +92,11 @@ namespace Fotografix.Win2D.Composition
             bitmap?.Dispose();
             this.bitmap = new Win2DBitmap(layer.Bitmap, Root.ResourceCreator);
             UpdateOutput();
+        }
+
+        private void UpdateTransform()
+        {
+            transformEffect.TransformMatrix = Matrix3x2.CreateTranslation(layer.Position.X, layer.Position.Y);
         }
     }
 }
