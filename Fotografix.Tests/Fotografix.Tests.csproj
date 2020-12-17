@@ -147,6 +147,7 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="Uwp\RecentFileListTest.cs" />
+    <Compile Include="Uwp\ToolAdapterTest.cs" />
     <Compile Include="Uwp\WindowsImageCodecTest.cs" />
   </ItemGroup>
   <ItemGroup>

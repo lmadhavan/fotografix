@@ -11,12 +11,17 @@ namespace Fotografix.Uwp
 {
     public sealed class ToolAdapter
     {
-        private static readonly Dictionary<ToolCursor, CoreCursor> CursorMap = new Dictionary<ToolCursor, CoreCursor>
+        public static readonly Dictionary<ToolCursor, CoreCursor> CursorMap = new Dictionary<ToolCursor, CoreCursor>
         {
             [ToolCursor.Disabled] = new CoreCursor(CoreCursorType.UniversalNo, 0),
             [ToolCursor.Crosshair] = new CoreCursor(CoreCursorType.Cross, 0),
             [ToolCursor.OpenHand] = new CoreCursor(CoreCursorType.Custom, 101),
-            [ToolCursor.ClosedHand] = new CoreCursor(CoreCursorType.Custom, 102)
+            [ToolCursor.ClosedHand] = new CoreCursor(CoreCursorType.Custom, 102),
+            [ToolCursor.Move] = new CoreCursor(CoreCursorType.SizeAll, 0),
+            [ToolCursor.SizeNortheastSouthwest] = new CoreCursor(CoreCursorType.SizeNortheastSouthwest, 0),
+            [ToolCursor.SizeNorthSouth] = new CoreCursor(CoreCursorType.SizeNorthSouth, 0),
+            [ToolCursor.SizeNorthwestSoutheast] = new CoreCursor(CoreCursorType.SizeNorthwestSoutheast, 0),
+            [ToolCursor.SizeWestEast] = new CoreCursor(CoreCursorType.SizeWestEast, 0),
         };
 
         private readonly CoreWindow window;

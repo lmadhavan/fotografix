@@ -134,13 +134,15 @@ namespace Fotografix.Win2D.Composition
             Rectangle? rect = image.GetCropPreview();
             cropPreviewNode?.Dispose();
 
-            if (rect == null)
+            if (rect != null)
+            {
+                this.cropPreviewNode = new CropPreviewNode(root.ResourceCreator, image.Size, rect.Value);
+            }
+            else
             {
                 this.cropPreviewNode = null;
-                return;
             }
 
-            this.cropPreviewNode = new CropPreviewNode(root.ResourceCreator, image.Size, rect.Value);
             root.Invalidate();
         }
 

@@ -29,6 +29,12 @@
         </StackPanel>
     </DataTemplate>
 
+    <DataTemplate x:Name="cropControlsTemplate" x:DataType="et:ICropToolControls">
+        <StackPanel Orientation="Horizontal">
+            <Button Content="Apply" Click="{x:Bind Commit}" />
+        </StackPanel>
+    </DataTemplate>
+
     <DataTemplate x:Name="gradientControlsTemplate" x:DataType="et:IGradientToolControls">
         <StackPanel Orientation="Horizontal">
             <TextBlock Text="Start:" VerticalAlignment="Center" Margin="8,0" />
