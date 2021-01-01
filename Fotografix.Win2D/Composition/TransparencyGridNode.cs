@@ -11,9 +11,9 @@ namespace Fotografix.Win2D.Composition
         private readonly CanvasCommandList gridTile;
         private readonly TileEffect tileEffect;
 
-        public TransparencyGridNode(int gridSize)
+        public TransparencyGridNode(int gridSize, ICanvasResourceCreator resourceCreator)
         {
-            this.gridTile = new CanvasCommandList(CanvasDevice.GetSharedDevice());
+            this.gridTile = new CanvasCommandList(resourceCreator);
             using (CanvasDrawingSession ds = gridTile.CreateDrawingSession())
             {
                 ds.Clear(Colors.White);

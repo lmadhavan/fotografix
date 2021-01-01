@@ -14,14 +14,14 @@ namespace Fotografix.Win2D.Composition
         private readonly CompositeEffectNode compositeEffectNode;
         private CanvasCommandList commandList;
 
-        internal DrawableNode(IDrawable drawable, Rectangle bounds)
+        internal DrawableNode(IDrawable drawable, Rectangle bounds, ICanvasResourceCreator resourceCreator)
         {
             this.drawable = drawable;
             drawable.ContentChanged += OnContentChanged;
 
             this.bounds = bounds;
 
-            this.resourceCreator = CanvasDevice.GetSharedDevice();
+            this.resourceCreator = resourceCreator;
             this.compositeEffectNode = new CompositeEffectNode();
             UpdateCommandList();
         }

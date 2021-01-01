@@ -79,7 +79,7 @@ namespace Fotografix.Win2D.Composition
         private void UpdateBitmap()
         {
             bitmap?.Dispose();
-            this.bitmap = new Win2DBitmap(layer.Bitmap, CanvasDevice.GetSharedDevice());
+            this.bitmap = new Win2DBitmap(layer.Bitmap, Root.ResourceCreator);
             UpdateOutput();
         }
     }
