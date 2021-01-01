@@ -12,7 +12,7 @@ namespace Fotografix.Win2D.Composition
         private readonly CrossFadeEffect crossFadeEffect;
         private AdjustmentNode adjustmentNode;
 
-        public AdjustmentLayerNode(AdjustmentLayer layer) : base(layer)
+        public AdjustmentLayerNode(AdjustmentLayer layer, ICompositionRoot root) : base(layer, root)
         {
             this.layer = layer;
             this.crossFadeEffect = new CrossFadeEffect();

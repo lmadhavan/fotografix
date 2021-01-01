@@ -9,22 +9,25 @@ namespace Fotografix.Win2D.Composition
     internal abstract class LayerNode : IDisposable
     {
         private readonly Layer layer;
+        private readonly ICompositionRoot root;
         private readonly BlendEffect blendEffect;
 
         private ICanvasImage background;
         private ICanvasImage output;
         private DrawableNode drawableNode;
 
-        protected LayerNode(Layer layer)
+        protected LayerNode(Layer layer, ICompositionRoot root)
         {
             this.layer = layer;
+            this.root = root;
+
             this.blendEffect = new BlendEffect();
-            layer.PropertyChanged += OnContentChanged;
+            layer.PropertyChanged += OnLayerPropertyChanged;
         }
 
         public virtual void Dispose()
         {
-            layer.PropertyChanged -= OnContentChanged;
+            layer.PropertyChanged -= OnLayerPropertyChanged;
             blendEffect.Dispose();
         }
 
@@ -67,7 +70,7 @@ namespace Fotografix.Win2D.Composition
         public void BeginPreview(IDrawable drawable)
         {
             this.drawableNode = new DrawableNode(drawable, Bounds);
-            drawableNode.OutputChanged += OnContentChanged;
+            drawableNode.OutputChanged += OnPreviewContentChanged;
             UpdateOutput();
         }
 
@@ -92,9 +95,15 @@ namespace Fotografix.Win2D.Composition
             this.Output = output;
         }
 
-        private void OnContentChanged(object sender, EventArgs e)
+        private void OnLayerPropertyChanged(object sender, EventArgs e)
         {
             UpdateOutput();
+        }
+
+        private void OnPreviewContentChanged(object sender, EventArgs e)
+        {
+            UpdateOutput();
+            root.Invalidate();
         }
 
         protected abstract ICanvasImage ResolveOutput(ICanvasImage background);

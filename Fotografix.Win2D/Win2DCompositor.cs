@@ -5,7 +5,7 @@ using System;
 
 namespace Fotografix.Win2D
 {
-    public sealed class Win2DCompositor : IDisposable
+    public sealed class Win2DCompositor : IDisposable, ICompositionRoot
     {
         private readonly Image image;
         private readonly ImageNode imageNode;
@@ -18,7 +18,7 @@ namespace Fotografix.Win2D
         public Win2DCompositor(Image image, int transparencyGridSize)
         {
             this.image = image;
-            this.imageNode = new ImageNode(image);
+            this.imageNode = new ImageNode(image, this);
             this.transparencyGrid = transparencyGridSize > 0 ? new TransparencyGridNode(transparencyGridSize) : null;
         }
 
@@ -27,6 +27,8 @@ namespace Fotografix.Win2D
             transparencyGrid?.Dispose();
             imageNode.Dispose();
         }
+
+        public event EventHandler Invalidated;
 
         public void Draw(CanvasDrawingSession ds)
         {
@@ -49,6 +51,11 @@ namespace Fotografix.Win2D
             Win2DBitmap bitmap = new Win2DBitmap(image.Size, CanvasDevice.GetSharedDevice());
             bitmap.Draw(this);
             return bitmap.Source;
+        }
+
+        void ICompositionRoot.Invalidate()
+        {
+            Invalidated?.Invoke(this, EventArgs.Empty);
         }
     }
 }

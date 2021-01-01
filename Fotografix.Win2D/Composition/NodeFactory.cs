@@ -11,14 +11,12 @@ namespace Fotografix.Win2D.Composition
 
         public BaseNodeType Create(BaseSourceType source)
         {
-            Type sourceType = source.GetType();
+            return (BaseNodeType)Activator.CreateInstance(nodeTypeDictionary[source.GetType()], source);
+        }
 
-            if (nodeTypeDictionary.TryGetValue(sourceType, out Type nodeType))
-            {
-                return (BaseNodeType)Activator.CreateInstance(nodeType, source);
-            }
-
-            throw new ArgumentException("Unsupported type " + sourceType);
+        public BaseNodeType Create(BaseSourceType source, ICompositionRoot root)
+        {
+            return (BaseNodeType)Activator.CreateInstance(nodeTypeDictionary[source.GetType()], source, root);
         }
 
         internal void Register<SourceType, NodeType>() where SourceType : BaseSourceType where NodeType : BaseNodeType

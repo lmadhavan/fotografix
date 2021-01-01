@@ -12,7 +12,7 @@ namespace Fotografix.Win2D.Composition
         private readonly CompositeEffectNode compositeEffectNode;
         private Win2DBitmap bitmap;
 
-        public BitmapLayerNode(BitmapLayer layer) : base(layer)
+        public BitmapLayerNode(BitmapLayer layer, ICompositionRoot root) : base(layer, root)
         {
             this.layer = layer;
             layer.PropertyChanged += OnLayerPropertyChanged;

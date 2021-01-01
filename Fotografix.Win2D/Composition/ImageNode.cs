@@ -9,22 +9,28 @@ namespace Fotografix.Win2D.Composition
     internal sealed class ImageNode : IDisposable
     {
         private readonly Image image;
+        private readonly ICompositionRoot root;
         private readonly Dictionary<Layer, LayerNode> layerNodes = new Dictionary<Layer, LayerNode>();
 
         private ICanvasImage output;
         private bool relinking;
 
-        internal ImageNode(Image image)
+        internal ImageNode(Image image, ICompositionRoot root)
         {
             this.image = image;
+            this.root = root;
+
             RegisterAll();
             RelinkLayers();
+
+            image.ContentChanged += OnImageContentChanged;
             image.Layers.CollectionChanged += OnLayerCollectionChanged;
         }
 
         public void Dispose()
         {
             image.Layers.CollectionChanged -= OnLayerCollectionChanged;
+            image.ContentChanged -= OnImageContentChanged;
             UnregisterAll();
         }
 
@@ -80,7 +86,7 @@ namespace Fotografix.Win2D.Composition
 
         private void Register(Layer layer)
         {
-            LayerNode node = NodeFactory.Layer.Create(layer);
+            LayerNode node = NodeFactory.Layer.Create(layer, root);
             node.OutputChanged += OnLayerOutputChanged;
             this.layerNodes[layer] = node;
         }
@@ -89,7 +95,6 @@ namespace Fotografix.Win2D.Composition
         {
             if (layerNodes.Remove(layer, out LayerNode node))
             {
-                node.OutputChanged -= OnLayerOutputChanged;
                 node.Dispose();
             }
         }
@@ -110,6 +115,11 @@ namespace Fotografix.Win2D.Composition
             }
 
             layerNodes.Clear();
+        }
+
+        private void OnImageContentChanged(object sender, ContentChangedEventArgs e)
+        {
+            root.Invalidate();
         }
 
         private void OnLayerOutputChanged(object sender, EventArgs e)

@@ -116,7 +116,11 @@ namespace Fotografix.Uwp
             }
         }
 
-        public event EventHandler Invalidated;
+        public event EventHandler Invalidated
+        {
+            add => compositor.Invalidated += value;
+            remove => compositor.Invalidated -= value;
+        }
 
         public void Draw(CanvasDrawingSession ds)
         {
@@ -144,8 +148,6 @@ namespace Fotografix.Uwp
 
         public async Task ImportLayersAsync(IEnumerable<IFile> files)
         {
-            List<Command> commands = new List<Command>();
-
             foreach (var file in files)
             {
                 Image importedImage = await ImageDecoder.ReadImageAsync(file);
@@ -277,8 +279,6 @@ namespace Fotografix.Uwp
                     history.Add(e.Change);
                 }
             }
-
-            Invalidated?.Invoke(this, EventArgs.Empty);
         }
 
         private void NotifyDrawingSurfaceListener()
@@ -306,12 +306,10 @@ namespace Fotografix.Uwp
             public void BeginDrawing(IDrawable drawable)
             {
                 editor.compositor.BeginPreview(bitmapLayer, drawable);
-                drawable.ContentChanged += editor.OnContentChanged;
             }
 
             public void EndDrawing(IDrawable drawable)
             {
-                drawable.ContentChanged -= editor.OnContentChanged;
                 editor.compositor.EndPreview(bitmapLayer);
                 editor.Execute(new DrawCommand(bitmapLayer.Bitmap, DrawingContextFactory, drawable));
             }
