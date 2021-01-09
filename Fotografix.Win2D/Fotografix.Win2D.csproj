@@ -142,7 +142,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Composition\TransparencyGridNode.cs" />
     <Compile Include="Win2DBitmap.cs" />
-    <Compile Include="Win2DBitmapDrawingContext.cs" />
     <Compile Include="Win2DBitmapResamplingStrategy.cs" />
     <Compile Include="Win2DCompositor.cs" />
     <Compile Include="Win2DDrawingContext.cs" />

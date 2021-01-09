@@ -1,8 +1,6 @@
-﻿using Fotografix.Drawing;
-using Microsoft.Graphics.Canvas;
+﻿using Microsoft.Graphics.Canvas;
 using System;
 using System.Drawing;
-using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Graphics.DirectX;
 
 namespace Fotografix.Win2D
@@ -69,7 +67,7 @@ namespace Fotografix.Win2D
             UpdateSource();
         }
 
-        internal IDrawingContext CreateDrawingContext()
+        internal Win2DDrawingContext CreateDrawingContext()
         {
             return new Win2DDrawingContext(renderTarget.CreateDrawingSession(), new Rectangle(Point.Empty, Source.Size));
         }

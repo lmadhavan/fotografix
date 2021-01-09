@@ -1,25 +1,29 @@
 ﻿using Fotografix.Drawing;
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Brushes;
+using System;
 using System.Drawing;
 
 namespace Fotografix.Win2D
 {
-    public class Win2DDrawingContext : IDrawingContext
+    internal sealed class Win2DDrawingContext : IDrawingContext
     {
         private readonly CanvasDrawingSession ds;
         private readonly Rectangle bounds;
 
-        public Win2DDrawingContext(CanvasDrawingSession ds, Rectangle bounds)
+        internal Win2DDrawingContext(CanvasDrawingSession ds, Rectangle bounds)
         {
             this.ds = ds;
             this.bounds = bounds;
         }
 
-        public virtual void Dispose()
+        public void Dispose()
         {
             ds.Dispose();
+            Disposed?.Invoke(this, EventArgs.Empty);
         }
+
+        public event EventHandler Disposed;
 
         public void Draw(BrushStroke brushStroke)
         {
