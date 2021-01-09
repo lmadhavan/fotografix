@@ -20,7 +20,7 @@ namespace Fotografix.Win2D
         {
             this.image = image;
             this.resourceCreator = CanvasDevice.GetSharedDevice();
-            this.imageNode = new ImageNode(image, this);
+            this.imageNode = NodeFactory.CreateNode(image, this);
             this.transparencyGrid = transparencyGridSize > 0 ? new TransparencyGridNode(transparencyGridSize, resourceCreator) : null;
         }
 

@@ -1,45 +1,77 @@
-﻿using System;
-using System.Collections.Generic;
-using Fotografix.Adjustments;
+﻿using Fotografix.Adjustments;
 using Fotografix.Win2D.Composition.Adjustments;
+using System;
 
 namespace Fotografix.Win2D.Composition
 {
-    internal class NodeFactory<BaseSourceType, BaseNodeType>
-    {
-        private readonly Dictionary<Type, Type> nodeTypeDictionary = new Dictionary<Type, Type>();
-
-        public BaseNodeType Create(BaseSourceType source)
-        {
-            return (BaseNodeType)Activator.CreateInstance(nodeTypeDictionary[source.GetType()], source);
-        }
-
-        public BaseNodeType Create(BaseSourceType source, ICompositionRoot root)
-        {
-            return (BaseNodeType)Activator.CreateInstance(nodeTypeDictionary[source.GetType()], source, root);
-        }
-
-        internal void Register<SourceType, NodeType>() where SourceType : BaseSourceType where NodeType : BaseNodeType
-        {
-            nodeTypeDictionary[typeof(SourceType)] = typeof(NodeType);
-        }
-    }
-
     internal static class NodeFactory
     {
-        internal static readonly NodeFactory<Layer, LayerNode> Layer = new NodeFactory<Layer, LayerNode>();
-        internal static readonly NodeFactory<Adjustment, AdjustmentNode> Adjustment = new NodeFactory<Adjustment, AdjustmentNode>();
-
-        static NodeFactory()
+        internal static ImageNode CreateNode(Image image, ICompositionRoot root)
         {
-            Layer.Register<AdjustmentLayer, AdjustmentLayerNode>();
-            Layer.Register<BitmapLayer, BitmapLayerNode>();
+            return new ImageNode(image, root);
+        }
 
-            Adjustment.Register<BlackAndWhiteAdjustment, BlackAndWhiteAdjustmentNode>();
-            Adjustment.Register<BrightnessContrastAdjustment, BrightnessContrastAdjustmentNode>();
-            Adjustment.Register<GradientMapAdjustment, GradientMapAdjustmentNode>();
-            Adjustment.Register<HueSaturationAdjustment, HueSaturationAdjustmentNode>();
-            Adjustment.Register<LevelsAdjustment, LevelsAdjustmentNode>();
+        internal static LayerNode CreateNode(Layer layer, ICompositionRoot root)
+        {
+            Visitor visitor = new Visitor { CompositionRoot = root };
+            layer.Accept(visitor);
+            return visitor.LayerNode ?? throw new InvalidOperationException("Unsupported layer: " + layer);
+        }
+
+        internal static AdjustmentNode CreateNode(Adjustment adjustment)
+        {
+            Visitor visitor = new Visitor();
+            adjustment.Accept(visitor);
+            return visitor.AdjustmentNode ?? throw new InvalidOperationException("Unsupported adjustment: " + adjustment);
+        }
+
+        private sealed class Visitor : ImageElementVisitor
+        {
+            internal ICompositionRoot CompositionRoot { get; set; }
+            internal LayerNode LayerNode { get; private set; }
+            internal AdjustmentNode AdjustmentNode { get; private set; }
+
+            public override bool VisitEnter(AdjustmentLayer layer)
+            {
+                this.LayerNode = new AdjustmentLayerNode(layer, CompositionRoot);
+                return false;
+            }
+
+            public override bool VisitEnter(BitmapLayer layer)
+            {
+                this.LayerNode = new BitmapLayerNode(layer, CompositionRoot);
+                return false;
+            }
+
+            public override bool Visit(BlackAndWhiteAdjustment adjustment)
+            {
+                this.AdjustmentNode = new BlackAndWhiteAdjustmentNode(adjustment);
+                return false;
+            }
+
+            public override bool Visit(BrightnessContrastAdjustment adjustment)
+            {
+                this.AdjustmentNode = new BrightnessContrastAdjustmentNode(adjustment);
+                return false;
+            }
+
+            public override bool Visit(GradientMapAdjustment adjustment)
+            {
+                this.AdjustmentNode = new GradientMapAdjustmentNode(adjustment);
+                return false;
+            }
+
+            public override bool Visit(HueSaturationAdjustment adjustment)
+            {
+                this.AdjustmentNode = new HueSaturationAdjustmentNode(adjustment);
+                return false;
+            }
+
+            public override bool Visit(LevelsAdjustment adjustment)
+            {
+                this.AdjustmentNode = new LevelsAdjustmentNode(adjustment);
+                return false;
+            }
         }
     }
 }

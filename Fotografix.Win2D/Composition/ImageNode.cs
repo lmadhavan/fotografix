@@ -86,7 +86,7 @@ namespace Fotografix.Win2D.Composition
 
         private void Register(Layer layer)
         {
-            LayerNode node = NodeFactory.Layer.Create(layer, root);
+            LayerNode node = NodeFactory.CreateNode(layer, root);
             node.OutputChanged += OnLayerOutputChanged;
             this.layerNodes[layer] = node;
         }
