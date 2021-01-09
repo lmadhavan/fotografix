@@ -17,7 +17,7 @@ namespace Fotografix.Win2D.Composition
         internal DrawableNode(IDrawable drawable, Rectangle bounds, ICanvasResourceCreator resourceCreator)
         {
             this.drawable = drawable;
-            drawable.ContentChanged += OnContentChanged;
+            drawable.Changed += OnContentChanged;
 
             this.bounds = bounds;
 
@@ -30,7 +30,7 @@ namespace Fotografix.Win2D.Composition
         {
             commandList?.Dispose();
             compositeEffectNode.Dispose();
-            drawable.ContentChanged -= OnContentChanged;
+            drawable.Changed -= OnContentChanged;
         }
 
         public event EventHandler OutputChanged;

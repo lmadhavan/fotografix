@@ -1,9 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 
 namespace Fotografix.Drawing
 {
-    public sealed class BrushStroke : NotifyContentChangedBase, IDrawable
+    public sealed class BrushStroke : IDrawable
     {
         private readonly List<Point> points;
 
@@ -18,10 +19,12 @@ namespace Fotografix.Drawing
         public int Size { get; }
         public Color Color { get; }
 
+        public event EventHandler Changed;
+
         public void AddPoint(Point pt)
         {
             points.Add(pt);
-            RaiseContentChanged();
+            Changed?.Invoke(this, EventArgs.Empty);
         }
 
         public void Draw(IDrawingContext drawingContext)

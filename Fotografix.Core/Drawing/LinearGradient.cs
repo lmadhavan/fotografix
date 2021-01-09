@@ -1,8 +1,9 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 
 namespace Fotografix.Drawing
 {
-    public sealed class LinearGradient : NotifyContentChangedBase, IDrawable
+    public sealed class LinearGradient : IDrawable
     {
         public LinearGradient(Color startColor, Color endColor, Point startPoint)
         {
@@ -16,10 +17,12 @@ namespace Fotografix.Drawing
         public Point StartPoint { get; }
         public Point EndPoint { get; private set; }
 
+        public event EventHandler Changed;
+
         public void SetEndPoint(Point pt)
         {
             this.EndPoint = pt;
-            RaiseContentChanged();
+            Changed?.Invoke(this, EventArgs.Empty);
         }
 
         public void Draw(IDrawingContext drawingContext)
