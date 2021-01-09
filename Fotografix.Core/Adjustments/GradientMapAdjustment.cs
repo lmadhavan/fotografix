@@ -19,9 +19,9 @@ namespace Fotografix.Adjustments
             set => SetProperty(ref highlights, value);
         }
 
-        public override void Accept(AdjustmentVisitor visitor)
+        public override bool Accept(ImageElementVisitor visitor)
         {
-            visitor.Visit(this);
+            return visitor.Visit(this);
         }
     }
 }

@@ -5,7 +5,5 @@
         internal Adjustment()
         {
         }
-
-        public abstract void Accept(AdjustmentVisitor visitor);
     }
 }

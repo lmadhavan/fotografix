@@ -76,7 +76,5 @@ namespace Fotografix
         }
 
         public abstract ImageElement Content { get; }
-
-        public abstract void Accept(LayerVisitor visitor);
     }
 }

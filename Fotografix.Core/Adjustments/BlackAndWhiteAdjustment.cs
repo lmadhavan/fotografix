@@ -2,9 +2,9 @@
 {
     public sealed class BlackAndWhiteAdjustment : Adjustment
     {
-        public override void Accept(AdjustmentVisitor visitor)
+        public override bool Accept(ImageElementVisitor visitor)
         {
-            visitor.Visit(this);
+            return visitor.Visit(this);
         }
     }
 }

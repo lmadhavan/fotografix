@@ -12,6 +12,8 @@ namespace Fotografix
         public event PropertyChangedEventHandler PropertyChanged;
         public event EventHandler<ContentChangedEventArgs> ContentChanged;
 
+        public abstract bool Accept(ImageElementVisitor visitor);
+
         protected void RaiseContentChanged(Change change)
         {
             ContentChangedEventArgs args = new ContentChangedEventArgs(change);
