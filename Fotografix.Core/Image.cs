@@ -1,5 +1,4 @@
 ﻿using Fotografix.Collections;
-using Fotografix.Drawing;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -7,7 +6,7 @@ using System.Drawing;
 
 namespace Fotografix
 {
-    public sealed class Image : ImageElement, IDrawable
+    public sealed class Image : ImageElement
     {
         private readonly LayerList layers;
         private Size size;
@@ -41,21 +40,6 @@ namespace Fotografix
         public IList<Layer> DetachLayers()
         {
             return layers.Detach();
-        }
-
-        public void Draw(IDrawingContext drawingContext)
-        {
-            drawingContext.Draw(this);
-        }
-
-        public Bitmap ToBitmap(IDrawingContextFactory drawingContextFactory)
-        {
-            Bitmap bitmap = new Bitmap(Size);
-            using (IDrawingContext dc = drawingContextFactory.CreateDrawingContext(bitmap))
-            {
-                dc.Draw(this);
-            }
-            return bitmap;
         }
 
         private sealed class LayerList : ObservableCollection<Layer>

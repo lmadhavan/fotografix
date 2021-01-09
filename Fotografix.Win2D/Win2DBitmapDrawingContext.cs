@@ -21,11 +21,6 @@ namespace Fotografix.Win2D
             bitmap.Dispose();
         }
 
-        public void Draw(Image image)
-        {
-            drawingContext.Draw(image);
-        }
-
         public void Draw(BrushStroke brushStroke)
         {
             drawingContext.Draw(brushStroke);

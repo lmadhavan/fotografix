@@ -21,14 +21,6 @@ namespace Fotografix.Win2D
             ds.Dispose();
         }
 
-        public void Draw(Image image)
-        {
-            using (var compositor = new Win2DCompositor(image))
-            {
-                compositor.Draw(ds);
-            }
-        }
-
         public void Draw(BrushStroke brushStroke)
         {
             var points = brushStroke.Points;
