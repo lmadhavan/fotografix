@@ -25,7 +25,6 @@ namespace Fotografix.Editor
         public void ChangesImageSize()
         {
             Command command = new ResampleImageCommand(image, NewImageSize, resamplingStrategy.Object);
-
             command.Execute();
 
             Assert.That(image.Size, Is.EqualTo(NewImageSize));
@@ -40,13 +39,12 @@ namespace Fotografix.Editor
             BitmapLayer layer = new BitmapLayer(originalBitmap);
             image.Layers.Add(layer);
 
-            Command command = new ResampleImageCommand(image, NewImageSize, resamplingStrategy.Object);
-
             Size expectedNewBitmapSize = originalBitmapSize * ScalingFactor;
             Bitmap newBitmap = new Bitmap(expectedNewBitmapSize);
 
             resamplingStrategy.Setup(rs => rs.Resample(originalBitmap, expectedNewBitmapSize)).Returns(newBitmap);
 
+            Command command = new ResampleImageCommand(image, NewImageSize, resamplingStrategy.Object);
             command.Execute();
 
             Assert.That(layer.Bitmap, Is.EqualTo(newBitmap));

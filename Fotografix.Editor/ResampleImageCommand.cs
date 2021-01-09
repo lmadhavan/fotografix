@@ -17,24 +17,42 @@ namespace Fotografix.Editor
 
         public override void Execute()
         {
-            Size oldSize = image.Size;
+            image.Accept(new ImageResamplingVisitor(newSize, resamplingStrategy));
+        }
 
-            PointF ratio = new PointF((float)newSize.Width / oldSize.Width,
-                                      (float)newSize.Height / oldSize.Height);
+        private sealed class ImageResamplingVisitor : ImageElementVisitor
+        {
+            private readonly Size newSize;
+            private readonly IBitmapResamplingStrategy resamplingStrategy;
+            private PointF scaleFactor;
 
-            foreach (Layer layer in image.Layers)
+            public ImageResamplingVisitor(Size newSize, IBitmapResamplingStrategy resamplingStrategy)
             {
-                if (layer is BitmapLayer bitmapLayer)
-                {
-                    Bitmap oldBitmap = bitmapLayer.Bitmap;
-
-                    Size newSize = new Size((int)(oldBitmap.Size.Width * ratio.X), (int)(oldBitmap.Size.Height * ratio.Y));
-                    Bitmap newBitmap = resamplingStrategy.Resample(oldBitmap, newSize);
-                    bitmapLayer.Bitmap = newBitmap;
-                }
+                this.newSize = newSize;
+                this.resamplingStrategy = resamplingStrategy;
             }
 
-            image.Size = newSize;
+            public override bool VisitEnter(Image image)
+            {
+                Size oldSize = image.Size;
+                this.scaleFactor = new PointF((float)newSize.Width / oldSize.Width,
+                                              (float)newSize.Height / oldSize.Height);
+                return true;
+            }
+
+            public override bool VisitEnter(BitmapLayer layer)
+            {
+                Bitmap oldBitmap = layer.Bitmap;
+                Size resampledSize = new Size((int)(oldBitmap.Size.Width * scaleFactor.X), (int)(oldBitmap.Size.Height * scaleFactor.Y));
+                layer.Bitmap = resamplingStrategy.Resample(oldBitmap, resampledSize);
+                return false;
+            }
+
+            public override bool VisitLeave(Image image)
+            {
+                image.Size = newSize;
+                return false;
+            }
         }
     }
 }
