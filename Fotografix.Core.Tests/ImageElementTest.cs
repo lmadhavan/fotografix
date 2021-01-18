@@ -8,7 +8,7 @@ namespace Fotografix
     public class ImageElementTest
     {
         [Test]
-        public void RaisesPropertyChangedEventWhenPropertyIsChanged()
+        public void RaisesPropertyChangedEvent()
         {
             FakeImageElement element = new FakeImageElement();
 
@@ -21,7 +21,7 @@ namespace Fotografix
         }
 
         [Test]
-        public void RaisesContentChangedEventWhenPropertyIsChanged()
+        public void RaisesContentChangedEvent()
         {
             FakeImageElement element = new FakeImageElement();
 
@@ -31,6 +31,20 @@ namespace Fotografix
             element.Property = 10;
 
             Assert.That(contentChangedEvent.Change, Is.EqualTo(new PropertyChange(element, nameof(FakeImageElement.Property), 0, 10)));
+        }
+
+        [Test]
+        public void RaisesUserPropertyChangedEvent()
+        {
+            FakeImageElement element = new FakeImageElement();
+            UserPropertyKey<string> key = new UserPropertyKey<string>();
+
+            UserPropertyChangedEventArgs userPropertyChangedEvent = null;
+            element.UserPropertyChanged += (s, e) => userPropertyChangedEvent = e;
+
+            element.SetUserProperty(key, "foo");
+
+            Assert.That(userPropertyChangedEvent.Key, Is.EqualTo(key));
         }
 
         [Test]
