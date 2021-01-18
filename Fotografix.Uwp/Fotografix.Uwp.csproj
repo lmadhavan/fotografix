@@ -156,7 +156,6 @@
       <DependentUpon>StartPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="TitleBar.cs" />
-    <Compile Include="ICommandService.cs" />
     <Compile Include="ICustomTitleBarProvider.cs" />
     <Compile Include="Layers\LayerTemplatesResourceDictionary.xaml.cs">
       <DependentUpon>LayerTemplatesResourceDictionary.xaml</DependentUpon>

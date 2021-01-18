@@ -5,7 +5,7 @@ using System.Drawing;
 namespace Fotografix.Editor
 {
     [TestFixture]
-    public class ResampleImageCommandTest
+    public class ResampleImageCommandHandlerTest
     {
         private const int ScalingFactor = 2;
         private static readonly Size OriginalImageSize = new Size(50, 25);
@@ -13,19 +13,20 @@ namespace Fotografix.Editor
 
         private Image image;
         private Mock<IBitmapResamplingStrategy> resamplingStrategy;
+        private ResampleImageCommandHandler handler;
 
         [SetUp]
         public void SetUp()
         {
             this.image = new Image(OriginalImageSize);
             this.resamplingStrategy = new Mock<IBitmapResamplingStrategy>();
+            this.handler = new ResampleImageCommandHandler(resamplingStrategy.Object);
         }
 
         [Test]
         public void ChangesImageSize()
         {
-            Command command = new ResampleImageCommand(image, NewImageSize, resamplingStrategy.Object);
-            command.Execute();
+            handler.Handle(new ResampleImageCommand(image, NewImageSize));
 
             Assert.That(image.Size, Is.EqualTo(NewImageSize));
         }
@@ -44,8 +45,7 @@ namespace Fotografix.Editor
 
             resamplingStrategy.Setup(rs => rs.Resample(originalBitmap, expectedNewBitmapSize)).Returns(newBitmap);
 
-            Command command = new ResampleImageCommand(image, NewImageSize, resamplingStrategy.Object);
-            command.Execute();
+            handler.Handle(new ResampleImageCommand(image, NewImageSize));
 
             Assert.That(layer.Bitmap, Is.EqualTo(newBitmap));
         }

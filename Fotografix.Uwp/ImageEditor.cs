@@ -17,12 +17,10 @@ using System.Threading.Tasks;
 
 namespace Fotografix.Uwp
 {
-    public sealed class ImageEditor : NotifyPropertyChangedBase, ICommandService, IDisposable, IToolbox
+    public sealed class ImageEditor : NotifyPropertyChangedBase, IDisposable, IToolbox, ICommandDispatcher
     {
-        private static readonly IDrawingContextFactory DrawingContextFactory = new Win2DDrawingContextFactory();
-
         private readonly Image image;
-
+        private readonly ICommandDispatcher dispatcher;
         private readonly Win2DCompositor compositor;
         private readonly ReversedCollectionView<Layer> layers;
         private readonly History history;
@@ -32,9 +30,10 @@ namespace Fotografix.Uwp
         private List<Change> changeGroup;
         private bool ignoreChanges;
 
-        public ImageEditor(Image image)
+        public ImageEditor(Image image, ICommandDispatcher dispatcher)
         {
             this.image = image;
+            this.dispatcher = dispatcher;
             this.compositor = new Win2DCompositor(image, 8);
 
             this.layers = new ReversedCollectionView<Layer>(image.Layers);
@@ -165,7 +164,7 @@ namespace Fotografix.Uwp
 
         public void ResizeImage(ResizeImageParameters resizeImageParameters)
         {
-            Execute(new ResampleImageCommand(image, resizeImageParameters.Size, new Win2DBitmapResamplingStrategy()));
+            Dispatch(new ResampleImageCommand(image, resizeImageParameters.Size));
         }
 
         public Task SaveAsync(IFile file)
@@ -247,12 +246,12 @@ namespace Fotografix.Uwp
             }
         }
 
-        public void Execute(Command command)
+        public void Dispatch<T>(T command) where T : ICommand
         {
             try
             {
                 this.changeGroup = new List<Change>();
-                command.Execute();
+                dispatcher.Dispatch(command);
             }
             finally
             {
@@ -311,7 +310,7 @@ namespace Fotografix.Uwp
             public void EndDrawing(IDrawable drawable)
             {
                 editor.compositor.EndPreview(bitmapLayer);
-                editor.Execute(new DrawCommand(bitmapLayer.Bitmap, DrawingContextFactory, drawable));
+                editor.Dispatch(new DrawCommand(bitmapLayer.Bitmap, drawable));
             }
         }
     }

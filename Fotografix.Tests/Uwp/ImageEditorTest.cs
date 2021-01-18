@@ -13,6 +13,7 @@ namespace Fotografix.Tests.Uwp
         private static readonly Size ImageSize = new Size(10, 10);
 
         private Image image;
+        private CommandHandlerCollection handlerCollection;
         private ImageEditor editor;
 
         [TestInitialize]
@@ -21,7 +22,9 @@ namespace Fotografix.Tests.Uwp
             this.image = new Image(ImageSize);
             image.Layers.Add(BitmapLayerFactory.CreateBitmapLayer(id: 1));
 
-            this.editor = new ImageEditor(image)
+            this.handlerCollection = new CommandHandlerCollection();
+
+            this.editor = new ImageEditor(image, handlerCollection)
             {
                 ImageDecoder = new FakeImageCodec()
             };
@@ -81,32 +84,17 @@ namespace Fotografix.Tests.Uwp
         }
 
         [TestMethod]
-        public void ResizesImage()
-        {
-            var parameters = editor.CreateResizeImageParameters();
-            
-            Assert.AreEqual(ImageSize, parameters.Size, "Resize parameters should be initialized to current image size");
-
-            Size newImageSize = ImageSize * 2;
-            parameters.Width = newImageSize.Width;
-            parameters.Height = newImageSize.Height;
-
-            editor.ResizeImage(parameters);
-
-            Assert.AreEqual(newImageSize, editor.Size, "Image should have new size after resizing");
-        }
-
-        [TestMethod]
         public void GroupsChangesProducedByCommand()
         {
-            editor.Execute(new FakeCommand(image, numberOfChanges: 3));
+            handlerCollection.Register(new FakeCommandHandler());
 
+            editor.Dispatch(new FakeCommand(image, numberOfChanges: 3));
             editor.Undo();
 
             Assert.IsFalse(editor.CanUndo);
         }
 
-        private sealed class FakeCommand : Command
+        private sealed class FakeCommand : ICommand
         {
             private readonly Image image;
             private readonly int numberOfChanges;
@@ -117,12 +105,20 @@ namespace Fotografix.Tests.Uwp
                 this.numberOfChanges = numberOfChanges;
             }
 
-            public override void Execute()
+            public void Execute()
             {
                 for (int i = 0; i < numberOfChanges; i++)
                 {
                     image.Layers.Add(new BitmapLayer());
                 }
+            }
+        }
+
+        private sealed class FakeCommandHandler : ICommandHandler<FakeCommand>
+        {
+            public void Handle(FakeCommand command)
+            {
+                command.Execute();
             }
         }
     }

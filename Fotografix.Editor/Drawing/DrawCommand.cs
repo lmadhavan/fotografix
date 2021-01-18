@@ -2,25 +2,15 @@
 
 namespace Fotografix.Editor.Drawing
 {
-    public sealed class DrawCommand : Command
+    public sealed class DrawCommand : ICommand
     {
-        private readonly Bitmap bitmap;
-        private readonly IDrawingContextFactory drawingContextFactory;
-        private readonly IDrawable drawable;
-
-        public DrawCommand(Bitmap bitmap, IDrawingContextFactory drawingContextFactory, IDrawable drawable)
+        public DrawCommand(Bitmap bitmap, IDrawable drawable)
         {
-            this.bitmap = bitmap;
-            this.drawingContextFactory = drawingContextFactory;
-            this.drawable = drawable;
+            this.Bitmap = bitmap;
+            this.Drawable = drawable;
         }
 
-        public override void Execute()
-        {
-            using (IDrawingContext dc = drawingContextFactory.CreateDrawingContext(bitmap))
-            {
-                drawable.Draw(dc);
-            }
-        }
+        public Bitmap Bitmap { get; }
+        public IDrawable Drawable { get; }
     }
 }

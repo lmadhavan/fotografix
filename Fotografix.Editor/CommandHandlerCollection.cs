@@ -1,0 +1,29 @@
+﻿using System;
+using System.Collections.Generic;
+
+namespace Fotografix.Editor
+{
+    public sealed class CommandHandlerCollection : ICommandDispatcher
+    {
+        private readonly Dictionary<Type, object> handlers = new Dictionary<Type, object>();
+
+        public void Register<T>(ICommandHandler<T> handler) where T : ICommand
+        {
+            handlers[typeof(T)] = handler;
+        }
+
+        public void Dispatch<T>(T command) where T : ICommand
+        {
+            Type type = command.GetType();
+
+            if (handlers.TryGetValue(type, out object handler))
+            {
+                ((ICommandHandler<T>)handler).Handle(command);
+            }
+            else
+            {
+                throw new InvalidOperationException("No handler registered for " + type.Name);
+            }
+        }
+    }
+}

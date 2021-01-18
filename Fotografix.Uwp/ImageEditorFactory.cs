@@ -1,4 +1,5 @@
 ﻿using Fotografix.Editor;
+using Fotografix.Editor.Drawing;
 using Fotografix.Editor.Tools;
 using Fotografix.IO;
 using Fotografix.Uwp.Codecs;
@@ -13,6 +14,13 @@ namespace Fotografix.Uwp
     {
         private readonly IImageDecoder imageDecoder = new WindowsImageDecoder();
         private readonly IImageEncoder imageEncoder = new WindowsImageEncoder(new Win2DImageRenderer());
+        private readonly CommandHandlerCollection handlerCollection = new CommandHandlerCollection();
+
+        public ImageEditorFactory()
+        {
+            handlerCollection.Register(new ResampleImageCommandHandler(new Win2DBitmapResamplingStrategy()));
+            handlerCollection.Register(new DrawCommandHandler(new Win2DDrawingContextFactory()));
+        }
 
         public IEnumerable<FileFormat> SupportedOpenFormats => imageDecoder.SupportedFileFormats;
 
@@ -33,7 +41,7 @@ namespace Fotografix.Uwp
 
         private ImageEditor CreateEditor(Viewport viewport, Image image)
         {
-            return new ImageEditor(image)
+            return new ImageEditor(image, handlerCollection)
             {
                 ImageDecoder = imageDecoder,
                 ImageEncoder = imageEncoder,
