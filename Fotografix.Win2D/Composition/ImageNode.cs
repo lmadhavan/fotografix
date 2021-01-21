@@ -1,5 +1,4 @@
-﻿using Fotografix.Drawing;
-using Microsoft.Graphics.Canvas;
+﻿using Microsoft.Graphics.Canvas;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -40,16 +39,6 @@ namespace Fotografix.Win2D.Composition
             {
                 ds.DrawImage(output);
             }
-        }
-
-        public void BeginPreview(Layer layer, IDrawable drawable)
-        {
-            layerNodes[layer].BeginPreview(drawable);
-        }
-
-        public void EndPreview(Layer layer)
-        {
-            layerNodes[layer].EndPreview();
         }
 
         private void RelinkLayers()

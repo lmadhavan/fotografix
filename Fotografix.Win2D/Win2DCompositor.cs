@@ -1,5 +1,4 @@
-﻿using Fotografix.Drawing;
-using Fotografix.Win2D.Composition;
+﻿using Fotografix.Win2D.Composition;
 using Microsoft.Graphics.Canvas;
 using System;
 
@@ -36,16 +35,6 @@ namespace Fotografix.Win2D
         {
             transparencyGrid?.Draw(ds);
             imageNode.Draw(ds);
-        }
-
-        public void BeginPreview(Layer layer, IDrawable drawable)
-        {
-            imageNode.BeginPreview(layer, drawable);
-        }
-
-        public void EndPreview(Layer layer)
-        {
-            imageNode.EndPreview(layer);
         }
 
         public Bitmap ToBitmap()

@@ -3,5 +3,8 @@
     public interface ITool : IPointerEventListener
     {
         string Name { get; }
+
+        void Activated(Image image);
+        void Deactivated();
     }
 }

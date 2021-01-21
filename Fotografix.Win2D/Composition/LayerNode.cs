@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using Fotografix.Drawing;
+using Fotografix.Editor;
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Effects;
 
@@ -13,7 +14,7 @@ namespace Fotografix.Win2D.Composition
 
         private ICanvasImage background;
         private ICanvasImage output;
-        private DrawableNode drawableNode;
+        private DrawableNode previewNode;
 
         protected LayerNode(Layer layer, ICompositionRoot root)
         {
@@ -21,12 +22,14 @@ namespace Fotografix.Win2D.Composition
             this.Root = root;
 
             this.blendEffect = new BlendEffect();
-            layer.PropertyChanged += OnLayerPropertyChanged;
+            layer.PropertyChanged += Layer_PropertyChanged;
+            layer.UserPropertyChanged += Layer_UserPropertyChanged;
         }
 
         public virtual void Dispose()
         {
-            layer.PropertyChanged -= OnLayerPropertyChanged;
+            layer.UserPropertyChanged -= Layer_UserPropertyChanged;
+            layer.PropertyChanged -= Layer_PropertyChanged;
             blendEffect.Dispose();
         }
 
@@ -66,20 +69,6 @@ namespace Fotografix.Win2D.Composition
 
         public event EventHandler OutputChanged;
 
-        public void BeginPreview(IDrawable drawable)
-        {
-            this.drawableNode = new DrawableNode(drawable, Bounds, Root.ResourceCreator);
-            drawableNode.OutputChanged += OnPreviewContentChanged;
-            UpdateOutput();
-        }
-
-        public void EndPreview()
-        {
-            drawableNode.Dispose();
-            this.drawableNode = null;
-            UpdateOutput();
-        }
-
         protected abstract Rectangle Bounds { get; }
 
         protected ICompositionRoot Root { get; }
@@ -88,20 +77,46 @@ namespace Fotografix.Win2D.Composition
         {
             ICanvasImage output = ResolveOutput(background);
             
-            if (drawableNode != null)
+            if (previewNode != null)
             {
-                output = drawableNode.ResolveOutput(output);
+                output = previewNode.ResolveOutput(output);
             }
             
             this.Output = output;
         }
 
-        private void OnLayerPropertyChanged(object sender, EventArgs e)
+        private void UpdatePreview()
+        {
+            IDrawable preview = layer.GetDrawingPreview();
+
+            if (preview != null)
+            {
+                this.previewNode = new DrawableNode(preview, Bounds, Root.ResourceCreator);
+                previewNode.OutputChanged += Preview_OutputChanged;
+            }
+            else
+            {
+                previewNode.Dispose();
+                this.previewNode = null;
+            }
+
+            UpdateOutput();
+        }
+
+        private void Layer_PropertyChanged(object sender, EventArgs e)
         {
             UpdateOutput();
         }
 
-        private void OnPreviewContentChanged(object sender, EventArgs e)
+        private void Layer_UserPropertyChanged(object sender, UserPropertyChangedEventArgs e)
+        {
+            if (e.Key == EditorProperties.DrawingPreviewProperty)
+            {
+                UpdatePreview();
+            }
+        }
+
+        private void Preview_OutputChanged(object sender, EventArgs e)
         {
             UpdateOutput();
             Root.Invalidate();

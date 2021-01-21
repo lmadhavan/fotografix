@@ -41,12 +41,14 @@ namespace Fotografix.Uwp
 
         private ImageEditor CreateEditor(Viewport viewport, Image image)
         {
-            return new ImageEditor(image, handlerCollection)
+            var editor = new ImageEditor(image, handlerCollection)
             {
                 ImageDecoder = imageDecoder,
                 ImageEncoder = imageEncoder,
                 Tools = CreateTools(viewport)
             };
+            image.SetCommandDispatcher(editor);
+            return editor;
         }
 
         private IList<ITool> CreateTools(Viewport viewport)

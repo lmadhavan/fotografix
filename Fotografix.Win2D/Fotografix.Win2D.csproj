@@ -162,6 +162,10 @@
       <Project>{258c6a47-8821-49eb-a1bb-188456689de4}</Project>
       <Name>Fotografix.Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Fotografix.Editor\Fotografix.Editor.csproj">
+      <Project>{C2424398-29D9-4392-A0C0-C4699C7B913B}</Project>
+      <Name>Fotografix.Editor</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>

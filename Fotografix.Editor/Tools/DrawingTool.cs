@@ -3,19 +3,29 @@ using Fotografix.Editor.Drawing;
 
 namespace Fotografix.Editor.Tools
 {
-    public abstract class DrawingTool<T> : ITool, IDrawingSurfaceListener where T : class, IDrawable
+    public abstract class DrawingTool<T> : ITool where T : class, IDrawable
     {
-        private IDrawingSurface drawingSurface;
+        private Image image;
+        private BitmapLayer activeLayer;
         private T drawable;
 
         public abstract string Name { get; }
         public ToolCursor Cursor => Enabled ? ToolCursor.Crosshair : ToolCursor.Disabled;
 
-        private bool Enabled => drawingSurface != null;
+        private bool Enabled => activeLayer != null;
 
-        public void DrawingSurfaceActivated(IDrawingSurface drawingSurface)
+        public void Activated(Image image)
         {
-            this.drawingSurface = drawingSurface;
+            this.image = image;
+            UpdateActiveLayer();
+            image.UserPropertyChanged += Image_UserPropertyChanged;
+        }
+
+        public void Deactivated()
+        {
+            image.UserPropertyChanged -= Image_UserPropertyChanged;
+            this.activeLayer = null;
+            this.image = null;
         }
 
         public void PointerPressed(PointerState p)
@@ -23,7 +33,7 @@ namespace Fotografix.Editor.Tools
             if (Enabled)
             {
                 this.drawable = CreateDrawable(p);
-                drawingSurface.BeginDrawing(drawable);
+                activeLayer.SetDrawingPreview(drawable);
             }
         }
 
@@ -39,11 +49,25 @@ namespace Fotografix.Editor.Tools
         {
             if (drawable != null)
             {
-                drawingSurface.EndDrawing(drawable);
+                activeLayer.SetDrawingPreview(null);
+                image.Dispatch(new DrawCommand(activeLayer.Bitmap, drawable));
                 this.drawable = null;
             }
         }
-        
+
+        private void Image_UserPropertyChanged(object sender, UserPropertyChangedEventArgs e)
+        {
+            if (e.Key == EditorProperties.ActiveLayerProperty)
+            {
+                UpdateActiveLayer();
+            }
+        }
+
+        private void UpdateActiveLayer()
+        {
+            this.activeLayer = image.GetActiveLayer() as BitmapLayer;
+        }
+
         protected abstract T CreateDrawable(PointerState p);
         protected abstract void UpdateDrawable(T drawable, PointerState p);
     }

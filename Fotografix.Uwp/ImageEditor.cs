@@ -1,7 +1,5 @@
-﻿using Fotografix.Drawing;
-using Fotografix.Editor;
+﻿using Fotografix.Editor;
 using Fotografix.Editor.Collections;
-using Fotografix.Editor.Drawing;
 using Fotografix.Editor.Tools;
 using Fotografix.IO;
 using Fotografix.Uwp.Adjustments;
@@ -110,7 +108,7 @@ namespace Fotografix.Uwp
                 if (value != null && SetProperty(ref activeLayer, value))
                 {
                     RaisePropertyChanged(nameof(CanDeleteActiveLayer));
-                    NotifyDrawingSurfaceListener();
+                    image.SetActiveLayer(activeLayer);
                 }
             }
         }
@@ -181,7 +179,6 @@ namespace Fotografix.Uwp
 
         private IList<ITool> tools;
         private ITool activeTool;
-        private List<IDrawingSurfaceListener> drawingSurfaceListeners;
 
         public IList<ITool> Tools
         {
@@ -191,7 +188,6 @@ namespace Fotografix.Uwp
             {
                 if (SetProperty(ref tools, value))
                 {
-                    this.drawingSurfaceListeners = tools.OfType<IDrawingSurfaceListener>().ToList();
                     this.ActiveTool = Tools.FirstOrDefault();
                 }
             }
@@ -203,9 +199,12 @@ namespace Fotografix.Uwp
 
             set
             {
+                ITool oldTool = activeTool;
+
                 if (SetProperty(ref activeTool, value))
                 {
-                    NotifyDrawingSurfaceListener();
+                    oldTool?.Deactivated();
+                    activeTool.Activated(image);
                 }
             }
         }
@@ -277,40 +276,6 @@ namespace Fotografix.Uwp
                 {
                     history.Add(e.Change);
                 }
-            }
-        }
-
-        private void NotifyDrawingSurfaceListener()
-        {
-            if (activeLayer is BitmapLayer bitmapLayer)
-            {
-                foreach (IDrawingSurfaceListener listener in drawingSurfaceListeners)
-                {
-                    listener.DrawingSurfaceActivated(new BitmapDrawingSurface(bitmapLayer, this));
-                }
-            }
-        }
-
-        private sealed class BitmapDrawingSurface : IDrawingSurface
-        {
-            private readonly BitmapLayer bitmapLayer;
-            private readonly ImageEditor editor;
-
-            public BitmapDrawingSurface(BitmapLayer bitmapLayer, ImageEditor editor)
-            {
-                this.bitmapLayer = bitmapLayer;
-                this.editor = editor;
-            }
-
-            public void BeginDrawing(IDrawable drawable)
-            {
-                editor.compositor.BeginPreview(bitmapLayer, drawable);
-            }
-
-            public void EndDrawing(IDrawable drawable)
-            {
-                editor.compositor.EndPreview(bitmapLayer);
-                editor.Dispatch(new DrawCommand(bitmapLayer.Bitmap, drawable));
             }
         }
     }

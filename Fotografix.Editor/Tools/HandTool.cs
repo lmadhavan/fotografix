@@ -16,6 +16,14 @@ namespace Fotografix.Editor.Tools
         public string Name => "Hand";
         public ToolCursor Cursor => scrollAnchor != null ? ToolCursor.ClosedHand : ToolCursor.OpenHand;
 
+        public void Activated(Image image)
+        {
+        }
+
+        public void Deactivated()
+        {
+        }
+
         public void PointerPressed(PointerState p)
         {
             this.scrollAnchor = new ScrollAnchor(viewport);

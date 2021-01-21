@@ -1,4 +1,5 @@
-﻿using Fotografix.Drawing;
+﻿using Fotografix.Adjustments;
+using Fotografix.Drawing;
 using Fotografix.Editor.Drawing;
 using Moq;
 using NUnit.Framework;
@@ -13,33 +14,66 @@ namespace Fotografix.Editor.Tools
         private static readonly PointerState End = new PointerState(new Point(20, 20));
 
         private FakeDrawingTool tool;
-        private Mock<IDrawingSurface> drawingSurface;
+        
+        private Image image;
+        private Bitmap bitmap;
+        private Layer bitmapLayer;
+        private Layer nonBitmapLayer;
+
         private Mock<IFakeDrawableFactory> drawableFactory;
         private Mock<IFakeDrawable> drawable;
+        private Mock<ICommandDispatcher> commandDispatcher;
 
         [SetUp]
         public void SetUp()
         {
-            this.drawingSurface = new Mock<IDrawingSurface>();
+            this.image = new Image(new Size(10, 10));
+            this.bitmap = new Bitmap(new Size(10, 10));
+            this.bitmapLayer = new BitmapLayer(bitmap);
+            this.nonBitmapLayer = new AdjustmentLayer(new BlackAndWhiteAdjustment());
+
             this.drawableFactory = new Mock<IFakeDrawableFactory>();
             this.drawable = new Mock<IFakeDrawable>();
             drawableFactory.Setup(f => f.Create(It.IsAny<Point>())).Returns(drawable.Object);
+
+            this.commandDispatcher = new Mock<ICommandDispatcher>();
+            image.SetCommandDispatcher(commandDispatcher.Object);
 
             this.tool = new FakeDrawingTool(drawableFactory.Object);
         }
 
         [Test]
-        public void DisabledWhenNoDrawingSurfaceIsActive()
+        public void DisabledWhenNotActivated()
         {
             Assert.That(tool.Cursor, Is.EqualTo(ToolCursor.Disabled));
         }
 
         [Test]
-        public void EnabledWhenDrawingSurfaceIsActive()
+        public void DisabledWhenActiveLayerIsNotBitmapLayer()
         {
-            tool.DrawingSurfaceActivated(drawingSurface.Object);
+            image.SetActiveLayer(nonBitmapLayer);
+            tool.Activated(image);
+
+            Assert.That(tool.Cursor, Is.EqualTo(ToolCursor.Disabled));
+        }
+
+        [Test]
+        public void EnabledWhenActiveLayerIsBitmapLayer()
+        {
+            image.SetActiveLayer(bitmapLayer);
+            tool.Activated(image);
 
             Assert.That(tool.Cursor, Is.EqualTo(ToolCursor.Crosshair));
+        }
+
+        [Test]
+        public void DisabledWhenActiveLayerChangesToNonBitmapLayerAfterActivation()
+        {
+            image.SetActiveLayer(bitmapLayer);
+            tool.Activated(image);
+            image.SetActiveLayer(nonBitmapLayer);
+
+            Assert.That(tool.Cursor, Is.EqualTo(ToolCursor.Disabled));
         }
 
         [Test]
@@ -53,19 +87,23 @@ namespace Fotografix.Editor.Tools
         }
 
         [Test]
-        public void BeginsDrawingWhenPointerPressed()
+        public void BeginsDrawingPreviewWhenPointerPressed()
         {
-            tool.DrawingSurfaceActivated(drawingSurface.Object);
+            image.SetActiveLayer(bitmapLayer);
+            tool.Activated(image);
+
             tool.PointerPressed(Start);
 
             drawableFactory.Verify(f => f.Create(Start.Location));
-            drawingSurface.Verify(ds => ds.BeginDrawing(drawable.Object));
+            Assert.That(bitmapLayer.GetDrawingPreview(), Is.EqualTo(drawable.Object));
         }
 
         [Test]
         public void UpdatesDrawingWhenPointerMoved()
         {
-            tool.DrawingSurfaceActivated(drawingSurface.Object);
+            image.SetActiveLayer(bitmapLayer);
+            tool.Activated(image);
+
             tool.PointerPressed(Start);
             tool.PointerMoved(End);
 
@@ -73,20 +111,25 @@ namespace Fotografix.Editor.Tools
         }
 
         [Test]
-        public void EndsDrawingWhenPointerReleased()
+        public void CommitsDrawingWhenPointerReleased()
         {
-            tool.DrawingSurfaceActivated(drawingSurface.Object);
+            image.SetActiveLayer(bitmapLayer);
+            tool.Activated(image);
+
             tool.PointerPressed(Start);
             tool.PointerMoved(End);
             tool.PointerReleased(End);
 
-            drawingSurface.Verify(ds => ds.EndDrawing(drawable.Object));
+            commandDispatcher.Verify(d => d.Dispatch(new DrawCommand(bitmap, drawable.Object)));
+            Assert.That(bitmapLayer.GetDrawingPreview(), Is.Null);
         }
 
         [Test]
         public void DoesNotUpdateDrawingAfterPointerReleased()
         {
-            tool.DrawingSurfaceActivated(drawingSurface.Object);
+            image.SetActiveLayer(bitmapLayer);
+            tool.Activated(image);
+
             tool.PointerPressed(Start);
             tool.PointerMoved(End);
             tool.PointerReleased(End);
