@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Drawing;
 using Fotografix.Drawing;
 using Fotografix.Editor;
@@ -23,12 +24,12 @@ namespace Fotografix.Win2D.Composition
 
             this.blendEffect = new BlendEffect();
             layer.PropertyChanged += Layer_PropertyChanged;
-            layer.UserPropertyChanged += Layer_UserPropertyChanged;
+            layer.UserPropertyChanged += Layer_PropertyChanged;
         }
 
         public virtual void Dispose()
         {
-            layer.UserPropertyChanged -= Layer_UserPropertyChanged;
+            layer.UserPropertyChanged -= Layer_PropertyChanged;
             layer.PropertyChanged -= Layer_PropertyChanged;
             blendEffect.Dispose();
         }
@@ -99,21 +100,16 @@ namespace Fotografix.Win2D.Composition
                 previewNode.Dispose();
                 this.previewNode = null;
             }
-
-            UpdateOutput();
         }
 
-        private void Layer_PropertyChanged(object sender, EventArgs e)
+        private void Layer_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            UpdateOutput();
-        }
-
-        private void Layer_UserPropertyChanged(object sender, UserPropertyChangedEventArgs e)
-        {
-            if (e.Key == EditorProperties.DrawingPreviewProperty)
+            if (e.PropertyName == EditorProperties.DrawingPreview)
             {
                 UpdatePreview();
             }
+
+            UpdateOutput();
         }
 
         private void Preview_OutputChanged(object sender, EventArgs e)

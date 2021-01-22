@@ -4,41 +4,41 @@ namespace Fotografix.Editor
 {
     public static class EditorProperties
     {
-        private static readonly UserPropertyKey<Layer> ActiveLayer = new UserPropertyKey<Layer>();
-        private static readonly UserPropertyKey<ICommandDispatcher> CommandDispatcher = new UserPropertyKey<ICommandDispatcher>();
-        private static readonly UserPropertyKey<IDrawable> DrawingPreview = new UserPropertyKey<IDrawable>();
+        private static readonly UserProperty<Layer> ActiveLayerProperty = new UserProperty<Layer>();
+        private static readonly UserProperty<ICommandDispatcher> CommandDispatcherProperty = new UserProperty<ICommandDispatcher>();
+        private static readonly UserProperty<IDrawable> DrawingPreviewProperty = new UserProperty<IDrawable>();
 
-        public static IUserPropertyKey ActiveLayerProperty => ActiveLayer;
-        public static IUserPropertyKey DrawingPreviewProperty => DrawingPreview;
+        public static string ActiveLayer => ActiveLayerProperty.Id;
+        public static string DrawingPreview => DrawingPreviewProperty.Id;
 
         public static Layer GetActiveLayer(this Image image)
         {
-            return image.GetUserProperty(ActiveLayer);
+            return image.GetUserProperty(ActiveLayerProperty);
         }
 
         public static void SetActiveLayer(this Image image, Layer layer)
         {
-            image.SetUserProperty(ActiveLayer, layer);
+            image.SetUserProperty(ActiveLayerProperty, layer);
         }
 
         public static void Dispatch<T>(this Image image, T command) where T : ICommand
         {
-            image.GetUserProperty(CommandDispatcher).Dispatch(command);
+            image.GetUserProperty(CommandDispatcherProperty).Dispatch(command);
         }
 
         public static void SetCommandDispatcher(this Image image, ICommandDispatcher commandDispatcher)
         {
-            image.SetUserProperty(CommandDispatcher, commandDispatcher);
+            image.SetUserProperty(CommandDispatcherProperty, commandDispatcher);
         }
 
         public static IDrawable GetDrawingPreview(this Layer layer)
         {
-            return layer.GetUserProperty(DrawingPreview);
+            return layer.GetUserProperty(DrawingPreviewProperty);
         }
 
         public static void SetDrawingPreview(this Layer layer, IDrawable drawable)
         {
-            layer.SetUserProperty(DrawingPreview, drawable);
+            layer.SetUserProperty(DrawingPreviewProperty, drawable);
         }
     }
 }

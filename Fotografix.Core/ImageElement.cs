@@ -7,19 +7,19 @@ namespace Fotografix
 {
     public abstract class ImageElement : INotifyPropertyChanged
     {
-        private readonly Dictionary<IUserPropertyKey, object> userProperties = new Dictionary<IUserPropertyKey, object>();
+        private readonly Dictionary<object, object> userProperties = new Dictionary<object, object>();
 
         public ImageElement Parent { get; private set; }
 
         public event PropertyChangedEventHandler PropertyChanged;
-        public event EventHandler<UserPropertyChangedEventArgs> UserPropertyChanged;
+        public event PropertyChangedEventHandler UserPropertyChanged;
         public event EventHandler<ContentChangedEventArgs> ContentChanged;
 
         public abstract bool Accept(ImageElementVisitor visitor);
 
-        public T GetUserProperty<T>(UserPropertyKey<T> key)
+        public T GetUserProperty<T>(UserProperty<T> property)
         {
-            if (userProperties.TryGetValue(key, out var value))
+            if (userProperties.TryGetValue(property, out var value))
             {
                 return (T)value;
             }
@@ -27,14 +27,14 @@ namespace Fotografix
             return default;
         }
 
-        public void SetUserProperty<T>(UserPropertyKey<T> key, T value)
+        public void SetUserProperty<T>(UserProperty<T> property, T value)
         {
-            T oldValue = GetUserProperty(key);
+            T oldValue = GetUserProperty(property);
 
             if (!EqualityComparer<T>.Default.Equals(oldValue, value))
             {
-                userProperties[key] = value;
-                UserPropertyChanged?.Invoke(this, new UserPropertyChangedEventArgs(key));
+                userProperties[property] = value;
+                UserPropertyChanged?.Invoke(this, new PropertyChangedEventArgs(property.Id));
             }
         }
 

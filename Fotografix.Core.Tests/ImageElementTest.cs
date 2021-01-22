@@ -37,14 +37,14 @@ namespace Fotografix
         public void RaisesUserPropertyChangedEvent()
         {
             FakeImageElement element = new FakeImageElement();
-            UserPropertyKey<string> key = new UserPropertyKey<string>();
+            UserProperty<string> property = new UserProperty<string>();
 
-            UserPropertyChangedEventArgs userPropertyChangedEvent = null;
-            element.UserPropertyChanged += (s, e) => userPropertyChangedEvent = e;
+            PropertyChangedEventArgs propertyChangedEvent = null;
+            element.UserPropertyChanged += (s, e) => propertyChangedEvent = e;
 
-            element.SetUserProperty(key, "foo");
+            element.SetUserProperty(property, "foo");
 
-            Assert.That(userPropertyChangedEvent.Key, Is.EqualTo(key));
+            Assert.That(propertyChangedEvent.PropertyName, Is.EqualTo(property.Id));
         }
 
         [Test]

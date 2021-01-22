@@ -1,5 +1,6 @@
 ﻿using Fotografix.Drawing;
 using Fotografix.Editor.Drawing;
+using System.ComponentModel;
 
 namespace Fotografix.Editor.Tools
 {
@@ -18,12 +19,12 @@ namespace Fotografix.Editor.Tools
         {
             this.image = image;
             UpdateActiveLayer();
-            image.UserPropertyChanged += Image_UserPropertyChanged;
+            image.UserPropertyChanged += Image_PropertyChanged;
         }
 
         public void Deactivated()
         {
-            image.UserPropertyChanged -= Image_UserPropertyChanged;
+            image.UserPropertyChanged -= Image_PropertyChanged;
             this.activeLayer = null;
             this.image = null;
         }
@@ -55,9 +56,9 @@ namespace Fotografix.Editor.Tools
             }
         }
 
-        private void Image_UserPropertyChanged(object sender, UserPropertyChangedEventArgs e)
+        private void Image_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (e.Key == EditorProperties.ActiveLayerProperty)
+            if (e.PropertyName == EditorProperties.ActiveLayer)
             {
                 UpdateActiveLayer();
             }
