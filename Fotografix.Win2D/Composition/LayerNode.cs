@@ -29,6 +29,8 @@ namespace Fotografix.Win2D.Composition
 
         public virtual void Dispose()
         {
+            previewNode?.Dispose();
+
             layer.UserPropertyChanged -= Layer_PropertyChanged;
             layer.PropertyChanged -= Layer_PropertyChanged;
             blendEffect.Dispose();
@@ -89,6 +91,7 @@ namespace Fotografix.Win2D.Composition
         private void UpdatePreview()
         {
             IDrawable preview = layer.GetDrawingPreview();
+            previewNode?.Dispose();
 
             if (preview != null)
             {
@@ -97,7 +100,6 @@ namespace Fotografix.Win2D.Composition
             }
             else
             {
-                previewNode.Dispose();
                 this.previewNode = null;
             }
         }

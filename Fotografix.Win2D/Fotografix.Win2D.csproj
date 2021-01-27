@@ -124,6 +124,7 @@
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="Composition\Adjustments\LevelsAdjustmentNode.cs" />
+    <Compile Include="Composition\CropPreviewNode.cs" />
     <Compile Include="ConversionExtensions.cs" />
     <Compile Include="Composition\AdjustmentLayerNode.cs" />
     <Compile Include="Composition\Adjustments\AdjustmentNode.cs" />

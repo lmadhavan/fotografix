@@ -25,5 +25,10 @@ namespace Fotografix.Editor
         /// Gets the location of the pointer in viewport coordinates.
         /// </summary>
         public PointF ViewportLocation { get; }
+
+        public static implicit operator PointerState(Point pt)
+        {
+            return new PointerState(pt);
+        }
     }
 }

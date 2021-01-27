@@ -1,4 +1,6 @@
 ﻿using Fotografix.Editor.Crop;
+using System;
+using System.ComponentModel;
 using System.Drawing;
 
 namespace Fotografix.Editor.Tools
@@ -15,13 +17,16 @@ namespace Fotografix.Editor.Tools
         public void Activated(Image image)
         {
             this.image = image;
-            Rectangle rect = new Rectangle(Point.Empty, image.Size);
-            this.tracker = new RectangleTracker(rect) { HandleTolerance = 8 };
+            image.PropertyChanged += Image_PropertyChanged;
+            InitializeTracker();
         }
 
         public void Deactivated()
         {
             this.tracker = null;
+
+            image.SetCropPreview(null);
+            image.PropertyChanged -= Image_PropertyChanged;
             this.image = null;
         }
 
@@ -43,6 +48,28 @@ namespace Fotografix.Editor.Tools
         public void Commit()
         {
             image.Dispatch(new CropCommand(image, tracker.Rectangle));
+        }
+
+        private void Image_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(Image.Size))
+            {
+                InitializeTracker();
+            }
+        }
+
+        private void InitializeTracker()
+        {
+            Rectangle rect = new Rectangle(Point.Empty, image.Size);
+            this.tracker = new RectangleTracker(rect) { HandleTolerance = 8 };
+            tracker.RectangleChanged += Tracker_RectangleChanged;
+
+            image.SetCropPreview(rect);
+        }
+
+        private void Tracker_RectangleChanged(object sender, EventArgs e)
+        {
+            image.SetCropPreview(tracker.Rectangle);
         }
     }
 }

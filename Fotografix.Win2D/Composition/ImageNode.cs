@@ -1,7 +1,10 @@
-﻿using Microsoft.Graphics.Canvas;
+﻿using Fotografix.Editor;
+using Microsoft.Graphics.Canvas;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.ComponentModel;
+using System.Drawing;
 
 namespace Fotografix.Win2D.Composition
 {
@@ -12,6 +15,7 @@ namespace Fotografix.Win2D.Composition
         private readonly Dictionary<Layer, LayerNode> layerNodes = new Dictionary<Layer, LayerNode>();
 
         private ICanvasImage output;
+        private CropPreviewNode cropPreviewNode;
         private bool relinking;
 
         internal ImageNode(Image image, ICompositionRoot root)
@@ -22,14 +26,18 @@ namespace Fotografix.Win2D.Composition
             RegisterAll();
             RelinkLayers();
 
-            image.ContentChanged += OnImageContentChanged;
-            image.Layers.CollectionChanged += OnLayerCollectionChanged;
+            image.ContentChanged += Image_ContentChanged;
+            image.UserPropertyChanged += Image_UserPropertyChanged;
+            image.Layers.CollectionChanged += Layers_CollectionChanged;
         }
 
         public void Dispose()
         {
-            image.Layers.CollectionChanged -= OnLayerCollectionChanged;
-            image.ContentChanged -= OnImageContentChanged;
+            cropPreviewNode?.Dispose();
+
+            image.Layers.CollectionChanged -= Layers_CollectionChanged;
+            image.UserPropertyChanged -= Image_UserPropertyChanged;
+            image.ContentChanged -= Image_ContentChanged;
             UnregisterAll();
         }
 
@@ -39,6 +47,8 @@ namespace Fotografix.Win2D.Composition
             {
                 ds.DrawImage(output);
             }
+
+            cropPreviewNode?.Draw(ds);
         }
 
         private void RelinkLayers()
@@ -76,7 +86,7 @@ namespace Fotografix.Win2D.Composition
         private void Register(Layer layer)
         {
             LayerNode node = NodeFactory.CreateNode(layer, root);
-            node.OutputChanged += OnLayerOutputChanged;
+            node.OutputChanged += Layer_OutputChanged;
             this.layerNodes[layer] = node;
         }
 
@@ -106,17 +116,40 @@ namespace Fotografix.Win2D.Composition
             layerNodes.Clear();
         }
 
-        private void OnImageContentChanged(object sender, ContentChangedEventArgs e)
+        private void Image_ContentChanged(object sender, ContentChangedEventArgs e)
         {
             root.Invalidate();
         }
 
-        private void OnLayerOutputChanged(object sender, EventArgs e)
+        private void Image_UserPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == EditorProperties.CropPreview)
+            {
+                UpdateCropPreview();
+            }
+        }
+
+        private void UpdateCropPreview()
+        {
+            Rectangle? rect = image.GetCropPreview();
+            cropPreviewNode?.Dispose();
+
+            if (rect == null)
+            {
+                this.cropPreviewNode = null;
+                return;
+            }
+
+            this.cropPreviewNode = new CropPreviewNode(root.ResourceCreator, image.Size, rect.Value);
+            root.Invalidate();
+        }
+
+        private void Layer_OutputChanged(object sender, EventArgs e)
         {
             RelinkLayers();
         }
 
-        private void OnLayerCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        private void Layers_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             if (e.Action == NotifyCollectionChangedAction.Reset)
             {
