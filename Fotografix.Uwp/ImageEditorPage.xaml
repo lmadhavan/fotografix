@@ -114,7 +114,7 @@
                 <Button Style="{StaticResource CommandButtonStyle}">
                     <StackPanel Orientation="Horizontal">
                         <SymbolIcon Symbol="Zoom" />
-                        <TextBlock Margin="4,0,0,0" HorizontalTextAlignment="Center" MinWidth="40" Text="{x:Bind sys:String.Format('{0:P0}', scrollViewer.ZoomFactor), Mode=OneWay}" />
+                        <TextBlock Margin="4,0,0,0" HorizontalTextAlignment="Center" MinWidth="40" Text="{x:Bind sys:String.Format('{0:P0}', editor.ZoomFactor), Mode=OneWay}" />
                     </StackPanel>
                 </Button>
             </StackPanel>
@@ -126,16 +126,18 @@
                   DisplayMemberPath="Name"
         />
 
-        <ScrollViewer x:Name="scrollViewer"
-                      Grid.Row="1" Grid.Column="1"
-                      HorizontalScrollBarVisibility="Auto" ZoomMode="Enabled"
-                      PointerEntered="{x:Bind toolAdapter.PointerEntered}"
-                      PointerPressed="{x:Bind toolAdapter.PointerPressed}"
-                      PointerMoved="{x:Bind toolAdapter.PointerMoved}"
-                      PointerReleased="{x:Bind toolAdapter.PointerReleased}"
-                      PointerExited="{x:Bind toolAdapter.PointerExited}">
-            <canvas:CanvasControl x:Name="canvas" CreateResources="Canvas_CreateResources" Draw="Canvas_Draw" />
-        </ScrollViewer>
+        <canvas:CanvasControl
+            x:Name="canvas"
+            Grid.Row="1" Grid.Column="1"
+            PointerEntered="{x:Bind toolAdapter.PointerEntered}"
+            PointerPressed="{x:Bind toolAdapter.PointerPressed}"
+            PointerMoved="{x:Bind toolAdapter.PointerMoved}"
+            PointerReleased="{x:Bind toolAdapter.PointerReleased}"
+            PointerExited="{x:Bind toolAdapter.PointerExited}"
+            SizeChanged="Canvas_SizeChanged"
+            CreateResources="Canvas_CreateResources"
+            Draw="Canvas_Draw" 
+        />
 
         <StackPanel Grid.Row="1" Grid.Column="2" Orientation="Vertical" Background="{ThemeResource AppBarBackgroundThemeBrush}" Padding="8" BorderThickness="1,0,0,0" BorderBrush="{ThemeResource ButtonBorderThemeBrush}">
             <StackPanel.Resources>

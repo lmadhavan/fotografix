@@ -5,7 +5,6 @@ using Microsoft.Graphics.Canvas.UI;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
@@ -29,8 +28,8 @@ namespace Fotografix.Uwp
         public ImageEditorPage()
         {
             this.InitializeComponent();
-            this.viewport = new ScrollViewerViewport(scrollViewer);
-            this.toolAdapter = new ToolAdapter(canvas, scrollViewer);
+            this.viewport = new Viewport();
+            this.toolAdapter = new ToolAdapter(canvas, viewport);
             BindNewAdjustmentMenuFlyout();
         }
 
@@ -75,15 +74,18 @@ namespace Fotografix.Uwp
             editor.Draw(args.DrawingSession);
         }
 
+        private void Canvas_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            viewport.Size = new Size((int)canvas.ActualWidth, (int)canvas.ActualHeight);
+        }
+
         private async Task LoadImageAsync()
         {
             this.editor = await createCommand.ExecuteAsync(viewport);
-            editor.Invalidated += OnEditorInvalidated;
-            editor.PropertyChanged += OnEditorPropertyChanged;
+            editor.Invalidated += Editor_Invalidated;
             toolAdapter.Toolbox = editor;
 
             Bindings.Update();
-            UpdateCanvasSize();
             FitToScreen();
         }
 
@@ -92,29 +94,13 @@ namespace Fotografix.Uwp
             return $"{size.Width}×{size.Height}";
         }
 
-        private void UpdateCanvasSize()
-        {
-            canvas.Width = editor.Size.Width;
-            canvas.Height = editor.Size.Height;
-            canvas.Invalidate();
-        }
-
         private void FitToScreen()
         {
-            viewport.ZoomToFit(editor.Size);
         }
 
-        private void OnEditorInvalidated(object sender, EventArgs e)
+        private void Editor_Invalidated(object sender, EventArgs e)
         {
             canvas.Invalidate();
-        }
-
-        private void OnEditorPropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == nameof(ImageEditor.Size))
-            {
-                UpdateCanvasSize();
-            }
         }
 
         protected override void OnDragEnter(DragEventArgs e)

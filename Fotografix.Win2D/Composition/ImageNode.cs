@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
-using System.Drawing;
+using Windows.Foundation;
 
 namespace Fotografix.Win2D.Composition
 {
@@ -15,7 +15,6 @@ namespace Fotografix.Win2D.Composition
         private readonly Dictionary<Layer, LayerNode> layerNodes = new Dictionary<Layer, LayerNode>();
 
         private ICanvasImage output;
-        private CropPreviewNode cropPreviewNode;
         private bool relinking;
 
         internal ImageNode(Image image, ICompositionRoot root)
@@ -33,22 +32,27 @@ namespace Fotografix.Win2D.Composition
 
         public void Dispose()
         {
-            cropPreviewNode?.Dispose();
-
             image.Layers.CollectionChanged -= Layers_CollectionChanged;
             image.UserPropertyChanged -= Image_UserPropertyChanged;
             image.ContentChanged -= Image_ContentChanged;
             UnregisterAll();
         }
 
-        public void Draw(CanvasDrawingSession ds)
+        public void Draw(CanvasDrawingSession ds, Rect imageBounds)
         {
             if (output != null)
             {
-                ds.DrawImage(output);
+                ds.DrawImage(output, imageBounds, new Rect(0, 0, image.Size.Width, image.Size.Height));
             }
 
-            cropPreviewNode?.Draw(ds);
+            System.Drawing.Rectangle? cropPreview = image.GetCropPreview();
+            if (cropPreview != null)
+            {
+                using (CropPreviewNode cropPreviewNode = new CropPreviewNode(root, cropPreview.Value))
+                {
+                    cropPreviewNode.Draw(ds);
+                }
+            }
         }
 
         private void RelinkLayers()
@@ -125,25 +129,8 @@ namespace Fotografix.Win2D.Composition
         {
             if (e.PropertyName == EditorProperties.CropPreview)
             {
-                UpdateCropPreview();
+                root.Invalidate();
             }
-        }
-
-        private void UpdateCropPreview()
-        {
-            Rectangle? rect = image.GetCropPreview();
-            cropPreviewNode?.Dispose();
-
-            if (rect != null)
-            {
-                this.cropPreviewNode = new CropPreviewNode(root.ResourceCreator, image.Size, rect.Value);
-            }
-            else
-            {
-                this.cropPreviewNode = null;
-            }
-
-            root.Invalidate();
         }
 
         private void Layer_OutputChanged(object sender, EventArgs e)

@@ -1,4 +1,5 @@
-﻿using Microsoft.Graphics.Canvas;
+﻿using Fotografix.Editor;
+using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Geometry;
 using System;
 using System.Collections.Generic;
@@ -28,18 +29,20 @@ namespace Fotografix.Win2D.Composition
             new PointF(1.0f, 1.0f)
         };
 
+        private readonly Viewport viewport;
+        private readonly Rectangle viewportCropBounds;
         private readonly CanvasGeometry dimmedArea;
-        private readonly Rectangle cropRect;
 
-        public CropPreviewNode(ICanvasResourceCreator resourceCreator, Size imageSize, Rectangle cropRectangle)
+        public CropPreviewNode(ICompositionRoot root, Rectangle cropRectangle)
         {
-            using (CanvasGeometry imageBoundsGeometry = CanvasGeometry.CreateRectangle(resourceCreator, 0, 0, imageSize.Width, imageSize.Height))
-            using (CanvasGeometry cropRectangleGeometry = CanvasGeometry.CreateRectangle(resourceCreator, cropRectangle.X, cropRectangle.Y, cropRectangle.Width, cropRectangle.Height))
+            this.viewport = root.Viewport;
+            this.viewportCropBounds = viewport.TransformImageToViewport(cropRectangle);
+
+            using (CanvasGeometry imageBoundsGeometry = CanvasGeometry.CreateRectangle(root.ResourceCreator, viewport.ImageBounds.ToWindowsRect()))
+            using (CanvasGeometry cropRectangleGeometry = CanvasGeometry.CreateRectangle(root.ResourceCreator, viewportCropBounds.ToWindowsRect()))
             {
                 this.dimmedArea = imageBoundsGeometry.CombineWith(cropRectangleGeometry, Matrix3x2.Identity, CanvasGeometryCombine.Exclude);
             }
-
-            this.cropRect = cropRectangle;
         }
 
         public void Dispose()
@@ -66,29 +69,29 @@ namespace Fotografix.Win2D.Composition
 
             ds.FillGeometry(dimmedArea, DimColor);
 
-            OuterStroke(cropRect);
-            InnerStroke(cropRect);
+            OuterStroke(viewportCropBounds);
+            InnerStroke(viewportCropBounds);
 
             foreach (PointF hl in HandleLocations)
             {
-                RectangleF r = GetHandleRectangle(hl);
-                OuterStroke(r);
-                Fill(r);
+                RectangleF handleRect = TransformHandleLocationToViewportRect(hl);
+                OuterStroke(handleRect);
+                Fill(handleRect);
             }
         }
 
-        private RectangleF GetHandleRectangle(PointF hl)
+        private RectangleF TransformHandleLocationToViewportRect(PointF hl)
         {
-            PointF pt = new PointF(
-                cropRect.X + hl.X * cropRect.Width,
-                cropRect.Y + hl.Y * cropRect.Height
+            PointF center = new PointF(
+                viewportCropBounds.X + hl.X * viewportCropBounds.Width,
+                viewportCropBounds.Y + hl.Y * viewportCropBounds.Height
             );
 
             return RectangleF.FromLTRB(
-                pt.X - HandleSize / 2,
-                pt.Y - HandleSize / 2,
-                pt.X + HandleSize / 2,
-                pt.Y + HandleSize / 2
+                center.X - HandleSize / 2,
+                center.Y - HandleSize / 2,
+                center.X + HandleSize / 2,
+                center.Y + HandleSize / 2
             );
         }
     }

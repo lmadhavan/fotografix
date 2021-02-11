@@ -1,5 +1,4 @@
-﻿using Fotografix.Editor;
-using Fotografix.Editor.Tools;
+﻿using Fotografix.Editor.Tools;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Drawing;
 using System.Threading.Tasks;
@@ -10,22 +9,21 @@ namespace Fotografix.Tests.Acceptance
     public class HandToolAcceptanceTest : ToolAcceptanceTestBase
     {
         [TestMethod]
-        public async Task ScrollsViewport()
+        public async Task PansViewport()
         {
             await OpenImageAsync("flowers.jpg");
+            ResizeViewport(new Size(200, 200));
             SelectTool("Hand");
 
             AssertToolCursor(ToolCursor.OpenHand);
 
-            Viewport.ScrollOffset = new PointF(10, 10);
-
             PressAndDragPointer(
-                new Point(30, 30),
-                new Point(32, 32)
+                new Point(150, 150),
+                new Point(50, 50)
             );
 
             AssertToolCursor(ToolCursor.ClosedHand);
-            Assert.AreEqual(new PointF(8, 8), Viewport.ScrollOffset);
+            await AssertImageAsync("flowers_viewport_pan.png");
         }
     }
 }

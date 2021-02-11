@@ -122,6 +122,7 @@
     <Compile Include="Acceptance\AcceptanceTestBase.cs" />
     <Compile Include="Acceptance\AdjustmentsAcceptanceTest.cs" />
     <Compile Include="Acceptance\CropToolAcceptanceTest.cs" />
+    <Compile Include="Acceptance\ViewportAcceptanceTest.cs" />
     <Compile Include="AssertImage.cs" />
     <Compile Include="BitmapCaptureExtensions.cs" />
     <Compile Include="Composition\BitmapBlendingTest.cs" />
@@ -131,6 +132,7 @@
     <Compile Include="Acceptance\GradientToolAcceptanceTest.cs" />
     <Compile Include="Acceptance\HandToolAcceptanceTest.cs" />
     <Compile Include="Acceptance\ResizeImageAcceptanceTest.cs" />
+    <Compile Include="Composition\CompositorPreviewTest.cs" />
     <Compile Include="Uwp\SmokeTest.cs" />
     <Compile Include="TestImages.cs" />
     <Compile Include="Acceptance\ToolAcceptanceTestBase.cs" />
@@ -164,11 +166,12 @@
   <ItemGroup>
     <Content Include="Images\flowers_bc.png" />
     <Content Include="Images\flowers_brush.png" />
-    <Content Include="Images\flowers_brush_preview.png" />
+    <Content Include="Images\flowers_brush_stars_small.png" />
     <Content Include="Images\flowers_bw_multiply_opacity50.png" />
     <Content Include="Images\flowers_bw_opacity50.png" />
     <Content Include="Images\flowers_crop.png" />
     <Content Include="Images\flowers_crop_preview.png" />
+    <Content Include="Images\flowers_crop_preview_scale50.png" />
     <Content Include="Images\flowers_gm.png" />
     <Content Include="Images\flowers_hsl.png" />
     <Content Include="Images\flowers_bw_multiply.png" />
@@ -182,8 +185,10 @@
     <Content Include="Images\flowers_stars_screen.png" />
     <Content Include="Images\flowers_stars_screen_opacity50.png" />
     <Content Include="Images\flowers_stars_small.png" />
+    <Content Include="Images\flowers_stars_small_brush.png" />
+    <Content Include="Images\flowers_viewport_center.png" />
+    <Content Include="Images\flowers_viewport_pan.png" />
     <Content Include="Images\gradient.png" />
-    <Content Include="Images\gradient_preview.png" />
     <Content Include="Images\stars.jpg" />
     <Content Include="Images\stars_small.jpg" />
     <Content Include="Properties\Default.rd.xml" />

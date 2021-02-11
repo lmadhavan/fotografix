@@ -34,9 +34,9 @@ namespace Fotografix.Win2D.Composition
             gridTile.Dispose();
         }
 
-        public void Draw(CanvasDrawingSession ds)
+        public void Draw(CanvasDrawingSession ds, Rect imageBounds)
         {
-            ds.DrawImage(tileEffect);
+            ds.DrawImage(tileEffect, imageBounds, new Rect(0, 0, imageBounds.Width, imageBounds.Height));
         }
     }
 }

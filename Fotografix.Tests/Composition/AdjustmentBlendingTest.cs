@@ -7,23 +7,21 @@ namespace Fotografix.Tests.Composition
     [TestClass]
     public class AdjustmentBlendingTest : CompositionTestBase
     {
-        private Image image;
         private Layer background;
         private Layer foreground;
 
         [TestInitialize]
-        public async Task Initialize()
+        public void Initialize()
         {
-            this.image = await LoadImageAsync("flowers.jpg");
-            this.background = image.Layers[0];
+            this.background = Image.Layers[0];
             this.foreground = new AdjustmentLayer(new BlackAndWhiteAdjustment());
-            image.Layers.Add(foreground);
+            Image.Layers.Add(foreground);
         }
 
         [TestMethod]
         public async Task DefaultProperties()
         {
-            await AssertImageAsync("flowers_bw.png", image);
+            await AssertImageAsync("flowers_bw.png");
         }
 
         [TestMethod]
@@ -31,7 +29,7 @@ namespace Fotografix.Tests.Composition
         {
             foreground.Visible = false;
 
-            await AssertImageAsync("flowers.jpg", image);
+            await AssertImageAsync("flowers.jpg");
         }
 
         [TestMethod]
@@ -39,7 +37,7 @@ namespace Fotografix.Tests.Composition
         {
             foreground.Opacity = 0;
 
-            await AssertImageAsync("flowers.jpg", image);
+            await AssertImageAsync("flowers.jpg");
         }
 
         [TestMethod]
@@ -47,7 +45,7 @@ namespace Fotografix.Tests.Composition
         {
             foreground.Opacity = 0.5f;
 
-            await AssertImageAsync("flowers_bw_opacity50.png", image);
+            await AssertImageAsync("flowers_bw_opacity50.png");
         }
 
         [TestMethod]
@@ -55,7 +53,7 @@ namespace Fotografix.Tests.Composition
         {
             foreground.BlendMode = BlendMode.Multiply;
 
-            await AssertImageAsync("flowers_bw_multiply.png", image);
+            await AssertImageAsync("flowers_bw_multiply.png");
         }
 
         [TestMethod]
@@ -64,7 +62,7 @@ namespace Fotografix.Tests.Composition
             foreground.BlendMode = BlendMode.Multiply;
             foreground.Opacity = 0.5f;
 
-            await AssertImageAsync("flowers_bw_multiply_opacity50.png", image);
+            await AssertImageAsync("flowers_bw_multiply_opacity50.png");
         }
 
         [TestMethod]
@@ -72,7 +70,7 @@ namespace Fotografix.Tests.Composition
         {
             background.Visible = false;
 
-            await AssertImageAsync("empty.png", image);
+            await AssertImageAsync("empty.png");
         }
 
         [TestMethod]
@@ -80,7 +78,7 @@ namespace Fotografix.Tests.Composition
         {
             background.Opacity = 0;
 
-            await AssertImageAsync("empty.png", image);
+            await AssertImageAsync("empty.png");
         }
 
         [TestMethod]
@@ -88,7 +86,7 @@ namespace Fotografix.Tests.Composition
         {
             background.Opacity = 0.5f;
 
-            await AssertImageAsync("flowers_opacity50_bw.png", image);
+            await AssertImageAsync("flowers_opacity50_bw.png");
         }
 
         [TestMethod]
@@ -97,7 +95,7 @@ namespace Fotografix.Tests.Composition
             foreground.Visible = false;
             background.Visible = false;
 
-            await AssertImageAsync("empty.png", image);
+            await AssertImageAsync("empty.png");
         }
     }
 }

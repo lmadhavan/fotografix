@@ -1,8 +1,9 @@
 ﻿using Fotografix.Editor;
-using Fotografix.Editor.Testing;
 using Fotografix.Uwp;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.ComponentModel;
+using System.Drawing;
 using System.Threading.Tasks;
 
 namespace Fotografix.Tests.Acceptance
@@ -12,19 +13,22 @@ namespace Fotografix.Tests.Acceptance
         private static readonly ImageEditorFactory ImageEditorFactory = new ImageEditorFactory();
 
         private bool invalidated;
+        private Viewport viewport;
 
         protected ImageEditor Editor { get; private set; }
-        protected Viewport Viewport { get; private set; }
 
         protected async Task OpenImageAsync(string filename)
         {
             Editor?.Dispose();
 
-            this.Viewport = new FakeViewport();
-
             var file = await TestImages.GetFileAsync(filename);
-            this.Editor = await ImageEditorFactory.OpenImageAsync(Viewport, new StorageFileAdapter(file));
-            Editor.Invalidated += OnEditorInvalidated;
+
+            this.viewport = new Viewport();
+            this.Editor = await ImageEditorFactory.OpenImageAsync(viewport, new StorageFileAdapter(file));
+            Editor.Invalidated += Editor_Invalidated;
+            Editor.PropertyChanged += Editor_PropertyChanged;
+
+            SyncViewportSize();
         }
 
         protected async Task SaveToTempFolderAsync(string filename)
@@ -52,9 +56,27 @@ namespace Fotografix.Tests.Acceptance
             }
         }
 
-        private void OnEditorInvalidated(object sender, EventArgs e)
+        protected void ResizeViewport(Size size)
+        {
+            viewport.Size = size;
+        }
+
+        private void Editor_Invalidated(object sender, EventArgs e)
         {
             this.invalidated = true;
+        }
+
+        private void Editor_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(ImageEditor.Size))
+            {
+                SyncViewportSize();
+            }
+        }
+
+        private void SyncViewportSize()
+        {
+            viewport.Size = Editor.Size;
         }
 
         private void AssertInvalidated(string message)

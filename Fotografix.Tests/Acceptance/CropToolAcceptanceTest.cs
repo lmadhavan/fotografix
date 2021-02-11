@@ -27,8 +27,6 @@ namespace Fotografix.Tests.Acceptance
                 new Point(200, 200)
             );
 
-            await AssertImageAsync("flowers_crop_preview.png");
-
             cropControls.Commit();
             SelectTool("Hand"); // dismiss crop preview
 

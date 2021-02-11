@@ -26,13 +26,13 @@ namespace Fotografix.Uwp
 
         private readonly CoreWindow window;
         private readonly UIElement canvas;
-        private readonly UIElement viewport;
+        private readonly Viewport viewport;
 
         private bool pointerInsideViewport;
         private bool pointerCaptured;
         private CoreCursor originalCursor;
 
-        public ToolAdapter(UIElement canvas, UIElement viewport)
+        public ToolAdapter(UIElement canvas, Viewport viewport)
         {
             this.window = CoreWindow.GetForCurrentThread();
             this.canvas = canvas;
@@ -54,7 +54,7 @@ namespace Fotografix.Uwp
 
         public void PointerPressed(object sender, PointerRoutedEventArgs e)
         {
-            if (viewport.CapturePointer(e.Pointer))
+            if (canvas.CapturePointer(e.Pointer))
             {
                 this.pointerCaptured = true;
             }
@@ -73,7 +73,7 @@ namespace Fotografix.Uwp
         {
             ActiveTool?.PointerReleased(PointerStateFrom(e));
 
-            viewport.ReleasePointerCapture(e.Pointer);
+            canvas.ReleasePointerCapture(e.Pointer);
             this.pointerCaptured = false;
 
             if (pointerInsideViewport)
@@ -109,12 +109,8 @@ namespace Fotografix.Uwp
         private PointerState PointerStateFrom(PointerRoutedEventArgs e)
         {
             PointerPoint point = e.GetCurrentPoint(canvas);
-            PointerPoint viewportPoint = e.GetCurrentPoint(viewport);
-
-            return new PointerState(
-                location: new Point((int)point.Position.X, (int)point.Position.Y),
-                viewportLocation: new PointF((float)viewportPoint.Position.X, (float)viewportPoint.Position.Y)
-            );
+            Point pt = new Point((int)point.Position.X, (int)point.Position.Y);
+            return new PointerState(viewport.TransformViewportToImage(pt));
         }
     }
 }

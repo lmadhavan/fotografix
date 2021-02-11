@@ -13,6 +13,7 @@ namespace Fotografix.Tests.Uwp
         private static readonly Size ImageSize = new Size(10, 10);
 
         private Image image;
+        private Viewport viewport;
         private CommandHandlerCollection handlerCollection;
         private ImageEditor editor;
 
@@ -21,6 +22,9 @@ namespace Fotografix.Tests.Uwp
         {
             this.image = new Image(ImageSize);
             image.Layers.Add(BitmapLayerFactory.CreateBitmapLayer(id: 1));
+
+            this.viewport = new Viewport();
+            image.SetViewport(viewport);
 
             this.handlerCollection = new CommandHandlerCollection();
 
@@ -92,6 +96,13 @@ namespace Fotografix.Tests.Uwp
             editor.Undo();
 
             Assert.IsFalse(editor.CanUndo);
+        }
+
+        [TestMethod]
+        public void SynchronizesViewportWhenImageSizeChanges()
+        {
+            image.Size = new Size(100, 100);
+            Assert.AreEqual(viewport.ImageSize, image.Size);
         }
 
         private sealed class FakeCommand : ICommand

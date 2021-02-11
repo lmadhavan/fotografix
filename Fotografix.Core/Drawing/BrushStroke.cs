@@ -8,9 +8,13 @@ namespace Fotografix.Drawing
     {
         private readonly List<Point> points;
 
-        public BrushStroke(Point start, int size, Color color)
+        public BrushStroke(Point start, int size, Color color) : this(new Point[] { start }, size, color)
         {
-            this.points = new List<Point> { start };
+        }
+
+        public BrushStroke(IEnumerable<Point> points, int size, Color color)
+        {
+            this.points = new List<Point>(points);
             this.Size = size;
             this.Color = color;
         }

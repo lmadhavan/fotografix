@@ -3,19 +3,150 @@ using System.Drawing;
 
 namespace Fotografix.Editor
 {
-    public abstract class Viewport
+    public sealed class Viewport : NotifyPropertyChangedBase
     {
-        public abstract int Width { get; }
-        public abstract int Height { get; }
+        private Size size;
+        private Size imageSize;
+        private float zoomFactor;
+        private Point scrollOffset;
 
-        public abstract float ZoomFactor { get; set; }
-        public abstract PointF ScrollOffset { get; set; }
+        private Point maxScrollOffset;
+        private Point centerOffset;
 
-        public void ZoomToFit(Size size)
+        public Viewport() : this(Size.Empty)
         {
-            float zx = (float)Width / size.Width;
-            float zy = (float)Height / size.Height;
+        }
+
+        public Viewport(Size size)
+        {
+            this.size = size;
+            this.imageSize = size;
+            this.zoomFactor = 1;
+        }
+
+        public Size Size
+        {
+            get => size;
+
+            set
+            {
+                if (SetProperty(ref size, value))
+                {
+                    ComputeOffsets();
+                }
+            }
+        }
+
+        public Size ImageSize
+        {
+            get => imageSize;
+
+            set
+            {
+                if (SetProperty(ref imageSize, value))
+                {
+                    ComputeOffsets();
+                }
+            }
+        }
+
+        public float ZoomFactor
+        {
+            get => zoomFactor;
+
+            set
+            {
+                if (SetProperty(ref zoomFactor, value))
+                {
+                    ComputeOffsets();
+                }
+            }
+        }
+
+        public Point ScrollOffset
+        {
+            get => scrollOffset;
+            set => SetProperty(ref scrollOffset, Clamp(value, Point.Empty, maxScrollOffset));
+        }
+
+        public Rectangle ImageBounds => TransformImageToViewport(new Rectangle(Point.Empty, ImageSize));
+
+        public Point TransformViewportToImage(Point viewportPoint)
+        {
+            return new Point(
+                (int)((viewportPoint.X + ScrollOffset.X - centerOffset.X) / zoomFactor),
+                (int)((viewportPoint.Y + ScrollOffset.Y - centerOffset.Y) / zoomFactor)
+            );
+        }
+
+        public Rectangle TransformViewportToImage(Rectangle viewportRect)
+        {
+            return new Rectangle(
+                TransformViewportToImage(viewportRect.Location),
+                Scale(viewportRect.Size, 1 / zoomFactor)
+            );
+        }
+
+        public Point TransformImageToViewport(Point imagePoint)
+        {
+            return new Point(
+                (int)(imagePoint.X * zoomFactor) - ScrollOffset.X + centerOffset.X,
+                (int)(imagePoint.Y * zoomFactor) - ScrollOffset.Y + centerOffset.Y
+            );
+        }
+
+        public Rectangle TransformImageToViewport(Rectangle imageRect)
+        {
+            return new Rectangle(
+                TransformImageToViewport(imageRect.Location),
+                Scale(imageRect.Size, zoomFactor)
+            );
+        }
+
+        public void ZoomToFit()
+        {
+            float zx = (float)size.Width / imageSize.Width;
+            float zy = (float)size.Height / imageSize.Height;
             this.ZoomFactor = Math.Min(1, Math.Min(zx, zy));
+        }
+
+        private void ComputeOffsets()
+        {
+            int dx = (int)(imageSize.Width * zoomFactor - size.Width);
+            int dy = (int)(imageSize.Height * zoomFactor - size.Height);
+
+            this.maxScrollOffset = new Point(
+                Math.Max(0, dx),
+                Math.Max(0, dy)
+            );
+
+            this.centerOffset = new Point(
+                Math.Max(0, -dx / 2),
+                Math.Max(0, -dy / 2)
+            );
+        }
+
+        private Point Clamp(Point pt, Point min, Point max)
+        {
+            return new Point(
+                Clamp(pt.X, min.X, max.X),
+                Clamp(pt.Y, min.Y, max.Y)
+            );
+        }
+
+        private int Clamp(int value, int min, int max)
+        {
+            if (value < min) return min;
+            if (value > max) return max;
+            return value;
+        }
+
+        private Size Scale(Size size, float factor)
+        {
+            return new Size(
+                (int)(size.Width * factor),
+                (int)(size.Height * factor)
+            );
         }
     }
 }

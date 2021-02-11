@@ -1,6 +1,7 @@
 ﻿using Fotografix.Editor;
 using Fotografix.Editor.Tools;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 
@@ -38,6 +39,18 @@ namespace Fotografix.Tests.Acceptance
             ActiveTool.PointerMoved(new PointerState(pt));
         }
 
+        protected void DragAndReleasePointer(IEnumerable<Point> points)
+        {
+            ActiveTool.PointerPressed(points.First());
+
+            foreach (Point pt in points.Skip(1))
+            {
+                ActiveTool.PointerMoved(pt);
+            }
+
+            ActiveTool.PointerReleased(points.Last());
+        }
+
         protected void DragAndReleasePointer(Point start, params Point[] points)
         {
             PressAndDragPointer(start);
@@ -46,11 +59,11 @@ namespace Fotografix.Tests.Acceptance
 
         protected void PressAndDragPointer(Point start, params Point[] points)
         {
-            ActiveTool.PointerPressed(new PointerState(start));
+            ActiveTool.PointerPressed(start);
 
             foreach (Point pt in points)
             {
-                ActiveTool.PointerMoved(new PointerState(pt));
+                ActiveTool.PointerMoved(pt);
             }
         }
 
@@ -58,10 +71,10 @@ namespace Fotografix.Tests.Acceptance
         {
             foreach (Point pt in points)
             {
-                ActiveTool.PointerMoved(new PointerState(pt));
+                ActiveTool.PointerMoved(pt);
             }
 
-            ActiveTool.PointerReleased(new PointerState(points.Last()));
+            ActiveTool.PointerReleased(points.Last());
         }
     }
 }

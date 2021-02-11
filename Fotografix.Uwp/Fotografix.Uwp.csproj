@@ -180,7 +180,6 @@
       <DependentUpon>ImageEditorPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ScrollViewerViewport.cs" />
     <Compile Include="TabViewContainer.xaml.cs">
       <DependentUpon>TabViewContainer.xaml</DependentUpon>
     </Compile>

@@ -12,27 +12,19 @@ namespace Fotografix.Tests.Acceptance
         public async Task DrawsLinearGradient()
         {
             await OpenImageAsync("flowers.jpg");
-            ConfigureGradientTool(startColor: Color.Red, endColor: Color.Green);
+
+            var gradientControls = SelectTool<IGradientToolControls>("Gradient");
+            gradientControls.StartColor = Color.Red;
+            gradientControls.EndColor = Color.Green;
 
             AssertToolCursor(ToolCursor.Crosshair);
 
-            PressAndDragPointer(
+            DragAndReleasePointer(
                 new Point(100, 100),
-                new Point(200, 200)
+                new Point(300, 300)
             );
 
-            await AssertImageAsync("gradient_preview.png");
-
-            ContinueDraggingAndReleasePointer(new Point(300, 300));
-
             await AssertImageAsync("gradient.png");
-        }
-
-        private void ConfigureGradientTool(Color startColor, Color endColor)
-        {
-            var gradientControls = SelectTool<IGradientToolControls>("Gradient");
-            gradientControls.StartColor = startColor;
-            gradientControls.EndColor = endColor;
         }
     }
 }

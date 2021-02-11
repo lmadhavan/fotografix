@@ -43,21 +43,24 @@ namespace Fotografix.Uwp
 
         private ImageEditor CreateEditor(Viewport viewport, Image image)
         {
+            image.SetViewport(viewport);
+
             var editor = new ImageEditor(image, handlerCollection)
             {
                 ImageDecoder = imageDecoder,
                 ImageEncoder = imageEncoder,
-                Tools = CreateTools(viewport)
+                Tools = CreateTools()
             };
             image.SetCommandDispatcher(editor);
+
             return editor;
         }
 
-        private IList<ITool> CreateTools(Viewport viewport)
+        private IList<ITool> CreateTools()
         {
             return new List<ITool>
             {
-                new HandTool(viewport),
+                new HandTool(),
                 new BrushTool() { Size = 5, Color = Color.White },
                 new GradientTool { StartColor = Color.Black, EndColor = Color.White },
                 new CropTool()

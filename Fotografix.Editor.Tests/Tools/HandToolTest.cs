@@ -1,5 +1,4 @@
-﻿using Fotografix.Editor.Testing;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using System.Drawing;
 
 namespace Fotografix.Editor.Tools
@@ -7,57 +6,65 @@ namespace Fotografix.Editor.Tools
     [TestFixture]
     public class HandToolTest
     {
-        private Viewport viewport;
         private HandTool tool;
+        private Image image;
+        private Viewport viewport;
 
         [SetUp]
         public void SetUp()
         {
-            this.viewport = new FakeViewport(100, 100);
-            this.tool = new HandTool(viewport);
+            this.tool = new HandTool();
+
+            this.image = new Image(Size.Empty);
+            this.viewport = new Viewport
+            {
+                Size = new Size(100, 100),
+                ImageSize = new Size(200, 200)
+            };
+            image.SetViewport(viewport);
         }
 
         [Test]
         public void TranslatesPointerDragIntoViewportScroll()
         {
-            viewport.ScrollOffset = new PointF(10, 10);
+            tool.Activated(image);
+            viewport.ScrollOffset = new Point(10, 10);
 
-            tool.PointerPressed(ViewportLocation(30, 30));
-            tool.PointerMoved(ViewportLocation(32, 32));
+            tool.PointerPressed(ViewportPoint(30, 30));
+            tool.PointerMoved(ViewportPoint(32, 32));
 
-            Assert.That(viewport.ScrollOffset, Is.EqualTo(new PointF(8, 8)));
+            Assert.That(viewport.ScrollOffset, Is.EqualTo(new Point(8, 8)));
         }
 
         [Test]
         public void IgnoresMovementWhenPointerNotPressed()
         {
-            viewport.ScrollOffset = new PointF(10, 10);
+            tool.Activated(image);
+            viewport.ScrollOffset = new Point(10, 10);
 
-            tool.PointerMoved(ViewportLocation(20, 20));
+            tool.PointerMoved(ViewportPoint(20, 20));
 
-            Assert.That(viewport.ScrollOffset, Is.EqualTo(new PointF(10, 10)));
+            Assert.That(viewport.ScrollOffset, Is.EqualTo(new Point(10, 10)));
         }
 
         [Test]
         public void IgnoresMovementAfterPointerReleased()
         {
-            tool.PointerPressed(ViewportLocation(10, 10));
-            tool.PointerMoved(ViewportLocation(20, 20));
-            tool.PointerReleased(ViewportLocation(30, 30));
+            tool.Activated(image);
+            tool.PointerPressed(ViewportPoint(10, 10));
+            tool.PointerMoved(ViewportPoint(20, 20));
+            tool.PointerReleased(ViewportPoint(30, 30));
 
-            viewport.ScrollOffset = new PointF(10, 10);
+            viewport.ScrollOffset = new Point(10, 10);
 
-            tool.PointerMoved(ViewportLocation(40, 40));
+            tool.PointerMoved(ViewportPoint(40, 40));
 
-            Assert.That(viewport.ScrollOffset, Is.EqualTo(new PointF(10, 10)));
+            Assert.That(viewport.ScrollOffset, Is.EqualTo(new Point(10, 10)));
         }
 
-        private PointerState ViewportLocation(float x, float y)
+        private PointerState ViewportPoint(int x, int y)
         {
-            return new PointerState(
-                location: Point.Empty,
-                viewportLocation: new PointF(x, y)
-            );
+            return viewport.TransformViewportToImage(new Point(x, y));
         }
     }
 }

@@ -18,6 +18,7 @@ namespace Fotografix.Uwp
     public sealed class ImageEditor : NotifyPropertyChangedBase, IDisposable, IToolbox, ICommandDispatcher
     {
         private readonly Image image;
+        private readonly Viewport viewport;
         private readonly ICommandDispatcher dispatcher;
         private readonly Win2DCompositor compositor;
         private readonly ReversedCollectionView<Layer> layers;
@@ -31,8 +32,12 @@ namespace Fotografix.Uwp
         public ImageEditor(Image image, ICommandDispatcher dispatcher)
         {
             this.image = image;
+            
+            this.viewport = image.GetViewport();
+            viewport.ImageSize = image.Size;
+
             this.dispatcher = dispatcher;
-            this.compositor = new Win2DCompositor(image, 8);
+            this.compositor = new Win2DCompositor(image, viewport, 8);
 
             this.layers = new ReversedCollectionView<Layer>(image.Layers);
 
@@ -93,6 +98,8 @@ namespace Fotografix.Uwp
         #endregion
 
         public Size Size => image.Size;
+
+        public float ZoomFactor => viewport.ZoomFactor;
 
         public IList<Layer> Layers => layers;
 
@@ -215,6 +222,7 @@ namespace Fotografix.Uwp
         {
             if (e.PropertyName == nameof(Image.Size))
             {
+                viewport.ImageSize = image.Size;
                 RaisePropertyChanged(nameof(Size));
             }
         }
