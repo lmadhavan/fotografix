@@ -10,10 +10,10 @@ namespace Fotografix.Win2D
     public sealed class Win2DCompositor : IDisposable, ICompositionRoot
     {
         private readonly Viewport viewport;
-
         private readonly ICanvasResourceCreator resourceCreator;
         private readonly ImageNode imageNode;
         private readonly TransparencyGridNode transparencyGrid;
+        private readonly CropPreviewNode cropPreviewNode;
 
         public Win2DCompositor(Image image, Viewport viewport, int transparencyGridSize)
         {
@@ -23,6 +23,7 @@ namespace Fotografix.Win2D
             this.resourceCreator = CanvasDevice.GetSharedDevice();
             this.imageNode = NodeFactory.CreateNode(image, this);
             this.transparencyGrid = transparencyGridSize > 0 ? new TransparencyGridNode(transparencyGridSize, resourceCreator) : null;
+            this.cropPreviewNode = new CropPreviewNode(image, resourceCreator, viewport);
         }
 
         public void Dispose()
@@ -39,6 +40,15 @@ namespace Fotografix.Win2D
             Rect imageBounds = viewport.ImageBounds.ToWindowsRect();
             transparencyGrid?.Draw(ds, imageBounds);
             imageNode.Draw(ds, imageBounds);
+            cropPreviewNode.Draw(ds, imageBounds);
+        }
+
+        public void Draw(Bitmap bitmap)
+        {
+            using (Win2DBitmap win2DBitmap = new Win2DBitmap(bitmap, resourceCreator))
+            {
+                win2DBitmap.Draw(this);
+            }
         }
 
         public Bitmap ToBitmap()
@@ -54,7 +64,6 @@ namespace Fotografix.Win2D
         }
 
         ICanvasResourceCreator ICompositionRoot.ResourceCreator => resourceCreator;
-        Viewport ICompositionRoot.Viewport => viewport;
 
         void ICompositionRoot.Invalidate()
         {

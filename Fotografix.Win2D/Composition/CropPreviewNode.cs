@@ -1,14 +1,14 @@
 ﻿using Fotografix.Editor;
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Geometry;
-using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Numerics;
+using Windows.Foundation;
 
 namespace Fotografix.Win2D.Composition
 {
-    internal sealed class CropPreviewNode : IDisposable
+    internal sealed class CropPreviewNode
     {
         private const int HandleSize = 8;
 
@@ -29,62 +29,61 @@ namespace Fotografix.Win2D.Composition
             new PointF(1.0f, 1.0f)
         };
 
+        private readonly Image image;
+        private readonly ICanvasResourceCreator resourceCreator;
         private readonly Viewport viewport;
-        private readonly Rectangle viewportCropBounds;
-        private readonly CanvasGeometry dimmedArea;
 
-        public CropPreviewNode(ICompositionRoot root, Rectangle cropRectangle)
+        public CropPreviewNode(Image image, ICanvasResourceCreator resourceCreator, Viewport viewport)
         {
-            this.viewport = root.Viewport;
-            this.viewportCropBounds = viewport.TransformImageToViewport(cropRectangle);
+            this.image = image;
+            this.resourceCreator = resourceCreator;
+            this.viewport = viewport;
+        }
 
-            using (CanvasGeometry imageBoundsGeometry = CanvasGeometry.CreateRectangle(root.ResourceCreator, viewport.ImageBounds.ToWindowsRect()))
-            using (CanvasGeometry cropRectangleGeometry = CanvasGeometry.CreateRectangle(root.ResourceCreator, viewportCropBounds.ToWindowsRect()))
+        public void Draw(CanvasDrawingSession ds, Rect imageBounds)
+        {
+            var cropPreview = image.GetCropPreview();
+
+            if (cropPreview != null)
             {
-                this.dimmedArea = imageBoundsGeometry.CombineWith(cropRectangleGeometry, Matrix3x2.Identity, CanvasGeometryCombine.Exclude);
+                Rectangle cropBounds = viewport.TransformImageToViewport(cropPreview.Value);
+                Draw(ds, imageBounds, cropBounds);
             }
         }
 
-        public void Dispose()
+        private void Draw(CanvasDrawingSession ds, Rect imageBounds, Rectangle cropBounds)
         {
-            dimmedArea.Dispose();
-        }
+            void OuterStroke(RectangleF r) =>ds.DrawRectangle(r.X - 0.5f, r.Y - 0.5f, r.Width + 1f, r.Height + 1f, OuterStrokeColor);
+            void InnerStroke(RectangleF r) => ds.DrawRectangle(r.X + 0.5f, r.Y + 0.5f, r.Width - 1f, r.Height - 1f, InnerStrokeColor);
+            void Fill(RectangleF r) => ds.FillRectangle(r.X, r.Y, r.Width, r.Height, FillColor);
 
-        public void Draw(CanvasDrawingSession ds)
-        {
-            void OuterStroke(RectangleF r)
-            {
-                ds.DrawRectangle(r.X - 0.5f, r.Y - 0.5f, r.Width + 1f, r.Height + 1f, OuterStrokeColor);
-            }
-
-            void InnerStroke(RectangleF r)
-            {
-                ds.DrawRectangle(r.X + 0.5f, r.Y + 0.5f, r.Width - 1f, r.Height - 1f, InnerStrokeColor);
-            }
-
-            void Fill(RectangleF r)
-            {
-                ds.FillRectangle(r.X, r.Y, r.Width, r.Height, FillColor);
-            }
-
-            ds.FillGeometry(dimmedArea, DimColor);
-
-            OuterStroke(viewportCropBounds);
-            InnerStroke(viewportCropBounds);
+            HighlightCropRectangle(ds, imageBounds, cropBounds.ToWindowsRect());
+            OuterStroke(cropBounds);
+            InnerStroke(cropBounds);
 
             foreach (PointF hl in HandleLocations)
             {
-                RectangleF handleRect = TransformHandleLocationToViewportRect(hl);
+                RectangleF handleRect = HandleLocationToRectangle(cropBounds, hl);
                 OuterStroke(handleRect);
                 Fill(handleRect);
             }
         }
 
-        private RectangleF TransformHandleLocationToViewportRect(PointF hl)
+        private void HighlightCropRectangle(CanvasDrawingSession ds, Rect imageBounds, Rect cropBounds)
+        {
+            using (CanvasGeometry imageBoundsGeometry = CanvasGeometry.CreateRectangle(resourceCreator, imageBounds))
+            using (CanvasGeometry cropRectangleGeometry = CanvasGeometry.CreateRectangle(resourceCreator, cropBounds))
+            using (CanvasGeometry dimmedArea = imageBoundsGeometry.CombineWith(cropRectangleGeometry, Matrix3x2.Identity, CanvasGeometryCombine.Exclude))
+            {
+                ds.FillGeometry(dimmedArea, DimColor);
+            }
+        }
+
+        private RectangleF HandleLocationToRectangle(RectangleF bounds, PointF hl)
         {
             PointF center = new PointF(
-                viewportCropBounds.X + hl.X * viewportCropBounds.Width,
-                viewportCropBounds.Y + hl.Y * viewportCropBounds.Height
+                bounds.X + hl.X * bounds.Width,
+                bounds.Y + hl.Y * bounds.Height
             );
 
             return RectangleF.FromLTRB(

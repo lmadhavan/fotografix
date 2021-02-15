@@ -44,15 +44,6 @@ namespace Fotografix.Win2D.Composition
             {
                 ds.DrawImage(output, imageBounds, new Rect(0, 0, image.Size.Width, image.Size.Height));
             }
-
-            System.Drawing.Rectangle? cropPreview = image.GetCropPreview();
-            if (cropPreview != null)
-            {
-                using (CropPreviewNode cropPreviewNode = new CropPreviewNode(root, cropPreview.Value))
-                {
-                    cropPreviewNode.Draw(ds);
-                }
-            }
         }
 
         private void RelinkLayers()
