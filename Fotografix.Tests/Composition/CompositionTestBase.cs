@@ -15,27 +15,15 @@ namespace Fotografix.Tests.Composition
         [TestInitialize]
         public async Task InitializeImageAndCompositor()
         {
-            this.Image = await LoadImageAsync("flowers.jpg");
+            this.Image = await TestImages.LoadImageAsync("flowers.jpg");
             this.Viewport = new Viewport(Image.Size);
-            this.compositor = new Win2DCompositor(Image, Viewport, 0);
+            this.compositor = new Win2DCompositor(Image, Viewport, new Win2DCompositorSettings { InteractiveMode = true });
         }
 
         [TestCleanup]
         public void DisposeCompositor()
         {
             compositor.Dispose();
-        }
-
-        protected async Task<Image> LoadImageAsync(string filename)
-        {
-            var layer = await LoadLayerAsync(filename);
-            return new Image(layer);
-        }
-
-        protected async Task<BitmapLayer> LoadLayerAsync(string filename)
-        {
-            Bitmap bitmap = await TestImages.LoadBitmapAsync(filename);
-            return new BitmapLayer(bitmap);
         }
 
         protected async Task AssertImageAsync(string fileWithExpectedOutput)

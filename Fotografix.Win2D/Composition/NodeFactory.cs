@@ -1,45 +1,113 @@
 ﻿using Fotografix.Adjustments;
+using Fotografix.Drawing;
+using Fotografix.Editor;
 using Fotografix.Win2D.Composition.Adjustments;
+using Microsoft.Graphics.Canvas;
 using System;
+using System.Drawing;
 
 namespace Fotografix.Win2D.Composition
 {
-    internal static class NodeFactory
+    internal sealed class NodeFactory
     {
-        internal static ImageNode CreateNode(Image image, ICompositionRoot root)
+        private readonly ICanvasResourceCreator resourceCreator;
+        private readonly int transparencyGridSize;
+        private readonly bool interactiveMode;
+
+        internal NodeFactory(ICanvasResourceCreator resourceCreator, int transparencyGridSize, bool interactiveMode)
         {
-            return new ImageNode(image, root);
+            this.resourceCreator = resourceCreator;
+            this.transparencyGridSize = transparencyGridSize;
+            this.interactiveMode = interactiveMode;
         }
 
-        internal static LayerNode CreateNode(Layer layer, ICompositionRoot root)
+        internal event EventHandler Invalidated;
+
+        internal void Invalidate()
         {
-            Visitor visitor = new Visitor { CompositionRoot = root };
+            Invalidated?.Invoke(this, EventArgs.Empty);
+        }
+
+        internal ImageNode CreateImageNode(Image image)
+        {
+            return new ImageNode(image, this);
+        }
+
+        internal LayerNode CreateLayerNode(Layer layer)
+        {
+            Visitor visitor = new Visitor(this);
             layer.Accept(visitor);
             return visitor.LayerNode ?? throw new InvalidOperationException("Unsupported layer: " + layer);
         }
 
-        internal static AdjustmentNode CreateNode(Adjustment adjustment)
+        internal AdjustmentNode CreateAdjustmentNode(Adjustment adjustment)
         {
-            Visitor visitor = new Visitor();
+            Visitor visitor = new Visitor(this);
             adjustment.Accept(visitor);
             return visitor.AdjustmentNode ?? throw new InvalidOperationException("Unsupported adjustment: " + adjustment);
         }
 
+        internal IDrawableNode CreateTransparencyGridNode()
+        {
+            if (transparencyGridSize > 0)
+            {
+                return new TransparencyGridNode(transparencyGridSize, resourceCreator);
+            }
+
+            return new NullDrawableNode();
+        }
+
+        internal IDrawableNode CreateCropPreviewNode(Image image, Viewport viewport)
+        {
+            if (interactiveMode)
+            {
+                return new CropPreviewNode(image, resourceCreator, viewport);
+            }
+
+            return new NullDrawableNode();
+        }
+
+        internal IComposableNode CreateDrawingPreviewNode(IDrawable drawable, Rectangle bounds)
+        {
+            if (interactiveMode)
+            {
+                return new DrawingPreviewNode(drawable, bounds, resourceCreator);
+            }
+
+            return new NullComposableNode();
+        }
+
+        internal Win2DBitmap CreateBitmap(Size size)
+        {
+            return new Win2DBitmap(size, resourceCreator);
+        }
+
+        internal Win2DBitmap WrapBitmap(Bitmap bitmap)
+        {
+            return new Win2DBitmap(bitmap, resourceCreator);
+        }
+
         private sealed class Visitor : ImageElementVisitor
         {
-            internal ICompositionRoot CompositionRoot { get; set; }
+            private readonly NodeFactory nodeFactory;
+
+            internal Visitor(NodeFactory nodeFactory)
+            {
+                this.nodeFactory = nodeFactory;
+            }
+
             internal LayerNode LayerNode { get; private set; }
             internal AdjustmentNode AdjustmentNode { get; private set; }
 
             public override bool VisitEnter(AdjustmentLayer layer)
             {
-                this.LayerNode = new AdjustmentLayerNode(layer, CompositionRoot);
+                this.LayerNode = new AdjustmentLayerNode(layer, nodeFactory);
                 return false;
             }
 
             public override bool VisitEnter(BitmapLayer layer)
             {
-                this.LayerNode = new BitmapLayerNode(layer, CompositionRoot);
+                this.LayerNode = new BitmapLayerNode(layer, nodeFactory);
                 return false;
             }
 

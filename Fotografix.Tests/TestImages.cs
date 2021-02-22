@@ -23,5 +23,17 @@ namespace Fotografix.Tests
                 return await WindowsImageDecoder.ReadBitmapAsync(stream);
             }
         }
+
+        internal static async Task<BitmapLayer> LoadLayerAsync(string filename)
+        {
+            Bitmap bitmap = await LoadBitmapAsync(filename);
+            return new BitmapLayer(bitmap);
+        }
+
+        internal static async Task<Image> LoadImageAsync(string filename)
+        {
+            var layer = await LoadLayerAsync(filename);
+            return new Image(layer);
+        }
     }
 }

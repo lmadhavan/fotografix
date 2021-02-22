@@ -125,11 +125,15 @@
     </Compile>
     <Compile Include="Composition\Adjustments\LevelsAdjustmentNode.cs" />
     <Compile Include="Composition\CropPreviewNode.cs" />
+    <Compile Include="Composition\IComposableNode.cs" />
+    <Compile Include="Composition\IDrawableNode.cs" />
+    <Compile Include="Composition\NullComposableNode.cs" />
+    <Compile Include="Composition\NullDrawableNode.cs" />
     <Compile Include="ConversionExtensions.cs" />
     <Compile Include="Composition\AdjustmentLayerNode.cs" />
     <Compile Include="Composition\Adjustments\AdjustmentNode.cs" />
     <Compile Include="Composition\Adjustments\BrightnessContrastAdjustmentNode.cs" />
-    <Compile Include="Composition\DrawableNode.cs" />
+    <Compile Include="Composition\DrawingPreviewNode.cs" />
     <Compile Include="Composition\CompositeEffectNode.cs" />
     <Compile Include="Composition\NodeFactory.cs" />
     <Compile Include="Composition\Adjustments\BlackAndWhiteAdjustmentNode.cs" />
@@ -139,12 +143,12 @@
     <Compile Include="Composition\BitmapLayerNode.cs" />
     <Compile Include="Composition\ImageNode.cs" />
     <Compile Include="Composition\LayerNode.cs" />
-    <Compile Include="Composition\ICompositionRoot.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Composition\TransparencyGridNode.cs" />
     <Compile Include="Win2DBitmap.cs" />
     <Compile Include="Win2DBitmapResamplingStrategy.cs" />
     <Compile Include="Win2DCompositor.cs" />
+    <Compile Include="Win2DCompositorSettings.cs" />
     <Compile Include="Win2DDrawingContext.cs" />
     <Compile Include="Win2DDrawingContextFactory.cs" />
     <Compile Include="Win2DImageRenderer.cs" />

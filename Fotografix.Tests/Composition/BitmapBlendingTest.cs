@@ -13,7 +13,7 @@ namespace Fotografix.Tests.Composition
         public async Task Initialize()
         {
             this.background = Image.Layers[0];
-            this.foreground = await LoadLayerAsync("stars.jpg");
+            this.foreground = await TestImages.LoadLayerAsync("stars.jpg");
             Image.Layers.Add(foreground);
         }
 
@@ -26,7 +26,7 @@ namespace Fotografix.Tests.Composition
         [TestMethod]
         public async Task ForegroundSmallerThanBackground()
         {
-            Image.Layers[1] = await LoadLayerAsync("stars_small.jpg");
+            Image.Layers[1] = await TestImages.LoadLayerAsync("stars_small.jpg");
 
             await AssertImageAsync("flowers_stars_small.png");
         }

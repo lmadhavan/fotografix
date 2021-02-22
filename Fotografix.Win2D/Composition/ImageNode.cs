@@ -8,19 +8,19 @@ using Windows.Foundation;
 
 namespace Fotografix.Win2D.Composition
 {
-    internal sealed class ImageNode : IDisposable
+    internal sealed class ImageNode : IDrawableNode
     {
         private readonly Image image;
-        private readonly ICompositionRoot root;
+        private readonly NodeFactory nodeFactory;
         private readonly Dictionary<Layer, LayerNode> layerNodes = new Dictionary<Layer, LayerNode>();
 
         private ICanvasImage output;
         private bool relinking;
 
-        internal ImageNode(Image image, ICompositionRoot root)
+        internal ImageNode(Image image, NodeFactory nodeFactory)
         {
             this.image = image;
-            this.root = root;
+            this.nodeFactory = nodeFactory;
 
             RegisterAll();
             RelinkLayers();
@@ -80,7 +80,7 @@ namespace Fotografix.Win2D.Composition
 
         private void Register(Layer layer)
         {
-            LayerNode node = NodeFactory.CreateNode(layer, root);
+            LayerNode node = nodeFactory.CreateLayerNode(layer);
             node.OutputChanged += Layer_OutputChanged;
             this.layerNodes[layer] = node;
         }
@@ -113,14 +113,14 @@ namespace Fotografix.Win2D.Composition
 
         private void Image_ContentChanged(object sender, ContentChangedEventArgs e)
         {
-            root.Invalidate();
+            nodeFactory.Invalidate();
         }
 
         private void Image_UserPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == EditorProperties.CropPreview)
             {
-                root.Invalidate();
+                nodeFactory.Invalidate();
             }
         }
 

@@ -1,5 +1,4 @@
-﻿using Fotografix.Drawing;
-using Fotografix.Editor;
+﻿using Fotografix.Editor;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Drawing;
 using System.Threading.Tasks;
@@ -9,12 +8,6 @@ namespace Fotografix.Tests.Composition
     [TestClass]
     public class CompositorPreviewTest : CompositionTestBase
     {
-        private static readonly IDrawable BrushStroke = new BrushStroke(
-            points: new Point[] { new Point(75, 100), new Point(250, 350) },
-            size: 5,
-            color: Color.White
-        );
-
         private Layer background;
 
         [TestInitialize]
@@ -26,10 +19,10 @@ namespace Fotografix.Tests.Composition
         [TestMethod]
         public async Task DrawingPreview_Background()
         {
-            Layer foreground = await LoadLayerAsync("stars_small.jpg");
+            Layer foreground = await TestImages.LoadLayerAsync("stars_small.jpg");
             Image.Layers.Add(foreground);
 
-            background.SetDrawingPreview(BrushStroke);
+            background.SetDrawingPreview(TestDrawables.BrushStroke);
 
             await AssertImageAsync("flowers_brush_stars_small.png");
         }
@@ -37,10 +30,10 @@ namespace Fotografix.Tests.Composition
         [TestMethod]
         public async Task DrawingPreview_Foreground()
         {
-            Layer foreground = await LoadLayerAsync("stars_small.jpg");
+            Layer foreground = await TestImages.LoadLayerAsync("stars_small.jpg");
             Image.Layers.Add(foreground);
 
-            foreground.SetDrawingPreview(BrushStroke);
+            foreground.SetDrawingPreview(TestDrawables.BrushStroke);
 
             await AssertImageAsync("flowers_stars_small_brush.png");
         }

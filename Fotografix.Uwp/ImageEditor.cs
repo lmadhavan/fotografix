@@ -17,6 +17,8 @@ namespace Fotografix.Uwp
 {
     public sealed class ImageEditor : NotifyPropertyChangedBase, IDisposable, IToolbox, ICommandDispatcher
     {
+        private static readonly Win2DCompositorSettings CompositorSettings = new Win2DCompositorSettings { TransparencyGridSize = 8, InteractiveMode = true };
+
         private readonly Image image;
         private readonly Viewport viewport;
         private readonly ICommandDispatcher dispatcher;
@@ -37,7 +39,7 @@ namespace Fotografix.Uwp
             viewport.ImageSize = image.Size;
 
             this.dispatcher = dispatcher;
-            this.compositor = new Win2DCompositor(image, viewport, 8);
+            this.compositor = new Win2DCompositor(image, viewport, CompositorSettings);
 
             this.layers = new ReversedCollectionView<Layer>(image.Layers);
 

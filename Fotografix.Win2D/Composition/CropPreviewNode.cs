@@ -8,7 +8,7 @@ using Windows.Foundation;
 
 namespace Fotografix.Win2D.Composition
 {
-    internal sealed class CropPreviewNode
+    internal sealed class CropPreviewNode : IDrawableNode
     {
         private const int HandleSize = 8;
 
@@ -38,6 +38,10 @@ namespace Fotografix.Win2D.Composition
             this.image = image;
             this.resourceCreator = resourceCreator;
             this.viewport = viewport;
+        }
+
+        public void Dispose()
+        {
         }
 
         public void Draw(CanvasDrawingSession ds, Rect imageBounds)

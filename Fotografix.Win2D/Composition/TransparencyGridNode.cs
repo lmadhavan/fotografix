@@ -1,12 +1,11 @@
 ﻿using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Effects;
-using System;
 using Windows.Foundation;
 using Windows.UI;
 
 namespace Fotografix.Win2D.Composition
 {
-    internal sealed class TransparencyGridNode : IDisposable
+    internal sealed class TransparencyGridNode : IDrawableNode
     {
         private readonly CanvasCommandList gridTile;
         private readonly TileEffect tileEffect;

@@ -5,7 +5,7 @@ using System.Drawing;
 
 namespace Fotografix.Win2D.Composition
 {
-    internal sealed class DrawableNode : IDisposable
+    internal sealed class DrawingPreviewNode : IComposableNode
     {
         private readonly IDrawable drawable;
         private readonly Rectangle bounds;
@@ -14,7 +14,7 @@ namespace Fotografix.Win2D.Composition
         private readonly CompositeEffectNode compositeEffectNode;
         private CanvasCommandList commandList;
 
-        internal DrawableNode(IDrawable drawable, Rectangle bounds, ICanvasResourceCreator resourceCreator)
+        internal DrawingPreviewNode(IDrawable drawable, Rectangle bounds, ICanvasResourceCreator resourceCreator)
         {
             this.drawable = drawable;
             drawable.Changed += OnContentChanged;
@@ -33,9 +33,9 @@ namespace Fotografix.Win2D.Composition
             drawable.Changed -= OnContentChanged;
         }
 
-        public event EventHandler OutputChanged;
+        public event EventHandler Invalidated;
 
-        public ICanvasImage ResolveOutput(ICanvasImage background)
+        public ICanvasImage Compose(ICanvasImage background)
         {
             return compositeEffectNode.ResolveOutput(commandList, background);
         }
@@ -55,7 +55,7 @@ namespace Fotografix.Win2D.Composition
                 drawable.Draw(dc);
             }
 
-            OutputChanged?.Invoke(this, EventArgs.Empty);
+            Invalidated?.Invoke(this, EventArgs.Empty);
         }
     }
 }

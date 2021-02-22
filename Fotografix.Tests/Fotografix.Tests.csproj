@@ -133,6 +133,8 @@
     <Compile Include="Acceptance\HandToolAcceptanceTest.cs" />
     <Compile Include="Acceptance\ResizeImageAcceptanceTest.cs" />
     <Compile Include="Composition\CompositorPreviewTest.cs" />
+    <Compile Include="Composition\ImageRendererTest.cs" />
+    <Compile Include="TestDrawables.cs" />
     <Compile Include="Uwp\SmokeTest.cs" />
     <Compile Include="TestImages.cs" />
     <Compile Include="Acceptance\ToolAcceptanceTestBase.cs" />

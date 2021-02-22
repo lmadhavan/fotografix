@@ -14,7 +14,7 @@ namespace Fotografix.Win2D.Composition
         private readonly CompositeEffectNode compositeEffectNode;
         private Win2DBitmap bitmap;
 
-        public BitmapLayerNode(BitmapLayer layer, ICompositionRoot root) : base(layer, root)
+        public BitmapLayerNode(BitmapLayer layer, NodeFactory nodeFactory) : base(layer, nodeFactory)
         {
             this.layer = layer;
             layer.PropertyChanged += Layer_PropertyChanged;
@@ -90,7 +90,7 @@ namespace Fotografix.Win2D.Composition
         private void UpdateBitmap()
         {
             bitmap?.Dispose();
-            this.bitmap = new Win2DBitmap(layer.Bitmap, Root.ResourceCreator);
+            this.bitmap = NodeFactory.WrapBitmap(layer.Bitmap);
             UpdateOutput();
         }
 

@@ -15,21 +15,23 @@ namespace Fotografix.Win2D.Composition
 
         private ICanvasImage background;
         private ICanvasImage output;
-        private DrawableNode previewNode;
+        private IComposableNode drawingPreviewNode;
 
-        protected LayerNode(Layer layer, ICompositionRoot root)
+        protected LayerNode(Layer layer, NodeFactory nodeFactory)
         {
             this.layer = layer;
-            this.Root = root;
+            this.NodeFactory = nodeFactory;
 
             this.blendEffect = new BlendEffect();
             layer.PropertyChanged += Layer_PropertyChanged;
             layer.UserPropertyChanged += Layer_PropertyChanged;
+
+            this.drawingPreviewNode = new NullComposableNode();
         }
 
         public virtual void Dispose()
         {
-            previewNode?.Dispose();
+            drawingPreviewNode.Dispose();
 
             layer.UserPropertyChanged -= Layer_PropertyChanged;
             layer.PropertyChanged -= Layer_PropertyChanged;
@@ -74,33 +76,26 @@ namespace Fotografix.Win2D.Composition
 
         protected abstract Rectangle Bounds { get; }
 
-        protected ICompositionRoot Root { get; }
+        protected NodeFactory NodeFactory { get; }
 
         protected void UpdateOutput()
         {
-            ICanvasImage output = ResolveOutput(background);
-            
-            if (previewNode != null)
-            {
-                output = previewNode.ResolveOutput(output);
-            }
-            
-            this.Output = output;
+            this.Output = drawingPreviewNode.Compose(ResolveOutput(background));
         }
 
         private void UpdatePreview()
         {
-            IDrawable preview = layer.GetDrawingPreview();
-            previewNode?.Dispose();
+            IDrawable drawable = layer.GetDrawingPreview();
+            drawingPreviewNode?.Dispose();
 
-            if (preview != null)
+            if (drawable != null)
             {
-                this.previewNode = new DrawableNode(preview, Bounds, Root.ResourceCreator);
-                previewNode.OutputChanged += Preview_OutputChanged;
+                this.drawingPreviewNode = NodeFactory.CreateDrawingPreviewNode(drawable, Bounds);
+                drawingPreviewNode.Invalidated += Preview_Invalidated;
             }
             else
             {
-                this.previewNode = null;
+                this.drawingPreviewNode = new NullComposableNode();
             }
         }
 
@@ -114,10 +109,10 @@ namespace Fotografix.Win2D.Composition
             UpdateOutput();
         }
 
-        private void Preview_OutputChanged(object sender, EventArgs e)
+        private void Preview_Invalidated(object sender, EventArgs e)
         {
             UpdateOutput();
-            Root.Invalidate();
+            NodeFactory.Invalidate();
         }
 
         protected abstract ICanvasImage ResolveOutput(ICanvasImage background);
