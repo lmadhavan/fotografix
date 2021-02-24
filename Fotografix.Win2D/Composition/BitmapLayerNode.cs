@@ -1,5 +1,8 @@
-﻿using Microsoft.Graphics.Canvas;
+﻿using Fotografix.Drawing;
+using Fotografix.Editor;
+using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Effects;
+using System;
 using System.ComponentModel;
 using System.Drawing;
 using System.Numerics;
@@ -13,11 +16,13 @@ namespace Fotografix.Win2D.Composition
         private readonly Transform2DEffect transformEffect;
         private readonly CompositeEffectNode compositeEffectNode;
         private Win2DBitmap bitmap;
+        private IComposableNode drawingPreviewNode;
 
         public BitmapLayerNode(BitmapLayer layer, NodeFactory nodeFactory) : base(layer, nodeFactory)
         {
             this.layer = layer;
             layer.PropertyChanged += Layer_PropertyChanged;
+            layer.UserPropertyChanged += Layer_PropertyChanged;
 
             this.opacityEffect = new OpacityEffect();
             this.transformEffect = new Transform2DEffect();
@@ -25,19 +30,23 @@ namespace Fotografix.Win2D.Composition
 
             UpdateBitmap();
             UpdateTransform();
+            UpdatePreview();
+            UpdateOutput();
         }
 
         public override void Dispose()
         {
+            drawingPreviewNode.Dispose();
             compositeEffectNode.Dispose();
             transformEffect.Dispose();
             opacityEffect.Dispose();
+
+            layer.UserPropertyChanged -= Layer_PropertyChanged;
             layer.PropertyChanged -= Layer_PropertyChanged;
+
             bitmap.Dispose();
             base.Dispose();
         }
-
-        protected override Rectangle Bounds => new Rectangle(Point.Empty, layer.Bitmap.Size);
 
         protected override ICanvasImage ResolveOutput(ICanvasImage background)
         {
@@ -46,57 +55,93 @@ namespace Fotografix.Win2D.Composition
                 return background;
             }
 
-            transformEffect.Source = ApplyOpacityToBitmap();
+            ICanvasImage content = drawingPreviewNode.Compose(bitmap.Output);
+            transformEffect.Source = ApplyOpacityTo(content);
+            return BlendBitmap(transformEffect, background);
+        }
 
+        private ICanvasImage BlendBitmap(ICanvasImage foreground, ICanvasImage background)
+        {
             if (background == null)
             {
-                return transformEffect;
+                return foreground;
             }
 
             if (layer.BlendMode == BlendMode.Normal)
             {
-                return compositeEffectNode.ResolveOutput(transformEffect, background);
+                return compositeEffectNode.ResolveOutput(foreground, background);
             }
 
-            return Blend(transformEffect, background);
+            return Blend(foreground, background);
         }
 
-        private ICanvasImage ApplyOpacityToBitmap()
+        private ICanvasImage ApplyOpacityTo(ICanvasImage content)
         {
             if (layer.Opacity == 1)
             {
-                return bitmap.Output;
+                return content;
             }
 
-            opacityEffect.Source = bitmap.Output;
+            opacityEffect.Source = content;
             opacityEffect.Opacity = layer.Opacity;
             return opacityEffect;
         }
 
         private void Layer_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            switch (e.PropertyName)
+            if (e.PropertyName == EditorProperties.DrawingPreview)
             {
-                case nameof(BitmapLayer.Bitmap):
-                    UpdateBitmap();
-                    break;
-
-                case nameof(Layer.Position):
-                    UpdateTransform();
-                    break;
+                UpdatePreview();
             }
+            else
+            {
+                switch (e.PropertyName)
+                {
+                    case nameof(BitmapLayer.Bitmap):
+                        UpdateBitmap();
+                        break;
+
+                    case nameof(Layer.Position):
+                        UpdateTransform();
+                        break;
+                }
+            }
+
+            UpdateOutput();
         }
 
         private void UpdateBitmap()
         {
             bitmap?.Dispose();
             this.bitmap = NodeFactory.WrapBitmap(layer.Bitmap);
-            UpdateOutput();
         }
 
         private void UpdateTransform()
         {
             transformEffect.TransformMatrix = Matrix3x2.CreateTranslation(layer.Position.X, layer.Position.Y);
+        }
+
+        private void UpdatePreview()
+        {
+            IDrawable drawable = layer.GetDrawingPreview();
+            drawingPreviewNode?.Dispose();
+
+            if (drawable != null)
+            {
+                Rectangle bounds = new Rectangle(Point.Empty, layer.Bitmap.Size);
+                this.drawingPreviewNode = NodeFactory.CreateDrawingPreviewNode(drawable, bounds);
+                drawingPreviewNode.Invalidated += Preview_Invalidated;
+            }
+            else
+            {
+                this.drawingPreviewNode = new NullComposableNode();
+            }
+        }
+
+        private void Preview_Invalidated(object sender, EventArgs e)
+        {
+            UpdateOutput();
+            NodeFactory.Invalidate();
         }
     }
 }

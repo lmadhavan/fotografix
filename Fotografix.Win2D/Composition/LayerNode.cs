@@ -1,8 +1,5 @@
 ﻿using System;
 using System.ComponentModel;
-using System.Drawing;
-using Fotografix.Drawing;
-using Fotografix.Editor;
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Effects;
 
@@ -15,7 +12,6 @@ namespace Fotografix.Win2D.Composition
 
         private ICanvasImage background;
         private ICanvasImage output;
-        private IComposableNode drawingPreviewNode;
 
         protected LayerNode(Layer layer, NodeFactory nodeFactory)
         {
@@ -24,16 +20,10 @@ namespace Fotografix.Win2D.Composition
 
             this.blendEffect = new BlendEffect();
             layer.PropertyChanged += Layer_PropertyChanged;
-            layer.UserPropertyChanged += Layer_PropertyChanged;
-
-            this.drawingPreviewNode = new NullComposableNode();
         }
 
         public virtual void Dispose()
         {
-            drawingPreviewNode.Dispose();
-
-            layer.UserPropertyChanged -= Layer_PropertyChanged;
             layer.PropertyChanged -= Layer_PropertyChanged;
             blendEffect.Dispose();
         }
@@ -74,45 +64,16 @@ namespace Fotografix.Win2D.Composition
 
         public event EventHandler OutputChanged;
 
-        protected abstract Rectangle Bounds { get; }
-
         protected NodeFactory NodeFactory { get; }
 
         protected void UpdateOutput()
         {
-            this.Output = drawingPreviewNode.Compose(ResolveOutput(background));
-        }
-
-        private void UpdatePreview()
-        {
-            IDrawable drawable = layer.GetDrawingPreview();
-            drawingPreviewNode?.Dispose();
-
-            if (drawable != null)
-            {
-                this.drawingPreviewNode = NodeFactory.CreateDrawingPreviewNode(drawable, Bounds);
-                drawingPreviewNode.Invalidated += Preview_Invalidated;
-            }
-            else
-            {
-                this.drawingPreviewNode = new NullComposableNode();
-            }
+            this.Output = ResolveOutput(background);
         }
 
         private void Layer_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == EditorProperties.DrawingPreview)
-            {
-                UpdatePreview();
-            }
-
             UpdateOutput();
-        }
-
-        private void Preview_Invalidated(object sender, EventArgs e)
-        {
-            UpdateOutput();
-            NodeFactory.Invalidate();
         }
 
         protected abstract ICanvasImage ResolveOutput(ICanvasImage background);

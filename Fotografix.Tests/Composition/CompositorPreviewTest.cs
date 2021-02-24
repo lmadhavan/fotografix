@@ -39,6 +39,18 @@ namespace Fotografix.Tests.Composition
         }
 
         [TestMethod]
+        public async Task DrawingPreview_Opacity()
+        {
+            Layer foreground = await TestImages.LoadLayerAsync("stars_small.jpg");
+            Image.Layers.Add(foreground);
+
+            foreground.Opacity = 0.5f;
+            foreground.SetDrawingPreview(TestDrawables.BrushStroke);
+
+            await AssertImageAsync("flowers_stars_small_opacity50_brush.png");
+        }
+
+        [TestMethod]
         public async Task CropPreview()
         {
             Image.SetCropPreview(Rectangle.FromLTRB(100, 100, 200, 200));
