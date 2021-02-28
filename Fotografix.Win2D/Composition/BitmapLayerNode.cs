@@ -55,9 +55,10 @@ namespace Fotografix.Win2D.Composition
                 return background;
             }
 
-            ICanvasImage content = drawingPreviewNode.Compose(bitmap.Output);
-            transformEffect.Source = ApplyOpacityTo(content);
-            return BlendBitmap(transformEffect, background);
+            transformEffect.Source = bitmap.Output;
+            ICanvasImage content = drawingPreviewNode.Compose(transformEffect);
+            ICanvasImage foreground = ApplyOpacityTo(content);
+            return BlendBitmap(foreground, background);
         }
 
         private ICanvasImage BlendBitmap(ICanvasImage foreground, ICanvasImage background)
