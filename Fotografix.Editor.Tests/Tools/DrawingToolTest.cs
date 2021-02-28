@@ -34,7 +34,7 @@ namespace Fotografix.Editor.Tools
 
             this.drawableFactory = new Mock<IFakeDrawableFactory>();
             this.drawable = new Mock<IFakeDrawable>();
-            drawableFactory.Setup(f => f.Create(It.IsAny<Point>())).Returns(drawable.Object);
+            drawableFactory.Setup(f => f.Create(It.IsAny<Image>(), It.IsAny<Point>())).Returns(drawable.Object);
 
             this.commandDispatcher = new Mock<ICommandDispatcher>();
             image.SetCommandDispatcher(commandDispatcher.Object);
@@ -94,7 +94,7 @@ namespace Fotografix.Editor.Tools
 
             tool.PointerPressed(Start);
 
-            drawableFactory.Verify(f => f.Create(Start.Location));
+            drawableFactory.Verify(f => f.Create(image, Start.Location));
             Assert.That(bitmapLayer.GetDrawingPreview(), Is.EqualTo(drawable.Object));
         }
 
@@ -149,9 +149,9 @@ namespace Fotografix.Editor.Tools
 
             public override string Name => "Test";
 
-            protected override IFakeDrawable CreateDrawable(PointerState p)
+            protected override IFakeDrawable CreateDrawable(Image image, PointerState p)
             {
-                return factory.Create(p.Location);
+                return factory.Create(image, p.Location);
             }
 
             protected override void UpdateDrawable(IFakeDrawable drawable, PointerState p)
@@ -162,7 +162,7 @@ namespace Fotografix.Editor.Tools
 
         public interface IFakeDrawableFactory
         {
-            IFakeDrawable Create(Point p);
+            IFakeDrawable Create(Image image, Point p);
         }
 
         public interface IFakeDrawable : IDrawable

@@ -10,14 +10,15 @@ namespace Fotografix.Editor.Tools
 
         public override string Name => "Gradient";
 
-        protected override LinearGradient CreateDrawable(PointerState p)
+        protected override LinearGradient CreateDrawable(Image image, PointerState p)
         {
-            return new LinearGradient(StartColor, EndColor, p.Location);
+            Rectangle bounds = new Rectangle(Point.Empty, image.Size);
+            return new LinearGradient(bounds, StartColor, EndColor) { StartPoint = p.Location };
         }
 
         protected override void UpdateDrawable(LinearGradient gradient, PointerState p)
         {
-            gradient.SetEndPoint(p.Location);
+            gradient.EndPoint = p.Location;
         }
     }
 }

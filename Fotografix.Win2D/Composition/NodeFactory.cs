@@ -67,11 +67,11 @@ namespace Fotografix.Win2D.Composition
             return new NullDrawableNode();
         }
 
-        internal IComposableNode CreateDrawingPreviewNode(IDrawable drawable, Rectangle bounds)
+        internal IComposableNode CreateDrawingPreviewNode(IDrawable drawable)
         {
             if (interactiveMode)
             {
-                return new DrawingPreviewNode(drawable, bounds, resourceCreator);
+                return new DrawingPreviewNode(drawable, resourceCreator);
             }
 
             return new NullComposableNode();

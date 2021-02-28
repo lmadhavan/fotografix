@@ -69,7 +69,7 @@ namespace Fotografix.Win2D
 
         internal Win2DDrawingContext CreateDrawingContext()
         {
-            return new Win2DDrawingContext(renderTarget.CreateDrawingSession(), new Rectangle(Point.Empty, Source.Size));
+            return new Win2DDrawingContext(renderTarget.CreateDrawingSession());
         }
 
         public void UpdateSource()

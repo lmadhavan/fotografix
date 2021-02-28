@@ -5,25 +5,43 @@ namespace Fotografix.Drawing
 {
     public sealed class LinearGradient : IDrawable
     {
-        public LinearGradient(Color startColor, Color endColor, Point startPoint)
+        private Point startPoint;
+        private Point endPoint;
+
+        public LinearGradient(Rectangle bounds, Color startColor, Color endColor)
         {
+            this.Bounds = bounds;
             this.StartColor = startColor;
             this.EndColor = endColor;
-            this.StartPoint = startPoint;
         }
 
+        public Rectangle Bounds { get; }
         public Color StartColor { get; }
         public Color EndColor { get; }
-        public Point StartPoint { get; }
-        public Point EndPoint { get; private set; }
+
+        public Point StartPoint
+        {
+            get => startPoint;
+
+            set
+            {
+                this.startPoint = value;
+                Changed?.Invoke(this, EventArgs.Empty);
+            }
+        }
+
+        public Point EndPoint
+        {
+            get => endPoint;
+
+            set
+            {
+                this.endPoint = value;
+                Changed?.Invoke(this, EventArgs.Empty);
+            }
+        }
 
         public event EventHandler Changed;
-
-        public void SetEndPoint(Point pt)
-        {
-            this.EndPoint = pt;
-            Changed?.Invoke(this, EventArgs.Empty);
-        }
 
         public void Draw(IDrawingContext drawingContext)
         {

@@ -9,12 +9,10 @@ namespace Fotografix.Win2D
     internal sealed class Win2DDrawingContext : IDrawingContext
     {
         private readonly CanvasDrawingSession ds;
-        private readonly Rectangle bounds;
 
-        internal Win2DDrawingContext(CanvasDrawingSession ds, Rectangle bounds)
+        internal Win2DDrawingContext(CanvasDrawingSession ds)
         {
             this.ds = ds;
-            this.bounds = bounds;
         }
 
         public void Dispose()
@@ -50,7 +48,7 @@ namespace Fotografix.Win2D
             {
                 brush.StartPoint = gradient.StartPoint.ToVector2();
                 brush.EndPoint = gradient.EndPoint.ToVector2();
-                ds.FillRectangle(bounds.ToWindowsRect(), brush);
+                ds.FillRectangle(gradient.Bounds.ToWindowsRect(), brush);
             }
         }
     }

@@ -128,8 +128,7 @@ namespace Fotografix.Win2D.Composition
 
             if (drawable != null)
             {
-                Rectangle bounds = new Rectangle(Point.Empty, layer.Bitmap.Size);
-                this.drawingPreviewNode = NodeFactory.CreateDrawingPreviewNode(drawable, bounds);
+                this.drawingPreviewNode = NodeFactory.CreateDrawingPreviewNode(drawable);
                 drawingPreviewNode.Invalidated += Preview_Invalidated;
             }
             else

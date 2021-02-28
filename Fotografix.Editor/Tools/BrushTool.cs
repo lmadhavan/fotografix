@@ -10,7 +10,7 @@ namespace Fotografix.Editor.Tools
 
         public override string Name => "Brush";
 
-        protected override BrushStroke CreateDrawable(PointerState p)
+        protected override BrushStroke CreateDrawable(Image image, PointerState p)
         {
             return new BrushStroke(p.Location, Size, Color);
         }

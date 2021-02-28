@@ -33,7 +33,7 @@ namespace Fotografix.Editor.Tools
         {
             if (Enabled)
             {
-                this.drawable = CreateDrawable(p);
+                this.drawable = CreateDrawable(image, p);
                 activeLayer.SetDrawingPreview(drawable);
             }
         }
@@ -69,7 +69,7 @@ namespace Fotografix.Editor.Tools
             this.activeLayer = image.GetActiveLayer() as BitmapLayer;
         }
 
-        protected abstract T CreateDrawable(PointerState p);
+        protected abstract T CreateDrawable(Image image, PointerState p);
         protected abstract void UpdateDrawable(T drawable, PointerState p);
     }
 }

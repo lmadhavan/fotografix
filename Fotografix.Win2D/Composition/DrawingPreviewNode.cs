@@ -1,25 +1,21 @@
 ﻿using Fotografix.Drawing;
 using Microsoft.Graphics.Canvas;
 using System;
-using System.Drawing;
 
 namespace Fotografix.Win2D.Composition
 {
     internal sealed class DrawingPreviewNode : IComposableNode
     {
         private readonly IDrawable drawable;
-        private readonly Rectangle bounds;
 
         private readonly ICanvasResourceCreator resourceCreator;
         private readonly CompositeEffectNode compositeEffectNode;
         private CanvasCommandList commandList;
 
-        internal DrawingPreviewNode(IDrawable drawable, Rectangle bounds, ICanvasResourceCreator resourceCreator)
+        internal DrawingPreviewNode(IDrawable drawable, ICanvasResourceCreator resourceCreator)
         {
             this.drawable = drawable;
             drawable.Changed += OnContentChanged;
-
-            this.bounds = bounds;
 
             this.resourceCreator = resourceCreator;
             this.compositeEffectNode = new CompositeEffectNode();
@@ -50,7 +46,7 @@ namespace Fotografix.Win2D.Composition
             commandList?.Dispose();
 
             this.commandList = new CanvasCommandList(resourceCreator);
-            using (var dc = new Win2DDrawingContext(commandList.CreateDrawingSession(), bounds))
+            using (var dc = new Win2DDrawingContext(commandList.CreateDrawingSession()))
             {
                 drawable.Draw(dc);
             }
