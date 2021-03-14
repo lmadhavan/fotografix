@@ -53,10 +53,10 @@ namespace Fotografix.Tests.Composition
         [TestMethod]
         public async Task DrawingPreview_Offset()
         {
-            Layer foreground = await TestImages.LoadLayerAsync("stars_small.jpg");
+            BitmapLayer foreground = await TestImages.LoadLayerAsync("stars_small.jpg");
             Image.Layers.Add(foreground);
 
-            foreground.Position = new Point(50, 50);
+            foreground.Bitmap.Position = new Point(50, 50);
             foreground.SetDrawingPreview(TestDrawables.BrushStroke);
 
             await AssertImageAsync("flowers_stars_small_offset_brush.png");

@@ -4,8 +4,6 @@ using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Effects;
 using System;
 using System.ComponentModel;
-using System.Drawing;
-using System.Numerics;
 
 namespace Fotografix.Win2D.Composition
 {
@@ -13,7 +11,6 @@ namespace Fotografix.Win2D.Composition
     {
         private readonly BitmapLayer layer;
         private readonly OpacityEffect opacityEffect;
-        private readonly Transform2DEffect transformEffect;
         private readonly CompositeEffectNode compositeEffectNode;
         private Win2DBitmap bitmap;
         private IComposableNode drawingPreviewNode;
@@ -25,11 +22,9 @@ namespace Fotografix.Win2D.Composition
             layer.UserPropertyChanged += Layer_PropertyChanged;
 
             this.opacityEffect = new OpacityEffect();
-            this.transformEffect = new Transform2DEffect();
             this.compositeEffectNode = new CompositeEffectNode();
 
             UpdateBitmap();
-            UpdateTransform();
             UpdatePreview();
             UpdateOutput();
         }
@@ -38,7 +33,6 @@ namespace Fotografix.Win2D.Composition
         {
             drawingPreviewNode.Dispose();
             compositeEffectNode.Dispose();
-            transformEffect.Dispose();
             opacityEffect.Dispose();
 
             layer.UserPropertyChanged -= Layer_PropertyChanged;
@@ -55,8 +49,7 @@ namespace Fotografix.Win2D.Composition
                 return background;
             }
 
-            transformEffect.Source = bitmap.Output;
-            ICanvasImage content = drawingPreviewNode.Compose(transformEffect);
+            ICanvasImage content = drawingPreviewNode.Compose(bitmap.Output);
             ICanvasImage foreground = ApplyOpacityTo(content);
             return BlendBitmap(foreground, background);
         }
@@ -101,10 +94,6 @@ namespace Fotografix.Win2D.Composition
                     case nameof(BitmapLayer.Bitmap):
                         UpdateBitmap();
                         break;
-
-                    case nameof(Layer.Position):
-                        UpdateTransform();
-                        break;
                 }
             }
 
@@ -115,11 +104,6 @@ namespace Fotografix.Win2D.Composition
         {
             bitmap?.Dispose();
             this.bitmap = NodeFactory.WrapBitmap(layer.Bitmap);
-        }
-
-        private void UpdateTransform()
-        {
-            transformEffect.TransformMatrix = Matrix3x2.CreateTranslation(layer.Position.X, layer.Position.Y);
         }
 
         private void UpdatePreview()

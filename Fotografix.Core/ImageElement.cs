@@ -38,6 +38,11 @@ namespace Fotografix
             }
         }
 
+        protected void RaisePropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
         protected void RaiseContentChanged(Change change)
         {
             ContentChangedEventArgs args = new ContentChangedEventArgs(change);
@@ -107,7 +112,7 @@ namespace Fotografix
             T oldValue = field;
             field = value;
 
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            RaisePropertyChanged(propertyName);
             RaiseContentChanged(new PropertyChange(this, propertyName, oldValue, value));
         }
     }

@@ -5,6 +5,7 @@ namespace Fotografix
 {
     public sealed class Bitmap : ImageElement
     {
+        private Point position = Point.Empty;
         private byte[] pixels;
 
         public Bitmap(Size size)
@@ -20,7 +21,25 @@ namespace Fotografix
             this.pixels = pixels;
         }
 
+        public Point Position
+        {
+            get
+            {
+                return position;
+            }
+
+            set
+            {
+                if (SetProperty(ref position, value))
+                {
+                    RaisePropertyChanged(nameof(Bounds));
+                }
+            }
+        }
+
         public Size Size { get; }
+
+        public Rectangle Bounds => new Rectangle(Position, Size);
 
         public byte[] Pixels
         {
@@ -40,7 +59,7 @@ namespace Fotografix
 
         public override string ToString()
         {
-            return $"Bitmap {Size}";
+            return $"Bitmap {Bounds}";
         }
 
         private void ValidateBufferLength(byte[] buffer)
