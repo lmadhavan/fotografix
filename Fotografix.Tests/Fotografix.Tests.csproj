@@ -133,6 +133,7 @@
     <Compile Include="Acceptance\HandToolAcceptanceTest.cs" />
     <Compile Include="Acceptance\ResizeImageAcceptanceTest.cs" />
     <Compile Include="Composition\CompositorPreviewTest.cs" />
+    <Compile Include="Composition\DrawingContextTest.cs" />
     <Compile Include="Composition\ImageRendererTest.cs" />
     <Compile Include="TestDrawables.cs" />
     <Compile Include="Uwp\SmokeTest.cs" />
@@ -195,6 +196,7 @@
     <Content Include="Images\gradient.png" />
     <Content Include="Images\stars.jpg" />
     <Content Include="Images\stars_small.jpg" />
+    <Content Include="Images\stars_small_offset_brush.png" />
     <Content Include="Properties\Default.rd.xml" />
     <Content Include="Assets\LockScreenLogo.scale-200.png" />
     <Content Include="Assets\SplashScreen.scale-200.png" />

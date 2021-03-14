@@ -77,7 +77,9 @@ namespace Fotografix.Win2D
 
         internal Win2DDrawingContext CreateDrawingContext()
         {
-            return new Win2DDrawingContext(renderTarget.CreateDrawingSession());
+            CanvasDrawingSession ds = renderTarget.CreateDrawingSession();
+            ds.Transform = Matrix3x2.CreateTranslation(-Source.Position.X, -Source.Position.Y);
+            return new Win2DDrawingContext(ds);
         }
 
         public void UpdateSource()
