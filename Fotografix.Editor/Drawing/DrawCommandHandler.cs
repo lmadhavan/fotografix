@@ -1,4 +1,5 @@
 ﻿using Fotografix.Drawing;
+using System.Drawing;
 
 namespace Fotografix.Editor.Drawing
 {
@@ -13,15 +14,42 @@ namespace Fotografix.Editor.Drawing
 
         public void Handle(DrawCommand command)
         {
-            Draw(command.Bitmap, command.Drawable);
+            Draw(command.Layer, command.Drawable);
         }
 
-        private void Draw(Bitmap bitmap, IDrawable drawable)
+        private void Draw(BitmapLayer layer, IDrawable drawable)
         {
-            using (IDrawingContext dc = drawingContextFactory.CreateDrawingContext(bitmap))
+            Bitmap target = ResolveTargetBitmap(layer.Bitmap, drawable, out bool redrawExistingBitmap);
+
+            using (IDrawingContext dc = drawingContextFactory.CreateDrawingContext(target))
             {
+                if (redrawExistingBitmap)
+                {
+                    dc.Draw(layer.Bitmap);
+                }
+
                 drawable.Draw(dc);
             }
+
+            layer.Bitmap = target;
+        }
+
+        private Bitmap ResolveTargetBitmap(Bitmap bitmap, IDrawable drawable, out bool redrawExistingBitmap)
+        {
+            redrawExistingBitmap = false;
+
+            if (bitmap.Bounds.IsEmpty)
+            {
+                return new Bitmap(drawable.Bounds);
+            }
+
+            if (!bitmap.Bounds.Contains(drawable.Bounds))
+            {
+                redrawExistingBitmap = true;
+                return new Bitmap(Rectangle.Union(bitmap.Bounds, drawable.Bounds));
+            }
+
+            return bitmap;
         }
     }
 }

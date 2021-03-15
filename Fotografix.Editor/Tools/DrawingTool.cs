@@ -51,7 +51,7 @@ namespace Fotografix.Editor.Tools
             if (drawable != null)
             {
                 activeLayer.SetDrawingPreview(null);
-                image.Dispatch(new DrawCommand(activeLayer.Bitmap, drawable));
+                image.Dispatch(new DrawCommand(activeLayer, drawable));
                 this.drawable = null;
             }
         }

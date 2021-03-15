@@ -23,6 +23,14 @@ namespace Fotografix.Win2D
 
         public event EventHandler Disposed;
 
+        public void Draw(Bitmap bitmap)
+        {
+            using (Win2DBitmap win2DBitmap = new Win2DBitmap(bitmap, ds))
+            {
+                ds.DrawImage(win2DBitmap.Output);
+            }
+        }
+
         public void Draw(BrushStroke brushStroke)
         {
             var points = brushStroke.Points;

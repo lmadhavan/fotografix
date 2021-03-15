@@ -1,11 +1,13 @@
 ﻿using System;
+using System.Drawing;
 
 namespace Fotografix.Drawing
 {
     public interface IDrawable
     {
-        void Draw(IDrawingContext drawingContext);
-
+        Rectangle Bounds { get; }
         event EventHandler Changed;
+
+        void Draw(IDrawingContext drawingContext);
     }
 }

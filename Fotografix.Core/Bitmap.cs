@@ -14,6 +14,11 @@ namespace Fotografix
             this.pixels = new byte[BufferLength(size)];
         }
 
+        public Bitmap(Rectangle rectangle) : this(rectangle.Size)
+        {
+            this.position = rectangle.Location;
+        }
+
         public Bitmap(Size size, byte[] pixels)
         {
             this.Size = size;

@@ -6,13 +6,13 @@ namespace Fotografix.Editor.Drawing
 {
     public sealed class DrawCommand : ICommand, IEquatable<DrawCommand>
     {
-        public DrawCommand(Bitmap bitmap, IDrawable drawable)
+        public DrawCommand(BitmapLayer bitmap, IDrawable drawable)
         {
-            this.Bitmap = bitmap;
+            this.Layer = bitmap;
             this.Drawable = drawable;
         }
 
-        public Bitmap Bitmap { get; }
+        public BitmapLayer Layer { get; }
         public IDrawable Drawable { get; }
 
         public override bool Equals(object obj)
@@ -23,14 +23,14 @@ namespace Fotografix.Editor.Drawing
         public bool Equals(DrawCommand other)
         {
             return other != null &&
-                   EqualityComparer<Bitmap>.Default.Equals(Bitmap, other.Bitmap) &&
+                   EqualityComparer<BitmapLayer>.Default.Equals(Layer, other.Layer) &&
                    EqualityComparer<IDrawable>.Default.Equals(Drawable, other.Drawable);
         }
 
         public override int GetHashCode()
         {
             int hashCode = 1468620837;
-            hashCode = hashCode * -1521134295 + EqualityComparer<Bitmap>.Default.GetHashCode(Bitmap);
+            hashCode = hashCode * -1521134295 + EqualityComparer<BitmapLayer>.Default.GetHashCode(Layer);
             hashCode = hashCode * -1521134295 + EqualityComparer<IDrawable>.Default.GetHashCode(Drawable);
             return hashCode;
         }

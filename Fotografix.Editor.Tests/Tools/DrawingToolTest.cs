@@ -17,7 +17,7 @@ namespace Fotografix.Editor.Tools
         
         private Image image;
         private Bitmap bitmap;
-        private Layer bitmapLayer;
+        private BitmapLayer bitmapLayer;
         private Layer nonBitmapLayer;
 
         private Mock<IFakeDrawableFactory> drawableFactory;
@@ -120,7 +120,7 @@ namespace Fotografix.Editor.Tools
             tool.PointerMoved(End);
             tool.PointerReleased(End);
 
-            commandDispatcher.Verify(d => d.Dispatch(new DrawCommand(bitmap, drawable.Object)));
+            commandDispatcher.Verify(d => d.Dispatch(new DrawCommand(bitmapLayer, drawable.Object)));
             Assert.That(bitmapLayer.GetDrawingPreview(), Is.Null);
         }
 
