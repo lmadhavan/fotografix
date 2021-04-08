@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Fotografix.Collections
 {
-    public sealed class MoveItemChange<T> : Change, IEquatable<MoveItemChange<T>>
+    public sealed class MoveItemChange<T> : IChange, IEquatable<MoveItemChange<T>>
     {
         public MoveItemChange(IList<T> list, int oldIndex, int newIndex)
         {
@@ -16,14 +16,14 @@ namespace Fotografix.Collections
         public int OldIndex { get; }
         public int NewIndex { get; }
 
-        public override void Undo()
+        public void Undo()
         {
             T item = List[NewIndex];
             List.RemoveAt(NewIndex);
             List.Insert(OldIndex, item);
         }
 
-        public override void Redo()
+        public void Redo()
         {
             T item = List[OldIndex];
             List.RemoveAt(OldIndex);

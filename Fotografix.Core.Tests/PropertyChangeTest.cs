@@ -10,7 +10,7 @@ namespace Fotografix
         {
             TestObject obj = new TestObject();
 
-            Change change = new PropertyChange(obj, nameof(TestObject.Name), "foo", "bar");
+            IMergeableChange change = new PropertyChange(obj, nameof(TestObject.Name), "foo", "bar");
 
             change.Undo();
             Assert.That(obj.Name, Is.EqualTo("foo"), "Undo");
@@ -24,10 +24,10 @@ namespace Fotografix
         {
             TestObject obj = new TestObject();
 
-            Change change1 = new PropertyChange(obj, nameof(TestObject.Name), "foo", "bar");
-            Change change2 = new PropertyChange(obj, nameof(TestObject.Name), "bar", "baz");
+            IMergeableChange change1 = new PropertyChange(obj, nameof(TestObject.Name), "foo", "bar");
+            IMergeableChange change2 = new PropertyChange(obj, nameof(TestObject.Name), "bar", "baz");
 
-            bool succeeded = change2.TryMergeWith(change1, out Change result);
+            bool succeeded = change2.TryMergeWith(change1, out IChange result);
 
             Assert.IsTrue(succeeded);
             Assert.That(result, Is.EqualTo(new PropertyChange(obj, nameof(TestObject.Name), "foo", "baz")));
@@ -36,8 +36,8 @@ namespace Fotografix
         [Test]
         public void DoesNotMergeChangesToDifferentObjects()
         {
-            Change change1 = new PropertyChange(new TestObject(), nameof(TestObject.Name), "foo", "bar");
-            Change change2 = new PropertyChange(new TestObject(), nameof(TestObject.Name), "bar", "baz");
+            IMergeableChange change1 = new PropertyChange(new TestObject(), nameof(TestObject.Name), "foo", "bar");
+            IMergeableChange change2 = new PropertyChange(new TestObject(), nameof(TestObject.Name), "bar", "baz");
             
             bool succeeded = change2.TryMergeWith(change1, out _);
 
@@ -49,8 +49,8 @@ namespace Fotografix
         {
             TestObject obj = new TestObject();
 
-            Change change1 = new PropertyChange(obj, nameof(TestObject.Name), "foo", "bar");
-            Change change2 = new PropertyChange(obj, nameof(TestObject.Count), 1, 2);
+            IMergeableChange change1 = new PropertyChange(obj, nameof(TestObject.Name), "foo", "bar");
+            IMergeableChange change2 = new PropertyChange(obj, nameof(TestObject.Count), 1, 2);
 
             bool succeeded = change2.TryMergeWith(change1, out _);
 

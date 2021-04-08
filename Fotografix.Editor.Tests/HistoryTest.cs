@@ -58,7 +58,7 @@ namespace Fotografix.Editor
             history.Add(existingChange);
             history.Add(newChange);
 
-            Assert.That(newChange.MergedChanges, Is.EqualTo(new List<Change> { existingChange }));
+            Assert.That(newChange.MergedChanges, Is.EqualTo(new List<IChange> { existingChange }));
 
             history.Undo();
 
@@ -80,25 +80,25 @@ namespace Fotografix.Editor
             Assert.AreEqual(redoCount, change.RedoCount, "RedoCount");
         }
 
-        private sealed class FakeChange : Change
+        private sealed class FakeChange : IMergeableChange
         {
             public int UndoCount { get; private set; }
             public int RedoCount { get; private set; }
 
-            public List<Change> MergedChanges { get; } = new List<Change>();
-            public Change MergeResult { get; set; }
+            public List<IChange> MergedChanges { get; } = new List<IChange>();
+            public IChange MergeResult { get; set; }
 
-            public override void Undo()
+            public void Undo()
             {
                 UndoCount++;
             }
 
-            public override void Redo()
+            public void Redo()
             {
                 RedoCount++;
             }
 
-            public override bool TryMergeWith(Change previous, out Change result)
+            public bool TryMergeWith(IChange previous, out IChange result)
             {
                 MergedChanges.Add(previous);
                 result = MergeResult;

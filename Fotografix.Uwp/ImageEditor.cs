@@ -28,7 +28,7 @@ namespace Fotografix.Uwp
 
         private Layer activeLayer;
 
-        private List<Change> changeGroup;
+        private List<IChange> changeGroup;
         private bool ignoreChanges;
 
         public ImageEditor(Image image, ICommandDispatcher dispatcher)
@@ -259,7 +259,7 @@ namespace Fotografix.Uwp
         {
             try
             {
-                this.changeGroup = new List<Change>();
+                this.changeGroup = new List<IChange>();
                 dispatcher.Dispatch(command);
             }
             finally

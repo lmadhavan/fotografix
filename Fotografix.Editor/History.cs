@@ -4,13 +4,13 @@ namespace Fotografix.Editor
 {
     public sealed class History : NotifyPropertyChangedBase
     {
-        private readonly Stack<Change> undoStack = new Stack<Change>();
-        private readonly Stack<Change> redoStack = new Stack<Change>();
+        private readonly Stack<IChange> undoStack = new Stack<IChange>();
+        private readonly Stack<IChange> redoStack = new Stack<IChange>();
 
         public bool CanUndo => undoStack.Count > 0;
         public bool CanRedo => redoStack.Count > 0;
 
-        public void Add(Change change)
+        public void Add(IChange change)
         {
             undoStack.Push(GetEffectiveChange(change));
             redoStack.Clear();
@@ -19,7 +19,7 @@ namespace Fotografix.Editor
 
         public void Undo()
         {
-            Change change = undoStack.Pop();
+            IChange change = undoStack.Pop();
             change.Undo();
             redoStack.Push(change);
             RaiseEvents();
@@ -27,16 +27,17 @@ namespace Fotografix.Editor
 
         public void Redo()
         {
-            Change change = redoStack.Pop();
+            IChange change = redoStack.Pop();
             change.Redo();
             undoStack.Push(change);
             RaiseEvents();
         }
 
-        private Change GetEffectiveChange(Change change)
+        private IChange GetEffectiveChange(IChange change)
         {
             if (undoStack.Count > 0 &&
-                change.TryMergeWith(undoStack.Peek(), out Change result))
+                change is IMergeableChange mergeable &&
+                mergeable.TryMergeWith(undoStack.Peek(), out IChange result))
             {
                 undoStack.Pop();
                 return result;

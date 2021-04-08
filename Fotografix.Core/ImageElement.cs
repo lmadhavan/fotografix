@@ -43,7 +43,7 @@ namespace Fotografix
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        protected void RaiseContentChanged(Change change)
+        protected void RaiseContentChanged(IChange change)
         {
             ContentChangedEventArgs args = new ContentChangedEventArgs(change);
             ImageElement element = this;

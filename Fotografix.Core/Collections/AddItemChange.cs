@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Fotografix.Collections
 {
-    public sealed class AddItemChange<T> : Change, IEquatable<AddItemChange<T>>
+    public sealed class AddItemChange<T> : IMergeableChange, IEquatable<AddItemChange<T>>
     {
         public AddItemChange(IList<T> list, int index, T item)
         {
@@ -16,17 +16,17 @@ namespace Fotografix.Collections
         public int Index { get; }
         public T Item { get; }
 
-        public override void Undo()
+        public void Undo()
         {
             List.RemoveAt(Index);
         }
 
-        public override void Redo()
+        public void Redo()
         {
             List.Insert(Index, Item);
         }
 
-        public override bool TryMergeWith(Change previous, out Change result)
+        public bool TryMergeWith(IChange previous, out IChange result)
         {
             if (previous is RemoveItemChange<T> remove &&
                 remove.List == this.List &&
@@ -36,7 +36,8 @@ namespace Fotografix.Collections
                 return true;
             }
 
-            return base.TryMergeWith(previous, out result);
+            result = null;
+            return false;
         }
 
         public override string ToString()

@@ -2,21 +2,21 @@
 
 namespace Fotografix
 {
-    public sealed class CompositeChange : Change
+    public sealed class CompositeChange : IChange
     {
-        private readonly IReadOnlyList<Change> changes;
+        private readonly IReadOnlyList<IChange> changes;
 
-        public CompositeChange(IReadOnlyList<Change> changes)
+        public CompositeChange(IReadOnlyList<IChange> changes)
         {
             this.changes = changes;
         }
 
-        public CompositeChange(params Change[] changes)
+        public CompositeChange(params IChange[] changes)
         {
             this.changes = changes;
         }
 
-        public override void Undo()
+        public void Undo()
         {
             for (int i = changes.Count - 1; i >= 0; i--)
             {
@@ -24,7 +24,7 @@ namespace Fotografix
             }
         }
 
-        public override void Redo()
+        public void Redo()
         {
             for (int i = 0; i < changes.Count; i++)
             {

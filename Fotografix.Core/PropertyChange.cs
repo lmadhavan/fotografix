@@ -4,7 +4,7 @@ using System.Reflection;
 
 namespace Fotografix
 {
-    public sealed class PropertyChange : Change, IEquatable<PropertyChange>
+    public sealed class PropertyChange : IMergeableChange, IEquatable<PropertyChange>
     {
         public PropertyChange(object target, string propertyName, object oldValue, object newValue)
         {
@@ -21,17 +21,17 @@ namespace Fotografix
 
         private PropertyInfo PropertyInfo => Target.GetType().GetProperty(PropertyName);
 
-        public override void Undo()
+        public void Undo()
         {
             PropertyInfo.SetValue(Target, OldValue);
         }
 
-        public override void Redo()
+        public void Redo()
         {
             PropertyInfo.SetValue(Target, NewValue);
         }
 
-        public override bool TryMergeWith(Change previous, out Change result)
+        public bool TryMergeWith(IChange previous, out IChange result)
         {
             if (previous is PropertyChange pc &&
                 pc.Target == this.Target &&
@@ -41,7 +41,8 @@ namespace Fotografix
                 return true;
             }
 
-            return base.TryMergeWith(previous, out result);
+            result = null;
+            return false;
         }
 
         public override string ToString()

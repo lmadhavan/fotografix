@@ -36,7 +36,7 @@ namespace Fotografix
             Assert.That(results, Is.EqualTo(new string[] { "Redo1", "Redo2" }));
         }
 
-        private sealed class FakeChange : Change
+        private sealed class FakeChange : IChange
         {
             private readonly List<string> results;
             private readonly int marker;
@@ -47,12 +47,12 @@ namespace Fotografix
                 this.marker = marker;
             }
 
-            public override void Undo()
+            public void Undo()
             {
                 results.Add("Undo" + marker);
             }
 
-            public override void Redo()
+            public void Redo()
             {
                 results.Add("Redo" + marker);
             }
