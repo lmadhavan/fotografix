@@ -1,6 +1,6 @@
 ﻿namespace Fotografix.Editor
 {
-    public interface ICommandHandler<T> where T : ICommand
+    public interface ICommandHandler<T>
     {
         void Handle(T command);
     }

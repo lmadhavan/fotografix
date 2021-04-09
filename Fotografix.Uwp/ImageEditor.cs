@@ -255,7 +255,7 @@ namespace Fotografix.Uwp
             }
         }
 
-        public void Dispatch<T>(T command) where T : ICommand
+        public void Dispatch<T>(T command)
         {
             try
             {

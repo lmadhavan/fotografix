@@ -25,7 +25,7 @@ namespace Fotografix.Editor
             image.SetUserProperty(ActiveLayerProperty, layer);
         }
 
-        public static void Dispatch<T>(this Image image, T command) where T : ICommand
+        public static void Dispatch<T>(this Image image, T command)
         {
             image.GetUserProperty(CommandDispatcherProperty).Dispatch(command);
         }

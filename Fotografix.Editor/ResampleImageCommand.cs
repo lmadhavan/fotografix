@@ -2,5 +2,5 @@
 
 namespace Fotografix.Editor
 {
-    public sealed record ResampleImageCommand(Image Image, Size NewSize) : ICommand;
+    public sealed record ResampleImageCommand(Image Image, Size NewSize);
 }

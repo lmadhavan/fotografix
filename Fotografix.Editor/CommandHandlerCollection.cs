@@ -7,12 +7,12 @@ namespace Fotografix.Editor
     {
         private readonly Dictionary<Type, object> handlers = new Dictionary<Type, object>();
 
-        public void Register<T>(ICommandHandler<T> handler) where T : ICommand
+        public void Register<T>(ICommandHandler<T> handler)
         {
             handlers[typeof(T)] = handler;
         }
 
-        public void Dispatch<T>(T command) where T : ICommand
+        public void Dispatch<T>(T command)
         {
             Type type = command.GetType();
 

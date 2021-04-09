@@ -105,7 +105,7 @@ namespace Fotografix.Tests.Uwp
             Assert.AreEqual(viewport.ImageSize, image.Size);
         }
 
-        private sealed class FakeCommand : ICommand
+        private sealed class FakeCommand
         {
             private readonly Image image;
             private readonly int numberOfChanges;

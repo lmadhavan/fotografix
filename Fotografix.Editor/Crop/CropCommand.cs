@@ -2,5 +2,5 @@
 
 namespace Fotografix.Editor.Crop
 {
-    public sealed record CropCommand(Image Image, Rectangle Rectangle) : ICommand;
+    public sealed record CropCommand(Image Image, Rectangle Rectangle);
 }
