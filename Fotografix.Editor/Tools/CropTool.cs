@@ -1,4 +1,4 @@
-﻿using Fotografix.Editor.Crop;
+﻿using Fotografix.Editor.Commands;
 using System;
 using System.ComponentModel;
 using System.Drawing;

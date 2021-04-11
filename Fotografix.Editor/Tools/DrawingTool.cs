@@ -1,5 +1,5 @@
 ﻿using Fotografix.Drawing;
-using Fotografix.Editor.Drawing;
+using Fotografix.Editor.Commands;
 using System.ComponentModel;
 
 namespace Fotografix.Editor.Tools

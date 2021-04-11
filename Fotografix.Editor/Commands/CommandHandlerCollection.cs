@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Fotografix.Editor
+namespace Fotografix.Editor.Commands
 {
     public sealed class CommandHandlerCollection : ICommandDispatcher
     {

@@ -1,4 +1,4 @@
-﻿using Fotografix.Editor.Crop;
+﻿using Fotografix.Editor.Commands;
 using Moq;
 using NUnit.Framework;
 using System.Drawing;

@@ -1,4 +1,5 @@
 ﻿using Fotografix.Editor;
+using Fotografix.Editor.Commands;
 using Fotografix.Uwp;
 using Fotografix.Uwp.FileManagement;
 using System.Drawing;

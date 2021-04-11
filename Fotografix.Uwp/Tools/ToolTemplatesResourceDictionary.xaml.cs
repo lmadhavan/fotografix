@@ -1,5 +1,4 @@
-﻿using Fotografix.Editor.Crop;
-using Fotografix.Editor.Tools;
+﻿using Fotografix.Editor.Tools;
 
 namespace Fotografix.Uwp.Tools
 {

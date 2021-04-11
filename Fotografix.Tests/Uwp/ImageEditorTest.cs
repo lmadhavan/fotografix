@@ -1,4 +1,5 @@
 ﻿using Fotografix.Editor;
+using Fotografix.Editor.Commands;
 using Fotografix.IO;
 using Fotografix.Uwp;
 using Microsoft.VisualStudio.TestTools.UnitTesting;

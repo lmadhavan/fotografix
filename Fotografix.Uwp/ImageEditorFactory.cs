@@ -1,6 +1,5 @@
 ﻿using Fotografix.Editor;
-using Fotografix.Editor.Crop;
-using Fotografix.Editor.Drawing;
+using Fotografix.Editor.Commands;
 using Fotografix.Editor.Tools;
 using Fotografix.IO;
 using Fotografix.Uwp.Codecs;

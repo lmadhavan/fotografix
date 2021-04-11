@@ -1,4 +1,4 @@
-﻿namespace Fotografix.Editor
+﻿namespace Fotografix.Editor.Commands
 {
     public interface ICommandDispatcher
     {

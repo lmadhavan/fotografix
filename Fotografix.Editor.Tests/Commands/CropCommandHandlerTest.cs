@@ -1,7 +1,7 @@
 ﻿using NUnit.Framework;
 using System.Drawing;
 
-namespace Fotografix.Editor.Crop
+namespace Fotografix.Editor.Commands
 {
     [TestFixture]
     public class CropCommandHandlerTest

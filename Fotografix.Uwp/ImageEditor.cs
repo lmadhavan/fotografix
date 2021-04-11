@@ -1,5 +1,6 @@
 ﻿using Fotografix.Editor;
 using Fotografix.Editor.Collections;
+using Fotografix.Editor.Commands;
 using Fotografix.Editor.Tools;
 using Fotografix.IO;
 using Fotografix.Uwp.Adjustments;

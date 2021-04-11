@@ -1,6 +1,6 @@
 ﻿using System.Drawing;
 
-namespace Fotografix.Editor.Crop
+namespace Fotografix.Editor.Commands
 {
     public sealed class CropCommandHandler : ICommandHandler<CropCommand>
     {

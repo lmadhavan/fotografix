@@ -1,4 +1,5 @@
 ﻿using Fotografix.Drawing;
+using Fotografix.Editor.Commands;
 using System.Drawing;
 
 namespace Fotografix.Editor

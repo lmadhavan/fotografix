@@ -1,7 +1,7 @@
 ﻿using Fotografix.Drawing;
 using System.Drawing;
 
-namespace Fotografix.Editor.Drawing
+namespace Fotografix.Editor.Commands
 {
     public sealed class DrawCommandHandler : ICommandHandler<DrawCommand>
     {

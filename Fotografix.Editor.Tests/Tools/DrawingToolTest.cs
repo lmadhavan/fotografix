@@ -1,6 +1,6 @@
 ﻿using Fotografix.Adjustments;
 using Fotografix.Drawing;
-using Fotografix.Editor.Drawing;
+using Fotografix.Editor.Commands;
 using Moq;
 using NUnit.Framework;
 using System.Drawing;
