@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Drawing;
-using System.Linq;
 
 namespace Fotografix
 {
@@ -37,22 +36,6 @@ namespace Fotografix
         }
 
         public ObservableCollection<Layer> Layers => layers;
-
-        public override bool Accept(ImageElementVisitor visitor)
-        {
-            if (visitor.VisitEnter(this))
-            {
-                foreach (Layer layer in layers)
-                {
-                    if (!layer.Accept(visitor))
-                    {
-                        break;
-                    }
-                }
-            }
-
-            return visitor.VisitLeave(this);
-        }
 
         public IList<Layer> DetachLayers()
         {

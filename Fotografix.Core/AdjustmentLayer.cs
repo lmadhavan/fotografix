@@ -13,15 +13,5 @@ namespace Fotografix
         public Adjustment Adjustment { get; }
 
         public override ImageElement Content => Adjustment;
-
-        public override bool Accept(ImageElementVisitor visitor)
-        {
-            if (visitor.VisitEnter(this))
-            {
-                Adjustment.Accept(visitor);
-            }
-
-            return visitor.VisitLeave(this);
-        }
     }
 }

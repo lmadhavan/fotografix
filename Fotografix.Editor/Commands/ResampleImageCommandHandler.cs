@@ -18,41 +18,26 @@ namespace Fotografix.Editor.Commands
 
         private void Resample(Image image, Size newSize)
         {
-            image.Accept(new ImageResamplingVisitor(newSize, resamplingStrategy));
+            Size oldSize = image.Size;
+            PointF scaleFactor = new((float)newSize.Width / oldSize.Width,
+                                     (float)newSize.Height / oldSize.Height);
+
+            foreach (Layer layer in image.Layers)
+            {
+                Resample(layer, scaleFactor);
+            }
+
+            image.Size = newSize;
         }
 
-        private sealed class ImageResamplingVisitor : ImageElementVisitor
+        private void Resample(Layer layer, PointF scaleFactor)
         {
-            private readonly Size newSize;
-            private readonly IBitmapResamplingStrategy resamplingStrategy;
-            private PointF scaleFactor;
-
-            public ImageResamplingVisitor(Size newSize, IBitmapResamplingStrategy resamplingStrategy)
+            if (layer is BitmapLayer bitmapLayer)
             {
-                this.newSize = newSize;
-                this.resamplingStrategy = resamplingStrategy;
-            }
-
-            public override bool VisitEnter(Image image)
-            {
-                Size oldSize = image.Size;
-                this.scaleFactor = new PointF((float)newSize.Width / oldSize.Width,
-                                              (float)newSize.Height / oldSize.Height);
-                return true;
-            }
-
-            public override bool VisitEnter(BitmapLayer layer)
-            {
-                Bitmap oldBitmap = layer.Bitmap;
-                Size resampledSize = new Size((int)(oldBitmap.Size.Width * scaleFactor.X), (int)(oldBitmap.Size.Height * scaleFactor.Y));
-                layer.Bitmap = resamplingStrategy.Resample(oldBitmap, resampledSize);
-                return false;
-            }
-
-            public override bool VisitLeave(Image image)
-            {
-                image.Size = newSize;
-                return false;
+                Bitmap oldBitmap = bitmapLayer.Bitmap;
+                Size resampledSize = new((int)(oldBitmap.Size.Width * scaleFactor.X),
+                                         (int)(oldBitmap.Size.Height * scaleFactor.Y));
+                bitmapLayer.Bitmap = resamplingStrategy.Resample(oldBitmap, resampledSize);
             }
         }
     }

@@ -15,8 +15,6 @@ namespace Fotografix
         public event PropertyChangedEventHandler UserPropertyChanged;
         public event EventHandler<ContentChangedEventArgs> ContentChanged;
 
-        public abstract bool Accept(ImageElementVisitor visitor);
-
         public T GetUserProperty<T>(UserProperty<T> property)
         {
             if (userProperties.TryGetValue(property, out var value))

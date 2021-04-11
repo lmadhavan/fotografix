@@ -61,10 +61,5 @@ namespace Fotografix.Adjustments
                 SetProperty(ref lightness, value);
             }
         }
-
-        public override bool Accept(ImageElementVisitor visitor)
-        {
-            return visitor.Visit(this);
-        }
     }
 }

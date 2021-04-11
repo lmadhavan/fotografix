@@ -35,16 +35,25 @@ namespace Fotografix.Win2D.Composition
 
         internal LayerNode CreateLayerNode(Layer layer)
         {
-            Visitor visitor = new Visitor(this);
-            layer.Accept(visitor);
-            return visitor.LayerNode ?? throw new InvalidOperationException("Unsupported layer: " + layer);
+            return layer switch
+            {
+                BitmapLayer l => new BitmapLayerNode(l, this),
+                AdjustmentLayer l => new AdjustmentLayerNode(l, this),
+                _ => throw new InvalidOperationException("Unsupported layer: " + layer)
+            };
         }
 
         internal AdjustmentNode CreateAdjustmentNode(Adjustment adjustment)
         {
-            Visitor visitor = new Visitor(this);
-            adjustment.Accept(visitor);
-            return visitor.AdjustmentNode ?? throw new InvalidOperationException("Unsupported adjustment: " + adjustment);
+            return adjustment switch
+            {
+                BlackAndWhiteAdjustment a => new BlackAndWhiteAdjustmentNode(a),
+                BrightnessContrastAdjustment a => new BrightnessContrastAdjustmentNode(a),
+                GradientMapAdjustment a => new GradientMapAdjustmentNode(a),
+                HueSaturationAdjustment a => new HueSaturationAdjustmentNode(a),
+                LevelsAdjustment a => new LevelsAdjustmentNode(a),
+                _ => throw new InvalidOperationException("Unsupported adjustment: " + adjustment)
+            };
         }
 
         internal IDrawableNode CreateTransparencyGridNode()
@@ -85,61 +94,6 @@ namespace Fotografix.Win2D.Composition
         internal Win2DBitmap WrapBitmap(Bitmap bitmap)
         {
             return new Win2DBitmap(bitmap, resourceCreator);
-        }
-
-        private sealed class Visitor : ImageElementVisitor
-        {
-            private readonly NodeFactory nodeFactory;
-
-            internal Visitor(NodeFactory nodeFactory)
-            {
-                this.nodeFactory = nodeFactory;
-            }
-
-            internal LayerNode LayerNode { get; private set; }
-            internal AdjustmentNode AdjustmentNode { get; private set; }
-
-            public override bool VisitEnter(AdjustmentLayer layer)
-            {
-                this.LayerNode = new AdjustmentLayerNode(layer, nodeFactory);
-                return false;
-            }
-
-            public override bool VisitEnter(BitmapLayer layer)
-            {
-                this.LayerNode = new BitmapLayerNode(layer, nodeFactory);
-                return false;
-            }
-
-            public override bool Visit(BlackAndWhiteAdjustment adjustment)
-            {
-                this.AdjustmentNode = new BlackAndWhiteAdjustmentNode(adjustment);
-                return false;
-            }
-
-            public override bool Visit(BrightnessContrastAdjustment adjustment)
-            {
-                this.AdjustmentNode = new BrightnessContrastAdjustmentNode(adjustment);
-                return false;
-            }
-
-            public override bool Visit(GradientMapAdjustment adjustment)
-            {
-                this.AdjustmentNode = new GradientMapAdjustmentNode(adjustment);
-                return false;
-            }
-
-            public override bool Visit(HueSaturationAdjustment adjustment)
-            {
-                this.AdjustmentNode = new HueSaturationAdjustmentNode(adjustment);
-                return false;
-            }
-
-            public override bool Visit(LevelsAdjustment adjustment)
-            {
-                this.AdjustmentNode = new LevelsAdjustmentNode(adjustment);
-                return false;
-            }
         }
     }
 }

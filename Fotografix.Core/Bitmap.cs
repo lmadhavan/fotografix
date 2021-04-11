@@ -57,11 +57,6 @@ namespace Fotografix
             }
         }
 
-        public override bool Accept(ImageElementVisitor visitor)
-        {
-            return visitor.Visit(this);
-        }
-
         public override string ToString()
         {
             return $"Bitmap {Bounds}";

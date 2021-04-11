@@ -42,10 +42,5 @@ namespace Fotografix.Adjustments
                 SetProperty(ref contrast, value);
             }
         }
-
-        public override bool Accept(ImageElementVisitor visitor)
-        {
-            return visitor.Visit(this);
-        }
     }
 }

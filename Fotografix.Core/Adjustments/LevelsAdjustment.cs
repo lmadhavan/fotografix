@@ -94,10 +94,5 @@ namespace Fotografix.Adjustments
                 SetProperty(ref outputWhitePoint, value);
             }
         }
-
-        public override bool Accept(ImageElementVisitor visitor)
-        {
-            return visitor.Visit(this);
-        }
     }
 }

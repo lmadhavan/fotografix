@@ -35,15 +35,5 @@ namespace Fotografix
         }
 
         public override ImageElement Content => Bitmap;
-
-        public override bool Accept(ImageElementVisitor visitor)
-        {
-            if (visitor.VisitEnter(this))
-            {
-                Bitmap.Accept(visitor);
-            }
-
-            return visitor.VisitLeave(this);
-        }
     }
 }

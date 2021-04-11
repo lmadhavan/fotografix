@@ -11,28 +11,19 @@ namespace Fotografix.Editor.Commands
 
         private void Crop(Image image, Rectangle rectangle)
         {
-            image.Accept(new ImageCroppingVisitor(rectangle));
+            foreach (Layer layer in image.Layers)
+            {
+                Crop(layer, rectangle);
+            }
+
+            image.Size = rectangle.Size;
         }
 
-        private sealed class ImageCroppingVisitor : ImageElementVisitor
+        private void Crop(Layer layer, Rectangle rectangle)
         {
-            private readonly Rectangle rectangle;
-
-            public ImageCroppingVisitor(Rectangle rectangle)
+            if (layer is BitmapLayer bitmapLayer)
             {
-                this.rectangle = rectangle;
-            }
-
-            public override bool Visit(Bitmap bitmap)
-            {
-                bitmap.Position -= (Size)rectangle.Location;
-                return true;
-            }
-
-            public override bool VisitLeave(Image image)
-            {
-                image.Size = rectangle.Size;
-                return true;
+                bitmapLayer.Bitmap.Position -= (Size)rectangle.Location;
             }
         }
     }

@@ -103,8 +103,6 @@ namespace Fotografix
                 get => child;
                 set => SetChild(ref child, value);
             }
-
-            public override bool Accept(ImageElementVisitor visitor) => true;
         }
     }
 }
