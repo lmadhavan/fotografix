@@ -136,7 +136,7 @@ namespace Fotografix.Uwp
 
         public void AddLayer()
         {
-            Layer layer = BitmapLayerFactory.CreateBitmapLayer(id: image.Layers.Count + 1);
+            Layer layer = CreateLayer(id: image.Layers.Count + 1);
             image.Layers.Add(layer);
         }
 
@@ -268,6 +268,11 @@ namespace Fotografix.Uwp
                 history.Add(new CompositeChange(changeGroup));
                 this.changeGroup = null;
             }
+        }
+
+        public static Layer CreateLayer(int id)
+        {
+            return new Layer { Name = "Layer " + id };
         }
 
         private void OnHistoryPropertyChanged(object sender, PropertyChangedEventArgs e)

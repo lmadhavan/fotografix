@@ -11,9 +11,9 @@ namespace Fotografix.Uwp.Adjustments
             this.name = name;
         }
 
-        public AdjustmentLayer CreateAdjustmentLayer()
+        public Layer CreateAdjustmentLayer()
         {
-            return new AdjustmentLayer(new T()) { Name = name };
+            return new Layer(new T()) { Name = name };
         }
     }
 }

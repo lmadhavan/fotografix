@@ -24,21 +24,22 @@ namespace Fotografix.Editor.Commands
 
             foreach (Layer layer in image.Layers)
             {
-                Resample(layer, scaleFactor);
+                layer.Content = Resample(layer.Content, scaleFactor);
             }
 
             image.Size = newSize;
         }
 
-        private void Resample(Layer layer, PointF scaleFactor)
+        private ContentElement Resample(ContentElement content, PointF scaleFactor)
         {
-            if (layer is BitmapLayer bitmapLayer)
+            if (content is Bitmap bitmap)
             {
-                Bitmap oldBitmap = bitmapLayer.Bitmap;
-                Size resampledSize = new((int)(oldBitmap.Size.Width * scaleFactor.X),
-                                         (int)(oldBitmap.Size.Height * scaleFactor.Y));
-                bitmapLayer.Bitmap = resamplingStrategy.Resample(oldBitmap, resampledSize);
+                Size resampledSize = new((int)(bitmap.Size.Width * scaleFactor.X),
+                                         (int)(bitmap.Size.Height * scaleFactor.Y));
+                return resamplingStrategy.Resample(bitmap, resampledSize);
             }
+
+            return content;
         }
     }
 }

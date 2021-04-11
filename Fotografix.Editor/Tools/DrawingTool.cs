@@ -7,13 +7,13 @@ namespace Fotografix.Editor.Tools
     public abstract class DrawingTool<T> : ITool where T : class, IDrawable
     {
         private Image image;
-        private BitmapLayer activeLayer;
+        private Layer activeBitmapLayer;
         private T drawable;
 
         public abstract string Name { get; }
         public ToolCursor Cursor => Enabled ? ToolCursor.Crosshair : ToolCursor.Disabled;
 
-        private bool Enabled => activeLayer != null;
+        private bool Enabled => activeBitmapLayer != null;
 
         public void Activated(Image image)
         {
@@ -25,7 +25,7 @@ namespace Fotografix.Editor.Tools
         public void Deactivated()
         {
             image.UserPropertyChanged -= Image_PropertyChanged;
-            this.activeLayer = null;
+            this.activeBitmapLayer = null;
             this.image = null;
         }
 
@@ -34,7 +34,7 @@ namespace Fotografix.Editor.Tools
             if (Enabled)
             {
                 this.drawable = CreateDrawable(image, p);
-                activeLayer.SetDrawingPreview(drawable);
+                activeBitmapLayer.SetDrawingPreview(drawable);
             }
         }
 
@@ -50,8 +50,8 @@ namespace Fotografix.Editor.Tools
         {
             if (drawable != null)
             {
-                activeLayer.SetDrawingPreview(null);
-                image.Dispatch(new DrawCommand(activeLayer, drawable));
+                activeBitmapLayer.SetDrawingPreview(null);
+                image.Dispatch(new DrawCommand(activeBitmapLayer, drawable));
                 this.drawable = null;
             }
         }
@@ -66,7 +66,8 @@ namespace Fotografix.Editor.Tools
 
         private void UpdateActiveLayer()
         {
-            this.activeLayer = image.GetActiveLayer() as BitmapLayer;
+            Layer activeLayer = image.GetActiveLayer();
+            this.activeBitmapLayer = activeLayer.Content is Bitmap ? activeLayer : null;
         }
 
         protected abstract T CreateDrawable(Image image, PointerState p);

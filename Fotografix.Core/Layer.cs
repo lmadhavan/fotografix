@@ -1,16 +1,23 @@
 ﻿using System;
+using System.Drawing;
 
 namespace Fotografix
 {
-    public abstract class Layer : ImageElement
+    public sealed class Layer : ImageElement
     {
         private string name = "";
         private bool visible = true;
         private BlendMode blendMode = BlendMode.Normal;
         private float opacity = 1;
+        private ContentElement content;
 
-        internal Layer()
+        public Layer() : this(new Bitmap(Size.Empty))
         {
+        }
+
+        public Layer(ContentElement content)
+        {
+            this.Content = content;
         }
 
         public string Name
@@ -75,6 +82,22 @@ namespace Fotografix
             }
         }
 
-        public abstract ImageElement Content { get; }
+        public ContentElement Content
+        {
+            get
+            {
+                return content;
+            }
+
+            set
+            {
+                if (value == null)
+                {
+                    throw new ArgumentNullException();
+                }
+
+                SetChild(ref content, value);
+            }
+        }
     }
 }

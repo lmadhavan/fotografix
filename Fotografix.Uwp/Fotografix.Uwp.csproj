@@ -168,7 +168,6 @@
     </Compile>
     <Compile Include="TypeBasedTemplateSelector.cs" />
     <Compile Include="Adjustments\IAdjustmentLayerFactory.cs" />
-    <Compile Include="BitmapLayerFactory.cs" />
     <Compile Include="BlendModes\BlendModeListItemStyleSelector.cs" />
     <Compile Include="BlendModes\BlendModeListItemTemplateSelector.cs" />
     <Compile Include="BlendModes\BlendModeListResourceDictionary.xaml.cs">

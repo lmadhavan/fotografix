@@ -2,6 +2,6 @@
 {
     public interface IAdjustmentLayerFactory
     {
-        AdjustmentLayer CreateAdjustmentLayer();
+        Layer CreateAdjustmentLayer();
     }
 }

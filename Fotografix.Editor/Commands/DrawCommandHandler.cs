@@ -1,4 +1,5 @@
 ﻿using Fotografix.Drawing;
+using System;
 using System.Drawing;
 
 namespace Fotografix.Editor.Commands
@@ -17,21 +18,22 @@ namespace Fotografix.Editor.Commands
             Draw(command.Layer, command.Drawable);
         }
 
-        private void Draw(BitmapLayer layer, IDrawable drawable)
+        private void Draw(Layer layer, IDrawable drawable)
         {
-            Bitmap target = ResolveTargetBitmap(layer.Bitmap, drawable, out bool redrawExistingBitmap);
+            Bitmap bitmap = layer.Content as Bitmap ?? throw new InvalidOperationException("Cannot draw on layer with content type " + layer.Content.GetType());
+            Bitmap target = ResolveTargetBitmap(bitmap, drawable, out bool redrawExistingBitmap);
 
             using (IDrawingContext dc = drawingContextFactory.CreateDrawingContext(target))
             {
                 if (redrawExistingBitmap)
                 {
-                    dc.Draw(layer.Bitmap);
+                    dc.Draw(bitmap);
                 }
 
                 drawable.Draw(dc);
             }
 
-            layer.Bitmap = target;
+            layer.Content = target;
         }
 
         private Bitmap ResolveTargetBitmap(Bitmap bitmap, IDrawable drawable, out bool redrawExistingBitmap)

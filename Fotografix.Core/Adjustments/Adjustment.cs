@@ -1,6 +1,6 @@
 ﻿namespace Fotografix.Adjustments
 {
-    public abstract class Adjustment : ImageElement
+    public abstract class Adjustment : ContentElement
     {
         internal Adjustment()
         {

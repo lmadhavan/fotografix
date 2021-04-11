@@ -22,7 +22,7 @@ namespace Fotografix
         [Test]
         public void RaisesContentChangedEventWhenLayerAdded()
         {
-            Layer layer = new BitmapLayer();
+            Layer layer = new Layer();
 
             image.Layers.Add(layer);
 
@@ -32,7 +32,7 @@ namespace Fotografix
         [Test]
         public void RaisesContentChangedEventWhenLayerRemoved()
         {
-            Layer layer = new BitmapLayer();
+            Layer layer = new Layer();
 
             image.Layers.Add(layer);
             image.Layers.Remove(layer);
@@ -43,8 +43,8 @@ namespace Fotografix
         [Test]
         public void RaisesContentChangedEventWhenLayerReplaced()
         {
-            Layer layer1 = new BitmapLayer();
-            Layer layer2 = new BitmapLayer();
+            Layer layer1 = new Layer();
+            Layer layer2 = new Layer();
 
             image.Layers.Add(layer1);
             image.Layers[0] = layer2;
@@ -55,8 +55,8 @@ namespace Fotografix
         [Test]
         public void RaisesContentChangedEventWhenLayerMoved()
         {
-            Layer layer1 = new BitmapLayer();
-            Layer layer2 = new BitmapLayer();
+            Layer layer1 = new Layer();
+            Layer layer2 = new Layer();
 
             image.Layers.Add(layer1);
             image.Layers.Add(layer2);
@@ -68,7 +68,7 @@ namespace Fotografix
         [Test]
         public void ThrowsExceptionWhenAddingLayerAttachedToAnotherImage()
         {
-            Layer layer = new BitmapLayer();
+            Layer layer = new Layer();
 
             Image anotherImage = new Image(new Size(20, 20));
             anotherImage.Layers.Add(layer);
@@ -79,7 +79,7 @@ namespace Fotografix
         [Test]
         public void DetachesLayerWhenRemoved()
         {
-            Layer layer = new BitmapLayer();
+            Layer layer = new Layer();
             image.Layers.Add(layer);
             image.Layers.Remove(layer);
 
@@ -89,8 +89,8 @@ namespace Fotografix
         [Test]
         public void DetachesLayerWhenReplaced()
         {
-            Layer layer1 = new BitmapLayer();
-            Layer layer2 = new BitmapLayer();
+            Layer layer1 = new Layer();
+            Layer layer2 = new Layer();
 
             image.Layers.Add(layer1);
             image.Layers[0] = layer2;
@@ -101,8 +101,8 @@ namespace Fotografix
         [Test]
         public void DetachesAndReturnsAllLayers()
         {
-            Layer layer1 = new BitmapLayer();
-            Layer layer2 = new BitmapLayer();
+            Layer layer1 = new Layer();
+            Layer layer2 = new Layer();
 
             image.Layers.Add(layer1);
             image.Layers.Add(layer2);

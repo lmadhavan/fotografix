@@ -5,7 +5,11 @@ namespace Fotografix.Win2D.Composition
 {
     public sealed class NullComposableNode : IComposableNode
     {
-        public event EventHandler Invalidated;
+        public event EventHandler Invalidated
+        {
+            add { }
+            remove { }
+        }
 
         public void Dispose()
         {

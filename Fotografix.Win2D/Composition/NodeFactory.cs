@@ -1,5 +1,4 @@
 ﻿using Fotografix.Adjustments;
-using Fotografix.Drawing;
 using Fotografix.Editor;
 using Fotografix.Win2D.Composition.Adjustments;
 using Microsoft.Graphics.Canvas;
@@ -35,15 +34,20 @@ namespace Fotografix.Win2D.Composition
 
         internal LayerNode CreateLayerNode(Layer layer)
         {
-            return layer switch
+            return new LayerNode(layer, this);
+        }
+
+        internal IBlendingStrategy CreateBlendingStrategy(ContentElement content, IComposableNode drawingPreviewNode)
+        {
+            return content switch
             {
-                BitmapLayer l => new BitmapLayerNode(l, this),
-                AdjustmentLayer l => new AdjustmentLayerNode(l, this),
-                _ => throw new InvalidOperationException("Unsupported layer: " + layer)
+                Bitmap bitmap => new BitmapBlendingStrategy(WrapBitmap(bitmap), drawingPreviewNode),
+                Adjustment adjustment => new AdjustmentBlendingStrategy(WrapAdjustment(adjustment)),
+                _ => throw new ArgumentException("Unsupported content type: " + content.GetType())
             };
         }
 
-        internal AdjustmentNode CreateAdjustmentNode(Adjustment adjustment)
+        private AdjustmentNode WrapAdjustment(Adjustment adjustment)
         {
             return adjustment switch
             {
@@ -52,7 +56,7 @@ namespace Fotografix.Win2D.Composition
                 GradientMapAdjustment a => new GradientMapAdjustmentNode(a),
                 HueSaturationAdjustment a => new HueSaturationAdjustmentNode(a),
                 LevelsAdjustment a => new LevelsAdjustmentNode(a),
-                _ => throw new InvalidOperationException("Unsupported adjustment: " + adjustment)
+                _ => throw new ArgumentException("Unsupported adjustment: " + adjustment)
             };
         }
 
@@ -76,11 +80,11 @@ namespace Fotografix.Win2D.Composition
             return new NullDrawableNode();
         }
 
-        internal IComposableNode CreateDrawingPreviewNode(IDrawable drawable)
+        internal IComposableNode CreateDrawingPreviewNode(Layer layer)
         {
             if (interactiveMode)
             {
-                return new DrawingPreviewNode(drawable, resourceCreator);
+                return new DrawingPreviewNode(layer, resourceCreator);
             }
 
             return new NullComposableNode();

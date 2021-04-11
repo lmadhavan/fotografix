@@ -1,5 +1,6 @@
 ﻿using Fotografix.IO;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -13,8 +14,9 @@ namespace Fotografix.Tests.Uwp
 
         public Task<Image> ReadImageAsync(IFile file)
         {
-            BitmapLayer layer = new BitmapLayer { Name = file.Name };
-            Image image = new Image(layer);
+            Layer layer = new Layer { Name = file.Name };
+            Image image = new Image(Size.Empty);
+            image.Layers.Add(layer);
             return Task.FromResult(image);
         }
 

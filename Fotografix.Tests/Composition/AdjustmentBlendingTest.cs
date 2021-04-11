@@ -14,7 +14,7 @@ namespace Fotografix.Tests.Composition
         public void Initialize()
         {
             this.background = Image.Layers[0];
-            this.foreground = new AdjustmentLayer(new BlackAndWhiteAdjustment());
+            this.foreground = new Layer(new BlackAndWhiteAdjustment());
             Image.Layers.Add(foreground);
         }
 

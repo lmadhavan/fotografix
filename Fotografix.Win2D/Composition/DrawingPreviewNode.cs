@@ -1,57 +1,100 @@
 ﻿using Fotografix.Drawing;
+using Fotografix.Editor;
 using Microsoft.Graphics.Canvas;
 using System;
+using System.ComponentModel;
 
 namespace Fotografix.Win2D.Composition
 {
     internal sealed class DrawingPreviewNode : IComposableNode
     {
-        private readonly IDrawable drawable;
-
+        private readonly Layer layer;
         private readonly ICanvasResourceCreator resourceCreator;
         private readonly CompositeEffectNode compositeEffectNode;
+
+        private IDrawable drawable;
         private CanvasCommandList commandList;
 
-        internal DrawingPreviewNode(IDrawable drawable, ICanvasResourceCreator resourceCreator)
+        internal DrawingPreviewNode(Layer layer, ICanvasResourceCreator resourceCreator)
         {
-            this.drawable = drawable;
-            drawable.Changed += OnContentChanged;
-
+            this.layer = layer;
             this.resourceCreator = resourceCreator;
             this.compositeEffectNode = new CompositeEffectNode();
-            UpdateCommandList();
+
+            UpdateDrawable();
+            layer.UserPropertyChanged += Layer_UserPropertyChanged;
         }
 
         public void Dispose()
         {
+            layer.UserPropertyChanged -= Layer_UserPropertyChanged;
+
+            if (drawable != null)
+            {
+                drawable.Changed -= Drawable_Changed;
+            }
+
             commandList?.Dispose();
             compositeEffectNode.Dispose();
-            drawable.Changed -= OnContentChanged;
         }
 
         public event EventHandler Invalidated;
 
         public ICanvasImage Compose(ICanvasImage background)
         {
-            return compositeEffectNode.ResolveOutput(commandList, background);
+            if (commandList != null)
+            {
+                return compositeEffectNode.ResolveOutput(commandList, background);
+            }
+
+            return background;
         }
 
-        private void OnContentChanged(object sender, EventArgs e)
+        private void UpdateDrawable()
         {
+            if (drawable != null)
+            {
+                drawable.Changed -= Drawable_Changed;
+            }
+
+            this.drawable = layer.GetDrawingPreview();
+
+            if (drawable != null)
+            {
+                drawable.Changed += Drawable_Changed;
+            }
+
             UpdateCommandList();
         }
 
         private void UpdateCommandList()
         {
             commandList?.Dispose();
+            this.commandList = null;
 
-            this.commandList = new CanvasCommandList(resourceCreator);
-            using (var dc = new Win2DDrawingContext(commandList.CreateDrawingSession()))
+            if (drawable != null)
             {
-                drawable.Draw(dc);
+                this.commandList = new CanvasCommandList(resourceCreator);
+                using (var dc = new Win2DDrawingContext(commandList.CreateDrawingSession()))
+                {
+                    drawable.Draw(dc);
+                }
             }
 
             Invalidated?.Invoke(this, EventArgs.Empty);
+        }
+
+        private void Layer_UserPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == EditorProperties.DrawingPreview)
+            {
+                UpdateDrawable();
+            }
+        }
+
+        private void Drawable_Changed(object sender, EventArgs e)
+        {
+            UpdateCommandList();
         }
     }
 }

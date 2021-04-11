@@ -2,5 +2,5 @@
 
 namespace Fotografix.Editor.Commands
 {
-    public sealed record DrawCommand(BitmapLayer Layer, IDrawable Drawable);
+    public sealed record DrawCommand(Layer Layer, IDrawable Drawable);
 }

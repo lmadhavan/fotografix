@@ -17,9 +17,9 @@ namespace Fotografix
             this.layers = new LayerList(this);
         }
 
-        public Image(BitmapLayer layer) : this(layer.Bitmap.Size)
+        public Image(Bitmap bitmap) : this(bitmap.Size)
         {
-            Layers.Add(layer);
+            Layers.Add(new Layer(bitmap));
         }
 
         public Size Size

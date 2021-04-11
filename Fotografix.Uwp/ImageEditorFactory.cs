@@ -27,7 +27,7 @@ namespace Fotografix.Uwp
 
         public ImageEditor CreateNewImage(Viewport viewport, Size size)
         {
-            BitmapLayer layer = BitmapLayerFactory.CreateBitmapLayer(id: 1);
+            Layer layer = ImageEditor.CreateLayer(id: 1);
             Image image = new Image(size);
             image.Layers.Add(layer);
 

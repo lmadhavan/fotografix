@@ -37,7 +37,7 @@ namespace Fotografix.Editor.Commands
             Size originalBitmapSize = new Size(10, 20);
             Bitmap originalBitmap = new Bitmap(originalBitmapSize);
 
-            BitmapLayer layer = new BitmapLayer(originalBitmap);
+            Layer layer = new Layer(originalBitmap);
             image.Layers.Add(layer);
 
             Size expectedNewBitmapSize = originalBitmapSize * ScalingFactor;
@@ -47,7 +47,7 @@ namespace Fotografix.Editor.Commands
 
             handler.Handle(new ResampleImageCommand(image, NewImageSize));
 
-            Assert.That(layer.Bitmap, Is.EqualTo(newBitmap));
+            Assert.That(layer.Content, Is.EqualTo(newBitmap));
         }
     }
 }

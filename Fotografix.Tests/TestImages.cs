@@ -24,16 +24,16 @@ namespace Fotografix.Tests
             }
         }
 
-        internal static async Task<BitmapLayer> LoadLayerAsync(string filename)
+        internal static async Task<Layer> LoadLayerAsync(string filename)
         {
             Bitmap bitmap = await LoadBitmapAsync(filename);
-            return new BitmapLayer(bitmap);
+            return new Layer(bitmap);
         }
 
         internal static async Task<Image> LoadImageAsync(string filename)
         {
-            var layer = await LoadLayerAsync(filename);
-            return new Image(layer);
+            Bitmap bitmap = await LoadBitmapAsync(filename);
+            return new Image(bitmap);
         }
     }
 }

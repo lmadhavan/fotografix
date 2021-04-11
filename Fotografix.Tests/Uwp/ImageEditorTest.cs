@@ -22,7 +22,7 @@ namespace Fotografix.Tests.Uwp
         public void Initialize()
         {
             this.image = new Image(ImageSize);
-            image.Layers.Add(BitmapLayerFactory.CreateBitmapLayer(id: 1));
+            image.Layers.Add(ImageEditor.CreateLayer(id: 1));
 
             this.viewport = new Viewport();
             image.SetViewport(viewport);
@@ -121,7 +121,7 @@ namespace Fotografix.Tests.Uwp
             {
                 for (int i = 0; i < numberOfChanges; i++)
                 {
-                    image.Layers.Add(new BitmapLayer());
+                    image.Layers.Add(new Layer());
                 }
             }
         }

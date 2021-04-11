@@ -13,17 +13,17 @@ namespace Fotografix.Editor.Commands
         {
             foreach (Layer layer in image.Layers)
             {
-                Crop(layer, rectangle);
+                Crop(layer.Content, rectangle);
             }
 
             image.Size = rectangle.Size;
         }
 
-        private void Crop(Layer layer, Rectangle rectangle)
+        private void Crop(ContentElement content, Rectangle rectangle)
         {
-            if (layer is BitmapLayer bitmapLayer)
+            if (content is Bitmap bitmap)
             {
-                bitmapLayer.Bitmap.Position -= (Size)rectangle.Location;
+                bitmap.Position -= (Size)rectangle.Location;
             }
         }
     }

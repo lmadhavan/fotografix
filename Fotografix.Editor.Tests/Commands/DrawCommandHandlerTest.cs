@@ -31,7 +31,7 @@ namespace Fotografix.Editor.Commands
         public void DrawsDrawableOnBitmap()
         {
             Bitmap bitmap = new Bitmap(new Size(10, 10));
-            BitmapLayer layer = new BitmapLayer(bitmap);
+            Layer layer = new Layer(bitmap);
 
             drawable.SetupGet(d => d.Bounds).Returns(bitmap.Bounds);
             drawable.Setup(d => d.Draw(It.IsAny<IDrawingContext>()));
@@ -46,7 +46,7 @@ namespace Fotografix.Editor.Commands
         public void ExpandsBitmapToAccommodateDrawable()
         {
             Bitmap bitmap = new Bitmap(new Rectangle(10, 10, 20, 20));
-            BitmapLayer layer = new BitmapLayer(bitmap);
+            Layer layer = new Layer(bitmap);
 
             drawable.SetupGet(d => d.Bounds).Returns(new Rectangle(5, 5, 10, 10));
 
@@ -56,7 +56,7 @@ namespace Fotografix.Editor.Commands
 
             handler.Handle(new DrawCommand(layer, drawable.Object));
 
-            Bitmap newBitmap = layer.Bitmap;
+            Bitmap newBitmap = (Bitmap)layer.Content;
             Assert.That(newBitmap.Bounds, Is.EqualTo(Rectangle.FromLTRB(5, 5, 30, 30)));
 
             drawingContextFactory.Verify(f => f.CreateDrawingContext(newBitmap));
@@ -68,7 +68,7 @@ namespace Fotografix.Editor.Commands
         public void IgnoresExistingBitmapIfEmpty()
         {
             Bitmap bitmap = new Bitmap(Size.Empty);
-            BitmapLayer layer = new BitmapLayer(bitmap);
+            Layer layer = new Layer(bitmap);
 
             Rectangle drawableBounds = new Rectangle(5, 5, 10, 10);
             drawable.SetupGet(d => d.Bounds).Returns(drawableBounds);
@@ -76,7 +76,7 @@ namespace Fotografix.Editor.Commands
 
             handler.Handle(new DrawCommand(layer, drawable.Object));
 
-            Bitmap newBitmap = layer.Bitmap;
+            Bitmap newBitmap = (Bitmap)layer.Content;
             Assert.That(newBitmap.Bounds, Is.EqualTo(drawableBounds));
 
             drawingContextFactory.Verify(f => f.CreateDrawingContext(newBitmap));

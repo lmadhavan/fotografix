@@ -17,7 +17,7 @@ namespace Fotografix.Editor.Tools
         
         private Image image;
         private Bitmap bitmap;
-        private BitmapLayer bitmapLayer;
+        private Layer bitmapLayer;
         private Layer nonBitmapLayer;
 
         private Mock<IFakeDrawableFactory> drawableFactory;
@@ -29,8 +29,8 @@ namespace Fotografix.Editor.Tools
         {
             this.image = new Image(new Size(10, 10));
             this.bitmap = new Bitmap(new Size(10, 10));
-            this.bitmapLayer = new BitmapLayer(bitmap);
-            this.nonBitmapLayer = new AdjustmentLayer(new BlackAndWhiteAdjustment());
+            this.bitmapLayer = new Layer(bitmap);
+            this.nonBitmapLayer = new Layer(new BlackAndWhiteAdjustment());
 
             this.drawableFactory = new Mock<IFakeDrawableFactory>();
             this.drawable = new Mock<IFakeDrawable>();

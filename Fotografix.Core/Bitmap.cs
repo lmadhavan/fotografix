@@ -3,7 +3,7 @@ using System.Drawing;
 
 namespace Fotografix
 {
-    public sealed class Bitmap : ImageElement
+    public sealed class Bitmap : ContentElement
     {
         private Point position = Point.Empty;
         private byte[] pixels;

@@ -25,8 +25,9 @@ namespace Fotografix.Uwp.Codecs
             using (Stream stream = await file.OpenReadAsync())
             {
                 Bitmap bitmap = await ReadBitmapAsync(stream.AsRandomAccessStream());
-                BitmapLayer layer = new BitmapLayer(bitmap) { Name = file.Name };
-                return new Image(layer);
+                Image image = new Image(bitmap);
+                image.Layers[0].Name = file.Name;
+                return image;
             }
         }
 

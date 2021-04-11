@@ -21,7 +21,7 @@ namespace Fotografix.Tests.Composition
         public async Task DoesNotRenderPreviews()
         {
             Image image = await TestImages.LoadImageAsync("flowers.jpg");
-            BitmapLayer layer = await TestImages.LoadLayerAsync("stars_small.jpg");
+            Layer layer = await TestImages.LoadLayerAsync("stars_small.jpg");
 
             image.Layers.Add(layer);
             image.SetCropPreview(new Rectangle(0, 0, 100, 100));

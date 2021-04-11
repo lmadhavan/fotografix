@@ -124,14 +124,17 @@
     <Compile Include="..\SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="Composition\AdjustmentBlendingStrategy.cs" />
     <Compile Include="Composition\Adjustments\LevelsAdjustmentNode.cs" />
+    <Compile Include="Composition\BitmapBlendingStrategy.cs" />
+    <Compile Include="Composition\BlendEffectNode.cs" />
     <Compile Include="Composition\CropPreviewNode.cs" />
+    <Compile Include="Composition\BlendingStrategy.cs" />
     <Compile Include="Composition\IComposableNode.cs" />
     <Compile Include="Composition\IDrawableNode.cs" />
     <Compile Include="Composition\NullComposableNode.cs" />
     <Compile Include="Composition\NullDrawableNode.cs" />
     <Compile Include="ConversionExtensions.cs" />
-    <Compile Include="Composition\AdjustmentLayerNode.cs" />
     <Compile Include="Composition\Adjustments\AdjustmentNode.cs" />
     <Compile Include="Composition\Adjustments\BrightnessContrastAdjustmentNode.cs" />
     <Compile Include="Composition\DrawingPreviewNode.cs" />
@@ -141,7 +144,6 @@
     <Compile Include="Composition\Adjustments\ColorMatrixAdjustmentNode.cs" />
     <Compile Include="Composition\Adjustments\GradientMapAdjustmentNode.cs" />
     <Compile Include="Composition\Adjustments\HueSaturationAdjustmentNode.cs" />
-    <Compile Include="Composition\BitmapLayerNode.cs" />
     <Compile Include="Composition\ImageNode.cs" />
     <Compile Include="Composition\LayerNode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -1,31 +1,37 @@
-﻿using System;
+﻿using Microsoft.Graphics.Canvas;
+using System;
 using System.ComponentModel;
-using Microsoft.Graphics.Canvas;
-using Microsoft.Graphics.Canvas.Effects;
 
 namespace Fotografix.Win2D.Composition
 {
-    internal abstract class LayerNode : IDisposable
+    internal sealed class LayerNode : IDisposable
     {
         private readonly Layer layer;
-        private readonly BlendEffect blendEffect;
+        private readonly NodeFactory nodeFactory;
 
+        private readonly IComposableNode drawingPreviewNode;
+        private IBlendingStrategy blendingStrategy;
+        
         private ICanvasImage background;
         private ICanvasImage output;
 
-        protected LayerNode(Layer layer, NodeFactory nodeFactory)
+        internal LayerNode(Layer layer, NodeFactory nodeFactory)
         {
             this.layer = layer;
-            this.NodeFactory = nodeFactory;
+            this.nodeFactory = nodeFactory;
 
-            this.blendEffect = new BlendEffect();
+            this.drawingPreviewNode = nodeFactory.CreateDrawingPreviewNode(layer);
+            drawingPreviewNode.Invalidated += Preview_Invalidated;
+
+            UpdateBlendingStrategy();
             layer.PropertyChanged += Layer_PropertyChanged;
         }
 
-        public virtual void Dispose()
+        public void Dispose()
         {
             layer.PropertyChanged -= Layer_PropertyChanged;
-            blendEffect.Dispose();
+            blendingStrategy.Dispose();
+            drawingPreviewNode.Dispose();
         }
 
         public ICanvasImage Background
@@ -64,26 +70,34 @@ namespace Fotografix.Win2D.Composition
 
         public event EventHandler OutputChanged;
 
-        protected NodeFactory NodeFactory { get; }
-
-        protected void UpdateOutput()
+        private void UpdateOutput()
         {
-            this.Output = ResolveOutput(background);
+            this.Output = blendingStrategy.Blend(layer, background);
         }
 
         private void Layer_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            UpdateOutput();
+            if (e.PropertyName == nameof(Layer.Content))
+            {
+                UpdateBlendingStrategy();
+            }
+            else
+            {
+                UpdateOutput();
+            }
         }
 
-        protected abstract ICanvasImage ResolveOutput(ICanvasImage background);
-
-        protected ICanvasImage Blend(ICanvasImage foreground, ICanvasImage background)
+        private void Preview_Invalidated(object sender, EventArgs e)
         {
-            blendEffect.Mode = Enum.Parse<BlendEffectMode>(Enum.GetName(typeof(BlendMode), layer.BlendMode));
-            blendEffect.Foreground = foreground;
-            blendEffect.Background = background;
-            return blendEffect;
+            UpdateOutput();
+            nodeFactory.Invalidate();
+        }
+
+        private void UpdateBlendingStrategy()
+        {
+            blendingStrategy?.Dispose();
+            this.blendingStrategy = nodeFactory.CreateBlendingStrategy(layer.Content, drawingPreviewNode);
+            UpdateOutput();
         }
     }
 }
