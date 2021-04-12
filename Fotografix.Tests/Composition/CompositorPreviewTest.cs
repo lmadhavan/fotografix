@@ -22,7 +22,8 @@ namespace Fotografix.Tests.Composition
             Layer foreground = await TestImages.LoadLayerAsync("stars_small.jpg");
             Image.Layers.Add(foreground);
 
-            background.SetDrawingPreview(TestDrawables.BrushStroke);
+            Bitmap bitmap = (Bitmap)background.Content;
+            bitmap.SetDrawingPreview(TestDrawables.BrushStroke);
 
             await AssertImageAsync("flowers_brush_stars_small.png");
         }
@@ -30,10 +31,11 @@ namespace Fotografix.Tests.Composition
         [TestMethod]
         public async Task DrawingPreview_Foreground()
         {
-            Layer foreground = await TestImages.LoadLayerAsync("stars_small.jpg");
+            Bitmap bitmap = await TestImages.LoadBitmapAsync("stars_small.jpg");
+            Layer foreground = new Layer(bitmap);
             Image.Layers.Add(foreground);
 
-            foreground.SetDrawingPreview(TestDrawables.BrushStroke);
+            bitmap.SetDrawingPreview(TestDrawables.BrushStroke);
 
             await AssertImageAsync("flowers_stars_small_brush.png");
         }
@@ -41,11 +43,12 @@ namespace Fotografix.Tests.Composition
         [TestMethod]
         public async Task DrawingPreview_Opacity()
         {
-            Layer foreground = await TestImages.LoadLayerAsync("stars_small.jpg");
+            Bitmap bitmap = await TestImages.LoadBitmapAsync("stars_small.jpg");
+            Layer foreground = new Layer(bitmap);
             Image.Layers.Add(foreground);
 
             foreground.Opacity = 0.5f;
-            foreground.SetDrawingPreview(TestDrawables.BrushStroke);
+            bitmap.SetDrawingPreview(TestDrawables.BrushStroke);
 
             await AssertImageAsync("flowers_stars_small_opacity50_brush.png");
         }
@@ -58,7 +61,7 @@ namespace Fotografix.Tests.Composition
             Image.Layers.Add(foreground);
 
             bitmap.Position = new Point(50, 50);
-            foreground.SetDrawingPreview(TestDrawables.BrushStroke);
+            bitmap.SetDrawingPreview(TestDrawables.BrushStroke);
 
             await AssertImageAsync("flowers_stars_small_offset_brush.png");
         }

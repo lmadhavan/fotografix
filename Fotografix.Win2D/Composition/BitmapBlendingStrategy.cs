@@ -1,5 +1,6 @@
 ﻿using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Effects;
+using System;
 
 namespace Fotografix.Win2D.Composition
 {
@@ -27,7 +28,14 @@ namespace Fotografix.Win2D.Composition
             compositeEffectNode.Dispose();
             opacityEffect.Dispose();
             blendEffectNode.Dispose();
+            drawingPreviewNode.Dispose();
             bitmapNode.Dispose();
+        }
+
+        public event EventHandler Invalidated
+        {
+            add => drawingPreviewNode.Invalidated += value;
+            remove => drawingPreviewNode.Invalidated -= value;
         }
 
         public ICanvasImage Blend(Layer layer, ICanvasImage background)

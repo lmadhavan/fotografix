@@ -7,13 +7,14 @@ namespace Fotografix.Editor.Tools
     public abstract class DrawingTool<T> : ITool where T : class, IDrawable
     {
         private Image image;
-        private Layer activeBitmapLayer;
+        private Layer activeLayer;
+        private Bitmap activeBitmap;
         private T drawable;
 
         public abstract string Name { get; }
         public ToolCursor Cursor => Enabled ? ToolCursor.Crosshair : ToolCursor.Disabled;
 
-        private bool Enabled => activeBitmapLayer != null;
+        private bool Enabled => activeBitmap != null;
 
         public void Activated(Image image)
         {
@@ -25,7 +26,8 @@ namespace Fotografix.Editor.Tools
         public void Deactivated()
         {
             image.UserPropertyChanged -= Image_PropertyChanged;
-            this.activeBitmapLayer = null;
+            this.activeLayer = null;
+            this.activeBitmap = null;
             this.image = null;
         }
 
@@ -34,7 +36,7 @@ namespace Fotografix.Editor.Tools
             if (Enabled)
             {
                 this.drawable = CreateDrawable(image, p);
-                activeBitmapLayer.SetDrawingPreview(drawable);
+                activeBitmap.SetDrawingPreview(drawable);
             }
         }
 
@@ -50,8 +52,8 @@ namespace Fotografix.Editor.Tools
         {
             if (drawable != null)
             {
-                activeBitmapLayer.SetDrawingPreview(null);
-                image.Dispatch(new DrawCommand(activeBitmapLayer, drawable));
+                activeBitmap.SetDrawingPreview(null);
+                image.Dispatch(new DrawCommand(activeLayer, drawable));
                 this.drawable = null;
             }
         }
@@ -66,8 +68,8 @@ namespace Fotografix.Editor.Tools
 
         private void UpdateActiveLayer()
         {
-            Layer activeLayer = image.GetActiveLayer();
-            this.activeBitmapLayer = activeLayer.Content is Bitmap ? activeLayer : null;
+            this.activeLayer = image.GetActiveLayer();
+            this.activeBitmap = activeLayer.Content as Bitmap;
         }
 
         protected abstract T CreateDrawable(Image image, PointerState p);

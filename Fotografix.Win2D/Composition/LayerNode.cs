@@ -9,9 +9,7 @@ namespace Fotografix.Win2D.Composition
         private readonly Layer layer;
         private readonly NodeFactory nodeFactory;
 
-        private readonly IComposableNode drawingPreviewNode;
         private IBlendingStrategy blendingStrategy;
-        
         private ICanvasImage background;
         private ICanvasImage output;
 
@@ -19,9 +17,6 @@ namespace Fotografix.Win2D.Composition
         {
             this.layer = layer;
             this.nodeFactory = nodeFactory;
-
-            this.drawingPreviewNode = nodeFactory.CreateDrawingPreviewNode(layer);
-            drawingPreviewNode.Invalidated += Preview_Invalidated;
 
             UpdateBlendingStrategy();
             layer.PropertyChanged += Layer_PropertyChanged;
@@ -31,7 +26,6 @@ namespace Fotografix.Win2D.Composition
         {
             layer.PropertyChanged -= Layer_PropertyChanged;
             blendingStrategy.Dispose();
-            drawingPreviewNode.Dispose();
         }
 
         public ICanvasImage Background
@@ -75,6 +69,14 @@ namespace Fotografix.Win2D.Composition
             this.Output = blendingStrategy.Blend(layer, background);
         }
 
+        private void UpdateBlendingStrategy()
+        {
+            blendingStrategy?.Dispose();
+            this.blendingStrategy = nodeFactory.CreateBlendingStrategy(layer.Content);
+            blendingStrategy.Invalidated += Content_Invalidated;
+            UpdateOutput();
+        }
+
         private void Layer_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == nameof(Layer.Content))
@@ -87,17 +89,10 @@ namespace Fotografix.Win2D.Composition
             }
         }
 
-        private void Preview_Invalidated(object sender, EventArgs e)
+        private void Content_Invalidated(object sender, EventArgs e)
         {
             UpdateOutput();
             nodeFactory.Invalidate();
-        }
-
-        private void UpdateBlendingStrategy()
-        {
-            blendingStrategy?.Dispose();
-            this.blendingStrategy = nodeFactory.CreateBlendingStrategy(layer.Content, drawingPreviewNode);
-            UpdateOutput();
         }
     }
 }

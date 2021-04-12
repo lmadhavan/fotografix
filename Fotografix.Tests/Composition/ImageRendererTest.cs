@@ -21,14 +21,14 @@ namespace Fotografix.Tests.Composition
         public async Task DoesNotRenderPreviews()
         {
             Image image = await TestImages.LoadImageAsync("flowers.jpg");
-            Layer layer = await TestImages.LoadLayerAsync("stars_small.jpg");
+            Bitmap bitmap = await TestImages.LoadBitmapAsync("stars_small.jpg");
 
-            image.Layers.Add(layer);
+            image.Layers.Add(new Layer(bitmap));
             image.SetCropPreview(new Rectangle(0, 0, 100, 100));
-            layer.SetDrawingPreview(TestDrawables.BrushStroke);
+            bitmap.SetDrawingPreview(TestDrawables.BrushStroke);
 
-            Bitmap bitmap = renderer.Render(image);
-            await AssertImage.IsEquivalentAsync("flowers_stars_small.png", bitmap);
+            Bitmap render = renderer.Render(image);
+            await AssertImage.IsEquivalentAsync("flowers_stars_small.png", render);
         }
     }
 }

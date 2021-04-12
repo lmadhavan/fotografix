@@ -1,6 +1,7 @@
 ﻿using Fotografix.Win2D.Composition.Adjustments;
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Effects;
+using System;
 
 namespace Fotografix.Win2D.Composition
 {
@@ -22,6 +23,12 @@ namespace Fotografix.Win2D.Composition
             crossFadeEffect.Dispose();
             blendEffectNode.Dispose();
             adjustmentNode.Dispose();
+        }
+
+        public event EventHandler Invalidated
+        {
+            add { }
+            remove { }
         }
 
         public ICanvasImage Blend(Layer layer, ICanvasImage background)

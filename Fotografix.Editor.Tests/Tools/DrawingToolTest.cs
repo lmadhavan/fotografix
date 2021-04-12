@@ -95,7 +95,7 @@ namespace Fotografix.Editor.Tools
             tool.PointerPressed(Start);
 
             drawableFactory.Verify(f => f.Create(image, Start.Location));
-            Assert.That(bitmapLayer.GetDrawingPreview(), Is.EqualTo(drawable.Object));
+            Assert.That(bitmap.GetDrawingPreview(), Is.EqualTo(drawable.Object));
         }
 
         [Test]
@@ -121,7 +121,7 @@ namespace Fotografix.Editor.Tools
             tool.PointerReleased(End);
 
             commandDispatcher.Verify(d => d.Dispatch(new DrawCommand(bitmapLayer, drawable.Object)));
-            Assert.That(bitmapLayer.GetDrawingPreview(), Is.Null);
+            Assert.That(bitmap.GetDrawingPreview(), Is.Null);
         }
 
         [Test]

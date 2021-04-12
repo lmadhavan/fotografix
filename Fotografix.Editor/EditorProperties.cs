@@ -46,14 +46,14 @@ namespace Fotografix.Editor
             image.SetUserProperty(ViewportProperty, viewport);
         }
 
-        public static IDrawable GetDrawingPreview(this Layer layer)
+        public static IDrawable GetDrawingPreview(this Bitmap bitmap)
         {
-            return layer.GetUserProperty(DrawingPreviewProperty);
+            return bitmap.GetUserProperty(DrawingPreviewProperty);
         }
 
-        public static void SetDrawingPreview(this Layer layer, IDrawable drawable)
+        public static void SetDrawingPreview(this Bitmap bitmap, IDrawable drawable)
         {
-            layer.SetUserProperty(DrawingPreviewProperty, drawable);
+            bitmap.SetUserProperty(DrawingPreviewProperty, drawable);
         }
 
         public static Rectangle? GetCropPreview(this Image image)
