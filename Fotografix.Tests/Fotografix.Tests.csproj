@@ -122,6 +122,7 @@
     <Compile Include="Acceptance\AcceptanceTestBase.cs" />
     <Compile Include="Acceptance\AdjustmentsAcceptanceTest.cs" />
     <Compile Include="Acceptance\CropToolAcceptanceTest.cs" />
+    <Compile Include="Acceptance\MoveToolAcceptanceTest.cs" />
     <Compile Include="Acceptance\ViewportAcceptanceTest.cs" />
     <Compile Include="AssertImage.cs" />
     <Compile Include="BitmapCaptureExtensions.cs" />
@@ -189,6 +190,7 @@
     <Content Include="Images\flowers_stars_screen_opacity50.png" />
     <Content Include="Images\flowers_stars_small.png" />
     <Content Include="Images\flowers_stars_small_brush.png" />
+    <Content Include="Images\flowers_stars_small_offset.png" />
     <Content Include="Images\flowers_stars_small_offset_brush.png" />
     <Content Include="Images\flowers_stars_small_opacity50_brush.png" />
     <Content Include="Images\flowers_viewport_center.png" />

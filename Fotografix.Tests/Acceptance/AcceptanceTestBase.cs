@@ -1,4 +1,5 @@
 ﻿using Fotografix.Editor;
+using Fotografix.IO;
 using Fotografix.Uwp;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
@@ -21,14 +22,18 @@ namespace Fotografix.Tests.Acceptance
         {
             Editor?.Dispose();
 
-            var file = await TestImages.GetFileAsync(filename);
-
             this.viewport = new Viewport();
-            this.Editor = await ImageEditorFactory.OpenImageAsync(viewport, new StorageFileAdapter(file));
+            this.Editor = await ImageEditorFactory.OpenImageAsync(viewport, await GetFileAsync(filename));
             Editor.Invalidated += Editor_Invalidated;
             Editor.PropertyChanged += Editor_PropertyChanged;
 
             SyncViewportSize();
+        }
+
+        protected async Task ImportLayerAsync(string filename)
+        {
+            var file = await GetFileAsync(filename);
+            await Editor.ImportLayersAsync(new IFile[] { file });
         }
 
         protected async Task SaveToTempFolderAsync(string filename)
@@ -59,6 +64,12 @@ namespace Fotografix.Tests.Acceptance
         protected void ResizeViewport(Size size)
         {
             viewport.Size = size;
+        }
+
+        private async Task<IFile> GetFileAsync(string filename)
+        {
+            var file = await TestImages.GetFileAsync(filename);
+            return new StorageFileAdapter(file);
         }
 
         private void Editor_Invalidated(object sender, EventArgs e)

@@ -62,7 +62,8 @@ namespace Fotografix.Uwp
                 new HandTool(),
                 new BrushTool() { Size = 5, Color = Color.White },
                 new GradientTool { StartColor = Color.Black, EndColor = Color.White },
-                new CropTool()
+                new CropTool(),
+                new MoveTool()
             };
         }
     }

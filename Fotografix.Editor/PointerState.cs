@@ -6,6 +6,10 @@ namespace Fotografix.Editor
     {
         public static readonly PointerState Empty = new PointerState(Point.Empty);
 
+        public PointerState(int x, int y) : this(new(x, y))
+        {
+        }
+
         public PointerState(Point location)
         {
             this.Location = location;
