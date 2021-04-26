@@ -2,35 +2,23 @@
 using Fotografix.Editor.Commands;
 using Moq;
 using NUnit.Framework;
-using System.Drawing;
 
 namespace Fotografix.Editor.Tools
 {
-    [TestFixture]
-    public class DrawingToolTest : BitmapToolTest
+    public abstract class DrawingToolTest : BitmapToolTest
     {
         private static readonly PointerState Start = new(10, 10);
         private static readonly PointerState End = new(20, 20);
 
-        private ITool tool;
-        
-        private Mock<IFakeDrawableFactory> drawableFactory;
-        private Mock<IFakeDrawable> drawable;
         private Mock<ICommandDispatcher> commandDispatcher;
 
-        protected override ITool Tool => tool;
+        protected abstract void AssertDrawable(IDrawable drawable, PointerState start, PointerState end);
 
         [SetUp]
-        public void SetUp()
+        public void SetUp_DrawingToolTest()
         {
-            this.drawableFactory = new Mock<IFakeDrawableFactory>();
-            this.drawable = new Mock<IFakeDrawable>();
-            drawableFactory.Setup(f => f.Create(It.IsAny<Image>(), It.IsAny<Point>())).Returns(drawable.Object);
-
             this.commandDispatcher = new Mock<ICommandDispatcher>();
             Image.SetCommandDispatcher(commandDispatcher.Object);
-
-            this.tool = new FakeDrawingTool(drawableFactory.Object);
         }
 
         [Test]
@@ -38,10 +26,9 @@ namespace Fotografix.Editor.Tools
         {
             Activate(BitmapLayer);
 
-            tool.PointerPressed(Start);
-
-            drawableFactory.Verify(f => f.Create(Image, Start.Location));
-            Assert.That(Bitmap.GetDrawingPreview(), Is.EqualTo(drawable.Object));
+            Tool.PointerPressed(Start);
+            
+            Assert.That(Bitmap.GetDrawingPreview(), Is.Not.Null);
         }
 
         [Test]
@@ -49,10 +36,10 @@ namespace Fotografix.Editor.Tools
         {
             Activate(BitmapLayer);
 
-            tool.PointerPressed(Start);
-            tool.PointerMoved(End);
+            Tool.PointerPressed(Start);
+            Tool.PointerMoved(End);
 
-            drawable.Verify(d => d.Update(End.Location));
+            AssertDrawable(Bitmap.GetDrawingPreview(), Start, End);
         }
 
         [Test]
@@ -60,11 +47,14 @@ namespace Fotografix.Editor.Tools
         {
             Activate(BitmapLayer);
 
-            tool.PointerPressed(Start);
-            tool.PointerMoved(End);
-            tool.PointerReleased(End);
+            Tool.PointerPressed(Start);
+            Tool.PointerMoved(End);
 
-            commandDispatcher.Verify(d => d.Dispatch(new DrawCommand(BitmapLayer, drawable.Object)));
+            IDrawable drawable = Bitmap.GetDrawingPreview();
+
+            Tool.PointerReleased(End);
+
+            commandDispatcher.Verify(d => d.Dispatch(new DrawCommand(BitmapLayer, drawable)));
             Assert.That(Bitmap.GetDrawingPreview(), Is.Null);
         }
 
@@ -73,44 +63,15 @@ namespace Fotografix.Editor.Tools
         {
             Activate(BitmapLayer);
 
-            tool.PointerPressed(Start);
-            tool.PointerMoved(End);
-            tool.PointerReleased(End);
-            tool.PointerMoved(PointerState.Empty);
+            Tool.PointerPressed(Start);
+            Tool.PointerMoved(End);
 
-            drawable.Verify(d => d.Update(It.IsAny<Point>()), Times.Once());
-        }
+            IDrawable drawable = Bitmap.GetDrawingPreview();
 
-        private class FakeDrawingTool : DrawingTool<IFakeDrawable>
-        {
-            private readonly IFakeDrawableFactory factory;
+            Tool.PointerReleased(End);
+            Tool.PointerMoved(new(30, 30));
 
-            public FakeDrawingTool(IFakeDrawableFactory factory)
-            {
-                this.factory = factory;
-            }
-
-            public override string Name => "Test";
-
-            protected override IFakeDrawable CreateDrawable(Image image, PointerState p)
-            {
-                return factory.Create(image, p.Location);
-            }
-
-            protected override void UpdateDrawable(IFakeDrawable drawable, PointerState p)
-            {
-                drawable.Update(p.Location);
-            }
-        }
-
-        public interface IFakeDrawableFactory
-        {
-            IFakeDrawable Create(Image image, Point p);
-        }
-
-        public interface IFakeDrawable : IDrawable
-        {
-            void Update(Point p);
+            AssertDrawable(drawable, Start, End);
         }
     }
 }
