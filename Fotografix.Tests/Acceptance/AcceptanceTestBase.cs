@@ -44,7 +44,7 @@ namespace Fotografix.Tests.Acceptance
         protected async Task AssertImageAsync(string fileWithExpectedImage)
         {
             AssertInvalidated($"Displayed image was not updated (expecting {fileWithExpectedImage})");
-            await AssertImage.IsEquivalentAsync(fileWithExpectedImage, Editor.ToBitmap());
+            await BitmapAssert.AreEquivalentAsync(fileWithExpectedImage, Editor.ToBitmap());
         }
 
         protected void AssertCanUndo()

@@ -4,9 +4,9 @@ using System.Threading.Tasks;
 
 namespace Fotografix.Tests
 {
-    public static class AssertImage
+    public static class BitmapAssert
     {
-        public static async Task IsEquivalentAsync(string fileWithExpectedOutput, Bitmap actual)
+        public static async Task AreEquivalentAsync(string fileWithExpectedOutput, Bitmap actual)
         {
             Bitmap expected = await TestImages.LoadBitmapAsync(fileWithExpectedOutput);
             AssertBytesAreEqual(expected.Pixels, actual.Pixels, 3, fileWithExpectedOutput);

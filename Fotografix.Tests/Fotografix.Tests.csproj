@@ -124,7 +124,7 @@
     <Compile Include="Acceptance\CropToolAcceptanceTest.cs" />
     <Compile Include="Acceptance\MoveToolAcceptanceTest.cs" />
     <Compile Include="Acceptance\ViewportAcceptanceTest.cs" />
-    <Compile Include="AssertImage.cs" />
+    <Compile Include="BitmapAssert.cs" />
     <Compile Include="BitmapCaptureExtensions.cs" />
     <Compile Include="Composition\BitmapBlendingTest.cs" />
     <Compile Include="Composition\AdjustmentBlendingTest.cs" />

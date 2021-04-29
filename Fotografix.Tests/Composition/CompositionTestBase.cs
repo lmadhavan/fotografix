@@ -29,7 +29,7 @@ namespace Fotografix.Tests.Composition
         protected async Task AssertImageAsync(string fileWithExpectedOutput)
         {
             Bitmap bitmap = compositor.ToBitmap();
-            await AssertImage.IsEquivalentAsync(fileWithExpectedOutput, bitmap);
+            await BitmapAssert.AreEquivalentAsync(fileWithExpectedOutput, bitmap);
         }
 
         protected async Task CaptureToTempFolderAsync(string filename)

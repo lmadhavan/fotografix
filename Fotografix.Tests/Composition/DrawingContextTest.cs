@@ -34,7 +34,7 @@ namespace Fotografix.Tests.Composition
                 dc.Draw(brushStroke);
             }
 
-            await AssertImage.IsEquivalentAsync("stars_small_offset_brush.png", bitmap);
+            await BitmapAssert.AreEquivalentAsync("stars_small_offset_brush.png", bitmap);
         }
     }
 }

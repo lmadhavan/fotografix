@@ -28,7 +28,7 @@ namespace Fotografix.Tests.Composition
             bitmap.SetDrawingPreview(TestDrawables.BrushStroke);
 
             Bitmap render = renderer.Render(image);
-            await AssertImage.IsEquivalentAsync("flowers_stars_small.png", render);
+            await BitmapAssert.AreEquivalentAsync("flowers_stars_small.png", render);
         }
     }
 }
