@@ -37,6 +37,29 @@ namespace Fotografix
 
         public ObservableCollection<Layer> Layers => layers;
 
+        public void Crop(Rectangle rectangle)
+        {
+            foreach (Layer layer in layers)
+            {
+                layer.Crop(rectangle);
+            }
+
+            this.Size = rectangle.Size;
+        }
+
+        public void Scale(Size newSize, IBitmapResamplingStrategy resamplingStrategy)
+        {
+            PointF scaleFactor = new((float)newSize.Width / size.Width,
+                                     (float)newSize.Height / size.Height);
+
+            foreach (Layer layer in layers)
+            {
+                layer.Scale(scaleFactor, resamplingStrategy);
+            }
+
+            this.Size = newSize;
+        }
+
         public IList<Layer> DetachLayers()
         {
             return layers.Detach();
