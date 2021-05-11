@@ -4,7 +4,7 @@ using System.Drawing;
 namespace Fotografix.Editor.Tools
 {
     [TestFixture]
-    public class MoveToolTest : BitmapToolTest
+    public class MoveToolTest : ChannelToolTest
     {
         private MoveTool tool;
 
@@ -19,13 +19,13 @@ namespace Fotografix.Editor.Tools
         [Test]
         public void MovesActiveBitmapWhenPointerIsDragged()
         {
-            Bitmap.Position = new(50, 50);
             Activate(BitmapLayer);
+            ActiveChannel.Position = new(50, 50);
 
             tool.PointerPressed(new(10, 10));
             tool.PointerMoved(new(15, 15));
 
-            Assert.That(Bitmap.Position, Is.EqualTo(new Point(55, 55)));
+            Assert.That(ActiveChannel.Position, Is.EqualTo(new Point(55, 55)));
         }
 
         [Test]
@@ -37,7 +37,7 @@ namespace Fotografix.Editor.Tools
             tool.PointerReleased(new(10, 10));
             tool.PointerMoved(new(15, 15));
 
-            Assert.That(Bitmap.Position, Is.EqualTo(Point.Empty));
+            Assert.That(ActiveChannel.Position, Is.EqualTo(Point.Empty));
         }
     }
 }

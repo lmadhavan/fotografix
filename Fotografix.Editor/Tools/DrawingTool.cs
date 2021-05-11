@@ -3,18 +3,19 @@ using Fotografix.Editor.Commands;
 
 namespace Fotografix.Editor.Tools
 {
-    public abstract class DrawingTool<T> : BitmapTool where T : class, IDrawable
+    public abstract class DrawingTool<T> : ChannelTool where T : class, IDrawable
     {
         private T drawable;
 
-        public override ToolCursor Cursor => ActiveBitmap != null ? ToolCursor.Crosshair : ToolCursor.Disabled;
+        private bool CanDraw => ActiveChannel?.CanDraw ?? false;
+        public override ToolCursor Cursor => CanDraw ? ToolCursor.Crosshair : ToolCursor.Disabled;
 
         public override void PointerPressed(PointerState p)
         {
-            if (ActiveBitmap != null)
+            if (CanDraw)
             {
                 this.drawable = CreateDrawable(Image, p);
-                ActiveBitmap.SetDrawingPreview(drawable);
+                ActiveChannel.SetDrawingPreview(drawable);
             }
         }
 
@@ -30,8 +31,8 @@ namespace Fotografix.Editor.Tools
         {
             if (drawable != null)
             {
-                ActiveBitmap.SetDrawingPreview(null);
-                Image.Dispatch(new DrawCommand(ActiveLayer, drawable));
+                ActiveChannel.SetDrawingPreview(null);
+                Image.Dispatch(new DrawCommand(ActiveChannel, drawable));
                 this.drawable = null;
             }
         }

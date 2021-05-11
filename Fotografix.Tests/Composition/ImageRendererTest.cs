@@ -21,11 +21,11 @@ namespace Fotografix.Tests.Composition
         public async Task DoesNotRenderPreviews()
         {
             Image image = await TestImages.LoadImageAsync("flowers.jpg");
-            Bitmap bitmap = await TestImages.LoadBitmapAsync("stars_small.jpg");
+            Layer layer = await TestImages.LoadLayerAsync("stars_small.jpg");
 
-            image.Layers.Add(new Layer(bitmap));
+            image.Layers.Add(layer);
             image.SetCropPreview(new Rectangle(0, 0, 100, 100));
-            bitmap.SetDrawingPreview(TestDrawables.BrushStroke);
+            layer.ContentChannel.SetDrawingPreview(TestDrawables.BrushStroke);
 
             Bitmap render = renderer.Render(image);
             await BitmapAssert.AreEquivalentAsync("flowers_stars_small.png", render);

@@ -2,27 +2,25 @@
 
 namespace Fotografix.Editor.Tools
 {
-    public abstract class BitmapTool : ITool
+    public abstract class ChannelTool : ITool
     {
         public abstract string Name { get; }
         public abstract ToolCursor Cursor { get; }
 
         protected Image Image { get; private set; }
-        protected Layer ActiveLayer { get; private set; }
-        protected Bitmap ActiveBitmap { get; private set; }
+        protected Channel ActiveChannel { get; private set; }
 
         public void Activated(Image image)
         {
             this.Image = image;
-            UpdateActiveLayer();
+            UpdateActiveChannel();
             image.UserPropertyChanged += Image_PropertyChanged;
         }
 
         public void Deactivated()
         {
             Image.UserPropertyChanged -= Image_PropertyChanged;
-            this.ActiveLayer = null;
-            this.ActiveBitmap = null;
+            this.ActiveChannel = null;
             this.Image = null;
         }
 
@@ -34,14 +32,14 @@ namespace Fotografix.Editor.Tools
         {
             if (e.PropertyName == EditorProperties.ActiveLayer)
             {
-                UpdateActiveLayer();
+                UpdateActiveChannel();
             }
         }
 
-        private void UpdateActiveLayer()
+        private void UpdateActiveChannel()
         {
-            this.ActiveLayer = Image.GetActiveLayer();
-            this.ActiveBitmap = ActiveLayer.Content as Bitmap;
+            Layer layer = Image.GetActiveLayer();
+            this.ActiveChannel = layer.ContentChannel;
         }
     }
 }

@@ -2,20 +2,21 @@
 
 namespace Fotografix.Editor.Tools
 {
-    public sealed class MoveTool : BitmapTool
+    public sealed class MoveTool : ChannelTool
     {
         private Size offset;
         private bool tracking;
 
         public override string Name => "Move";
 
-        public override ToolCursor Cursor => ActiveBitmap != null ? ToolCursor.Move : ToolCursor.Disabled;
+        private bool CanMove => ActiveChannel?.CanMove ?? false;
+        public override ToolCursor Cursor => CanMove ? ToolCursor.Move : ToolCursor.Disabled;
 
         public override void PointerPressed(PointerState p)
         {
-            if (ActiveBitmap != null)
+            if (CanMove)
             {
-                Point startPos = ActiveBitmap.Position;
+                Point startPos = ActiveChannel.Position;
                 this.offset = new(startPos.X - p.Location.X, startPos.Y - p.Location.Y);
                 this.tracking = true;
             }
@@ -25,7 +26,7 @@ namespace Fotografix.Editor.Tools
         {
             if (tracking)
             {
-                ActiveBitmap.Position = p.Location + offset;
+                ActiveChannel.Position = p.Location + offset;
             }
         }
 

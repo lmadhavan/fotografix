@@ -37,11 +37,13 @@ namespace Fotografix.Win2D.Composition
             return new LayerNode(layer, this);
         }
 
-        internal IBlendingStrategy CreateBlendingStrategy(ContentElement content)
+        internal IBlendingStrategy CreateBlendingStrategy(Channel channel)
         {
+            ImageElement content = channel.Content;
+
             return content switch
             {
-                Bitmap bitmap => new BitmapBlendingStrategy(WrapBitmap(bitmap), CreateDrawingPreviewNode(bitmap)),
+                Bitmap bitmap => new BitmapBlendingStrategy(WrapBitmap(bitmap), CreateDrawingPreviewNode(channel)),
                 Adjustment adjustment => new AdjustmentBlendingStrategy(WrapAdjustment(adjustment)),
                 _ => throw new ArgumentException("Unsupported content type: " + content.GetType())
             };
@@ -80,11 +82,11 @@ namespace Fotografix.Win2D.Composition
             return new NullDrawableNode();
         }
 
-        private IComposableNode CreateDrawingPreviewNode(Bitmap bitmap)
+        private IComposableNode CreateDrawingPreviewNode(Channel channel)
         {
             if (interactiveMode)
             {
-                return new DrawingPreviewNode(bitmap, resourceCreator);
+                return new DrawingPreviewNode(channel, resourceCreator);
             }
 
             return new NullComposableNode();

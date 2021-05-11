@@ -13,7 +13,7 @@ namespace Fotografix.Editor.Commands
 
         public void Handle(DrawCommand command)
         {
-            command.Layer.Draw(command.Drawable, drawingContextFactory);
+            command.Channel.Draw(command.Drawable, drawingContextFactory);
         }
     }
 }

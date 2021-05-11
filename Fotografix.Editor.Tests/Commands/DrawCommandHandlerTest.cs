@@ -31,12 +31,12 @@ namespace Fotografix.Editor.Commands
         public void DrawsDrawableOnBitmap()
         {
             Bitmap bitmap = new Bitmap(new Size(10, 10));
-            Layer layer = new Layer(bitmap);
+            BitmapChannel channel = new BitmapChannel(bitmap);
 
             drawable.SetupGet(d => d.Bounds).Returns(bitmap.Bounds);
             drawable.Setup(d => d.Draw(It.IsAny<IDrawingContext>()));
 
-            handler.Handle(new DrawCommand(layer, drawable.Object));
+            handler.Handle(new DrawCommand(channel, drawable.Object));
 
             drawingContextFactory.Verify(f => f.CreateDrawingContext(bitmap));
             drawable.Verify();
@@ -46,7 +46,7 @@ namespace Fotografix.Editor.Commands
         public void ExpandsBitmapToAccommodateDrawable()
         {
             Bitmap bitmap = new Bitmap(new Rectangle(10, 10, 20, 20));
-            Layer layer = new Layer(bitmap);
+            BitmapChannel channel = new BitmapChannel(bitmap);
 
             drawable.SetupGet(d => d.Bounds).Returns(new Rectangle(5, 5, 10, 10));
 
@@ -54,9 +54,9 @@ namespace Fotografix.Editor.Commands
             drawingContext.InSequence(sequence).Setup(dc => dc.Draw(It.IsAny<Bitmap>()));
             drawable.InSequence(sequence).Setup(d => d.Draw(It.IsAny<IDrawingContext>()));
 
-            handler.Handle(new DrawCommand(layer, drawable.Object));
+            handler.Handle(new DrawCommand(channel, drawable.Object));
 
-            Bitmap newBitmap = (Bitmap)layer.Content;
+            Bitmap newBitmap = channel.Bitmap;
             Assert.That(newBitmap.Bounds, Is.EqualTo(Rectangle.FromLTRB(5, 5, 30, 30)));
 
             drawingContextFactory.Verify(f => f.CreateDrawingContext(newBitmap));
@@ -68,15 +68,15 @@ namespace Fotografix.Editor.Commands
         public void IgnoresExistingBitmapIfEmpty()
         {
             Bitmap bitmap = new Bitmap(Size.Empty);
-            Layer layer = new Layer(bitmap);
+            BitmapChannel channel = new BitmapChannel(bitmap);
 
             Rectangle drawableBounds = new Rectangle(5, 5, 10, 10);
             drawable.SetupGet(d => d.Bounds).Returns(drawableBounds);
             drawable.Setup(d => d.Draw(It.IsAny<IDrawingContext>()));
 
-            handler.Handle(new DrawCommand(layer, drawable.Object));
+            handler.Handle(new DrawCommand(channel, drawable.Object));
 
-            Bitmap newBitmap = (Bitmap)layer.Content;
+            Bitmap newBitmap = channel.Bitmap;
             Assert.That(newBitmap.Bounds, Is.EqualTo(drawableBounds));
 
             drawingContextFactory.Verify(f => f.CreateDrawingContext(newBitmap));

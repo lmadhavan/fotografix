@@ -4,21 +4,20 @@ using System.Drawing;
 
 namespace Fotografix.Editor.Tools
 {
-    public abstract class BitmapToolTest
+    public abstract class ChannelToolTest
     {
         protected Image Image { get; private set; }
-        protected Bitmap Bitmap { get; private set; }
         protected Layer BitmapLayer { get; private set; }
         protected Layer NonBitmapLayer { get; private set; }
+        protected Channel ActiveChannel { get; private set; }
 
         protected abstract ITool Tool { get; }
 
         [SetUp]
-        public void SetUp_BitmapToolTest()
+        public void SetUp_ChannelToolTest()
         {
             this.Image = new Image(new Size(10, 10));
-            this.Bitmap = new Bitmap(new Size(10, 10));
-            this.BitmapLayer = new Layer(Bitmap);
+            this.BitmapLayer = new Layer(new Bitmap(Size.Empty));
             this.NonBitmapLayer = new Layer(new BlackAndWhiteAdjustment());
         }
 
@@ -70,6 +69,7 @@ namespace Fotografix.Editor.Tools
         {
             Image.SetActiveLayer(layer);
             Tool.Activated(Image);
+            this.ActiveChannel = layer.ContentChannel;
         }
     }
 }

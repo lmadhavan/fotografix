@@ -1,24 +1,36 @@
-﻿using Fotografix.Drawing;
+﻿using Fotografix.Adjustments;
 using System;
+using System.ComponentModel;
 using System.Drawing;
 
 namespace Fotografix
 {
     public sealed class Layer : ImageElement
     {
+        private readonly Channel contentChannel;
+
         private string name = "";
         private bool visible = true;
         private BlendMode blendMode = BlendMode.Normal;
         private float opacity = 1;
-        private ContentElement content;
 
         public Layer() : this(new Bitmap(Size.Empty))
         {
         }
 
-        public Layer(ContentElement content)
+        public Layer(Bitmap bitmap) : this(new BitmapChannel(bitmap))
         {
-            this.Content = content;
+        }
+
+        public Layer(Adjustment adjustment) : this(new AdjustmentChannel(adjustment))
+        {
+        }
+
+        private Layer(Channel contentChannel)
+        {
+            this.contentChannel = contentChannel;
+            contentChannel.PropertyChanged += ContentChannel_PropertyChanged;
+            AddChild(contentChannel);
         }
 
         public string Name
@@ -83,76 +95,25 @@ namespace Fotografix
             }
         }
 
-        public ContentElement Content
-        {
-            get
-            {
-                return content;
-            }
-
-            private set
-            {
-                if (value == null)
-                {
-                    throw new ArgumentNullException();
-                }
-
-                SetChild(ref content, value);
-            }
-        }
+        public Channel ContentChannel => contentChannel;
+        public ImageElement Content => contentChannel.Content;
 
         internal void Crop(Rectangle rectangle)
         {
-            if (content is Bitmap bitmap)
-            {
-                bitmap.Position -= (Size)rectangle.Location;
-            }
-        }
-
-        public void Draw(IDrawable drawable, IDrawingContextFactory drawingContextFactory)
-        {
-            Bitmap bitmap = content as Bitmap ?? throw new InvalidOperationException("Cannot draw on layer with content type " + content.GetType());
-            Bitmap target = ResolveTargetBitmap(bitmap, drawable, out bool redrawExistingBitmap);
-
-            using (IDrawingContext dc = drawingContextFactory.CreateDrawingContext(target))
-            {
-                if (redrawExistingBitmap)
-                {
-                    dc.Draw(bitmap);
-                }
-
-                drawable.Draw(dc);
-            }
-
-            this.Content = target;
+            contentChannel.Crop(rectangle);
         }
 
         internal void Scale(PointF scaleFactor, IBitmapResamplingStrategy resamplingStrategy)
         {
-            if (content is Bitmap bitmap)
-            {
-                Size resampledSize = new((int)(bitmap.Size.Width * scaleFactor.X),
-                                         (int)(bitmap.Size.Height * scaleFactor.Y));
-                this.Content = resamplingStrategy.Resample(bitmap, resampledSize);
-            }
+            contentChannel.Scale(scaleFactor, resamplingStrategy);
         }
 
-        private Bitmap ResolveTargetBitmap(Bitmap bitmap, IDrawable drawable, out bool redrawExistingBitmap)
+        private void ContentChannel_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            redrawExistingBitmap = false;
-
-            if (bitmap.Bounds.IsEmpty)
+            if (e.PropertyName == nameof(Channel.Content))
             {
-                return new Bitmap(drawable.Bounds);
+                RaisePropertyChanged(nameof(Content));
             }
-
-            if (!bitmap.Bounds.Contains(drawable.Bounds))
-            {
-                redrawExistingBitmap = true;
-                return new Bitmap(Rectangle.Union(bitmap.Bounds, drawable.Bounds));
-            }
-
-            return bitmap;
         }
     }
 }

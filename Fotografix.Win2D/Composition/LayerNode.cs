@@ -72,7 +72,7 @@ namespace Fotografix.Win2D.Composition
         private void UpdateBlendingStrategy()
         {
             blendingStrategy?.Dispose();
-            this.blendingStrategy = nodeFactory.CreateBlendingStrategy(layer.Content);
+            this.blendingStrategy = nodeFactory.CreateBlendingStrategy(layer.ContentChannel);
             blendingStrategy.Invalidated += Content_Invalidated;
             UpdateOutput();
         }

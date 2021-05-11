@@ -5,7 +5,7 @@ using NUnit.Framework;
 
 namespace Fotografix.Editor.Tools
 {
-    public abstract class DrawingToolTest : BitmapToolTest
+    public abstract class DrawingToolTest : ChannelToolTest
     {
         private static readonly PointerState Start = new(10, 10);
         private static readonly PointerState End = new(20, 20);
@@ -28,7 +28,7 @@ namespace Fotografix.Editor.Tools
 
             Tool.PointerPressed(Start);
             
-            Assert.That(Bitmap.GetDrawingPreview(), Is.Not.Null);
+            Assert.That(ActiveChannel.GetDrawingPreview(), Is.Not.Null);
         }
 
         [Test]
@@ -39,7 +39,7 @@ namespace Fotografix.Editor.Tools
             Tool.PointerPressed(Start);
             Tool.PointerMoved(End);
 
-            AssertDrawable(Bitmap.GetDrawingPreview(), Start, End);
+            AssertDrawable(ActiveChannel.GetDrawingPreview(), Start, End);
         }
 
         [Test]
@@ -50,12 +50,12 @@ namespace Fotografix.Editor.Tools
             Tool.PointerPressed(Start);
             Tool.PointerMoved(End);
 
-            IDrawable drawable = Bitmap.GetDrawingPreview();
+            IDrawable drawable = ActiveChannel.GetDrawingPreview();
 
             Tool.PointerReleased(End);
 
-            commandDispatcher.Verify(d => d.Dispatch(new DrawCommand(BitmapLayer, drawable)));
-            Assert.That(Bitmap.GetDrawingPreview(), Is.Null);
+            commandDispatcher.Verify(d => d.Dispatch(new DrawCommand(BitmapLayer.ContentChannel, drawable)));
+            Assert.That(ActiveChannel.GetDrawingPreview(), Is.Null);
         }
 
         [Test]
@@ -66,7 +66,7 @@ namespace Fotografix.Editor.Tools
             Tool.PointerPressed(Start);
             Tool.PointerMoved(End);
 
-            IDrawable drawable = Bitmap.GetDrawingPreview();
+            IDrawable drawable = ActiveChannel.GetDrawingPreview();
 
             Tool.PointerReleased(End);
             Tool.PointerMoved(new(30, 30));

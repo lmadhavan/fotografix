@@ -8,26 +8,26 @@ namespace Fotografix.Win2D.Composition
 {
     internal sealed class DrawingPreviewNode : IComposableNode
     {
-        private readonly Bitmap bitmap;
+        private readonly Channel channel;
         private readonly ICanvasResourceCreator resourceCreator;
         private readonly CompositeEffectNode compositeEffectNode;
 
         private IDrawable drawable;
         private CanvasCommandList commandList;
 
-        internal DrawingPreviewNode(Bitmap bitmap, ICanvasResourceCreator resourceCreator)
+        internal DrawingPreviewNode(Channel channel, ICanvasResourceCreator resourceCreator)
         {
-            this.bitmap = bitmap;
+            this.channel = channel;
             this.resourceCreator = resourceCreator;
             this.compositeEffectNode = new CompositeEffectNode();
 
             UpdateDrawable();
-            bitmap.UserPropertyChanged += Layer_UserPropertyChanged;
+            channel.UserPropertyChanged += Channel_UserPropertyChanged;
         }
 
         public void Dispose()
         {
-            bitmap.UserPropertyChanged -= Layer_UserPropertyChanged;
+            channel.UserPropertyChanged -= Channel_UserPropertyChanged;
 
             if (drawable != null)
             {
@@ -57,7 +57,7 @@ namespace Fotografix.Win2D.Composition
                 drawable.Changed -= Drawable_Changed;
             }
 
-            this.drawable = bitmap.GetDrawingPreview();
+            this.drawable = channel.GetDrawingPreview();
 
             if (drawable != null)
             {
@@ -84,7 +84,7 @@ namespace Fotografix.Win2D.Composition
             Invalidated?.Invoke(this, EventArgs.Empty);
         }
 
-        private void Layer_UserPropertyChanged(object sender, PropertyChangedEventArgs e)
+        private void Channel_UserPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == EditorProperties.DrawingPreview)
             {
