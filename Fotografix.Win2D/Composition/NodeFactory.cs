@@ -82,6 +82,16 @@ namespace Fotografix.Win2D.Composition
             return new NullDrawableNode();
         }
 
+        internal IDrawableNode CreateSelectionNode(Image image, Viewport viewport)
+        {
+            if (interactiveMode)
+            {
+                return new SelectionNode(image, viewport);
+            }
+
+            return new NullDrawableNode();
+        }
+
         private IComposableNode CreateDrawingPreviewNode(Channel channel)
         {
             if (interactiveMode)

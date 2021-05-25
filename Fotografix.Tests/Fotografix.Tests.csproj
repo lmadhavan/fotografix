@@ -123,6 +123,7 @@
     <Compile Include="Acceptance\AdjustmentsAcceptanceTest.cs" />
     <Compile Include="Acceptance\CropToolAcceptanceTest.cs" />
     <Compile Include="Acceptance\MoveToolAcceptanceTest.cs" />
+    <Compile Include="Acceptance\SelectionToolAcceptanceTest.cs" />
     <Compile Include="Acceptance\ViewportAcceptanceTest.cs" />
     <Compile Include="BitmapAssert.cs" />
     <Compile Include="BitmapCaptureExtensions.cs" />
@@ -185,6 +186,8 @@
     <Content Include="Images\flowers_levels.png" />
     <Content Include="Images\flowers_opacity50_bw.png" />
     <Content Include="Images\flowers_scale50.png" />
+    <Content Include="Images\flowers_selection_rectangle.png" />
+    <Content Include="Images\flowers_selection_rectangle_scale50.png" />
     <Content Include="Images\flowers_stars_opacity50.png" />
     <Content Include="Images\flowers_stars_screen.png" />
     <Content Include="Images\flowers_stars_screen_opacity50.png" />

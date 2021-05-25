@@ -25,6 +25,7 @@ namespace Fotografix.Tests.Composition
 
             image.Layers.Add(layer);
             image.SetCropPreview(new Rectangle(0, 0, 100, 100));
+            image.SetSelection(new Rectangle(25, 25, 50, 50));
             layer.ContentChannel.SetDrawingPreview(TestDrawables.BrushStroke);
 
             Bitmap render = renderer.Render(image);

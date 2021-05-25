@@ -79,5 +79,22 @@ namespace Fotografix.Tests.Composition
 
             await AssertImageAsync("flowers_crop_preview_scale50.png");
         }
+
+        [TestMethod]
+        public async Task Selection()
+        {
+            Image.SetSelection(Rectangle.FromLTRB(100, 100, 200, 200));
+
+            await AssertImageAsync("flowers_selection_rectangle.png");
+        }
+
+        [TestMethod]
+        public async Task Selection_Scaled()
+        {
+            Viewport.ZoomFactor = 0.5f;
+            Image.SetSelection(Rectangle.FromLTRB(100, 100, 200, 200));
+
+            await AssertImageAsync("flowers_selection_rectangle_scale50.png");
+        }
     }
 }

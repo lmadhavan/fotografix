@@ -134,6 +134,7 @@
     <Compile Include="Composition\IDrawableNode.cs" />
     <Compile Include="Composition\NullComposableNode.cs" />
     <Compile Include="Composition\NullDrawableNode.cs" />
+    <Compile Include="Composition\SelectionNode.cs" />
     <Compile Include="ConversionExtensions.cs" />
     <Compile Include="Composition\Adjustments\AdjustmentNode.cs" />
     <Compile Include="Composition\Adjustments\BrightnessContrastAdjustmentNode.cs" />

@@ -25,6 +25,7 @@ namespace Fotografix.Win2D
             nodes.Add(nodeFactory.CreateTransparencyGridNode());
             nodes.Add(nodeFactory.CreateImageNode(image));
             nodes.Add(nodeFactory.CreateCropPreviewNode(image, viewport));
+            nodes.Add(nodeFactory.CreateSelectionNode(image, viewport));
         }
 
         public void Dispose()
@@ -46,6 +47,7 @@ namespace Fotografix.Win2D
         public void Draw(CanvasDrawingSession ds)
         {
             Rect imageBounds = viewport.ImageBounds.ToWindowsRect();
+            ds.Antialiasing = CanvasAntialiasing.Aliased;
 
             foreach (var node in nodes)
             {

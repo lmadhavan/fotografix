@@ -17,7 +17,7 @@ namespace Fotografix.Win2D.Composition
         private static readonly Windows.UI.Color InnerStrokeColor = Windows.UI.Colors.White;
         private static readonly Windows.UI.Color FillColor = Windows.UI.Colors.White;
 
-        private static readonly List<PointF> HandleLocations = new List<PointF>
+        private static readonly List<PointF> HandleLocations = new()
         {
             new PointF(0.0f, 0.0f),
             new PointF(0.5f, 0.0f),
@@ -57,7 +57,7 @@ namespace Fotografix.Win2D.Composition
 
         private void Draw(CanvasDrawingSession ds, Rect imageBounds, Rectangle cropBounds)
         {
-            void OuterStroke(RectangleF r) =>ds.DrawRectangle(r.X - 0.5f, r.Y - 0.5f, r.Width + 1f, r.Height + 1f, OuterStrokeColor);
+            void OuterStroke(RectangleF r) => ds.DrawRectangle(r.X - 0.5f, r.Y - 0.5f, r.Width + 1f, r.Height + 1f, OuterStrokeColor);
             void InnerStroke(RectangleF r) => ds.DrawRectangle(r.X + 0.5f, r.Y + 0.5f, r.Width - 1f, r.Height - 1f, InnerStrokeColor);
             void Fill(RectangleF r) => ds.FillRectangle(r.X, r.Y, r.Width, r.Height, FillColor);
 
@@ -75,12 +75,11 @@ namespace Fotografix.Win2D.Composition
 
         private void HighlightCropRectangle(CanvasDrawingSession ds, Rect imageBounds, Rect cropBounds)
         {
-            using (CanvasGeometry imageBoundsGeometry = CanvasGeometry.CreateRectangle(resourceCreator, imageBounds))
-            using (CanvasGeometry cropRectangleGeometry = CanvasGeometry.CreateRectangle(resourceCreator, cropBounds))
-            using (CanvasGeometry dimmedArea = imageBoundsGeometry.CombineWith(cropRectangleGeometry, Matrix3x2.Identity, CanvasGeometryCombine.Exclude))
-            {
-                ds.FillGeometry(dimmedArea, DimColor);
-            }
+            using CanvasGeometry imageBoundsGeometry = CanvasGeometry.CreateRectangle(resourceCreator, imageBounds);
+            using CanvasGeometry cropRectangleGeometry = CanvasGeometry.CreateRectangle(resourceCreator, cropBounds);
+            using CanvasGeometry dimmedArea = imageBoundsGeometry.CombineWith(cropRectangleGeometry, Matrix3x2.Identity, CanvasGeometryCombine.Exclude);
+            
+            ds.FillGeometry(dimmedArea, DimColor);
         }
 
         private RectangleF HandleLocationToRectangle(RectangleF bounds, PointF hl)
