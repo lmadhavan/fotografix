@@ -1,10 +1,8 @@
-﻿using System.Drawing;
-
-namespace Fotografix.Editor.Tools
+﻿namespace Fotografix.Editor.Tools
 {
     public sealed class MoveTool : ChannelTool
     {
-        private Size offset;
+        private MoveTracker tracker;
         private bool tracking;
 
         public override string Name => "Move";
@@ -16,8 +14,7 @@ namespace Fotografix.Editor.Tools
         {
             if (CanMove)
             {
-                Point startPos = ActiveChannel.Position;
-                this.offset = new(startPos.X - p.Location.X, startPos.Y - p.Location.Y);
+                this.tracker = new MoveTracker(ActiveChannel.Position, p);
                 this.tracking = true;
             }
         }
@@ -26,7 +23,7 @@ namespace Fotografix.Editor.Tools
         {
             if (tracking)
             {
-                ActiveChannel.Position = p.Location + offset;
+                ActiveChannel.Position = tracker.ObjectPositionAt(p);
             }
         }
 
