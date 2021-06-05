@@ -90,7 +90,7 @@ namespace Fotografix.Editor.Tools
             public void PointerMoved(PointerState p)
             {
                 Point end = p.Location;
-                Rectangle rect = Rectangle.FromLTRB(start.X, start.Y, end.X, end.Y);
+                Rectangle rect = Rectangle.FromLTRB(start.X, start.Y, end.X, end.Y).Normalize();
                 tool.image.SetSelection(rect);
             }
 
