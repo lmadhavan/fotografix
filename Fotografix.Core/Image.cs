@@ -10,6 +10,7 @@ namespace Fotografix
     {
         private readonly LayerList layers;
         private Size size;
+        private Rectangle selection;
 
         public Image(Size size)
         {
@@ -24,15 +25,14 @@ namespace Fotografix
 
         public Size Size
         {
-            get
-            {
-                return size;
-            }
+            get => size;
+            set => SetProperty(ref size, value);
+        }
 
-            set
-            {
-                SetProperty(ref size, value);
-            }
+        public Rectangle Selection
+        {
+            get => selection;
+            set => SetProperty(ref selection, value);
         }
 
         public ObservableCollection<Layer> Layers => layers;

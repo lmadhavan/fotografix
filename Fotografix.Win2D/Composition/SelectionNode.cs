@@ -1,6 +1,7 @@
 ﻿using Fotografix.Editor;
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Geometry;
+using System.Drawing;
 using Windows.Foundation;
 using Windows.UI;
 
@@ -33,11 +34,11 @@ namespace Fotografix.Win2D.Composition
 
         public void Draw(CanvasDrawingSession ds, Rect imageBounds)
         {
-            var selection = image.GetSelection();
+            var selection = image.Selection;
 
-            if (selection.HasValue)
+            if (selection != Rectangle.Empty)
             {
-                Rect rect = viewport.TransformImageToViewport(selection.Value).ToWindowsRect();
+                Rect rect = viewport.TransformImageToViewport(selection).ToWindowsRect();
                 ds.DrawRectangle(rect, Colors.Black, 1);
                 ds.DrawRectangle(rect, Colors.White, 1, dashStroke);
             }

@@ -118,7 +118,7 @@ namespace Fotografix.Win2D.Composition
 
         private void Image_UserPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == EditorProperties.CropPreview || e.PropertyName == EditorProperties.Selection)
+            if (e.PropertyName == EditorProperties.CropPreview)
             {
                 nodeFactory.Invalidate();
             }

@@ -58,16 +58,7 @@ namespace Fotografix.Editor.Tools
 
         private IPointerEventListener HandlerFor(PointerState p)
         {
-            var selection = image.GetSelection();
-
-            if (selection?.Contains(p.Location) ?? false)
-            {
-                return moveHandler;
-            }
-            else
-            {
-                return selectHandler;
-            }
+            return image.Selection.Contains(p.Location) ? moveHandler : selectHandler;
         }
 
         private sealed class SelectHandler : IPointerEventListener
@@ -90,15 +81,14 @@ namespace Fotografix.Editor.Tools
             public void PointerMoved(PointerState p)
             {
                 Point end = p.Location;
-                Rectangle rect = Rectangle.FromLTRB(start.X, start.Y, end.X, end.Y).Normalize();
-                tool.image.SetSelection(rect);
+                tool.image.Selection = Rectangle.FromLTRB(start.X, start.Y, end.X, end.Y).Normalize();
             }
 
             public void PointerReleased(PointerState p)
             {
                 if (p.Location == start)
                 {
-                    tool.image.SetSelection(null);
+                    tool.image.Selection = Rectangle.Empty;
                 }
             }
         }
@@ -118,14 +108,14 @@ namespace Fotografix.Editor.Tools
 
             public void PointerPressed(PointerState p)
             {
-                this.rect = tool.image.GetSelection() ?? default;
+                this.rect = tool.image.Selection;
                 this.tracker = new MoveTracker(rect.Location, p);
             }
 
             public void PointerMoved(PointerState p)
             {
                 rect.Location = tracker.ObjectPositionAt(p);
-                tool.image.SetSelection(rect);
+                tool.image.Selection = rect;
             }
 
             public void PointerReleased(PointerState p)

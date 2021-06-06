@@ -11,12 +11,10 @@ namespace Fotografix.Editor
         private static readonly UserProperty<Viewport> ViewportProperty = new UserProperty<Viewport>();
         private static readonly UserProperty<IDrawable> DrawingPreviewProperty = new UserProperty<IDrawable>();
         private static readonly UserProperty<Rectangle?> CropPreviewProperty = new UserProperty<Rectangle?>();
-        private static readonly UserProperty<Rectangle?> SelectionProperty = new UserProperty<Rectangle?>();
 
         public static string ActiveLayer => ActiveLayerProperty.Id;
         public static string DrawingPreview => DrawingPreviewProperty.Id;
         public static string CropPreview => CropPreviewProperty.Id;
-        public static string Selection => SelectionProperty.Id;
 
         public static Layer GetActiveLayer(this Image image)
         {
@@ -66,16 +64,6 @@ namespace Fotografix.Editor
         public static void SetCropPreview(this Image image, Rectangle? rectangle)
         {
             image.SetUserProperty(CropPreviewProperty, rectangle);
-        }
-
-        public static Rectangle? GetSelection(this Image image)
-        {
-            return image.GetUserProperty(SelectionProperty);
-        }
-
-        public static void SetSelection(this Image image, Rectangle? rectangle)
-        {
-            image.SetUserProperty(SelectionProperty, rectangle);
         }
     }
 }
