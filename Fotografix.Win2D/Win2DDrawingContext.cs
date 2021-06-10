@@ -59,5 +59,10 @@ namespace Fotografix.Win2D
                 ds.FillRectangle(gradient.Bounds.ToWindowsRect(), brush);
             }
         }
+
+        public IDisposable BeginClip(Rectangle rect)
+        {
+            return ds.CreateLayer(1, rect.ToWindowsRect());
+        }
     }
 }

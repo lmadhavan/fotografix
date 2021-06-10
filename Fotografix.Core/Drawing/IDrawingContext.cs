@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 
 namespace Fotografix.Drawing
 {
@@ -7,5 +8,7 @@ namespace Fotografix.Drawing
         void Draw(Bitmap bitmap);
         void Draw(BrushStroke brushStroke);
         void Draw(LinearGradient gradient);
+
+        IDisposable BeginClip(Rectangle rect);
     }
 }

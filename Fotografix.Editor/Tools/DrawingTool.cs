@@ -6,6 +6,7 @@ namespace Fotografix.Editor.Tools
     public abstract class DrawingTool<T> : ChannelTool where T : class, IDrawable
     {
         private T drawable;
+        private IDrawable clippedDrawable;
 
         private bool CanDraw => ActiveChannel?.CanDraw ?? false;
         public override ToolCursor Cursor => CanDraw ? ToolCursor.Crosshair : ToolCursor.Disabled;
@@ -15,7 +16,8 @@ namespace Fotografix.Editor.Tools
             if (CanDraw)
             {
                 this.drawable = CreateDrawable(Image, p);
-                ActiveChannel.SetDrawingPreview(drawable);
+                this.clippedDrawable = ClippedDrawable.Create(drawable, Image.Selection);
+                ActiveChannel.SetDrawingPreview(clippedDrawable);
             }
         }
 
@@ -32,8 +34,9 @@ namespace Fotografix.Editor.Tools
             if (drawable != null)
             {
                 ActiveChannel.SetDrawingPreview(null);
-                Image.Dispatch(new DrawCommand(ActiveChannel, drawable));
+                Image.Dispatch(new DrawCommand(ActiveChannel, clippedDrawable));
                 this.drawable = null;
+                this.clippedDrawable = null;
             }
         }
 
