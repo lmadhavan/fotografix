@@ -23,11 +23,11 @@ namespace Fotografix.Win2D
 
         public event EventHandler Disposed;
 
-        public void Draw(Bitmap bitmap)
+        public void Draw(Bitmap bitmap, Rectangle destRect, Rectangle srcRect)
         {
             using (Win2DBitmap win2DBitmap = new Win2DBitmap(bitmap, ds))
             {
-                ds.DrawImage(win2DBitmap.Output);
+                ds.DrawImage(win2DBitmap.Output, destRect.ToWindowsRect(), srcRect.ToWindowsRect());
             }
         }
 

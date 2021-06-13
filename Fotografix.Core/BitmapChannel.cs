@@ -64,7 +64,7 @@ namespace Fotografix
             {
                 if (redrawExistingBitmap)
                 {
-                    dc.Draw(bitmap);
+                    dc.Draw(bitmap, destRect: bitmap.Bounds, srcRect: bitmap.Bounds);
                 }
 
                 drawable.Draw(dc);
@@ -73,16 +73,27 @@ namespace Fotografix
             this.Bitmap = target;
         }
 
-        internal override void Crop(Rectangle rectangle)
+        public override void Crop(Rectangle rectangle)
         {
             bitmap.Position -= (Size)rectangle.Location;
         }
 
-        internal override void Scale(PointF scaleFactor, IBitmapResamplingStrategy resamplingStrategy)
+        public override void Scale(PointF scaleFactor, IDrawingContextFactory drawingContextFactory)
         {
-            Size newSize = new((int)(bitmap.Size.Width * scaleFactor.X),
-                               (int)(bitmap.Size.Height * scaleFactor.Y));
-            this.Bitmap = resamplingStrategy.Resample(bitmap, newSize);
+            Rectangle bounds = bitmap.Bounds;
+
+            Rectangle scaledBounds = new((int)(bounds.X * scaleFactor.X),
+                                         (int)(bounds.Y * scaleFactor.Y),
+                                         (int)(bounds.Width * scaleFactor.X),
+                                         (int)(bounds.Height * scaleFactor.Y));
+
+            Bitmap scaledBitmap = new Bitmap(scaledBounds);
+            using (IDrawingContext dc = drawingContextFactory.CreateDrawingContext(scaledBitmap))
+            {
+                dc.Draw(bitmap, destRect: scaledBitmap.Bounds, srcRect: bitmap.Bounds);
+            }
+
+            this.Bitmap = scaledBitmap;
         }
 
         private Bitmap ResolveTargetBitmap(Bitmap bitmap, IDrawable drawable, out bool redrawExistingBitmap)

@@ -1,17 +1,19 @@
-﻿namespace Fotografix.Editor.Commands
+﻿using Fotografix.Drawing;
+
+namespace Fotografix.Editor.Commands
 {
     public sealed class ResampleImageCommandHandler : ICommandHandler<ResampleImageCommand>
     {
-        private readonly IBitmapResamplingStrategy resamplingStrategy;
+        private readonly IDrawingContextFactory drawingContextFactory;
 
-        public ResampleImageCommandHandler(IBitmapResamplingStrategy resamplingStrategy)
+        public ResampleImageCommandHandler(IDrawingContextFactory drawingContextFactory)
         {
-            this.resamplingStrategy = resamplingStrategy;
+            this.drawingContextFactory = drawingContextFactory;
         }
 
         public void Handle(ResampleImageCommand command)
         {
-            command.Image.Scale(command.NewSize, resamplingStrategy);
+            command.Image.Scale(command.NewSize, drawingContextFactory);
         }
     }
 }

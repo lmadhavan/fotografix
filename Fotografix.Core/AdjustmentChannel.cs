@@ -1,4 +1,5 @@
 ﻿using Fotografix.Adjustments;
+using Fotografix.Drawing;
 using System;
 using System.Drawing;
 
@@ -16,11 +17,11 @@ namespace Fotografix
 
         public Adjustment Adjustment { get; }
 
-        internal override void Crop(Rectangle rectangle)
+        public override void Crop(Rectangle rectangle)
         {
         }
 
-        internal override void Scale(PointF scaleFactor, IBitmapResamplingStrategy resamplingStrategy)
+        public override void Scale(PointF scaleFactor, IDrawingContextFactory drawingContextFactory)
         {
         }
     }

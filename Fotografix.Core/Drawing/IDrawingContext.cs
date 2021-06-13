@@ -5,7 +5,7 @@ namespace Fotografix.Drawing
 {
     public interface IDrawingContext : IDisposable
     {
-        void Draw(Bitmap bitmap);
+        void Draw(Bitmap bitmap, Rectangle destRect, Rectangle srcRect);
         void Draw(BrushStroke brushStroke);
         void Draw(LinearGradient gradient);
 

@@ -1,4 +1,5 @@
 ﻿using Fotografix.Adjustments;
+using Fotografix.Drawing;
 using System;
 using System.ComponentModel;
 using System.Drawing;
@@ -26,7 +27,7 @@ namespace Fotografix
         {
         }
 
-        private Layer(Channel contentChannel)
+        public Layer(Channel contentChannel)
         {
             this.contentChannel = contentChannel;
             contentChannel.PropertyChanged += ContentChannel_PropertyChanged;
@@ -103,9 +104,9 @@ namespace Fotografix
             contentChannel.Crop(rectangle);
         }
 
-        internal void Scale(PointF scaleFactor, IBitmapResamplingStrategy resamplingStrategy)
+        internal void Scale(PointF scaleFactor, IDrawingContextFactory drawingContextFactory)
         {
-            contentChannel.Scale(scaleFactor, resamplingStrategy);
+            contentChannel.Scale(scaleFactor, drawingContextFactory);
         }
 
         private void ContentChannel_PropertyChanged(object sender, PropertyChangedEventArgs e)

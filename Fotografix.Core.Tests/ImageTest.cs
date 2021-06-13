@@ -1,4 +1,6 @@
 ﻿using Fotografix.Collections;
+using Fotografix.Drawing;
+using Moq;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -111,6 +113,22 @@ namespace Fotografix
             Assert.That(detachedLayers, Is.EqualTo(new List<Layer> { layer1, layer2 }));
             Assert.That(layer1.Parent, Is.Null);
             Assert.That(layer2.Parent, Is.Null);
+        }
+
+        [Test]
+        public void ScalesContentsToSpecifiedSize()
+        {
+            Mock<IDrawingContextFactory> drawingContextFactory = new();
+            Mock<Channel> channel = new();
+            image.Layers.Add(new Layer(channel.Object));
+
+            const int scalingFactor = 2;
+            Size newSize = image.Size * scalingFactor;
+
+            image.Scale(newSize, drawingContextFactory.Object);
+
+            Assert.That(image.Size, Is.EqualTo(newSize));
+            channel.Verify(c => c.Scale(new(scalingFactor, scalingFactor), drawingContextFactory.Object));
         }
     }
 }

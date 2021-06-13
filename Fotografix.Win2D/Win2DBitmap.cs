@@ -50,21 +50,6 @@ namespace Fotografix.Win2D
         public Bitmap Source { get; }
         internal ICanvasImage Output => transformEffect;
 
-        public Win2DBitmap Scale(Size newSize)
-        {
-            Win2DBitmap result = new Win2DBitmap(newSize, resourceCreator: renderTarget);
-
-            using (CanvasDrawingSession ds = result.renderTarget.CreateDrawingSession())
-            {
-                ds.DrawImage(renderTarget,
-                             new Windows.Foundation.Rect(0, 0, newSize.Width, newSize.Height),
-                             new Windows.Foundation.Rect(0, 0, Size.Width, Size.Height));
-            }
-
-            result.UpdateSource();
-            return result;
-        }
-
         public void Draw(Win2DCompositor compositor)
         {
             using (CanvasDrawingSession ds = renderTarget.CreateDrawingSession())

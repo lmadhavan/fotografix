@@ -6,8 +6,6 @@ namespace Fotografix
 {
     public abstract class Channel : ImageElement
     {
-        internal Channel() { }
-
         public abstract ImageElement Content { get; }
 
         public virtual bool CanDraw => false;
@@ -24,7 +22,7 @@ namespace Fotografix
             throw new NotSupportedException();
         }
 
-        internal abstract void Crop(Rectangle rectangle);
-        internal abstract void Scale(PointF scaleFactor, IBitmapResamplingStrategy resamplingStrategy);
+        public abstract void Crop(Rectangle rectangle);
+        public abstract void Scale(PointF scaleFactor, IDrawingContextFactory drawingContextFactory);
     }
 }
