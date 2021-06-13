@@ -1,5 +1,4 @@
 ﻿using Fotografix.Adjustments;
-using Fotografix.Drawing;
 using System;
 using System.ComponentModel;
 using System.Drawing;
@@ -104,9 +103,9 @@ namespace Fotografix
             contentChannel.Crop(rectangle);
         }
 
-        internal void Scale(PointF scaleFactor, IDrawingContextFactory drawingContextFactory)
+        internal void Scale(PointF scaleFactor, IGraphicsDevice graphicsDevice)
         {
-            contentChannel.Scale(scaleFactor, drawingContextFactory);
+            contentChannel.Scale(scaleFactor, graphicsDevice);
         }
 
         private void ContentChannel_PropertyChanged(object sender, PropertyChangedEventArgs e)

@@ -17,12 +17,12 @@ namespace Fotografix
             set => throw new NotSupportedException();
         }
 
-        public virtual void Draw(IDrawable drawable, IDrawingContextFactory drawingContextFactory)
+        public virtual void Draw(IDrawable drawable, IGraphicsDevice graphicsDevice)
         {
             throw new NotSupportedException();
         }
 
         public abstract void Crop(Rectangle rectangle);
-        public abstract void Scale(PointF scaleFactor, IDrawingContextFactory drawingContextFactory);
+        public abstract void Scale(PointF scaleFactor, IGraphicsDevice graphicsDevice);
     }
 }

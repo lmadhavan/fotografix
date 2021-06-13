@@ -1,5 +1,4 @@
 ﻿using Fotografix.Adjustments;
-using Fotografix.Drawing;
 using System;
 using System.Drawing;
 
@@ -21,7 +20,7 @@ namespace Fotografix
         {
         }
 
-        public override void Scale(PointF scaleFactor, IDrawingContextFactory drawingContextFactory)
+        public override void Scale(PointF scaleFactor, IGraphicsDevice graphicsDevice)
         {
         }
     }

@@ -153,7 +153,7 @@
     <Compile Include="Win2DCompositor.cs" />
     <Compile Include="Win2DCompositorSettings.cs" />
     <Compile Include="Win2DDrawingContext.cs" />
-    <Compile Include="Win2DDrawingContextFactory.cs" />
+    <Compile Include="Win2DGraphicsDevice.cs" />
     <Compile Include="Win2DImageRenderer.cs" />
     <EmbeddedResource Include="Properties\Fotografix.Win2D.rd.xml" />
   </ItemGroup>

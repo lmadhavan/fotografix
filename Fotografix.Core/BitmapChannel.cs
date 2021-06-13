@@ -56,11 +56,11 @@ namespace Fotografix
             set => bitmap.Position = value;
         }
 
-        public override void Draw(IDrawable drawable, IDrawingContextFactory drawingContextFactory)
+        public override void Draw(IDrawable drawable, IGraphicsDevice graphicsDevice)
         {
             Bitmap target = ResolveTargetBitmap(bitmap, drawable, out bool redrawExistingBitmap);
 
-            using (IDrawingContext dc = drawingContextFactory.CreateDrawingContext(target))
+            using (IDrawingContext dc = graphicsDevice.CreateDrawingContext(target))
             {
                 if (redrawExistingBitmap)
                 {
@@ -78,7 +78,7 @@ namespace Fotografix
             bitmap.Position -= (Size)rectangle.Location;
         }
 
-        public override void Scale(PointF scaleFactor, IDrawingContextFactory drawingContextFactory)
+        public override void Scale(PointF scaleFactor, IGraphicsDevice graphicsDevice)
         {
             Rectangle bounds = bitmap.Bounds;
 
@@ -88,7 +88,7 @@ namespace Fotografix
                                          (int)(bounds.Height * scaleFactor.Y));
 
             Bitmap scaledBitmap = new Bitmap(scaledBounds);
-            using (IDrawingContext dc = drawingContextFactory.CreateDrawingContext(scaledBitmap))
+            using (IDrawingContext dc = graphicsDevice.CreateDrawingContext(scaledBitmap))
             {
                 dc.Draw(bitmap, destRect: scaledBitmap.Bounds, srcRect: bitmap.Bounds);
             }

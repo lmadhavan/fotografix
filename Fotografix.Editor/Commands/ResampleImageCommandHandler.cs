@@ -1,19 +1,17 @@
-﻿using Fotografix.Drawing;
-
-namespace Fotografix.Editor.Commands
+﻿namespace Fotografix.Editor.Commands
 {
     public sealed class ResampleImageCommandHandler : ICommandHandler<ResampleImageCommand>
     {
-        private readonly IDrawingContextFactory drawingContextFactory;
+        private readonly IGraphicsDevice graphicsDevice;
 
-        public ResampleImageCommandHandler(IDrawingContextFactory drawingContextFactory)
+        public ResampleImageCommandHandler(IGraphicsDevice graphicsDevice)
         {
-            this.drawingContextFactory = drawingContextFactory;
+            this.graphicsDevice = graphicsDevice;
         }
 
         public void Handle(ResampleImageCommand command)
         {
-            command.Image.Scale(command.NewSize, drawingContextFactory);
+            command.Image.Scale(command.NewSize, graphicsDevice);
         }
     }
 }

@@ -18,9 +18,9 @@ namespace Fotografix.Uwp
 
         public ImageEditorFactory()
         {
-            var drawingContextFactory = new Win2DDrawingContextFactory();
-            handlerCollection.Register(new ResampleImageCommandHandler(drawingContextFactory));
-            handlerCollection.Register(new DrawCommandHandler(drawingContextFactory));
+            var graphicsDevice = new Win2DGraphicsDevice();
+            handlerCollection.Register(new ResampleImageCommandHandler(graphicsDevice));
+            handlerCollection.Register(new DrawCommandHandler(graphicsDevice));
             handlerCollection.Register(new CropCommandHandler());
         }
 

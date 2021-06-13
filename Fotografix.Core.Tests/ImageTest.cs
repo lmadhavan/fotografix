@@ -1,5 +1,4 @@
 ﻿using Fotografix.Collections;
-using Fotografix.Drawing;
 using Moq;
 using NUnit.Framework;
 using System;
@@ -118,17 +117,17 @@ namespace Fotografix
         [Test]
         public void ScalesContentsToSpecifiedSize()
         {
-            Mock<IDrawingContextFactory> drawingContextFactory = new();
+            Mock<IGraphicsDevice> graphicsDevice = new();
             Mock<Channel> channel = new();
             image.Layers.Add(new Layer(channel.Object));
 
             const int scalingFactor = 2;
             Size newSize = image.Size * scalingFactor;
 
-            image.Scale(newSize, drawingContextFactory.Object);
+            image.Scale(newSize, graphicsDevice.Object);
 
             Assert.That(image.Size, Is.EqualTo(newSize));
-            channel.Verify(c => c.Scale(new(scalingFactor, scalingFactor), drawingContextFactory.Object));
+            channel.Verify(c => c.Scale(new(scalingFactor, scalingFactor), graphicsDevice.Object));
         }
     }
 }

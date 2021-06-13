@@ -8,18 +8,18 @@ namespace Fotografix
     [TestFixture]
     public class BitmapChannelTest
     {
-        private Mock<IDrawingContextFactory> drawingContextFactory;
+        private Mock<IGraphicsDevice> graphicsDevice;
         private Mock<IDrawingContext> drawingContext;
         private Mock<IDrawable> drawable;
 
         [SetUp]
         public void SetUp()
         {
-            this.drawingContextFactory = new Mock<IDrawingContextFactory>();
+            this.graphicsDevice = new Mock<IGraphicsDevice>();
             this.drawingContext = new Mock<IDrawingContext>(MockBehavior.Strict);
             this.drawable = new Mock<IDrawable>(MockBehavior.Strict);
 
-            drawingContextFactory.Setup(f => f.CreateDrawingContext(It.IsAny<Bitmap>())).Returns(drawingContext.Object);
+            graphicsDevice.Setup(f => f.CreateDrawingContext(It.IsAny<Bitmap>())).Returns(drawingContext.Object);
             drawingContext.Setup(dc => dc.Dispose());
         }
 
@@ -32,9 +32,9 @@ namespace Fotografix
             drawable.Setup(d => d.Draw(It.IsAny<IDrawingContext>()));
 
             BitmapChannel channel = new BitmapChannel(bitmap);
-            channel.Draw(drawable.Object, drawingContextFactory.Object);
+            channel.Draw(drawable.Object, graphicsDevice.Object);
 
-            drawingContextFactory.Verify(f => f.CreateDrawingContext(bitmap));
+            graphicsDevice.Verify(f => f.CreateDrawingContext(bitmap));
             drawable.Verify();
         }
 
@@ -50,12 +50,12 @@ namespace Fotografix
             drawable.InSequence(sequence).Setup(d => d.Draw(It.IsAny<IDrawingContext>()));
 
             BitmapChannel channel = new BitmapChannel(bitmap);
-            channel.Draw(drawable.Object, drawingContextFactory.Object);
+            channel.Draw(drawable.Object, graphicsDevice.Object);
 
             Bitmap newBitmap = channel.Bitmap;
             Assert.That(newBitmap.Bounds, Is.EqualTo(Rectangle.FromLTRB(5, 5, 30, 30)));
 
-            drawingContextFactory.Verify(f => f.CreateDrawingContext(newBitmap));
+            graphicsDevice.Verify(f => f.CreateDrawingContext(newBitmap));
             drawingContext.Verify(dc => dc.Draw(bitmap, bitmap.Bounds, bitmap.Bounds));
             drawable.Verify(d => d.Draw(drawingContext.Object));
         }
@@ -70,12 +70,12 @@ namespace Fotografix
             drawable.Setup(d => d.Draw(It.IsAny<IDrawingContext>()));
 
             BitmapChannel channel = new BitmapChannel(bitmap);
-            channel.Draw(drawable.Object, drawingContextFactory.Object);
+            channel.Draw(drawable.Object, graphicsDevice.Object);
 
             Bitmap newBitmap = channel.Bitmap;
             Assert.That(newBitmap.Bounds, Is.EqualTo(drawableBounds));
 
-            drawingContextFactory.Verify(f => f.CreateDrawingContext(newBitmap));
+            graphicsDevice.Verify(f => f.CreateDrawingContext(newBitmap));
             drawable.Verify(d => d.Draw(drawingContext.Object));
         }
 
@@ -87,12 +87,12 @@ namespace Fotografix
 
             drawingContext.Setup(dc => dc.Draw(It.IsAny<Bitmap>(), It.IsAny<Rectangle>(), It.IsAny<Rectangle>()));
 
-            channel.Scale(new(1.5f, 1.5f), drawingContextFactory.Object);
+            channel.Scale(new(1.5f, 1.5f), graphicsDevice.Object);
 
             Bitmap newBitmap = channel.Bitmap;
             Assert.That(newBitmap.Bounds, Is.EqualTo(new Rectangle(15, 15, 30, 30)));
 
-            drawingContextFactory.Verify(f => f.CreateDrawingContext(newBitmap));
+            graphicsDevice.Verify(f => f.CreateDrawingContext(newBitmap));
             drawingContext.Verify(dc => dc.Draw(bitmap, newBitmap.Bounds, bitmap.Bounds));
         }
     }

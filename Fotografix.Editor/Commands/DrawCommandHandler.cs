@@ -1,19 +1,17 @@
-﻿using Fotografix.Drawing;
-
-namespace Fotografix.Editor.Commands
+﻿namespace Fotografix.Editor.Commands
 {
     public sealed class DrawCommandHandler : ICommandHandler<DrawCommand>
     {
-        private readonly IDrawingContextFactory drawingContextFactory;
+        private readonly IGraphicsDevice graphicsDevice;
 
-        public DrawCommandHandler(IDrawingContextFactory drawingContextFactory)
+        public DrawCommandHandler(IGraphicsDevice graphicsDevice)
         {
-            this.drawingContextFactory = drawingContextFactory;
+            this.graphicsDevice = graphicsDevice;
         }
 
         public void Handle(DrawCommand command)
         {
-            command.Channel.Draw(command.Drawable, drawingContextFactory);
+            command.Channel.Draw(command.Drawable, graphicsDevice);
         }
     }
 }

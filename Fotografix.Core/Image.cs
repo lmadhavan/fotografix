@@ -1,5 +1,4 @@
 ﻿using Fotografix.Collections;
-using Fotografix.Drawing;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -48,14 +47,14 @@ namespace Fotografix
             this.Size = rectangle.Size;
         }
 
-        public void Scale(Size newSize, IDrawingContextFactory drawingContextFactory)
+        public void Scale(Size newSize, IGraphicsDevice graphicsDevice)
         {
             PointF scaleFactor = new((float)newSize.Width / size.Width,
                                      (float)newSize.Height / size.Height);
 
             foreach (Layer layer in layers)
             {
-                layer.Scale(scaleFactor, drawingContextFactory);
+                layer.Scale(scaleFactor, graphicsDevice);
             }
 
             this.Size = newSize;

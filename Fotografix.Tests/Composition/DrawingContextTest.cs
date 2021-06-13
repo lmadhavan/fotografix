@@ -9,12 +9,12 @@ namespace Fotografix.Tests.Composition
     [TestClass]
     public class DrawingContextTest
     {
-        private IDrawingContextFactory drawingContextFactory;
+        private IGraphicsDevice graphicsDevice;
 
         [TestInitialize]
         public void Initialize()
         {
-            this.drawingContextFactory = new Win2DDrawingContextFactory();
+            this.graphicsDevice = new Win2DGraphicsDevice();
         }
 
         [TestMethod]
@@ -29,7 +29,7 @@ namespace Fotografix.Tests.Composition
                 color: Color.White
             );
 
-            using (IDrawingContext dc = drawingContextFactory.CreateDrawingContext(bitmap))
+            using (IDrawingContext dc = graphicsDevice.CreateDrawingContext(bitmap))
             {
                 dc.Draw(brushStroke);
             }

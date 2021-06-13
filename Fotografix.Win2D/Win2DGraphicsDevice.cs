@@ -3,7 +3,7 @@ using Microsoft.Graphics.Canvas;
 
 namespace Fotografix.Win2D
 {
-    public sealed class Win2DDrawingContextFactory : IDrawingContextFactory
+    public sealed class Win2DGraphicsDevice : IGraphicsDevice
     {
         private readonly ICanvasResourceCreator resourceCreator = CanvasDevice.GetSharedDevice();
 
