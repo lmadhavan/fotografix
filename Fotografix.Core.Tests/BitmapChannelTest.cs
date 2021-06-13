@@ -3,16 +3,14 @@ using Moq;
 using NUnit.Framework;
 using System.Drawing;
 
-namespace Fotografix.Editor.Commands
+namespace Fotografix
 {
     [TestFixture]
-    public class DrawCommandHandlerTest
+    public class BitmapChannelTest
     {
         private Mock<IDrawingContextFactory> drawingContextFactory;
         private Mock<IDrawingContext> drawingContext;
         private Mock<IDrawable> drawable;
-
-        private DrawCommandHandler handler;
 
         [SetUp]
         public void SetUp()
@@ -23,20 +21,18 @@ namespace Fotografix.Editor.Commands
 
             drawingContextFactory.Setup(f => f.CreateDrawingContext(It.IsAny<Bitmap>())).Returns(drawingContext.Object);
             drawingContext.Setup(dc => dc.Dispose());
-            
-            this.handler = new DrawCommandHandler(drawingContextFactory.Object);
         }
 
         [Test]
         public void DrawsDrawableOnBitmap()
         {
             Bitmap bitmap = new Bitmap(new Size(10, 10));
-            BitmapChannel channel = new BitmapChannel(bitmap);
 
             drawable.SetupGet(d => d.Bounds).Returns(bitmap.Bounds);
             drawable.Setup(d => d.Draw(It.IsAny<IDrawingContext>()));
 
-            handler.Handle(new DrawCommand(channel, drawable.Object));
+            BitmapChannel channel = new BitmapChannel(bitmap);
+            channel.Draw(drawable.Object, drawingContextFactory.Object);
 
             drawingContextFactory.Verify(f => f.CreateDrawingContext(bitmap));
             drawable.Verify();
@@ -46,7 +42,6 @@ namespace Fotografix.Editor.Commands
         public void ExpandsBitmapToAccommodateDrawable()
         {
             Bitmap bitmap = new Bitmap(new Rectangle(10, 10, 20, 20));
-            BitmapChannel channel = new BitmapChannel(bitmap);
 
             drawable.SetupGet(d => d.Bounds).Returns(new Rectangle(5, 5, 10, 10));
 
@@ -54,7 +49,8 @@ namespace Fotografix.Editor.Commands
             drawingContext.InSequence(sequence).Setup(dc => dc.Draw(It.IsAny<Bitmap>()));
             drawable.InSequence(sequence).Setup(d => d.Draw(It.IsAny<IDrawingContext>()));
 
-            handler.Handle(new DrawCommand(channel, drawable.Object));
+            BitmapChannel channel = new BitmapChannel(bitmap);
+            channel.Draw(drawable.Object, drawingContextFactory.Object);
 
             Bitmap newBitmap = channel.Bitmap;
             Assert.That(newBitmap.Bounds, Is.EqualTo(Rectangle.FromLTRB(5, 5, 30, 30)));
@@ -68,13 +64,13 @@ namespace Fotografix.Editor.Commands
         public void IgnoresExistingBitmapIfEmpty()
         {
             Bitmap bitmap = new Bitmap(Size.Empty);
-            BitmapChannel channel = new BitmapChannel(bitmap);
 
             Rectangle drawableBounds = new Rectangle(5, 5, 10, 10);
             drawable.SetupGet(d => d.Bounds).Returns(drawableBounds);
             drawable.Setup(d => d.Draw(It.IsAny<IDrawingContext>()));
 
-            handler.Handle(new DrawCommand(channel, drawable.Object));
+            BitmapChannel channel = new BitmapChannel(bitmap);
+            channel.Draw(drawable.Object, drawingContextFactory.Object);
 
             Bitmap newBitmap = channel.Bitmap;
             Assert.That(newBitmap.Bounds, Is.EqualTo(drawableBounds));
