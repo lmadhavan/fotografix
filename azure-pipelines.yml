@@ -23,6 +23,7 @@ steps:
     restoreSolution: '$(solution)'
 
 - task: VSBuild@1
+  displayName: Build
   inputs:
     platform: 'x86'
     solution: '$(solution)'
@@ -30,15 +31,28 @@ steps:
     msbuildArgs: '/p:AppxBundlePlatforms="$(buildPlatform)" /p:AppxPackageDir="$(appxPackageDir)" /p:AppxBundle=Always /p:UapAppxPackageBuildMode=StoreUpload /p:AppxPackageSigningEnabled=false'
 
 - task: VSTest@2
+  displayName: Unit Tests
   inputs:
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
     testSelector: 'testAssemblies'
     testAssemblyVer2: |
       **\*Tests.dll
-      **\*Tests.build.appxrecipe
-      !**\*TestAdapter.dll
       !**\obj\**
+      !**\ilc\**
+    searchFolder: '$(Build.SourcesDirectory)'
+    codeCoverageEnabled: true
+    runTestsInIsolation: true
+
+- task: VSTest@2
+  displayName: UWP Tests
+  inputs:
+    platform: '$(buildPlatform)'
+    configuration: '$(buildConfiguration)'
+    testSelector: 'testAssemblies'
+    testAssemblyVer2: |
+      **\*Tests.build.appxrecipe
+      !**\Upload\**
     searchFolder: '$(Build.SourcesDirectory)'
     codeCoverageEnabled: true
     runTestsInIsolation: true
