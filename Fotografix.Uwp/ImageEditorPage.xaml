@@ -157,16 +157,25 @@
                 <TextBlock Grid.Column="0" Margin="0,4,0,0" Style="{StaticResource PanelTitleTextBlockStyle}" Text="Layers" />
 
                 <StackPanel Grid.Column="1" Orientation="Horizontal">
-                    <Button x:Name="newAdjustmentButton" Style="{StaticResource CommandButtonStyle}"
-                            Flyout="{StaticResource NewAdjustmentMenuFlyout}">
+                    <Button Style="{StaticResource CommandButtonStyle}"
+                            ToolTipService.ToolTip="New layer"
+                            Click="{x:Bind editor.AddLayer}">
                         <SymbolIcon Symbol="Add" />
+                    </Button>
+
+                    <Button x:Name="newAdjustmentButton"
+                            Style="{StaticResource CommandButtonStyle}"
+                            ToolTipService.ToolTip="Adjustments"
+                            Flyout="{StaticResource NewAdjustmentMenuFlyout}">
+                        <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE706;"/>
                     </Button>
 
                     <Button Style="{StaticResource CommandButtonStyle}" Click="Import_Click" ToolTipService.ToolTip="Import">
                         <SymbolIcon Symbol="Import" />
                     </Button>
 
-                    <Button Style="{StaticResource CommandButtonStyle}" Margin="4,0,0,0"
+                    <Button Style="{StaticResource CommandButtonStyle}"
+                            ToolTipService.ToolTip="Delete"
                             IsEnabled="{x:Bind editor.CanDeleteActiveLayer, Mode=OneWay}"
                             Click="{x:Bind editor.DeleteActiveLayer}">
                         <SymbolIcon Symbol="Delete" />
