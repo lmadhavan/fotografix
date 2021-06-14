@@ -3,7 +3,7 @@
         <Product>Fotografix</Product>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
       
-        <Version>2.2103.1.0</Version>
+        <Version>2.2106.1.0</Version>
 
         <LangVersion>9.0</LangVersion>
     </PropertyGroup>
