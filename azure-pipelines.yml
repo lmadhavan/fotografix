@@ -39,6 +39,6 @@ steps:
       **\*Tests.build.appxrecipe
       !**\*TestAdapter.dll
       !**\obj\**
-    searchFolder: '$(Build.BinariesDirectory)'
+    searchFolder: '$(Build.SourcesDirectory)'
     codeCoverageEnabled: true
     runTestsInIsolation: true
