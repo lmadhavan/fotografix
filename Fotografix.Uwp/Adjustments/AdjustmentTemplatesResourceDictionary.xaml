@@ -9,7 +9,7 @@
     <ui:ColorConverter x:Key="ColorConverter" />
     <aui:AdjustmentSliderToolTipValueConverter x:Key="AdjustmentSliderToolTipValueConverter" />
 
-    <Style x:Key="AdjustmentSliderStyle" TargetType="Slider">
+    <Style x:Key="AdjustmentSliderStyle" TargetType="Slider" BasedOn="{StaticResource DefaultSliderStyle}">
         <Setter Property="Minimum" Value="-1" />
         <Setter Property="Maximum" Value="1" />
         <Setter Property="StepFrequency" Value="0.01" />
