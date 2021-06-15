@@ -33,21 +33,21 @@
             <ColumnDefinition Width="300" />
         </Grid.ColumnDefinitions>
 
-        <Grid Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" BorderThickness="0,1" BorderBrush="{ThemeResource ButtonBorderThemeBrush}" Background="{ThemeResource AppBarBackgroundThemeBrush}">
+        <Grid Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" BorderThickness="0,1" BorderBrush="{ThemeResource ButtonBorderThemeBrush}" Background="{ThemeResource SystemChromeLowColor}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
-            <StackPanel Grid.Column="0" Orientation="Horizontal">
+            <StackPanel Grid.Column="0" Margin="6,0" Orientation="Horizontal">
                 <Button Style="{StaticResource CommandButtonStyle}"
                         Click="Save_Click"
                         ToolTipService.ToolTip="Save">
                     <Button.KeyboardAccelerators>
                         <KeyboardAccelerator Modifiers="Control" Key="S" />
                     </Button.KeyboardAccelerators>
-                    
+
                     <SymbolIcon Symbol="Save" />
                 </Button>
 
@@ -58,7 +58,7 @@
                     <Button.KeyboardAccelerators>
                         <KeyboardAccelerator Modifiers="Control" Key="Z" />
                     </Button.KeyboardAccelerators>
-                    
+
                     <SymbolIcon Symbol="Undo" />
                 </Button>
 
@@ -76,8 +76,10 @@
             </StackPanel>
 
             <Grid Grid.Column="1"
-                  Margin="4,0" Padding="8,0"
-                  BorderThickness="1,0" BorderBrush="{ThemeResource ButtonBorderThemeBrush}">
+                  Margin="2,4"
+                  Padding="8,2"
+                  CornerRadius="4"
+                  Background="{ThemeResource SystemChromeMediumColor}">
                 <Grid.Resources>
                     <ResourceDictionary>
                         <ResourceDictionary.MergedDictionaries>
@@ -92,18 +94,21 @@
                 </Grid.ColumnDefinitions>
 
                 <TextBlock Grid.Column="0"
+                           Margin="0,1,0,0"
+                           Padding="0,6"
                            FontWeight="SemiBold"
                            VerticalAlignment="Center"
                            Text="{x:Bind editor.ActiveTool.Name, Mode=OneWay}" />
 
                 <ContentControl Grid.Column="1"
                                 Margin="8,0"
+                                Padding="0"
                                 VerticalAlignment="Center"
                                 ContentTemplateSelector="{StaticResource ToolControlsTemplateSelector}"
                                 Content="{x:Bind editor.ActiveTool, Mode=OneWay}" />
             </Grid>
 
-            <StackPanel Grid.Column="2" Orientation="Horizontal">
+            <StackPanel Grid.Column="2" Padding="6,0" Orientation="Horizontal">
                 <Button Click="ResizeImage_Click" Style="{StaticResource CommandButtonStyle}">
                     <StackPanel Orientation="Horizontal">
                         <SymbolIcon Symbol="FullScreen" />

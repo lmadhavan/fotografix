@@ -17,7 +17,8 @@
 
     <Style x:Key="CommandButtonStyle" TargetType="Button">
         <Setter Property="BorderThickness" Value="0" />
-        <Setter Property="Padding" Value="10" />
+        <Setter Property="CornerRadius" Value="4" />
+        <Setter Property="Padding" Value="8" />
         <Setter Property="FontWeight" Value="SemiLight" />
         <Setter Property="Background" Value="Transparent" />
 
