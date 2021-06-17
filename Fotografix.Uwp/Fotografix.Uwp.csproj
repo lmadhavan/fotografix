@@ -139,6 +139,10 @@
     <Compile Include="FileManagement\RecentFile.cs" />
     <Compile Include="FileManagement\RecentFileList.cs" />
     <Compile Include="FileManagement\Workspace.cs" />
+    <Compile Include="GeometryResourceConverter.cs" />
+    <Compile Include="Icons.xaml.cs">
+      <DependentUpon>Icons.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ImageEditorFactory.cs" />
     <Compile Include="IToolbox.cs" />
     <Compile Include="StorageFileAdapter.cs" />
@@ -219,6 +223,10 @@
     <Page Include="ErrorDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Icons.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="ImageEditorPage.xaml">
       <SubType>Designer</SubType>

@@ -6,6 +6,8 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:canvas="using:Microsoft.Graphics.Canvas.UI.Xaml"
     xmlns:c="using:Fotografix"
+    xmlns:et="using:Fotografix.Editor.Tools"
+    xmlns:ui="using:Fotografix.Uwp"
     xmlns:layers="using:Fotografix.Uwp.Layers"
     xmlns:tools="using:Fotografix.Uwp.Tools"
     xmlns:sys="using:System"
@@ -18,6 +20,8 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Styles.xaml" />
             </ResourceDictionary.MergedDictionaries>
+
+            <ui:GeometryResourceConverter x:Key="ToolIconConverter" KeySuffix="Icon" />
         </ResourceDictionary>
     </Page.Resources>
 
@@ -28,7 +32,7 @@
         </Grid.RowDefinitions>
 
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="96" />
+            <ColumnDefinition Width="48" />
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="300" />
         </Grid.ColumnDefinitions>
@@ -127,9 +131,15 @@
 
         <ListView Grid.Row="1" Grid.Column="0"
                   ItemsSource="{x:Bind editor.Tools}"
-                  SelectedItem="{x:Bind editor.ActiveTool, Mode=TwoWay}"
-                  DisplayMemberPath="Name"
-        />
+                  SelectedItem="{x:Bind editor.ActiveTool, Mode=TwoWay}">
+            <ListView.ItemTemplate>
+                <DataTemplate x:DataType="et:ITool">
+                    <PathIcon
+                        Data="{x:Bind Name, Converter={StaticResource ToolIconConverter}}"
+                        ToolTipService.ToolTip="{x:Bind Name}" />
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
 
         <canvas:CanvasControl
             x:Name="canvas"

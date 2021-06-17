@@ -61,11 +61,11 @@ namespace Fotografix.Uwp
             return new List<ITool>
             {
                 new HandTool(),
-                new BrushTool() { Size = 5, Color = Color.White },
-                new GradientTool { StartColor = Color.Black, EndColor = Color.White },
-                new CropTool(),
                 new MoveTool(),
-                new SelectionTool()
+                new SelectionTool(),
+                new CropTool(),
+                new BrushTool() { Size = 5, Color = Color.White },
+                new GradientTool { StartColor = Color.Black, EndColor = Color.White }
             };
         }
     }
