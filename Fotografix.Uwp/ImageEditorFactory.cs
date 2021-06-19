@@ -3,6 +3,7 @@ using Fotografix.Editor.Commands;
 using Fotografix.Editor.Tools;
 using Fotografix.IO;
 using Fotografix.Uwp.Codecs;
+using Fotografix.Uwp.FileManagement;
 using Fotografix.Win2D;
 using System.Collections.Generic;
 using System.Drawing;
@@ -22,6 +23,10 @@ namespace Fotografix.Uwp
             handlerCollection.Register(new ResampleImageCommandHandler(graphicsDevice));
             handlerCollection.Register(new DrawCommandHandler(graphicsDevice));
             handlerCollection.Register(new CropCommandHandler());
+
+            SaveCommandHandler saveHandler = new SaveCommandHandler(imageEncoder, new FilePickerAdapter());
+            handlerCollection.Register<SaveCommand>(saveHandler);
+            handlerCollection.Register<SaveAsCommand>(saveHandler);
         }
 
         public IEnumerable<FileFormat> SupportedOpenFormats => imageDecoder.SupportedFileFormats;
@@ -38,6 +43,7 @@ namespace Fotografix.Uwp
         public async Task<ImageEditor> OpenImageAsync(Viewport viewport, IFile file)
         {
             Image image = await imageDecoder.ReadImageAsync(file);
+            image.SetFile(file);
             return CreateEditor(viewport, image);
         }
 
@@ -48,7 +54,6 @@ namespace Fotografix.Uwp
             var editor = new ImageEditor(image, handlerCollection)
             {
                 ImageDecoder = imageDecoder,
-                ImageEncoder = imageEncoder,
                 Tools = CreateTools()
             };
             image.SetCommandDispatcher(editor);

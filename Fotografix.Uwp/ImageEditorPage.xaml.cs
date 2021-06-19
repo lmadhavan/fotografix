@@ -153,16 +153,5 @@ namespace Fotografix.Uwp
                 await editor.ResizeImageAsync(parameters);
             }
         }
-
-        private async void Save_Click(object sender, RoutedEventArgs e)
-        {
-            FileSavePicker picker = FilePickerFactory.CreateFileSavePicker(editor.SupportedSaveFormats);
-
-            var file = await picker.PickSaveFileAsync();
-            if (file != null)
-            {
-                await editor.SaveAsync(new StorageFileAdapter(file));
-            }
-        }
     }
 }

@@ -62,10 +62,7 @@ namespace Fotografix.Uwp
         }
 
         public IImageDecoder ImageDecoder { get; set; } = NullImageCodec.Instance;
-        public IImageEncoder ImageEncoder { get; set; } = NullImageCodec.Instance;
-
         public IEnumerable<FileFormat> SupportedImportFormats => ImageDecoder.SupportedFileFormats;
-        public IEnumerable<FileFormat> SupportedSaveFormats => ImageEncoder.SupportedFileFormats;
 
         #region Undo/Redo
 
@@ -175,9 +172,14 @@ namespace Fotografix.Uwp
             return DispatchAsync(new ResampleImageCommand(image, resizeImageParameters.Size));
         }
 
-        public Task SaveAsync(IFile file)
+        public async void Save()
         {
-            return ImageEncoder.WriteImageAsync(image, file);
+            await DispatchAsync(new SaveCommand(image));
+        }
+
+        public async void SaveAs()
+        {
+            await DispatchAsync(new SaveAsCommand(image));
         }
 
         public Bitmap ToBitmap()
@@ -265,7 +267,11 @@ namespace Fotografix.Uwp
             }
             finally
             {
-                history.Add(new CompositeChange(changeGroup));
+                if (changeGroup.Count > 0)
+                {
+                    history.Add(new CompositeChange(changeGroup));
+                }
+
                 this.changeGroup = null;
             }
         }

@@ -132,6 +132,7 @@
     <Compile Include="ErrorDialog.xaml.cs">
       <DependentUpon>ErrorDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="FileManagement\FilePickerAdapter.cs" />
     <Compile Include="FileManagement\FilePickerFactory.cs" />
     <Compile Include="FileManagement\ICreateImageEditorCommand.cs" />
     <Compile Include="FileManagement\NewImageParameters.cs" />

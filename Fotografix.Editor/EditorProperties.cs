@@ -1,5 +1,6 @@
 ﻿using Fotografix.Drawing;
 using Fotografix.Editor.Commands;
+using Fotografix.IO;
 using System.Drawing;
 using System.Threading.Tasks;
 
@@ -7,11 +8,12 @@ namespace Fotografix.Editor
 {
     public static class EditorProperties
     {
-        private static readonly UserProperty<Layer> ActiveLayerProperty = new UserProperty<Layer>();
-        private static readonly UserProperty<ICommandDispatcher> CommandDispatcherProperty = new UserProperty<ICommandDispatcher>();
-        private static readonly UserProperty<Viewport> ViewportProperty = new UserProperty<Viewport>();
-        private static readonly UserProperty<IDrawable> DrawingPreviewProperty = new UserProperty<IDrawable>();
-        private static readonly UserProperty<Rectangle?> CropPreviewProperty = new UserProperty<Rectangle?>();
+        private static readonly UserProperty<Layer> ActiveLayerProperty = new();
+        private static readonly UserProperty<ICommandDispatcher> CommandDispatcherProperty = new();
+        private static readonly UserProperty<Viewport> ViewportProperty = new();
+        private static readonly UserProperty<IDrawable> DrawingPreviewProperty = new();
+        private static readonly UserProperty<Rectangle?> CropPreviewProperty = new();
+        private static readonly UserProperty<IFile> FileProperty = new();
 
         public static string ActiveLayer => ActiveLayerProperty.Id;
         public static string DrawingPreview => DrawingPreviewProperty.Id;
@@ -65,6 +67,16 @@ namespace Fotografix.Editor
         public static void SetCropPreview(this Image image, Rectangle? rectangle)
         {
             image.SetUserProperty(CropPreviewProperty, rectangle);
+        }
+
+        public static IFile GetFile(this Image image)
+        {
+            return image.GetUserProperty(FileProperty);
+        }
+
+        public static void SetFile(this Image image, IFile file)
+        {
+            image.SetUserProperty(FileProperty, file);
         }
     }
 }

@@ -24,5 +24,10 @@ namespace Fotografix.IO
         {
             return Task.FromResult(stream);
         }
+
+        public override string ToString()
+        {
+            return Name;
+        }
     }
 }

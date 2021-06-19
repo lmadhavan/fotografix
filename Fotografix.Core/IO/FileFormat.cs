@@ -6,6 +6,10 @@ namespace Fotografix.IO
 {
     public sealed class FileFormat
     {
+        public FileFormat(string name, string fileExtension) : this(name, new string[] { fileExtension })
+        {
+        }
+
         public FileFormat(string name, IEnumerable<string> fileExtensions)
         {
             this.Name = name;

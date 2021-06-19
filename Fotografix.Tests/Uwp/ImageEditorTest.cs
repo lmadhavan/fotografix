@@ -94,7 +94,20 @@ namespace Fotografix.Tests.Uwp
             handlerCollection.Register(new FakeCommandHandler());
 
             await editor.DispatchAsync(new FakeCommand(image, numberOfChanges: 3));
+
+            Assert.IsTrue(editor.CanUndo);
+
             editor.Undo();
+
+            Assert.IsFalse(editor.CanUndo);
+        }
+
+        [TestMethod]
+        public async Task DoesNotAddEmptyChangeGroupsToHistory()
+        {
+            handlerCollection.Register(new FakeCommandHandler());
+
+            await editor.DispatchAsync(new FakeCommand(image, numberOfChanges: 0));
 
             Assert.IsFalse(editor.CanUndo);
         }

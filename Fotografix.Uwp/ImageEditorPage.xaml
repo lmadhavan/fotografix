@@ -11,6 +11,7 @@
     xmlns:layers="using:Fotografix.Uwp.Layers"
     xmlns:tools="using:Fotografix.Uwp.Tools"
     xmlns:sys="using:System"
+    xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     mc:Ignorable="d"
     Background="{ThemeResource AppBarBackgroundThemeBrush}"
     AllowDrop="True">
@@ -45,15 +46,27 @@
             </Grid.ColumnDefinitions>
 
             <StackPanel Grid.Column="0" Margin="6,0" Orientation="Horizontal">
-                <Button Style="{StaticResource CommandButtonStyle}"
-                        Click="Save_Click"
-                        ToolTipService.ToolTip="Save">
-                    <Button.KeyboardAccelerators>
-                        <KeyboardAccelerator Modifiers="Control" Key="S" />
-                    </Button.KeyboardAccelerators>
-
+                <muxc:DropDownButton
+                    Style="{StaticResource CommandDropDownButtonStyle}"
+                    ToolTipService.ToolTip="Save">
                     <SymbolIcon Symbol="Save" />
-                </Button>
+
+                    <muxc:DropDownButton.Flyout>
+                        <MenuFlyout>
+                            <MenuFlyoutItem Text="Save" Click="{x:Bind editor.Save}">
+                                <MenuFlyoutItem.KeyboardAccelerators>
+                                    <KeyboardAccelerator Modifiers="Control" Key="S" />
+                                </MenuFlyoutItem.KeyboardAccelerators>
+                            </MenuFlyoutItem>
+
+                            <MenuFlyoutItem Text="Save as..." Click="{x:Bind editor.SaveAs}">
+                                <MenuFlyoutItem.KeyboardAccelerators>
+                                    <KeyboardAccelerator Modifiers="Control,Shift" Key="S" />
+                                </MenuFlyoutItem.KeyboardAccelerators>
+                            </MenuFlyoutItem>
+                        </MenuFlyout>
+                    </muxc:DropDownButton.Flyout>
+                </muxc:DropDownButton>
 
                 <Button Style="{StaticResource CommandButtonStyle}"
                         Click="{x:Bind editor.Undo}"

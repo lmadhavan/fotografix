@@ -85,6 +85,14 @@
         </Setter>
     </Style>
 
+    <Style x:Key="CommandDropDownButtonStyle" TargetType="muxc:DropDownButton">
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="CornerRadius" Value="4" />
+        <Setter Property="Padding" Value="8" />
+        <Setter Property="FontWeight" Value="SemiLight" />
+        <Setter Property="Background" Value="Transparent" />
+    </Style>
+
     <Style x:Key="PanelTitleTextBlockStyle" TargetType="TextBlock">
         <Setter Property="FontWeight" Value="SemiLight" />
         <Setter Property="FontSize" Value="20" />
