@@ -1,7 +1,7 @@
 ﻿using NUnit.Framework;
 using System.Collections.Generic;
 
-namespace Fotografix.Editor
+namespace Fotografix.Editor.ChangeTracking
 {
     [TestFixture]
     public class HistoryTest

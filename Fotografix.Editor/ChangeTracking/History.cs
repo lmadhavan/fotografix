@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 
-namespace Fotografix.Editor
+namespace Fotografix.Editor.ChangeTracking
 {
-    public sealed class History : NotifyPropertyChangedBase
+    public sealed class History : NotifyPropertyChangedBase, IAppendableHistory
     {
         private readonly Stack<IChange> undoStack = new Stack<IChange>();
         private readonly Stack<IChange> redoStack = new Stack<IChange>();

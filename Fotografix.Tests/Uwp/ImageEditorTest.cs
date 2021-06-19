@@ -1,4 +1,5 @@
 ﻿using Fotografix.Editor;
+using Fotografix.Editor.ChangeTracking;
 using Fotografix.Editor.Commands;
 using Fotografix.IO;
 using Fotografix.Uwp;
@@ -15,7 +16,6 @@ namespace Fotografix.Tests.Uwp
 
         private Image image;
         private Viewport viewport;
-        private CommandHandlerCollection handlerCollection;
         private ImageEditor editor;
 
         [TestInitialize]
@@ -27,9 +27,7 @@ namespace Fotografix.Tests.Uwp
             this.viewport = new Viewport();
             image.SetViewport(viewport);
 
-            this.handlerCollection = new CommandHandlerCollection();
-
-            this.editor = new ImageEditor(image, handlerCollection)
+            this.editor = new ImageEditor(image, new History(), new CommandHandlerCollection())
             {
                 ImageDecoder = new FakeImageCodec()
             };
@@ -89,63 +87,10 @@ namespace Fotografix.Tests.Uwp
         }
 
         [TestMethod]
-        public async Task GroupsChangesProducedByCommand()
-        {
-            handlerCollection.Register(new FakeCommandHandler());
-
-            await editor.DispatchAsync(new FakeCommand(image, numberOfChanges: 3));
-
-            Assert.IsTrue(editor.CanUndo);
-
-            editor.Undo();
-
-            Assert.IsFalse(editor.CanUndo);
-        }
-
-        [TestMethod]
-        public async Task DoesNotAddEmptyChangeGroupsToHistory()
-        {
-            handlerCollection.Register(new FakeCommandHandler());
-
-            await editor.DispatchAsync(new FakeCommand(image, numberOfChanges: 0));
-
-            Assert.IsFalse(editor.CanUndo);
-        }
-
-        [TestMethod]
         public void SynchronizesViewportWhenImageSizeChanges()
         {
             image.Size = new Size(100, 100);
             Assert.AreEqual(viewport.ImageSize, image.Size);
-        }
-
-        private sealed class FakeCommand
-        {
-            private readonly Image image;
-            private readonly int numberOfChanges;
-
-            public FakeCommand(Image image, int numberOfChanges)
-            {
-                this.image = image;
-                this.numberOfChanges = numberOfChanges;
-            }
-
-            public void Execute()
-            {
-                for (int i = 0; i < numberOfChanges; i++)
-                {
-                    image.Layers.Add(new Layer());
-                }
-            }
-        }
-
-        private sealed class FakeCommandHandler : ICommandHandler<FakeCommand>
-        {
-            public Task HandleAsync(FakeCommand command)
-            {
-                command.Execute();
-                return Task.CompletedTask;
-            }
         }
     }
 }

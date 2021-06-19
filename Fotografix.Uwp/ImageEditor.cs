@@ -1,4 +1,5 @@
 ﻿using Fotografix.Editor;
+using Fotografix.Editor.ChangeTracking;
 using Fotografix.Editor.Collections;
 using Fotografix.Editor.Commands;
 using Fotografix.Editor.Tools;
@@ -16,41 +17,37 @@ using System.Threading.Tasks;
 
 namespace Fotografix.Uwp
 {
-    public sealed class ImageEditor : NotifyPropertyChangedBase, IDisposable, IToolbox, ICommandDispatcher
+    public sealed class ImageEditor : NotifyPropertyChangedBase, IDisposable, IToolbox
     {
         private static readonly Win2DCompositorSettings CompositorSettings = new Win2DCompositorSettings { TransparencyGridSize = 8, InteractiveMode = true };
 
         private readonly Image image;
         private readonly Viewport viewport;
+        private readonly IHistory history;
         private readonly ICommandDispatcher dispatcher;
         private readonly Win2DCompositor compositor;
         private readonly ReversedCollectionView<Layer> layers;
-        private readonly History history;
 
         private Layer activeLayer;
 
-        private List<IChange> changeGroup;
-        private bool ignoreChanges;
-
-        public ImageEditor(Image image, ICommandDispatcher dispatcher)
+        public ImageEditor(Image image, IHistory history, ICommandDispatcher dispatcher)
         {
             this.image = image;
             
             this.viewport = image.GetViewport();
             viewport.ImageSize = image.Size;
 
+            this.history = history;
+            history.PropertyChanged += OnHistoryPropertyChanged;
+
             this.dispatcher = dispatcher;
             this.compositor = new Win2DCompositor(image, viewport, CompositorSettings);
 
             this.layers = new ReversedCollectionView<Layer>(image.Layers);
 
-            this.history = new History();
-            history.PropertyChanged += OnHistoryPropertyChanged;
-
             this.Tools = new List<ITool>();
             this.ActiveLayer = image.Layers.First();
 
-            image.ContentChanged += OnContentChanged;
             image.PropertyChanged += OnImagePropertyChanged;
             image.Layers.CollectionChanged += OnLayerCollectionChanged;
         }
@@ -64,38 +61,18 @@ namespace Fotografix.Uwp
         public IImageDecoder ImageDecoder { get; set; } = NullImageCodec.Instance;
         public IEnumerable<FileFormat> SupportedImportFormats => ImageDecoder.SupportedFileFormats;
 
-        #region Undo/Redo
-
         public bool CanUndo => history.CanUndo;
         public bool CanRedo => history.CanRedo;
 
         public void Undo()
         {
-            try
-            {
-                this.ignoreChanges = true;
-                history.Undo();
-            }
-            finally
-            {
-                this.ignoreChanges = false;
-            }
+            history.Undo();
         }
 
         public void Redo()
         {
-            try
-            {
-                this.ignoreChanges = true;
-                history.Redo();
-            }
-            finally
-            {
-                this.ignoreChanges = false;
-            }
+            history.Redo();
         }
-
-        #endregion
 
         public Size Size => image.Size;
 
@@ -169,17 +146,17 @@ namespace Fotografix.Uwp
 
         public Task ResizeImageAsync(ResizeImageParameters resizeImageParameters)
         {
-            return DispatchAsync(new ResampleImageCommand(image, resizeImageParameters.Size));
+            return dispatcher.DispatchAsync(new ResampleImageCommand(image, resizeImageParameters.Size));
         }
 
         public async void Save()
         {
-            await DispatchAsync(new SaveCommand(image));
+            await dispatcher.DispatchAsync(new SaveCommand(image));
         }
 
         public async void SaveAs()
         {
-            await DispatchAsync(new SaveAsCommand(image));
+            await dispatcher.DispatchAsync(new SaveAsCommand(image));
         }
 
         public Bitmap ToBitmap()
@@ -258,24 +235,6 @@ namespace Fotografix.Uwp
             }
         }
 
-        public async Task DispatchAsync<T>(T command)
-        {
-            try
-            {
-                this.changeGroup = new List<IChange>();
-                await dispatcher.DispatchAsync(command);
-            }
-            finally
-            {
-                if (changeGroup.Count > 0)
-                {
-                    history.Add(new CompositeChange(changeGroup));
-                }
-
-                this.changeGroup = null;
-            }
-        }
-
         public static Layer CreateLayer(int id)
         {
             return new Layer { Name = "Layer " + id };
@@ -284,21 +243,6 @@ namespace Fotografix.Uwp
         private void OnHistoryPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             RaisePropertyChanged(e.PropertyName);
-        }
-
-        private void OnContentChanged(object sender, ContentChangedEventArgs e)
-        {
-            if (e.Change != null && !ignoreChanges)
-            {
-                if (changeGroup != null)
-                {
-                    changeGroup.Add(e.Change);
-                }
-                else
-                {
-                    history.Add(e.Change);
-                }
-            }
         }
     }
 }

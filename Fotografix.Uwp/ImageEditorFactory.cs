@@ -1,4 +1,5 @@
 ﻿using Fotografix.Editor;
+using Fotografix.Editor.ChangeTracking;
 using Fotografix.Editor.Commands;
 using Fotografix.Editor.Tools;
 using Fotografix.IO;
@@ -49,14 +50,15 @@ namespace Fotografix.Uwp
 
         private ImageEditor CreateEditor(Viewport viewport, Image image)
         {
+            ChangeTrackingCommandDispatcher dispatcher = new ChangeTrackingCommandDispatcher(image, handlerCollection);
+            image.SetCommandDispatcher(dispatcher);
             image.SetViewport(viewport);
 
-            var editor = new ImageEditor(image, handlerCollection)
+            var editor = new ImageEditor(image, dispatcher, dispatcher)
             {
                 ImageDecoder = imageDecoder,
                 Tools = CreateTools()
             };
-            image.SetCommandDispatcher(editor);
 
             return editor;
         }
