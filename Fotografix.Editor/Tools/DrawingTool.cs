@@ -29,12 +29,12 @@ namespace Fotografix.Editor.Tools
             }
         }
 
-        public override void PointerReleased(PointerState p)
+        public async override void PointerReleased(PointerState p)
         {
             if (drawable != null)
             {
                 ActiveChannel.SetDrawingPreview(null);
-                Image.Dispatch(new DrawCommand(ActiveChannel, clippedDrawable));
+                await Image.DispatchAsync(new DrawCommand(ActiveChannel, clippedDrawable));
                 this.drawable = null;
                 this.clippedDrawable = null;
             }

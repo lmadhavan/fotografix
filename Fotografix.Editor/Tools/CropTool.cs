@@ -45,9 +45,9 @@ namespace Fotografix.Editor.Tools
             tracker.PointerReleased(p);
         }
 
-        public void Commit()
+        public async void Commit()
         {
-            image.Dispatch(new CropCommand(image, tracker.Rectangle));
+            await image.DispatchAsync(new CropCommand(image, tracker.Rectangle));
         }
 
         private void Image_PropertyChanged(object sender, PropertyChangedEventArgs e)

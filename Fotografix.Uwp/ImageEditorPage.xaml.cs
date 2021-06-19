@@ -150,7 +150,7 @@ namespace Fotografix.Uwp
             ResizeImageDialog dialog = new ResizeImageDialog(parameters);
             if (await dialog.ShowAsync(ContentDialogPlacement.InPlace) == ContentDialogResult.Primary)
             {
-                editor.ResizeImage(parameters);
+                await editor.ResizeImageAsync(parameters);
             }
         }
 

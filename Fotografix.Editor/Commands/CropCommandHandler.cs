@@ -1,10 +1,13 @@
-﻿namespace Fotografix.Editor.Commands
+﻿using System.Threading.Tasks;
+
+namespace Fotografix.Editor.Commands
 {
     public sealed class CropCommandHandler : ICommandHandler<CropCommand>
     {
-        public void Handle(CropCommand command)
+        public Task HandleAsync(CropCommand command)
         {
             command.Image.Crop(command.Rectangle);
+            return Task.CompletedTask;
         }
     }
 }

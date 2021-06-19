@@ -15,7 +15,7 @@ namespace Fotografix.Tests.Acceptance
             var parameters = BeginResizeImage();
             parameters.LockAspectRatio = true;
             parameters.Width /= 2;
-            ResizeImage(parameters);
+            await ResizeImageAsync(parameters);
 
             await AssertImageAsync("flowers_scale50.png");
         }
@@ -25,9 +25,9 @@ namespace Fotografix.Tests.Acceptance
             return Editor.CreateResizeImageParameters();
         }
 
-        private void ResizeImage(ResizeImageParameters parameters)
+        private Task ResizeImageAsync(ResizeImageParameters parameters)
         {
-            Editor.ResizeImage(parameters);
+            return Editor.ResizeImageAsync(parameters);
         }
     }
 }

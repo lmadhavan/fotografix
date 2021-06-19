@@ -1,7 +1,9 @@
-﻿namespace Fotografix.Editor.Commands
+﻿using System.Threading.Tasks;
+
+namespace Fotografix.Editor.Commands
 {
     public interface ICommandDispatcher
     {
-        void Dispatch<T>(T command);
+        Task DispatchAsync<T>(T command);
     }
 }

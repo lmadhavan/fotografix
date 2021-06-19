@@ -1,7 +1,9 @@
-﻿namespace Fotografix.Editor.Commands
+﻿using System.Threading.Tasks;
+
+namespace Fotografix.Editor.Commands
 {
     public interface ICommandHandler<T>
     {
-        void Handle(T command);
+        Task HandleAsync(T command);
     }
 }

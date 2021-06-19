@@ -1,4 +1,6 @@
-﻿namespace Fotografix.Editor.Commands
+﻿using System.Threading.Tasks;
+
+namespace Fotografix.Editor.Commands
 {
     public sealed class ResampleImageCommandHandler : ICommandHandler<ResampleImageCommand>
     {
@@ -9,9 +11,10 @@
             this.graphicsDevice = graphicsDevice;
         }
 
-        public void Handle(ResampleImageCommand command)
+        public Task HandleAsync(ResampleImageCommand command)
         {
             command.Image.Scale(command.NewSize, graphicsDevice);
+            return Task.CompletedTask;
         }
     }
 }

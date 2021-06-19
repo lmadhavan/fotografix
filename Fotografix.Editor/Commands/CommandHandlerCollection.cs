@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Fotografix.Editor.Commands
 {
@@ -12,13 +13,13 @@ namespace Fotografix.Editor.Commands
             handlers[typeof(T)] = handler;
         }
 
-        public void Dispatch<T>(T command)
+        public Task DispatchAsync<T>(T command)
         {
             Type type = command.GetType();
 
             if (handlers.TryGetValue(type, out object handler))
             {
-                ((ICommandHandler<T>)handler).Handle(command);
+                return ((ICommandHandler<T>)handler).HandleAsync(command);
             }
             else
             {

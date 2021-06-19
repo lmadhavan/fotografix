@@ -170,9 +170,9 @@ namespace Fotografix.Uwp
             return new ResizeImageParameters(Size);
         }
 
-        public void ResizeImage(ResizeImageParameters resizeImageParameters)
+        public Task ResizeImageAsync(ResizeImageParameters resizeImageParameters)
         {
-            Dispatch(new ResampleImageCommand(image, resizeImageParameters.Size));
+            return DispatchAsync(new ResampleImageCommand(image, resizeImageParameters.Size));
         }
 
         public Task SaveAsync(IFile file)
@@ -256,12 +256,12 @@ namespace Fotografix.Uwp
             }
         }
 
-        public void Dispatch<T>(T command)
+        public async Task DispatchAsync<T>(T command)
         {
             try
             {
                 this.changeGroup = new List<IChange>();
-                dispatcher.Dispatch(command);
+                await dispatcher.DispatchAsync(command);
             }
             finally
             {

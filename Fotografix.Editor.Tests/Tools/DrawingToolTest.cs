@@ -58,7 +58,7 @@ namespace Fotografix.Editor.Tools
 
             Tool.PointerReleased(End);
 
-            commandDispatcher.Verify(d => d.Dispatch(new DrawCommand(BitmapLayer.ContentChannel, drawable)));
+            commandDispatcher.Verify(d => d.DispatchAsync(new DrawCommand(BitmapLayer.ContentChannel, drawable)));
             Assert.That(ActiveChannel.GetDrawingPreview(), Is.Null);
         }
 

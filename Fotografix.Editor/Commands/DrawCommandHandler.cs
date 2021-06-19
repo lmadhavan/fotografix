@@ -1,4 +1,6 @@
-﻿namespace Fotografix.Editor.Commands
+﻿using System.Threading.Tasks;
+
+namespace Fotografix.Editor.Commands
 {
     public sealed class DrawCommandHandler : ICommandHandler<DrawCommand>
     {
@@ -9,9 +11,10 @@
             this.graphicsDevice = graphicsDevice;
         }
 
-        public void Handle(DrawCommand command)
+        public Task HandleAsync(DrawCommand command)
         {
             command.Channel.Draw(command.Drawable, graphicsDevice);
+            return Task.CompletedTask;
         }
     }
 }

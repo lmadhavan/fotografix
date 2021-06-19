@@ -68,7 +68,7 @@ namespace Fotografix.Editor.Tools
             tool.Activated(image);
             tool.Commit();
 
-            commandDispatcher.Verify(d => d.Dispatch(new CropCommand(image, new Rectangle(Point.Empty, ImageSize))));
+            commandDispatcher.Verify(d => d.DispatchAsync(new CropCommand(image, new Rectangle(Point.Empty, ImageSize))));
         }
     }
 }

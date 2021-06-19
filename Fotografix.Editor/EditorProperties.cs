@@ -1,6 +1,7 @@
 ﻿using Fotografix.Drawing;
 using Fotografix.Editor.Commands;
 using System.Drawing;
+using System.Threading.Tasks;
 
 namespace Fotografix.Editor
 {
@@ -26,9 +27,9 @@ namespace Fotografix.Editor
             image.SetUserProperty(ActiveLayerProperty, layer);
         }
 
-        public static void Dispatch<T>(this Image image, T command)
+        public static Task DispatchAsync<T>(this Image image, T command)
         {
-            image.GetUserProperty(CommandDispatcherProperty).Dispatch(command);
+            return image.GetUserProperty(CommandDispatcherProperty).DispatchAsync(command);
         }
 
         public static void SetCommandDispatcher(this Image image, ICommandDispatcher commandDispatcher)

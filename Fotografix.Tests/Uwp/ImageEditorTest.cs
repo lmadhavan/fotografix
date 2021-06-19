@@ -89,11 +89,11 @@ namespace Fotografix.Tests.Uwp
         }
 
         [TestMethod]
-        public void GroupsChangesProducedByCommand()
+        public async Task GroupsChangesProducedByCommand()
         {
             handlerCollection.Register(new FakeCommandHandler());
 
-            editor.Dispatch(new FakeCommand(image, numberOfChanges: 3));
+            await editor.DispatchAsync(new FakeCommand(image, numberOfChanges: 3));
             editor.Undo();
 
             Assert.IsFalse(editor.CanUndo);
@@ -128,9 +128,10 @@ namespace Fotografix.Tests.Uwp
 
         private sealed class FakeCommandHandler : ICommandHandler<FakeCommand>
         {
-            public void Handle(FakeCommand command)
+            public Task HandleAsync(FakeCommand command)
             {
                 command.Execute();
+                return Task.CompletedTask;
             }
         }
     }
