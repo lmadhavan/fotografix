@@ -95,5 +95,16 @@ namespace Fotografix
             graphicsDevice.Verify(f => f.CreateDrawingContext(newBitmap));
             drawingContext.Verify(dc => dc.Draw(bitmap, newBitmap.Bounds, bitmap.Bounds));
         }
+
+        [Test]
+        public void RepositionsBitmapToCropRectangle()
+        {
+            Bitmap bitmap = new Bitmap(new Rectangle(10, 10, 20, 20));
+            BitmapChannel channel = new BitmapChannel(bitmap);
+
+            channel.Crop(new Rectangle(25, 25, 50, 50));
+
+            Assert.That(bitmap.Position, Is.EqualTo(new Point(-15, -15)));
+        }
     }
 }

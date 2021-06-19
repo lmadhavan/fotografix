@@ -129,5 +129,19 @@ namespace Fotografix
             Assert.That(image.Size, Is.EqualTo(newSize));
             channel.Verify(c => c.Scale(new(scalingFactor, scalingFactor), graphicsDevice.Object));
         }
+
+        [Test]
+        public void CropsContentsToSpecifiedRectangle()
+        {
+            Mock<Channel> channel = new();
+            image.Layers.Add(new Layer(channel.Object));
+
+            Rectangle rect = new Rectangle(10, 10, 50, 50);
+
+            image.Crop(rect);
+
+            Assert.That(image.Size, Is.EqualTo(rect.Size));
+            channel.Verify(c => c.Crop(rect));
+        }
     }
 }
