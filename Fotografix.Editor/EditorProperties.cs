@@ -14,10 +14,13 @@ namespace Fotografix.Editor
         private static readonly UserProperty<IDrawable> DrawingPreviewProperty = new();
         private static readonly UserProperty<Rectangle?> CropPreviewProperty = new();
         private static readonly UserProperty<IFile> FileProperty = new();
+        private static readonly UserProperty<bool> DirtyProperty = new();
 
         public static string ActiveLayer => ActiveLayerProperty.Id;
         public static string DrawingPreview => DrawingPreviewProperty.Id;
         public static string CropPreview => CropPreviewProperty.Id;
+        public static string File => FileProperty.Id;
+        public static string Dirty => DirtyProperty.Id;
 
         public static Layer GetActiveLayer(this Image image)
         {
@@ -77,6 +80,16 @@ namespace Fotografix.Editor
         public static void SetFile(this Image image, IFile file)
         {
             image.SetUserProperty(FileProperty, file);
+        }
+
+        public static bool IsDirty(this Image image)
+        {
+            return image.GetUserProperty(DirtyProperty);
+        }
+
+        public static void SetDirty(this Image image, bool dirty)
+        {
+            image.SetUserProperty(DirtyProperty, dirty);
         }
     }
 }

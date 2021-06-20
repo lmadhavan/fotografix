@@ -15,8 +15,6 @@ namespace Fotografix.Uwp.FileManagement
             this.imageEditorFactory = imageEditorFactory;
         }
 
-        public string Title => file.Name;
-
         public async Task<ImageEditor> ExecuteAsync(Viewport viewport)
         {
             return await imageEditorFactory.OpenImageAsync(viewport, file);

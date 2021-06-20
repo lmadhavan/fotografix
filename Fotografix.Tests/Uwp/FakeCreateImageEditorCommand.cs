@@ -10,8 +10,6 @@ namespace Fotografix.Tests.Uwp
 {
     public sealed class FakeCreateImageEditorCommand : ICreateImageEditorCommand
     {
-        public string Title => "Test";
-
         public Task<ImageEditor> ExecuteAsync(Viewport viewport)
         {
             ImageEditor editor = new ImageEditor(new Image(Size.Empty), new History(), new CommandHandlerCollection());

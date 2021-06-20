@@ -5,7 +5,6 @@ namespace Fotografix.Uwp.FileManagement
 {
     public interface ICreateImageEditorCommand
     {
-        string Title { get; }
         Task<ImageEditor> ExecuteAsync(Viewport viewport);
     }
 }

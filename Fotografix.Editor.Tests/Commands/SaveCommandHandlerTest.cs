@@ -26,6 +26,7 @@ namespace Fotografix.Editor.Commands
             this.handler = new SaveCommandHandler(imageEncoder.Object, filePicker.Object);
 
             this.image = new Image(new Size(10, 10));
+            image.SetDirty(true);
         }
 
         [Test]
@@ -38,9 +39,8 @@ namespace Fotografix.Editor.Commands
 
             await handler.HandleAsync(new SaveCommand(image));
 
-            Assert.That(image.GetFile(), Is.EqualTo(file));
             filePicker.Verify(p => p.PickSaveFileAsync(supportedFormats));
-            imageEncoder.Verify(e => e.WriteImageAsync(image, file, fileFormat));
+            AssertImageSaved(file);
         }
 
         [Test]
@@ -54,7 +54,7 @@ namespace Fotografix.Editor.Commands
             await handler.HandleAsync(new SaveCommand(image));
 
             filePicker.VerifyNoOtherCalls();
-            imageEncoder.Verify(e => e.WriteImageAsync(image, file, fileFormat));
+            AssertImageSaved(file);
         }
 
         [Test]
@@ -71,7 +71,7 @@ namespace Fotografix.Editor.Commands
             await handler.HandleAsync(new SaveCommand(image));
 
             filePicker.Verify(p => p.PickSaveFileAsync(supportedFormats));
-            imageEncoder.Verify(e => e.WriteImageAsync(image, newFile, fileFormat));
+            AssertImageSaved(newFile);
         }
 
         [Test]
@@ -84,7 +84,7 @@ namespace Fotografix.Editor.Commands
             await handler.HandleAsync(new SaveCommand(image));
 
             Assert.That(image.GetFile(), Is.Null);
-            imageEncoder.Verify(e => e.WriteImageAsync(It.IsAny<Image>(), It.IsAny<IFile>(), It.IsAny<FileFormat>()), Times.Never);
+            AssertImageNotSaved();
         }
 
         [Test]
@@ -101,7 +101,7 @@ namespace Fotografix.Editor.Commands
             await handler.HandleAsync(new SaveAsCommand(image));
 
             filePicker.Verify(p => p.PickSaveFileAsync(supportedFormats));
-            imageEncoder.Verify(e => e.WriteImageAsync(image, newFile, fileFormat));
+            AssertImageSaved(newFile);
         }
 
         [Test]
@@ -117,7 +117,7 @@ namespace Fotografix.Editor.Commands
             await handler.HandleAsync(new SaveAsCommand(image));
 
             Assert.That(image.GetFile(), Is.EqualTo(existingFile));
-            imageEncoder.Verify(e => e.WriteImageAsync(It.IsAny<Image>(), It.IsAny<IFile>(), It.IsAny<FileFormat>()), Times.Never);
+            AssertImageNotSaved();
         }
 
         private void SetupEncoderFormat(string fileExtension)
@@ -125,6 +125,19 @@ namespace Fotografix.Editor.Commands
             this.fileFormat = new FileFormat("Test Format", fileExtension);
             this.supportedFormats = new[] { fileFormat };
             imageEncoder.SetupGet(e => e.SupportedFileFormats).Returns(supportedFormats);
+        }
+
+        private void AssertImageSaved(IFile file)
+        {
+            Assert.That(image.GetFile(), Is.EqualTo(file));
+            Assert.IsFalse(image.IsDirty(), "Dirty");
+            imageEncoder.Verify(e => e.WriteImageAsync(image, file, fileFormat));
+        }
+
+        private void AssertImageNotSaved()
+        {
+            Assert.IsTrue(image.IsDirty(), "Dirty");
+            imageEncoder.Verify(e => e.WriteImageAsync(It.IsAny<Image>(), It.IsAny<IFile>(), It.IsAny<FileFormat>()), Times.Never);
         }
     }
 }

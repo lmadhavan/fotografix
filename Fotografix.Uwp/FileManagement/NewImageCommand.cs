@@ -15,8 +15,6 @@ namespace Fotografix.Uwp.FileManagement
             this.imageEditorFactory = imageEditorFactory;
         }
 
-        public string Title => "Untitled";
-
         public Task<ImageEditor> ExecuteAsync(Viewport viewport)
         {
             return Task.FromResult(imageEditorFactory.CreateNewImage(viewport, size));

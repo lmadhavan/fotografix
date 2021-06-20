@@ -4,6 +4,7 @@ using Fotografix.Editor.Commands;
 using Fotografix.IO;
 using Fotografix.Uwp;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.ComponentModel;
 using System.Drawing;
 using System.Threading.Tasks;
 
@@ -12,11 +13,13 @@ namespace Fotografix.Tests.Uwp
     [TestClass]
     public class ImageEditorTest
     {
+        private const string Filename = "file.tst";
         private static readonly Size ImageSize = new Size(10, 10);
 
         private Image image;
         private Viewport viewport;
         private ImageEditor editor;
+        private PropertyChangedEventArgs lastPropertyChange;
 
         [TestInitialize]
         public void Initialize()
@@ -31,6 +34,7 @@ namespace Fotografix.Tests.Uwp
             {
                 ImageDecoder = new FakeImageCodec()
             };
+            editor.PropertyChanged += (s, e) => this.lastPropertyChange = e;
         }
 
         [TestCleanup]
@@ -91,6 +95,37 @@ namespace Fotografix.Tests.Uwp
         {
             image.Size = new Size(100, 100);
             Assert.AreEqual(viewport.ImageSize, image.Size);
+        }
+
+        [TestMethod]
+        public void DisplaysFilenameInTitle()
+        {
+            image.SetFile(new InMemoryFile(Filename));
+
+            AssertPropertyChanged(nameof(ImageEditor.Title));
+            Assert.AreEqual(Filename, editor.Title);
+        }
+
+        [TestMethod]
+        public void DisplaysDirtyIndicatorInTitle()
+        {
+            image.SetFile(new InMemoryFile(Filename));
+            image.SetDirty(true);
+
+            AssertPropertyChanged(nameof(ImageEditor.Title));
+            Assert.AreEqual("* " + Filename, editor.Title);
+        }
+
+        [TestMethod]
+        public void DisplaysDefaultTitleWhenNoFilenameIsPresent()
+        {
+            Assert.AreEqual("Untitled", editor.Title);
+        }
+
+        private void AssertPropertyChanged(string propertyName)
+        {
+            Assert.IsNotNull(lastPropertyChange, "Property change event");
+            Assert.AreEqual(propertyName, lastPropertyChange.PropertyName, "Property name");
         }
     }
 }

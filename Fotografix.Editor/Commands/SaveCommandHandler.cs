@@ -37,8 +37,9 @@ namespace Fotografix.Editor.Commands
                 return;
             }
 
-            await imageEncoder.WriteImageAsync(image, file, FindFileFormat(file)).ConfigureAwait(false);
+            await imageEncoder.WriteImageAsync(image, file, FindFileFormat(file));
             image.SetFile(file);
+            image.SetDirty(false);
         }
 
         private FileFormat FindFileFormat(IFile file)

@@ -24,11 +24,21 @@ namespace Fotografix.Editor.ChangeTracking
         }
 
         [Test]
+        public void TracksChangesToImage()
+        {
+            ProduceChange(image);
+
+            history.Verify(h => h.Add(It.IsAny<IChange>()));
+            Assert.IsTrue(image.IsDirty(), "Dirty");
+        }
+
+        [Test]
         public async Task GroupsChangesProducedByCommand()
         {
             await changeTrackingDispatcher.DispatchAsync(3);
 
             history.Verify(h => h.Add(It.IsAny<CompositeChange>()), Times.Once);
+            Assert.IsTrue(image.IsDirty(), "Dirty");
         }
 
         [Test]
@@ -37,6 +47,16 @@ namespace Fotografix.Editor.ChangeTracking
             await changeTrackingDispatcher.DispatchAsync(0);
             
             history.Verify(h => h.Add(It.IsAny<IChange>()), Times.Never);
+            Assert.IsFalse(image.IsDirty(), "Dirty");
+        }
+
+        [Test]
+        public void UndoingMarksImageDirty()
+        {
+            changeTrackingDispatcher.Undo();
+
+            history.Verify(h => h.Undo());
+            Assert.IsTrue(image.IsDirty(), "Dirty");
         }
 
         [Test]
@@ -46,8 +66,16 @@ namespace Fotografix.Editor.ChangeTracking
 
             changeTrackingDispatcher.Undo();
 
-            history.Verify(h => h.Undo());
             history.Verify(h => h.Add(It.IsAny<IChange>()), Times.Never);
+        }
+
+        [Test]
+        public void RedoingMarksImageDirty()
+        {
+            changeTrackingDispatcher.Redo();
+
+            history.Verify(h => h.Redo());
+            Assert.IsTrue(image.IsDirty(), "Dirty");
         }
 
         [Test]
@@ -57,7 +85,6 @@ namespace Fotografix.Editor.ChangeTracking
 
             changeTrackingDispatcher.Redo();
 
-            history.Verify(h => h.Redo());
             history.Verify(h => h.Add(It.IsAny<IChange>()), Times.Never);
         }
 

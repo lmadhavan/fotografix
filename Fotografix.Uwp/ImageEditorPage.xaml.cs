@@ -5,6 +5,7 @@ using Microsoft.Graphics.Canvas.UI;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
@@ -38,6 +39,9 @@ namespace Fotografix.Uwp
             canvas.RemoveFromVisualTree();
             editor?.Dispose();
         }
+
+        public string Title => editor?.Title ?? "Loading...";
+        public event EventHandler TitleChanged;
 
         private void BindNewAdjustmentMenuFlyout()
         {
@@ -83,10 +87,12 @@ namespace Fotografix.Uwp
         {
             this.editor = await createCommand.ExecuteAsync(viewport);
             editor.Invalidated += Editor_Invalidated;
+            editor.PropertyChanged += Editor_PropertyChanged;
+
             toolAdapter.Toolbox = editor;
 
             Bindings.Update();
-            FitToScreen();
+            TitleChanged?.Invoke(this, EventArgs.Empty);
         }
 
         private string FormatSize(Size size)
@@ -94,8 +100,12 @@ namespace Fotografix.Uwp
             return $"{size.Width}×{size.Height}";
         }
 
-        private void FitToScreen()
+        private void Editor_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
+            if (e.PropertyName == nameof(ImageEditor.Title))
+            {
+                TitleChanged?.Invoke(this, EventArgs.Empty);
+            }
         }
 
         private void Editor_Invalidated(object sender, EventArgs e)

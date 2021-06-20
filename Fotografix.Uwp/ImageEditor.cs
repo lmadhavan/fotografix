@@ -33,7 +33,7 @@ namespace Fotografix.Uwp
         public ImageEditor(Image image, IHistory history, ICommandDispatcher dispatcher)
         {
             this.image = image;
-            
+
             this.viewport = image.GetViewport();
             viewport.ImageSize = image.Size;
 
@@ -49,6 +49,7 @@ namespace Fotografix.Uwp
             this.ActiveLayer = image.Layers.First();
 
             image.PropertyChanged += OnImagePropertyChanged;
+            image.UserPropertyChanged += OnImagePropertyChanged;
             image.Layers.CollectionChanged += OnLayerCollectionChanged;
         }
 
@@ -72,6 +73,16 @@ namespace Fotografix.Uwp
         public void Redo()
         {
             history.Redo();
+        }
+
+        public string Title
+        {
+            get
+            {
+                string prefix = image.IsDirty() ? "* " : "";
+                string filename = image.GetFile()?.Name ?? "Untitled";
+                return prefix + filename;
+            }
         }
 
         public Size Size => image.Size;
@@ -206,6 +217,10 @@ namespace Fotografix.Uwp
             {
                 viewport.ImageSize = image.Size;
                 RaisePropertyChanged(nameof(Size));
+            }
+            else if (e.PropertyName == EditorProperties.File || e.PropertyName == EditorProperties.Dirty)
+            {
+                RaisePropertyChanged(nameof(Title));
             }
         }
 

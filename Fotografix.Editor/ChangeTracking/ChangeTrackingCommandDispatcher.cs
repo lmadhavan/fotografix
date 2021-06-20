@@ -10,19 +10,19 @@ namespace Fotografix.Editor.ChangeTracking
     {
         private readonly ICommandDispatcher dispatcher;
         private readonly IAppendableHistory history;
-        private readonly ImageElement trackedElement;
+        private readonly Image image;
 
         private List<IChange> changeGroup;
         private bool ignoreChanges;
 
-        public ChangeTrackingCommandDispatcher(ImageElement trackedElement, ICommandDispatcher dispatcher) : this(trackedElement, dispatcher, new History())
+        public ChangeTrackingCommandDispatcher(Image image, ICommandDispatcher dispatcher) : this(image, dispatcher, new History())
         {
         }
 
-        public ChangeTrackingCommandDispatcher(ImageElement trackedElement, ICommandDispatcher dispatcher, IAppendableHistory history)
+        public ChangeTrackingCommandDispatcher(Image image, ICommandDispatcher dispatcher, IAppendableHistory history)
         {
-            this.trackedElement = trackedElement;
-            trackedElement.ContentChanged += TrackedElement_ContentChanged;
+            this.image = image;
+            image.ContentChanged += Image_ContentChanged;
 
             this.dispatcher = dispatcher;
             this.history = history;
@@ -30,7 +30,7 @@ namespace Fotografix.Editor.ChangeTracking
 
         public void Dispose()
         {
-            trackedElement.ContentChanged -= TrackedElement_ContentChanged;
+            image.ContentChanged -= Image_ContentChanged;
         }
 
         public event PropertyChangedEventHandler PropertyChanged
@@ -54,6 +54,7 @@ namespace Fotografix.Editor.ChangeTracking
                 if (changeGroup.Count > 0)
                 {
                     history.Add(new CompositeChange(changeGroup));
+                    image.SetDirty(true);
                 }
 
                 this.changeGroup = null;
@@ -66,6 +67,7 @@ namespace Fotografix.Editor.ChangeTracking
             {
                 this.ignoreChanges = true;
                 history.Undo();
+                image.SetDirty(true);
             }
             finally
             {
@@ -79,6 +81,7 @@ namespace Fotografix.Editor.ChangeTracking
             {
                 this.ignoreChanges = true;
                 history.Redo();
+                image.SetDirty(true);
             }
             finally
             {
@@ -86,7 +89,7 @@ namespace Fotografix.Editor.ChangeTracking
             }
         }
 
-        private void TrackedElement_ContentChanged(object sender, ContentChangedEventArgs e)
+        private void Image_ContentChanged(object sender, ContentChangedEventArgs e)
         {
             if (e.Change != null && !ignoreChanges)
             {
@@ -97,6 +100,7 @@ namespace Fotografix.Editor.ChangeTracking
                 else
                 {
                     history.Add(e.Change);
+                    image.SetDirty(true);
                 }
             }
         }
