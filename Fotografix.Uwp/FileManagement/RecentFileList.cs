@@ -13,7 +13,13 @@ namespace Fotografix.Uwp.FileManagement
 {
     public sealed class RecentFileList : IReadOnlyList<RecentFile>, IList, INotifyCollectionChanged, INotifyPropertyChanged
     {
+        public static readonly RecentFileList Default = new RecentFileList();
+
         private readonly StorageItemMostRecentlyUsedList mruList;
+
+        public RecentFileList() : this(StorageApplicationPermissions.MostRecentlyUsedList)
+        {
+        }
 
         public RecentFileList(StorageItemMostRecentlyUsedList mruList)
         {

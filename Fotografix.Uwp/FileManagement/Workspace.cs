@@ -11,8 +11,6 @@ namespace Fotografix.Uwp.FileManagement
     {
         private readonly ImageEditorFactory imageEditorFactory = new ImageEditorFactory();
 
-        public RecentFileList RecentFiles { get; } = new RecentFileList(StorageApplicationPermissions.MostRecentlyUsedList);
-        
         public event EventHandler<OpenImageEditorRequestedEventArgs> OpenImageEditorRequested;
 
         public async Task NewImageAsync()
@@ -39,14 +37,14 @@ namespace Fotografix.Uwp.FileManagement
 
         public async Task OpenRecentFileAsync(RecentFile recentFile)
         {
-            StorageFile file = await RecentFiles.GetFileAsync(recentFile);
+            StorageFile file = await RecentFileList.Default.GetFileAsync(recentFile);
             OpenFile(file);
         }
 
         public void OpenFile(StorageFile file)
         {
             OpenImageEditor(new OpenFileCommand(new StorageFileAdapter(file), imageEditorFactory));
-            RecentFiles.Add(file);
+            RecentFileList.Default.Add(file);
         }
 
         private void OpenImageEditor(ICreateImageEditorCommand command)

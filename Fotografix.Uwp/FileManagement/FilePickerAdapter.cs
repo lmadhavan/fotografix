@@ -12,7 +12,14 @@ namespace Fotografix.Uwp.FileManagement
         {
             var picker = FilePickerFactory.CreateFileSavePicker(fileFormats);
             var storageFile = await picker.PickSaveFileAsync();
-            return storageFile == null ? null : new StorageFileAdapter(storageFile);
+
+            if (storageFile == null)
+            {
+                return null;
+            }
+
+            RecentFileList.Default.Add(storageFile);
+            return new StorageFileAdapter(storageFile);
         }
     }
 }

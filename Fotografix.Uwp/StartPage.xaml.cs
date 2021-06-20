@@ -14,7 +14,7 @@ namespace Fotografix.Uwp
             this.InitializeComponent();
         }
 
-        private RecentFileList RecentFiles => workspace.RecentFiles;
+        private RecentFileList RecentFiles => RecentFileList.Default;
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
