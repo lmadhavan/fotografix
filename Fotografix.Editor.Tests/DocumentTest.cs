@@ -1,26 +1,26 @@
-﻿using Fotografix.Editor.Commands;
+﻿using Fotografix.Editor.ChangeTracking;
 using Moq;
 using NUnit.Framework;
 using System.Drawing;
 using System.Threading.Tasks;
 
-namespace Fotografix.Editor.ChangeTracking
+namespace Fotografix.Editor
 {
     [TestFixture]
-    public class ChangeTrackingCommandDispatcherTest
+    public class DocumentTest
     {
-        private Image image;
-        private FakeCommandDispatcher baseDispatcher;
         private Mock<IAppendableHistory> history;
-        private ChangeTrackingCommandDispatcher changeTrackingDispatcher;
+
+        private Image image;
+        private Document document;
 
         [SetUp]
         public void SetUp()
         {
-            this.image = new Image(new Size(10, 10));
-            this.baseDispatcher = new FakeCommandDispatcher(image);
             this.history = new Mock<IAppendableHistory>();
-            this.changeTrackingDispatcher = new ChangeTrackingCommandDispatcher(image, baseDispatcher, history.Object);
+
+            this.image = new Image(new Size(10, 10));
+            this.document = new Document(image, history.Object);
         }
 
         [Test]
@@ -33,27 +33,35 @@ namespace Fotografix.Editor.ChangeTracking
         }
 
         [Test]
-        public async Task GroupsChangesProducedByCommand()
+        public void CanGroupChanges()
         {
-            await changeTrackingDispatcher.DispatchAsync(3);
+            using (document.BeginChangeGroup())
+            {
+                ProduceChange(image);
+                ProduceChange(image);
+
+                history.VerifyNoOtherCalls();
+            }
 
             history.Verify(h => h.Add(It.IsAny<CompositeChange>()), Times.Once);
             Assert.IsTrue(image.IsDirty(), "Dirty");
         }
 
         [Test]
-        public async Task DoesNotAddEmptyChangeGroupsToHistory()
+        public void DoesNotAddEmptyChangeGroupsToHistory()
         {
-            await changeTrackingDispatcher.DispatchAsync(0);
-            
-            history.Verify(h => h.Add(It.IsAny<IChange>()), Times.Never);
+            using (document.BeginChangeGroup())
+            {
+            }
+
+            history.VerifyNoOtherCalls();
             Assert.IsFalse(image.IsDirty(), "Dirty");
         }
 
         [Test]
-        public void UndoingMarksImageDirty()
+        public void IsDirtyOnUndo()
         {
-            changeTrackingDispatcher.Undo();
+            document.Undo();
 
             history.Verify(h => h.Undo());
             Assert.IsTrue(image.IsDirty(), "Dirty");
@@ -64,15 +72,15 @@ namespace Fotografix.Editor.ChangeTracking
         {
             history.Setup(h => h.Undo()).Callback(() => ProduceChange(image));
 
-            changeTrackingDispatcher.Undo();
+            document.Undo();
 
             history.Verify(h => h.Add(It.IsAny<IChange>()), Times.Never);
         }
 
         [Test]
-        public void RedoingMarksImageDirty()
+        public void IsDirtyOnRedo()
         {
-            changeTrackingDispatcher.Redo();
+            document.Redo();
 
             history.Verify(h => h.Redo());
             Assert.IsTrue(image.IsDirty(), "Dirty");
@@ -83,7 +91,7 @@ namespace Fotografix.Editor.ChangeTracking
         {
             history.Setup(h => h.Redo()).Callback(() => ProduceChange(image));
 
-            changeTrackingDispatcher.Redo();
+            document.Redo();
 
             history.Verify(h => h.Add(It.IsAny<IChange>()), Times.Never);
         }
@@ -93,26 +101,14 @@ namespace Fotografix.Editor.ChangeTracking
             image.Size *= 2;
         }
 
-        private sealed class FakeCommandDispatcher : ICommandDispatcher
+        private static Task ProduceChangesAsync(Image image, int count)
         {
-            private readonly Image image;
-
-            public FakeCommandDispatcher(Image image)
+            for (int i = 0; i < count; i++)
             {
-                this.image = image;
+                ProduceChange(image);
             }
 
-            public Task DispatchAsync<T>(T command)
-            {
-                int changes = (int)(object)command;
-
-                for (int i = 0; i < changes; i++)
-                {
-                    ProduceChange(image);
-                }
-
-                return Task.CompletedTask;
-            }
+            return Task.CompletedTask;
         }
     }
 }

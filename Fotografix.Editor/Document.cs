@@ -1,64 +1,47 @@
-﻿using Fotografix.Editor.Commands;
+﻿using Fotografix.Editor.ChangeTracking;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Threading.Tasks;
 
-namespace Fotografix.Editor.ChangeTracking
+namespace Fotografix.Editor
 {
-    public sealed class ChangeTrackingCommandDispatcher : ICommandDispatcher, IHistory, IDisposable
+    public sealed class Document : NotifyPropertyChangedBase, IDisposable, IHistory
     {
-        private readonly ICommandDispatcher dispatcher;
-        private readonly IAppendableHistory history;
         private readonly Image image;
+        private readonly IAppendableHistory history;
 
         private List<IChange> changeGroup;
         private bool ignoreChanges;
 
-        public ChangeTrackingCommandDispatcher(Image image, ICommandDispatcher dispatcher) : this(image, dispatcher, new History())
+        public Document(Image image) : this(image, new History())
         {
         }
 
-        public ChangeTrackingCommandDispatcher(Image image, ICommandDispatcher dispatcher, IAppendableHistory history)
+        public Document(Image image, IAppendableHistory history)
         {
             this.image = image;
             image.ContentChanged += Image_ContentChanged;
 
-            this.dispatcher = dispatcher;
             this.history = history;
+            history.PropertyChanged += History_PropertyChanged;
         }
 
         public void Dispose()
         {
+            history.PropertyChanged -= History_PropertyChanged;
             image.ContentChanged -= Image_ContentChanged;
         }
 
-        public event PropertyChangedEventHandler PropertyChanged
-        {
-            add => history.PropertyChanged += value;
-            remove => history.PropertyChanged -= value;
-        }
+        public Image Image => image;
 
         public bool CanUndo => history.CanUndo;
         public bool CanRedo => history.CanRedo;
 
-        public async Task DispatchAsync<T>(T command)
+        public IDisposable BeginChangeGroup()
         {
-            try
-            {
-                this.changeGroup = new List<IChange>();
-                await dispatcher.DispatchAsync(command);
-            }
-            finally
-            {
-                if (changeGroup.Count > 0)
-                {
-                    history.Add(new CompositeChange(changeGroup));
-                    image.SetDirty(true);
-                }
-
-                this.changeGroup = null;
-            }
+            this.changeGroup = new List<IChange>();
+            return new DisposableAction(CommitChangeGroup);
         }
 
         public void Undo()
@@ -89,6 +72,17 @@ namespace Fotografix.Editor.ChangeTracking
             }
         }
 
+        private void CommitChangeGroup()
+        {
+            if (changeGroup.Count > 0)
+            {
+                history.Add(new CompositeChange(changeGroup));
+                image.SetDirty(true);
+            }
+
+            this.changeGroup = null;
+        }
+
         private void Image_ContentChanged(object sender, ContentChangedEventArgs e)
         {
             if (e.Change != null && !ignoreChanges)
@@ -103,6 +97,11 @@ namespace Fotografix.Editor.ChangeTracking
                     image.SetDirty(true);
                 }
             }
+        }
+
+        private void History_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            RaisePropertyChanged(e.PropertyName);
         }
     }
 }

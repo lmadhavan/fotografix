@@ -1,5 +1,4 @@
 ﻿using Fotografix.Editor;
-using Fotografix.Editor.ChangeTracking;
 using Fotografix.Editor.Commands;
 using Fotografix.IO;
 using Fotografix.Uwp;
@@ -30,7 +29,7 @@ namespace Fotografix.Tests.Uwp
             this.viewport = new Viewport();
             image.SetViewport(viewport);
 
-            this.editor = new ImageEditor(image, new History(), new CommandHandlerCollection())
+            this.editor = new ImageEditor(new Document(image), new CommandHandlerCollection())
             {
                 ImageDecoder = new FakeImageCodec()
             };

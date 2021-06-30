@@ -1,5 +1,4 @@
 ﻿using Fotografix.Editor;
-using Fotografix.Editor.ChangeTracking;
 using Fotografix.Editor.Commands;
 using Fotografix.Uwp;
 using Fotografix.Uwp.FileManagement;
@@ -12,7 +11,7 @@ namespace Fotografix.Tests.Uwp
     {
         public Task<ImageEditor> ExecuteAsync(Viewport viewport)
         {
-            ImageEditor editor = new ImageEditor(new Image(Size.Empty), new History(), new CommandHandlerCollection());
+            ImageEditor editor = new ImageEditor(new Document(new Image(Size.Empty)), new CommandHandlerCollection());
             return Task.FromResult(editor);
         }
     }

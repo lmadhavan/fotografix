@@ -30,14 +30,14 @@ namespace Fotografix.Uwp
 
         private Layer activeLayer;
 
-        public ImageEditor(Image image, IHistory history, ICommandDispatcher dispatcher)
+        public ImageEditor(Document document, ICommandDispatcher dispatcher)
         {
-            this.image = image;
+            this.image = document.Image;
 
             this.viewport = image.GetViewport();
             viewport.ImageSize = image.Size;
 
-            this.history = history;
+            this.history = document;
             history.PropertyChanged += OnHistoryPropertyChanged;
 
             this.dispatcher = dispatcher;
