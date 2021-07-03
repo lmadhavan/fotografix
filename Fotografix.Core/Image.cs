@@ -12,6 +12,10 @@ namespace Fotografix
         private Size size;
         private Rectangle selection;
 
+        public Image() : this(Size.Empty)
+        {
+        }
+
         public Image(Size size)
         {
             this.size = size;

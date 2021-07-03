@@ -1,8 +1,8 @@
 ﻿using Fotografix.Editor.ChangeTracking;
+using Fotografix.IO;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Threading.Tasks;
 
 namespace Fotografix.Editor
 {
@@ -11,8 +11,15 @@ namespace Fotografix.Editor
         private readonly Image image;
         private readonly IAppendableHistory history;
 
+        private IFile file;
+        private bool dirty;
+
         private List<IChange> changeGroup;
         private bool ignoreChanges;
+
+        public Document() : this(new Image())
+        {
+        }
 
         public Document(Image image) : this(image, new History())
         {
@@ -38,6 +45,18 @@ namespace Fotografix.Editor
         public bool CanUndo => history.CanUndo;
         public bool CanRedo => history.CanRedo;
 
+        public IFile File
+        {
+            get => file;
+            set => SetProperty(ref file, value);
+        }
+
+        public bool IsDirty
+        {
+            get => dirty;
+            set => SetProperty(ref dirty, value);
+        }
+
         public IDisposable BeginChangeGroup()
         {
             this.changeGroup = new List<IChange>();
@@ -50,7 +69,7 @@ namespace Fotografix.Editor
             {
                 this.ignoreChanges = true;
                 history.Undo();
-                image.SetDirty(true);
+                this.IsDirty = true;
             }
             finally
             {
@@ -64,7 +83,7 @@ namespace Fotografix.Editor
             {
                 this.ignoreChanges = true;
                 history.Redo();
-                image.SetDirty(true);
+                this.IsDirty = true;
             }
             finally
             {
@@ -77,7 +96,7 @@ namespace Fotografix.Editor
             if (changeGroup.Count > 0)
             {
                 history.Add(new CompositeChange(changeGroup));
-                image.SetDirty(true);
+                this.IsDirty = true;
             }
 
             this.changeGroup = null;
@@ -94,7 +113,7 @@ namespace Fotografix.Editor
                 else
                 {
                     history.Add(e.Change);
-                    image.SetDirty(true);
+                    this.IsDirty = true;
                 }
             }
         }

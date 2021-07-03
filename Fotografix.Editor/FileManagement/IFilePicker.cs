@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Fotografix.Editor
+namespace Fotografix.Editor.FileManagement
 {
     public interface IFilePicker
     {

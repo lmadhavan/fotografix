@@ -2,31 +2,30 @@
 using Moq;
 using NUnit.Framework;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Threading.Tasks;
 
-namespace Fotografix.Editor.Commands
+namespace Fotografix.Editor.FileManagement
 {
     [TestFixture]
-    public class SaveCommandHandlerTest
+    public class SaveCommandTest
     {
         private Mock<IImageEncoder> imageEncoder;
         private Mock<IFilePicker> filePicker;
-        private SaveCommandHandler handler;
 
-        private Image image;
+        private Document document;
         private FileFormat fileFormat;
         private FileFormat[] supportedFormats;
+
+        private SaveCommand command;
 
         [SetUp]
         public void SetUp()
         {
             this.imageEncoder = new Mock<IImageEncoder>();
             this.filePicker = new Mock<IFilePicker>();
-            this.handler = new SaveCommandHandler(imageEncoder.Object, filePicker.Object);
 
-            this.image = new Image(new Size(10, 10));
-            image.SetDirty(true);
+            this.document = new Document { IsDirty = true };
+            this.command = new SaveCommand(imageEncoder.Object, filePicker.Object);
         }
 
         [Test]
@@ -35,9 +34,9 @@ namespace Fotografix.Editor.Commands
             SetupEncoderFormat(".tst");
 
             IFile file = new InMemoryFile("test.tst");
-            filePicker.Setup(p => p.PickSaveFileAsync(It.IsAny<IEnumerable<FileFormat>>())).Returns(Task.FromResult(file));
+            SetupFilePicker(file);
 
-            await handler.HandleAsync(new SaveCommand(image));
+            await command.ExecuteAsync(document);
 
             filePicker.Verify(p => p.PickSaveFileAsync(supportedFormats));
             AssertImageSaved(file);
@@ -49,9 +48,9 @@ namespace Fotografix.Editor.Commands
             SetupEncoderFormat(".tst");
 
             IFile file = new InMemoryFile("test.tst");
-            image.SetFile(file);
+            document.File = file;
 
-            await handler.HandleAsync(new SaveCommand(image));
+            await command.ExecuteAsync(document);
 
             filePicker.VerifyNoOtherCalls();
             AssertImageSaved(file);
@@ -63,12 +62,12 @@ namespace Fotografix.Editor.Commands
             SetupEncoderFormat(".tst");
 
             IFile existingFile = new InMemoryFile("file.xyz");
-            image.SetFile(existingFile);
+            document.File = existingFile;
 
             IFile newFile = new InMemoryFile("file.tst");
-            filePicker.Setup(p => p.PickSaveFileAsync(It.IsAny<IEnumerable<FileFormat>>())).Returns(Task.FromResult(newFile));
+            SetupFilePicker(newFile);
 
-            await handler.HandleAsync(new SaveCommand(image));
+            await command.ExecuteAsync(document);
 
             filePicker.Verify(p => p.PickSaveFileAsync(supportedFormats));
             AssertImageSaved(newFile);
@@ -78,12 +77,11 @@ namespace Fotografix.Editor.Commands
         public async Task SaveIsCancelledIfNoFileIsPicked()
         {
             SetupEncoderFormat(".tst");
+            SetupFilePicker(null);
 
-            filePicker.Setup(p => p.PickSaveFileAsync(It.IsAny<IEnumerable<FileFormat>>())).Returns(Task.FromResult<IFile>(null));
+            await command.ExecuteAsync(document);
 
-            await handler.HandleAsync(new SaveCommand(image));
-
-            Assert.That(image.GetFile(), Is.Null);
+            Assert.IsNull(document.File);
             AssertImageNotSaved();
         }
 
@@ -93,12 +91,13 @@ namespace Fotografix.Editor.Commands
             SetupEncoderFormat(".tst");
 
             IFile existingFile = new InMemoryFile("file1.tst");
-            image.SetFile(existingFile);
+            document.File = existingFile;
 
             IFile newFile = new InMemoryFile("file2.tst");
-            filePicker.Setup(p => p.PickSaveFileAsync(It.IsAny<IEnumerable<FileFormat>>())).Returns(Task.FromResult(newFile));
+            SetupFilePicker(newFile);
 
-            await handler.HandleAsync(new SaveAsCommand(image));
+            command.Mode = SaveCommandMode.SaveAs;
+            await command.ExecuteAsync(document);
 
             filePicker.Verify(p => p.PickSaveFileAsync(supportedFormats));
             AssertImageSaved(newFile);
@@ -110,13 +109,14 @@ namespace Fotografix.Editor.Commands
             SetupEncoderFormat(".tst");
 
             IFile existingFile = new InMemoryFile("file.tst");
-            image.SetFile(existingFile);
+            document.File = existingFile;
 
-            filePicker.Setup(p => p.PickSaveFileAsync(It.IsAny<IEnumerable<FileFormat>>())).Returns(Task.FromResult<IFile>(null));
+            SetupFilePicker(null);
 
-            await handler.HandleAsync(new SaveAsCommand(image));
+            command.Mode = SaveCommandMode.SaveAs;
+            await command.ExecuteAsync(document);
 
-            Assert.That(image.GetFile(), Is.EqualTo(existingFile));
+            Assert.That(document.File, Is.EqualTo(existingFile));
             AssertImageNotSaved();
         }
 
@@ -127,16 +127,21 @@ namespace Fotografix.Editor.Commands
             imageEncoder.SetupGet(e => e.SupportedFileFormats).Returns(supportedFormats);
         }
 
+        private void SetupFilePicker(IFile file)
+        {
+            filePicker.Setup(p => p.PickSaveFileAsync(It.IsAny<IEnumerable<FileFormat>>())).Returns(Task.FromResult(file));
+        }
+
         private void AssertImageSaved(IFile file)
         {
-            Assert.That(image.GetFile(), Is.EqualTo(file));
-            Assert.IsFalse(image.IsDirty(), "Dirty");
-            imageEncoder.Verify(e => e.WriteImageAsync(image, file, fileFormat));
+            Assert.That(document.File, Is.EqualTo(file));
+            Assert.IsFalse(document.IsDirty, "Dirty");
+            imageEncoder.Verify(e => e.WriteImageAsync(document.Image, file, fileFormat));
         }
 
         private void AssertImageNotSaved()
         {
-            Assert.IsTrue(image.IsDirty(), "Dirty");
+            Assert.IsTrue(document.IsDirty, "Dirty");
             imageEncoder.Verify(e => e.WriteImageAsync(It.IsAny<Image>(), It.IsAny<IFile>(), It.IsAny<FileFormat>()), Times.Never);
         }
     }

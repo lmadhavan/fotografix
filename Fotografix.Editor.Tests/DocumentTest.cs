@@ -2,7 +2,6 @@
 using Moq;
 using NUnit.Framework;
 using System.Drawing;
-using System.Threading.Tasks;
 
 namespace Fotografix.Editor
 {
@@ -29,7 +28,7 @@ namespace Fotografix.Editor
             ProduceChange(image);
 
             history.Verify(h => h.Add(It.IsAny<IChange>()));
-            Assert.IsTrue(image.IsDirty(), "Dirty");
+            Assert.IsTrue(document.IsDirty, "Dirty");
         }
 
         [Test]
@@ -44,7 +43,7 @@ namespace Fotografix.Editor
             }
 
             history.Verify(h => h.Add(It.IsAny<CompositeChange>()), Times.Once);
-            Assert.IsTrue(image.IsDirty(), "Dirty");
+            Assert.IsTrue(document.IsDirty, "Dirty");
         }
 
         [Test]
@@ -55,7 +54,7 @@ namespace Fotografix.Editor
             }
 
             history.VerifyNoOtherCalls();
-            Assert.IsFalse(image.IsDirty(), "Dirty");
+            Assert.IsFalse(document.IsDirty, "Dirty");
         }
 
         [Test]
@@ -64,7 +63,7 @@ namespace Fotografix.Editor
             document.Undo();
 
             history.Verify(h => h.Undo());
-            Assert.IsTrue(image.IsDirty(), "Dirty");
+            Assert.IsTrue(document.IsDirty, "Dirty");
         }
 
         [Test]
@@ -83,7 +82,7 @@ namespace Fotografix.Editor
             document.Redo();
 
             history.Verify(h => h.Redo());
-            Assert.IsTrue(image.IsDirty(), "Dirty");
+            Assert.IsTrue(document.IsDirty, "Dirty");
         }
 
         [Test]
@@ -99,16 +98,6 @@ namespace Fotografix.Editor
         private static void ProduceChange(Image image)
         {
             image.Size *= 2;
-        }
-
-        private static Task ProduceChangesAsync(Image image, int count)
-        {
-            for (int i = 0; i < count; i++)
-            {
-                ProduceChange(image);
-            }
-
-            return Task.CompletedTask;
         }
     }
 }

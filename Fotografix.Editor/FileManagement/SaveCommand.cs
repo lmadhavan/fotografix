@@ -2,31 +2,35 @@
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Fotografix.Editor.Commands
+namespace Fotografix.Editor.FileManagement
 {
-    public sealed class SaveCommandHandler : ICommandHandler<SaveCommand>, ICommandHandler<SaveAsCommand>
+    public sealed class SaveCommand : IDocumentCommand
     {
         private readonly IImageEncoder imageEncoder;
         private readonly IFilePicker filePicker;
 
-        public SaveCommandHandler(IImageEncoder imageEncoder, IFilePicker filePicker)
+        public SaveCommand(IImageEncoder imageEncoder, IFilePicker filePicker)
         {
             this.imageEncoder = imageEncoder;
             this.filePicker = filePicker;
         }
 
-        public Task HandleAsync(SaveCommand command)
+        public SaveCommandMode Mode { get; set; } = SaveCommandMode.Save;
+
+        public bool CanExecute(Document document)
         {
-            return HandleAsync(command.Image, command.Image.GetFile());
+            return true;
         }
 
-        public Task HandleAsync(SaveAsCommand command)
+        public async Task ExecuteAsync(Document document)
         {
-            return HandleAsync(command.Image, null);
-        }
+            IFile file = null;
 
-        private async Task HandleAsync(Image image, IFile file)
-        {
+            if (Mode == SaveCommandMode.Save)
+            {
+                file = document.File;
+            }
+
             if (file == null || FindFileFormat(file) == null)
             {
                 file = await filePicker.PickSaveFileAsync(imageEncoder.SupportedFileFormats);
@@ -37,14 +41,20 @@ namespace Fotografix.Editor.Commands
                 return;
             }
 
-            await imageEncoder.WriteImageAsync(image, file, FindFileFormat(file));
-            image.SetFile(file);
-            image.SetDirty(false);
+            await imageEncoder.WriteImageAsync(document.Image, file, FindFileFormat(file));
+            document.File = file;
+            document.IsDirty = false;
         }
 
         private FileFormat FindFileFormat(IFile file)
         {
             return imageEncoder.SupportedFileFormats.FirstOrDefault(f => f.Matches(file));
         }
+    }
+
+    public enum SaveCommandMode
+    {
+        Save,
+        SaveAs
     }
 }

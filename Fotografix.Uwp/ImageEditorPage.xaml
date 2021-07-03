@@ -53,13 +53,13 @@
 
                     <muxc:DropDownButton.Flyout>
                         <MenuFlyout>
-                            <MenuFlyoutItem Text="Save" Click="{x:Bind editor.Save}">
+                            <MenuFlyoutItem Text="Save" Command="{x:Bind editor.SaveCommand}">
                                 <MenuFlyoutItem.KeyboardAccelerators>
                                     <KeyboardAccelerator Modifiers="Control" Key="S" />
                                 </MenuFlyoutItem.KeyboardAccelerators>
                             </MenuFlyoutItem>
 
-                            <MenuFlyoutItem Text="Save as..." Click="{x:Bind editor.SaveAs}">
+                            <MenuFlyoutItem Text="Save as..." Command="{x:Bind editor.SaveAsCommand}">
                                 <MenuFlyoutItem.KeyboardAccelerators>
                                     <KeyboardAccelerator Modifiers="Control,Shift" Key="S" />
                                 </MenuFlyoutItem.KeyboardAccelerators>

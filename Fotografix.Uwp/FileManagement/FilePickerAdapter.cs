@@ -1,4 +1,4 @@
-﻿using Fotografix.Editor;
+﻿using Fotografix.Editor.FileManagement;
 using Fotografix.IO;
 using System;
 using System.Collections.Generic;

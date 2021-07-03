@@ -1,5 +1,4 @@
 ﻿using Fotografix.Editor;
-using Fotografix.Editor.ChangeTracking;
 using Fotografix.Editor.Collections;
 using Fotografix.Editor.Commands;
 using Fotografix.Editor.Tools;
@@ -14,6 +13,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace Fotografix.Uwp
 {
@@ -21,9 +21,9 @@ namespace Fotografix.Uwp
     {
         private static readonly Win2DCompositorSettings CompositorSettings = new Win2DCompositorSettings { TransparencyGridSize = 8, InteractiveMode = true };
 
+        private readonly Document document;
         private readonly Image image;
         private readonly Viewport viewport;
-        private readonly IHistory history;
         private readonly ICommandDispatcher dispatcher;
         private readonly Win2DCompositor compositor;
         private readonly ReversedCollectionView<Layer> layers;
@@ -32,13 +32,13 @@ namespace Fotografix.Uwp
 
         public ImageEditor(Document document, ICommandDispatcher dispatcher)
         {
+            this.document = document;
+            document.PropertyChanged += Document_PropertyChanged;
+
             this.image = document.Image;
 
             this.viewport = image.GetViewport();
             viewport.ImageSize = image.Size;
-
-            this.history = document;
-            history.PropertyChanged += OnHistoryPropertyChanged;
 
             this.dispatcher = dispatcher;
             this.compositor = new Win2DCompositor(image, viewport, CompositorSettings);
@@ -48,8 +48,7 @@ namespace Fotografix.Uwp
             this.Tools = new List<ITool>();
             this.ActiveLayer = image.Layers.First();
 
-            image.PropertyChanged += OnImagePropertyChanged;
-            image.UserPropertyChanged += OnImagePropertyChanged;
+            image.PropertyChanged += Image_PropertyChanged;
             image.Layers.CollectionChanged += OnLayerCollectionChanged;
         }
 
@@ -62,25 +61,28 @@ namespace Fotografix.Uwp
         public IImageDecoder ImageDecoder { get; set; } = NullImageCodec.Instance;
         public IEnumerable<FileFormat> SupportedImportFormats => ImageDecoder.SupportedFileFormats;
 
-        public bool CanUndo => history.CanUndo;
-        public bool CanRedo => history.CanRedo;
+        public ICommand SaveCommand { get; set; }
+        public ICommand SaveAsCommand { get; set; }
+
+        public bool CanUndo => document.CanUndo;
+        public bool CanRedo => document.CanRedo;
 
         public void Undo()
         {
-            history.Undo();
+            document.Undo();
         }
 
         public void Redo()
         {
-            history.Redo();
+            document.Redo();
         }
 
         public string Title
         {
             get
             {
-                string prefix = image.IsDirty() ? "* " : "";
-                string filename = image.GetFile()?.Name ?? "Untitled";
+                string prefix = document.IsDirty ? "* " : "";
+                string filename = document.File?.Name ?? "Untitled";
                 return prefix + filename;
             }
         }
@@ -160,16 +162,6 @@ namespace Fotografix.Uwp
             return dispatcher.DispatchAsync(new ResampleImageCommand(image, resizeImageParameters.Size));
         }
 
-        public async void Save()
-        {
-            await dispatcher.DispatchAsync(new SaveCommand(image));
-        }
-
-        public async void SaveAs()
-        {
-            await dispatcher.DispatchAsync(new SaveAsCommand(image));
-        }
-
         public Bitmap ToBitmap()
         {
             return compositor.ToBitmap();
@@ -211,16 +203,28 @@ namespace Fotografix.Uwp
 
         #endregion
 
-        private void OnImagePropertyChanged(object sender, PropertyChangedEventArgs e)
+        private void Document_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            switch (e.PropertyName)
+            {
+                case nameof(Document.CanUndo):
+                case nameof(Document.CanRedo):
+                    RaisePropertyChanged(e.PropertyName);
+                    break;
+
+                case nameof(Document.File):
+                case nameof(Document.IsDirty):
+                    RaisePropertyChanged(nameof(Title));
+                    break;
+            }
+        }
+
+        private void Image_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == nameof(Image.Size))
             {
                 viewport.ImageSize = image.Size;
                 RaisePropertyChanged(nameof(Size));
-            }
-            else if (e.PropertyName == EditorProperties.File || e.PropertyName == EditorProperties.Dirty)
-            {
-                RaisePropertyChanged(nameof(Title));
             }
         }
 
@@ -253,11 +257,6 @@ namespace Fotografix.Uwp
         public static Layer CreateLayer(int id)
         {
             return new Layer { Name = "Layer " + id };
-        }
-
-        private void OnHistoryPropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            RaisePropertyChanged(e.PropertyName);
         }
     }
 }

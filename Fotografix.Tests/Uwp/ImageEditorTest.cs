@@ -17,6 +17,7 @@ namespace Fotografix.Tests.Uwp
 
         private Image image;
         private Viewport viewport;
+        private Document document;
         private ImageEditor editor;
         private PropertyChangedEventArgs lastPropertyChange;
 
@@ -29,7 +30,9 @@ namespace Fotografix.Tests.Uwp
             this.viewport = new Viewport();
             image.SetViewport(viewport);
 
-            this.editor = new ImageEditor(new Document(image), new CommandHandlerCollection())
+            this.document = new Document(image);
+
+            this.editor = new ImageEditor(document, new CommandHandlerCollection())
             {
                 ImageDecoder = new FakeImageCodec()
             };
@@ -99,7 +102,7 @@ namespace Fotografix.Tests.Uwp
         [TestMethod]
         public void DisplaysFilenameInTitle()
         {
-            image.SetFile(new InMemoryFile(Filename));
+            document.File = new InMemoryFile(Filename);
 
             AssertPropertyChanged(nameof(ImageEditor.Title));
             Assert.AreEqual(Filename, editor.Title);
@@ -108,8 +111,8 @@ namespace Fotografix.Tests.Uwp
         [TestMethod]
         public void DisplaysDirtyIndicatorInTitle()
         {
-            image.SetFile(new InMemoryFile(Filename));
-            image.SetDirty(true);
+            document.File = new InMemoryFile(Filename);
+            document.IsDirty = true;
 
             AssertPropertyChanged(nameof(ImageEditor.Title));
             Assert.AreEqual("* " + Filename, editor.Title);

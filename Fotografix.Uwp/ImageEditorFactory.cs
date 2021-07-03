@@ -1,5 +1,6 @@
 ﻿using Fotografix.Editor;
 using Fotografix.Editor.Commands;
+using Fotografix.Editor.FileManagement;
 using Fotografix.Editor.Tools;
 using Fotografix.IO;
 using Fotografix.Uwp.Codecs;
@@ -15,6 +16,7 @@ namespace Fotografix.Uwp
     {
         private readonly IImageDecoder imageDecoder = new WindowsImageDecoder();
         private readonly IImageEncoder imageEncoder = new WindowsImageEncoder(new Win2DImageRenderer());
+        private readonly IFilePicker filePicker = new FilePickerAdapter();
         private readonly CommandHandlerCollection handlerCollection = new CommandHandlerCollection();
 
         public ImageEditorFactory()
@@ -23,10 +25,6 @@ namespace Fotografix.Uwp
             handlerCollection.Register(new ResampleImageCommandHandler(graphicsDevice));
             handlerCollection.Register(new DrawCommandHandler(graphicsDevice));
             handlerCollection.Register(new CropCommandHandler());
-
-            SaveCommandHandler saveHandler = new SaveCommandHandler(imageEncoder, new FilePickerAdapter());
-            handlerCollection.Register<SaveCommand>(saveHandler);
-            handlerCollection.Register<SaveAsCommand>(saveHandler);
         }
 
         public IEnumerable<FileFormat> SupportedOpenFormats => imageDecoder.SupportedFileFormats;
@@ -37,27 +35,34 @@ namespace Fotografix.Uwp
             Image image = new Image(size);
             image.Layers.Add(layer);
 
-            return CreateEditor(viewport, image);
+            return CreateEditor(viewport, new Document(image));
         }
 
         public async Task<ImageEditor> OpenImageAsync(Viewport viewport, IFile file)
         {
             Image image = await imageDecoder.ReadImageAsync(file);
-            image.SetFile(file);
-            return CreateEditor(viewport, image);
+            return CreateEditor(viewport, new Document(image) { File = file });
         }
 
-        private ImageEditor CreateEditor(Viewport viewport, Image image)
+        private ImageEditor CreateEditor(Viewport viewport, Document document)
         {
-            Document document = new Document(image);
             DocumentCommandDispatcher dispatcher = new DocumentCommandDispatcher(document, handlerCollection);
-            image.SetCommandDispatcher(dispatcher);
-            image.SetViewport(viewport);
+            document.Image.SetCommandDispatcher(dispatcher);
+            document.Image.SetViewport(viewport);
 
             var editor = new ImageEditor(document, dispatcher)
             {
                 ImageDecoder = imageDecoder,
-                Tools = CreateTools()
+                Tools = CreateTools(),
+
+                SaveCommand = new DocumentCommandAdapter(
+                    new SaveCommand(imageEncoder, filePicker) { Mode = SaveCommandMode.Save },
+                    document
+                ),
+                SaveAsCommand = new DocumentCommandAdapter(
+                    new SaveCommand(imageEncoder, filePicker) { Mode = SaveCommandMode.SaveAs },
+                    document
+                )
             };
 
             return editor;
