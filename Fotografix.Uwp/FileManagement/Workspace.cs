@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Windows.Storage;
-using Windows.Storage.AccessCache;
 using Windows.Storage.Pickers;
 using Windows.UI.Xaml.Controls;
 
@@ -9,7 +8,7 @@ namespace Fotografix.Uwp.FileManagement
 {
     public sealed class Workspace
     {
-        private readonly ImageEditorFactory imageEditorFactory = new ImageEditorFactory();
+        private readonly ImageEditorFactory imageEditorFactory = new ImageEditorFactory(ClipboardAdapter.GetForCurrentThread());
 
         public event EventHandler<OpenImageEditorRequestedEventArgs> OpenImageEditorRequested;
 

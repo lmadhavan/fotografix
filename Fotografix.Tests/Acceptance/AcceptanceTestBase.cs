@@ -1,4 +1,5 @@
 ﻿using Fotografix.Editor;
+using Fotografix.Editor.Clipboard;
 using Fotografix.IO;
 using Fotografix.Uwp;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -11,11 +12,18 @@ namespace Fotografix.Tests.Acceptance
 {
     public abstract class AcceptanceTestBase
     {
-        private static readonly ImageEditorFactory ImageEditorFactory = new ImageEditorFactory();
+        private readonly ImageEditorFactory imageEditorFactory;
 
         private bool invalidated;
         private Viewport viewport;
 
+        protected AcceptanceTestBase()
+        {
+            this.Clipboard = new FakeClipboard();
+            this.imageEditorFactory = new ImageEditorFactory(Clipboard);
+        }
+
+        protected FakeClipboard Clipboard { get; }
         protected ImageEditor Editor { get; private set; }
 
         protected async Task OpenImageAsync(string filename)
@@ -23,7 +31,7 @@ namespace Fotografix.Tests.Acceptance
             Editor?.Dispose();
 
             this.viewport = new Viewport();
-            this.Editor = await ImageEditorFactory.OpenImageAsync(viewport, await GetFileAsync(filename));
+            this.Editor = await imageEditorFactory.OpenImageAsync(viewport, await GetFileAsync(filename));
             Editor.Invalidated += Editor_Invalidated;
             Editor.PropertyChanged += Editor_PropertyChanged;
 

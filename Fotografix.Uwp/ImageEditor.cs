@@ -61,8 +61,9 @@ namespace Fotografix.Uwp
         public IImageDecoder ImageDecoder { get; set; } = NullImageCodec.Instance;
         public IEnumerable<FileFormat> SupportedImportFormats => ImageDecoder.SupportedFileFormats;
 
-        public ICommand SaveCommand { get; set; }
-        public ICommand SaveAsCommand { get; set; }
+        public AsyncCommand SaveCommand { get; set; }
+        public AsyncCommand SaveAsCommand { get; set; }
+        public AsyncCommand PasteCommand { get; set; }
 
         public bool CanUndo => document.CanUndo;
         public bool CanRedo => document.CanRedo;

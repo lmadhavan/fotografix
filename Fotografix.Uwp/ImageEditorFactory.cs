@@ -1,4 +1,5 @@
 ﻿using Fotografix.Editor;
+using Fotografix.Editor.Clipboard;
 using Fotografix.Editor.Commands;
 using Fotografix.Editor.FileManagement;
 using Fotografix.Editor.Tools;
@@ -18,13 +19,16 @@ namespace Fotografix.Uwp
         private readonly IImageEncoder imageEncoder = new WindowsImageEncoder(new Win2DImageRenderer());
         private readonly IFilePicker filePicker = new FilePickerAdapter();
         private readonly CommandHandlerCollection handlerCollection = new CommandHandlerCollection();
+        private readonly IClipboard clipboard;
 
-        public ImageEditorFactory()
+        public ImageEditorFactory(IClipboard clipboard)
         {
             var graphicsDevice = new Win2DGraphicsDevice();
             handlerCollection.Register(new ResampleImageCommandHandler(graphicsDevice));
             handlerCollection.Register(new DrawCommandHandler(graphicsDevice));
             handlerCollection.Register(new CropCommandHandler());
+
+            this.clipboard = clipboard;
         }
 
         public IEnumerable<FileFormat> SupportedOpenFormats => imageDecoder.SupportedFileFormats;
@@ -61,6 +65,10 @@ namespace Fotografix.Uwp
                 ),
                 SaveAsCommand = new DocumentCommandAdapter(
                     new SaveCommand(imageEncoder, filePicker) { Mode = SaveCommandMode.SaveAs },
+                    document
+                ),
+                PasteCommand = new DocumentCommandAdapter(
+                    new PasteCommand(clipboard),
                     document
                 )
             };

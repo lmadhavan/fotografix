@@ -69,6 +69,16 @@
                 </muxc:DropDownButton>
 
                 <Button Style="{StaticResource CommandButtonStyle}"
+                        Command="{x:Bind editor.PasteCommand}"
+                        ToolTipService.ToolTip="Paste">
+                    <Button.KeyboardAccelerators>
+                        <KeyboardAccelerator Modifiers="Control" Key="V" />
+                    </Button.KeyboardAccelerators>
+
+                    <SymbolIcon Symbol="Paste" />
+                </Button>
+
+                <Button Style="{StaticResource CommandButtonStyle}"
                         Click="{x:Bind editor.Undo}"
                         IsEnabled="{x:Bind editor.CanUndo, Mode=OneWay}"
                         ToolTipService.ToolTip="Undo">

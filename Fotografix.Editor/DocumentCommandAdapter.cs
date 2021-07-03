@@ -1,9 +1,9 @@
 ﻿using System;
-using System.Windows.Input;
+using System.Threading.Tasks;
 
 namespace Fotografix.Editor
 {
-    public sealed class DocumentCommandAdapter : ICommand
+    public sealed class DocumentCommandAdapter : AsyncCommand
     {
         private readonly IDocumentCommand documentCommand;
         private readonly Document document;
@@ -14,16 +14,20 @@ namespace Fotografix.Editor
             this.document = document;
         }
 
-        public event EventHandler CanExecuteChanged;
+        public override event EventHandler CanExecuteChanged
+        {
+            add { if (documentCommand is IObservableDocumentCommand o) o.CanExecuteChanged += value; }
+            remove { if (documentCommand is IObservableDocumentCommand o) o.CanExecuteChanged -= value; }
+        }
 
-        public bool CanExecute(object parameter)
+        public override bool CanExecute()
         {
             return documentCommand.CanExecute(document);
         }
 
-        public async void Execute(object parameter)
+        public override Task ExecuteAsync()
         {
-            await documentCommand.ExecuteAsync(document);
+            return documentCommand.ExecuteAsync(document);
         }
     }
 }
