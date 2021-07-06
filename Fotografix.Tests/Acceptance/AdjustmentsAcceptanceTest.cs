@@ -1,5 +1,5 @@
 ﻿using Fotografix.Adjustments;
-using Fotografix.Uwp.Adjustments;
+using Fotografix.Editor.Layers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Drawing;
@@ -15,7 +15,7 @@ namespace Fotografix.Tests.Acceptance
         {
             await OpenImageAsync("flowers.jpg");
 
-            AddAdjustmentLayer<BlackAndWhiteAdjustment>();
+            await AddAdjustmentLayerAsync<BlackAndWhiteAdjustment>();
 
             await AssertImageAsync("flowers_bw.png");
         }
@@ -25,7 +25,7 @@ namespace Fotografix.Tests.Acceptance
         {
             await OpenImageAsync("flowers.jpg");
 
-            AddAdjustmentLayer<BrightnessContrastAdjustment>();
+            await AddAdjustmentLayerAsync<BrightnessContrastAdjustment>();
             SetAdjustmentProperties<BrightnessContrastAdjustment>(p =>
             {
                 p.Brightness = 0.5f;
@@ -40,7 +40,7 @@ namespace Fotografix.Tests.Acceptance
         {
             await OpenImageAsync("flowers.jpg");
 
-            AddAdjustmentLayer<GradientMapAdjustment>();
+            await AddAdjustmentLayerAsync<GradientMapAdjustment>();
             SetAdjustmentProperties<GradientMapAdjustment>(p =>
             {
                 p.Shadows = Color.FromArgb(255, 12, 16, 68);
@@ -55,7 +55,7 @@ namespace Fotografix.Tests.Acceptance
         {
             await OpenImageAsync("flowers.jpg");
 
-            AddAdjustmentLayer<HueSaturationAdjustment>();
+            await AddAdjustmentLayerAsync<HueSaturationAdjustment>();
             SetAdjustmentProperties<HueSaturationAdjustment>(p =>
             {
                 p.Hue = 0.5f;
@@ -71,7 +71,7 @@ namespace Fotografix.Tests.Acceptance
         {
             await OpenImageAsync("flowers.jpg");
 
-            AddAdjustmentLayer<LevelsAdjustment>();
+            await AddAdjustmentLayerAsync<LevelsAdjustment>();
             SetAdjustmentProperties<LevelsAdjustment>(p =>
             {
                 p.InputBlackPoint = 0.2f;
@@ -84,9 +84,9 @@ namespace Fotografix.Tests.Acceptance
             await AssertImageAsync("flowers_levels.png");
         }
 
-        private void AddAdjustmentLayer<T>() where T : Adjustment, new()
+        private Task AddAdjustmentLayerAsync<T>() where T : Adjustment, new()
         {
-            Editor.AddAdjustmentLayer(new AdjustmentLayerFactory<T>(""));
+            return Editor.ExecuteAsync(new NewAdjustmentLayerCommand<T>(""));
         }
 
         private void SetAdjustmentProperties<T>(Action<T> action) where T : Adjustment

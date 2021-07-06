@@ -3,7 +3,7 @@ using Fotografix.Editor.Collections;
 using Fotografix.Editor.Commands;
 using Fotografix.Editor.Tools;
 using Fotografix.IO;
-using Fotografix.Uwp.Adjustments;
+using Fotografix.Uwp.FileManagement;
 using Fotografix.Win2D;
 using Microsoft.Graphics.Canvas;
 using System;
@@ -13,7 +13,6 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Windows.Input;
 
 namespace Fotografix.Uwp
 {
@@ -58,12 +57,14 @@ namespace Fotografix.Uwp
             compositor.Dispose();
         }
 
-        public IImageDecoder ImageDecoder { get; set; } = NullImageCodec.Instance;
-        public IEnumerable<FileFormat> SupportedImportFormats => ImageDecoder.SupportedFileFormats;
+        public FilePickerOverride FilePickerOverride { get; set; }
 
         public AsyncCommand SaveCommand { get; set; }
         public AsyncCommand SaveAsCommand { get; set; }
         public AsyncCommand PasteCommand { get; set; }
+        public AsyncCommand NewLayerCommand { get; set; }
+        public AsyncCommand DeleteLayerCommand { get; set; }
+        public AsyncCommand ImportLayerCommand { get; set; }
 
         public bool CanUndo => document.CanUndo;
         public bool CanRedo => document.CanRedo;
@@ -105,7 +106,6 @@ namespace Fotografix.Uwp
             {
                 if (value != null && SetProperty(ref activeLayer, value))
                 {
-                    RaisePropertyChanged(nameof(CanDeleteActiveLayer));
                     image.SetActiveLayer(activeLayer);
                 }
             }
@@ -122,34 +122,16 @@ namespace Fotografix.Uwp
             compositor.Draw(ds);
         }
 
-        public void AddLayer()
+        public Task ExecuteAsync(IDocumentCommand command)
         {
-            Layer layer = CreateLayer(id: image.Layers.Count + 1);
-            image.Layers.Add(layer);
-        }
-
-        public void AddAdjustmentLayer(IAdjustmentLayerFactory adjustmentLayerFactory)
-        {
-            Layer layer = adjustmentLayerFactory.CreateAdjustmentLayer();
-            image.Layers.Add(layer);
-        }
-
-        public bool CanDeleteActiveLayer => activeLayer != image.Layers[0];
-
-        public void DeleteActiveLayer()
-        {
-            image.Layers.Remove(activeLayer);
+            return command.ExecuteAsync(document);
         }
 
         public async Task ImportLayersAsync(IEnumerable<IFile> files)
         {
-            foreach (var file in files)
+            using (FilePickerOverride.OverrideOpenFiles(files))
             {
-                Image importedImage = await ImageDecoder.ReadImageAsync(file);
-                foreach (Layer layer in importedImage.DetachLayers())
-                {
-                    image.Layers.Add(layer);
-                }
+                await ImportLayerCommand.ExecuteAsync();
             }
         }
 

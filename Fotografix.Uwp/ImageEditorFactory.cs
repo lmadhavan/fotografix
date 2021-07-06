@@ -2,6 +2,7 @@
 using Fotografix.Editor.Clipboard;
 using Fotografix.Editor.Commands;
 using Fotografix.Editor.FileManagement;
+using Fotografix.Editor.Layers;
 using Fotografix.Editor.Tools;
 using Fotografix.IO;
 using Fotografix.Uwp.Codecs;
@@ -54,9 +55,11 @@ namespace Fotografix.Uwp
             document.Image.SetCommandDispatcher(dispatcher);
             document.Image.SetViewport(viewport);
 
+            FilePickerOverride filePickerOverride = new FilePickerOverride(filePicker);
+
             var editor = new ImageEditor(document, dispatcher)
             {
-                ImageDecoder = imageDecoder,
+                FilePickerOverride = filePickerOverride,
                 Tools = CreateTools(),
 
                 SaveCommand = new DocumentCommandAdapter(
@@ -69,6 +72,19 @@ namespace Fotografix.Uwp
                 ),
                 PasteCommand = new DocumentCommandAdapter(
                     new PasteCommand(clipboard),
+                    document
+                ),
+
+                NewLayerCommand = new DocumentCommandAdapter(
+                    new NewLayerCommand(),
+                    document
+                ),
+                DeleteLayerCommand = new DocumentCommandAdapter(
+                    new DeleteLayerCommand(),
+                    document
+                ),
+                ImportLayerCommand = new DocumentCommandAdapter(
+                    new ImportLayerCommand(imageDecoder, filePickerOverride),
                     document
                 )
             };

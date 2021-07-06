@@ -135,6 +135,7 @@
     </Compile>
     <Compile Include="FileManagement\FilePickerAdapter.cs" />
     <Compile Include="FileManagement\FilePickerFactory.cs" />
+    <Compile Include="FileManagement\FilePickerOverride.cs" />
     <Compile Include="FileManagement\ICreateImageEditorCommand.cs" />
     <Compile Include="FileManagement\NewImageParameters.cs" />
     <Compile Include="FileManagement\OpenImageEditorRequestedEventArgs.cs" />
@@ -167,13 +168,11 @@
       <DependentUpon>LayerTemplatesResourceDictionary.xaml</DependentUpon>
     </Compile>
     <Compile Include="Layers\OpacitySliderToolTipValueConverter.cs" />
-    <Compile Include="Adjustments\AdjustmentLayerFactory.cs" />
     <Compile Include="Adjustments\AdjustmentSliderToolTipValueConverter.cs" />
     <Compile Include="Adjustments\AdjustmentTemplatesResourceDictionary.xaml.cs">
       <DependentUpon>AdjustmentTemplatesResourceDictionary.xaml</DependentUpon>
     </Compile>
     <Compile Include="TypeBasedTemplateSelector.cs" />
-    <Compile Include="Adjustments\IAdjustmentLayerFactory.cs" />
     <Compile Include="BlendModes\BlendModeListItemStyleSelector.cs" />
     <Compile Include="BlendModes\BlendModeListItemTemplateSelector.cs" />
     <Compile Include="BlendModes\BlendModeListResourceDictionary.xaml.cs">

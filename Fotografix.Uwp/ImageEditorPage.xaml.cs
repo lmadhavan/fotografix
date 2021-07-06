@@ -1,5 +1,4 @@
 ﻿using Fotografix.Editor;
-using Fotografix.Uwp.Adjustments;
 using Fotografix.Uwp.FileManagement;
 using Microsoft.Graphics.Canvas.UI;
 using Microsoft.Graphics.Canvas.UI.Xaml;
@@ -11,7 +10,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Storage;
-using Windows.Storage.Pickers;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
@@ -52,11 +50,11 @@ namespace Fotografix.Uwp
             }
         }
 
-        private void NewAdjustmentMenuItem_Click(object sender, RoutedEventArgs e)
+        private async void NewAdjustmentMenuItem_Click(object sender, RoutedEventArgs e)
         {
             var item = (MenuFlyoutItem)sender;
-            var adjustmentLayerFactory = (IAdjustmentLayerFactory)item.Tag;
-            editor.AddAdjustmentLayer(adjustmentLayerFactory);
+            var command = (IDocumentCommand)item.Tag;
+            await editor.ExecuteAsync(command);
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -137,15 +135,6 @@ namespace Fotografix.Uwp
                 var items = await e.DataView.GetStorageItemsAsync();
                 await ImportLayersAsync(items.OfType<StorageFile>());
             }
-        }
-
-        private async void Import_Click(object sender, RoutedEventArgs e)
-        {
-            FileOpenPicker picker = FilePickerFactory.CreateFileOpenPicker(editor.SupportedImportFormats);
-            picker.CommitButtonText = "Import";
-
-            var files = await picker.PickMultipleFilesAsync();
-            await ImportLayersAsync(files);
         }
 
         private Task ImportLayersAsync(IEnumerable<StorageFile> files)

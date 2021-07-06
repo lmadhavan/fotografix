@@ -197,7 +197,7 @@
                 <StackPanel Grid.Column="1" Orientation="Horizontal">
                     <Button Style="{StaticResource CommandButtonStyle}"
                             ToolTipService.ToolTip="New layer"
-                            Click="{x:Bind editor.AddLayer}">
+                            Command="{x:Bind editor.NewLayerCommand}">
                         <SymbolIcon Symbol="Add" />
                     </Button>
 
@@ -208,14 +208,15 @@
                         <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE706;"/>
                     </Button>
 
-                    <Button Style="{StaticResource CommandButtonStyle}" Click="Import_Click" ToolTipService.ToolTip="Import">
+                    <Button Style="{StaticResource CommandButtonStyle}"
+                            Command="{x:Bind editor.ImportLayerCommand}"
+                            ToolTipService.ToolTip="Import">
                         <SymbolIcon Symbol="Import" />
                     </Button>
 
                     <Button Style="{StaticResource CommandButtonStyle}"
                             ToolTipService.ToolTip="Delete"
-                            IsEnabled="{x:Bind editor.CanDeleteActiveLayer, Mode=OneWay}"
-                            Click="{x:Bind editor.DeleteActiveLayer}">
+                            Command="{x:Bind editor.DeleteLayerCommand}">
                         <SymbolIcon Symbol="Delete" />
                     </Button>
                 </StackPanel>
