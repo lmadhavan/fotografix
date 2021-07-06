@@ -1,4 +1,5 @@
 ﻿using Fotografix.Editor;
+using Fotografix.Editor.ChangeTracking;
 using Fotografix.Editor.Clipboard;
 using Fotografix.Editor.Commands;
 using Fotografix.Editor.FileManagement;
@@ -63,6 +64,9 @@ namespace Fotografix.Uwp
             {
                 FilePickerOverride = filePickerOverride,
                 Tools = CreateTools(),
+
+                UndoCommand = workspace.Bind(new UndoCommand()),
+                RedoCommand = workspace.Bind(new RedoCommand()),
 
                 SaveCommand = workspace.Bind(new SaveCommand(imageEncoder, filePicker) { Mode = SaveCommandMode.Save }),
                 SaveAsCommand = workspace.Bind(new SaveCommand(imageEncoder, filePicker) { Mode = SaveCommandMode.SaveAs }),

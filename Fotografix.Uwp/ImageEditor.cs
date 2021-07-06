@@ -59,25 +59,16 @@ namespace Fotografix.Uwp
 
         public FilePickerOverride FilePickerOverride { get; set; }
 
+        public AsyncCommand UndoCommand { get; set; }
+        public AsyncCommand RedoCommand { get; set; }
+        
         public AsyncCommand SaveCommand { get; set; }
         public AsyncCommand SaveAsCommand { get; set; }
         public AsyncCommand PasteCommand { get; set; }
+
         public AsyncCommand NewLayerCommand { get; set; }
         public AsyncCommand DeleteLayerCommand { get; set; }
         public AsyncCommand ImportLayerCommand { get; set; }
-
-        public bool CanUndo => document.CanUndo;
-        public bool CanRedo => document.CanRedo;
-
-        public void Undo()
-        {
-            document.Undo();
-        }
-
-        public void Redo()
-        {
-            document.Redo();
-        }
 
         public string Title
         {
@@ -190,11 +181,6 @@ namespace Fotografix.Uwp
         {
             switch (e.PropertyName)
             {
-                case nameof(Document.CanUndo):
-                case nameof(Document.CanRedo):
-                    RaisePropertyChanged(e.PropertyName);
-                    break;
-
                 case nameof(Document.File):
                 case nameof(Document.IsDirty):
                     RaisePropertyChanged(nameof(Title));

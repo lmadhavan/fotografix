@@ -55,20 +55,6 @@ namespace Fotografix.Tests.Acceptance
             await BitmapAssert.AreEquivalentAsync(fileWithExpectedImage, Editor.ToBitmap());
         }
 
-        protected void AssertCanUndo()
-        {
-            Assert.IsTrue(Editor.CanUndo);
-        }
-
-        protected void Undo(int times = 1)
-        {
-            for (int i = 1; i <= times; i++)
-            {
-                Assert.IsTrue(Editor.CanUndo, $"Undo not available (${i} of ${times})");
-                Editor.Undo();
-            }
-        }
-
         protected void ResizeViewport(Size size)
         {
             viewport.Size = size;

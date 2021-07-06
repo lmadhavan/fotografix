@@ -12,6 +12,7 @@ namespace Fotografix.Editor
 
         private Image image;
         private Document document;
+        private int contentChangedCount;
 
         [SetUp]
         public void SetUp()
@@ -20,6 +21,9 @@ namespace Fotografix.Editor
 
             this.image = new Image(new Size(10, 10));
             this.document = new Document(image, history.Object);
+
+            this.contentChangedCount = 0;
+            document.ContentChanged += (s, e) => this.contentChangedCount++;
         }
 
         [Test]
@@ -29,6 +33,7 @@ namespace Fotografix.Editor
 
             history.Verify(h => h.Add(It.IsAny<IChange>()));
             Assert.IsTrue(document.IsDirty, "Dirty");
+            Assert.That(contentChangedCount, Is.EqualTo(1), "Content changed");
         }
 
         [Test]
@@ -44,6 +49,7 @@ namespace Fotografix.Editor
 
             history.Verify(h => h.Add(It.IsAny<CompositeChange>()), Times.Once);
             Assert.IsTrue(document.IsDirty, "Dirty");
+            Assert.That(contentChangedCount, Is.EqualTo(1), "Content changed");
         }
 
         [Test]
@@ -55,6 +61,7 @@ namespace Fotografix.Editor
 
             history.VerifyNoOtherCalls();
             Assert.IsFalse(document.IsDirty, "Dirty");
+            Assert.That(contentChangedCount, Is.EqualTo(0), "Content changed");
         }
 
         [Test]
@@ -64,6 +71,7 @@ namespace Fotografix.Editor
 
             history.Verify(h => h.Undo());
             Assert.IsTrue(document.IsDirty, "Dirty");
+            Assert.That(contentChangedCount, Is.EqualTo(1), "Content changed");
         }
 
         [Test]
@@ -74,6 +82,7 @@ namespace Fotografix.Editor
             document.Undo();
 
             history.Verify(h => h.Add(It.IsAny<IChange>()), Times.Never);
+            Assert.That(contentChangedCount, Is.EqualTo(1), "Content changed");
         }
 
         [Test]
@@ -83,6 +92,7 @@ namespace Fotografix.Editor
 
             history.Verify(h => h.Redo());
             Assert.IsTrue(document.IsDirty, "Dirty");
+            Assert.That(contentChangedCount, Is.EqualTo(1), "Content changed");
         }
 
         [Test]
@@ -93,6 +103,7 @@ namespace Fotografix.Editor
             document.Redo();
 
             history.Verify(h => h.Add(It.IsAny<IChange>()), Times.Never);
+            Assert.That(contentChangedCount, Is.EqualTo(1), "Content changed");
         }
 
         private static void ProduceChange(Image image)

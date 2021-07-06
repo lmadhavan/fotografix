@@ -57,11 +57,7 @@ namespace Fotografix.Editor
             set => SetProperty(ref dirty, value);
         }
 
-        public event EventHandler<ContentChangedEventArgs> ContentChanged
-        {
-            add => image.ContentChanged += value;
-            remove => image.ContentChanged -= value;
-        }
+        public event EventHandler ContentChanged;
 
         public IDisposable BeginChangeGroup()
         {
@@ -80,6 +76,7 @@ namespace Fotografix.Editor
             finally
             {
                 this.ignoreChanges = false;
+                RaiseContentChanged();
             }
         }
 
@@ -94,6 +91,7 @@ namespace Fotografix.Editor
             finally
             {
                 this.ignoreChanges = false;
+                RaiseContentChanged();
             }
         }
 
@@ -101,8 +99,7 @@ namespace Fotografix.Editor
         {
             if (changeGroup.Count > 0)
             {
-                history.Add(new CompositeChange(changeGroup));
-                this.IsDirty = true;
+                AddChange(new CompositeChange(changeGroup));
             }
 
             this.changeGroup = null;
@@ -118,8 +115,7 @@ namespace Fotografix.Editor
                 }
                 else
                 {
-                    history.Add(e.Change);
-                    this.IsDirty = true;
+                    AddChange(e.Change);
                 }
             }
         }
@@ -127,6 +123,18 @@ namespace Fotografix.Editor
         private void History_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             RaisePropertyChanged(e.PropertyName);
+        }
+
+        private void AddChange(IChange change)
+        {
+            history.Add(change);
+            this.IsDirty = true;
+            RaiseContentChanged();
+        }
+
+        private void RaiseContentChanged()
+        {
+            ContentChanged?.Invoke(this, EventArgs.Empty);
         }
     }
 }

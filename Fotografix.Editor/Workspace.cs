@@ -31,7 +31,7 @@ namespace Fotografix.Editor
 
         private event EventHandler RequerySuggested;
 
-        private void ActiveDocument_ContentChanged(object sender, ContentChangedEventArgs e)
+        private void ActiveDocument_ContentChanged(object sender, EventArgs e)
         {
             RequerySuggested?.Invoke(this, EventArgs.Empty);
         }
