@@ -51,6 +51,8 @@ namespace Fotografix.Uwp
 
         private ImageEditor CreateEditor(Viewport viewport, Document document)
         {
+            Workspace workspace = new Workspace { ActiveDocument = document };
+
             DocumentCommandDispatcher dispatcher = new DocumentCommandDispatcher(document, handlerCollection);
             document.Image.SetCommandDispatcher(dispatcher);
             document.Image.SetViewport(viewport);
@@ -62,31 +64,13 @@ namespace Fotografix.Uwp
                 FilePickerOverride = filePickerOverride,
                 Tools = CreateTools(),
 
-                SaveCommand = new DocumentCommandAdapter(
-                    new SaveCommand(imageEncoder, filePicker) { Mode = SaveCommandMode.Save },
-                    document
-                ),
-                SaveAsCommand = new DocumentCommandAdapter(
-                    new SaveCommand(imageEncoder, filePicker) { Mode = SaveCommandMode.SaveAs },
-                    document
-                ),
-                PasteCommand = new DocumentCommandAdapter(
-                    new PasteCommand(clipboard),
-                    document
-                ),
+                SaveCommand = workspace.Bind(new SaveCommand(imageEncoder, filePicker) { Mode = SaveCommandMode.Save }),
+                SaveAsCommand = workspace.Bind(new SaveCommand(imageEncoder, filePicker) { Mode = SaveCommandMode.SaveAs }),
+                PasteCommand = workspace.Bind(new PasteCommand(clipboard)),
 
-                NewLayerCommand = new DocumentCommandAdapter(
-                    new NewLayerCommand(),
-                    document
-                ),
-                DeleteLayerCommand = new DocumentCommandAdapter(
-                    new DeleteLayerCommand(),
-                    document
-                ),
-                ImportLayerCommand = new DocumentCommandAdapter(
-                    new ImportLayerCommand(imageDecoder, filePickerOverride),
-                    document
-                )
+                NewLayerCommand = workspace.Bind(new NewLayerCommand()),
+                DeleteLayerCommand = workspace.Bind(new DeleteLayerCommand()),
+                ImportLayerCommand = workspace.Bind(new ImportLayerCommand(imageDecoder, filePickerOverride))
             };
 
             return editor;

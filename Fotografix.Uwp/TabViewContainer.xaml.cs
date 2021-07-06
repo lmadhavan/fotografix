@@ -10,22 +10,22 @@ namespace Fotografix.Uwp
 {
     public sealed partial class TabViewContainer : UserControl, ICustomTitleBarProvider
     {
-        private readonly Workspace workspace;
+        private readonly FileManager fileManager;
 
         public TabViewContainer()
         {
             this.InitializeComponent();
             this.Tabs = new TabCollection(tabView.TabItems);
 
-            this.workspace = new Workspace();
-            workspace.OpenImageEditorRequested += (s, e) => OpenImageEditor(e.Command);
+            this.fileManager = new FileManager();
+            fileManager.OpenImageEditorRequested += (s, e) => OpenImageEditor(e.Command);
         }
 
         public IReadOnlyList<Tab> Tabs { get; }
 
         public void OpenStartPage()
         {
-            CreateEmptyTab().OpenStartPage(workspace);
+            CreateEmptyTab().OpenStartPage(fileManager);
         }
 
         public void OpenImageEditor(ICreateImageEditorCommand command)
@@ -104,13 +104,13 @@ namespace Fotografix.Uwp
         private async void OnNewImageInvoked(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
         {
             args.Handled = true;
-            await workspace.NewImageAsync();
+            await fileManager.NewImageAsync();
         }
 
         private async void OnOpenFileInvoked(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
         {
             args.Handled = true;
-            await workspace.OpenFileAsync();
+            await fileManager.OpenFileAsync();
         }
 
         #endregion

@@ -6,7 +6,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Fotografix.Uwp.FileManagement
 {
-    public sealed class Workspace
+    public sealed class FileManager
     {
         private readonly ImageEditorFactory imageEditorFactory = new ImageEditorFactory(ClipboardAdapter.GetForCurrentThread());
 

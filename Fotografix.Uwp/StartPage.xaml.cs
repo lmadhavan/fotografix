@@ -7,7 +7,7 @@ namespace Fotografix.Uwp
 {
     public sealed partial class StartPage : Page
     {
-        private Workspace workspace;
+        private FileManager fileManager;
 
         public StartPage()
         {
@@ -19,7 +19,7 @@ namespace Fotografix.Uwp
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
-            this.workspace = (Workspace)e.Parameter;
+            this.fileManager = (FileManager)e.Parameter;
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
@@ -34,17 +34,17 @@ namespace Fotografix.Uwp
 
         private async void New_Click(object sender, RoutedEventArgs e)
         {
-            await workspace.NewImageAsync();
+            await fileManager.NewImageAsync();
         }
 
         private async void Open_Click(object sender, RoutedEventArgs e)
         {
-            await workspace.OpenFileAsync();
+            await fileManager.OpenFileAsync();
         }
 
         private async void RecentFileList_ItemClick(object sender, ItemClickEventArgs e)
         {
-            await workspace.OpenRecentFileAsync((RecentFile)e.ClickedItem);
+            await fileManager.OpenRecentFileAsync((RecentFile)e.ClickedItem);
         }
     }
 }

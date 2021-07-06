@@ -31,10 +31,10 @@ namespace Fotografix.Uwp
         public bool IsEmpty { get; private set; }
         public Type ContentType => frame.Content.GetType();
 
-        public void OpenStartPage(Workspace workspace)
+        public void OpenStartPage(FileManager fileManager)
         {
             this.Header = "Start";
-            frame.Navigate(typeof(StartPage), workspace, new SuppressNavigationTransitionInfo());
+            frame.Navigate(typeof(StartPage), fileManager, new SuppressNavigationTransitionInfo());
         }
 
         public void OpenImageEditor(ICreateImageEditorCommand command)

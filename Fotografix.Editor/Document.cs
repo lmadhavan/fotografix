@@ -57,6 +57,12 @@ namespace Fotografix.Editor
             set => SetProperty(ref dirty, value);
         }
 
+        public event EventHandler<ContentChangedEventArgs> ContentChanged
+        {
+            add => image.ContentChanged += value;
+            remove => image.ContentChanged -= value;
+        }
+
         public IDisposable BeginChangeGroup()
         {
             this.changeGroup = new List<IChange>();
