@@ -19,14 +19,13 @@ namespace Fotografix.Uwp
     {
         private readonly IImageDecoder imageDecoder = new WindowsImageDecoder();
         private readonly IImageEncoder imageEncoder = new WindowsImageEncoder(new Win2DImageRenderer());
+        private readonly IGraphicsDevice graphicsDevice = new Win2DGraphicsDevice();
         private readonly IFilePicker filePicker = new FilePickerAdapter();
         private readonly CommandHandlerCollection handlerCollection = new CommandHandlerCollection();
         private readonly IClipboard clipboard;
 
         public ImageEditorFactory(IClipboard clipboard)
         {
-            var graphicsDevice = new Win2DGraphicsDevice();
-            handlerCollection.Register(new ResampleImageCommandHandler(graphicsDevice));
             handlerCollection.Register(new DrawCommandHandler(graphicsDevice));
             handlerCollection.Register(new CropCommandHandler());
 
@@ -34,6 +33,7 @@ namespace Fotografix.Uwp
         }
 
         public IEnumerable<FileFormat> SupportedOpenFormats => imageDecoder.SupportedFileFormats;
+        public IDialog<ResizeImageParameters> ResizeImageDialog { get; set; } = new ContentDialogAdapter<ResizeImageDialog, ResizeImageParameters>();
 
         public ImageEditor CreateNewImage(Viewport viewport, Size size)
         {
@@ -60,7 +60,7 @@ namespace Fotografix.Uwp
 
             FilePickerOverride filePickerOverride = new FilePickerOverride(filePicker);
 
-            var editor = new ImageEditor(document, dispatcher)
+            var editor = new ImageEditor(document)
             {
                 FilePickerOverride = filePickerOverride,
                 Tools = CreateTools(),
@@ -74,7 +74,9 @@ namespace Fotografix.Uwp
 
                 NewLayerCommand = workspace.Bind(new NewLayerCommand()),
                 DeleteLayerCommand = workspace.Bind(new DeleteLayerCommand()),
-                ImportLayerCommand = workspace.Bind(new ImportLayerCommand(imageDecoder, filePickerOverride))
+                ImportLayerCommand = workspace.Bind(new ImportLayerCommand(imageDecoder, filePickerOverride)),
+
+                ResizeImageCommand = workspace.Bind(new ResizeImageCommand(ResizeImageDialog, graphicsDevice))
             };
 
             return editor;

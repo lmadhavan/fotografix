@@ -1,6 +1,5 @@
 ﻿using Fotografix.Editor;
 using Fotografix.Editor.Collections;
-using Fotografix.Editor.Commands;
 using Fotografix.Editor.Tools;
 using Fotografix.IO;
 using Fotografix.Uwp.FileManagement;
@@ -23,13 +22,12 @@ namespace Fotografix.Uwp
         private readonly Document document;
         private readonly Image image;
         private readonly Viewport viewport;
-        private readonly ICommandDispatcher dispatcher;
         private readonly Win2DCompositor compositor;
         private readonly ReversedCollectionView<Layer> layers;
 
         private Layer activeLayer;
 
-        public ImageEditor(Document document, ICommandDispatcher dispatcher)
+        public ImageEditor(Document document)
         {
             this.document = document;
             document.PropertyChanged += Document_PropertyChanged;
@@ -39,7 +37,6 @@ namespace Fotografix.Uwp
             this.viewport = image.GetViewport();
             viewport.ImageSize = image.Size;
 
-            this.dispatcher = dispatcher;
             this.compositor = new Win2DCompositor(image, viewport, CompositorSettings);
 
             this.layers = new ReversedCollectionView<Layer>(image.Layers);
@@ -69,6 +66,8 @@ namespace Fotografix.Uwp
         public AsyncCommand NewLayerCommand { get; set; }
         public AsyncCommand DeleteLayerCommand { get; set; }
         public AsyncCommand ImportLayerCommand { get; set; }
+
+        public AsyncCommand ResizeImageCommand { get; set; }
 
         public string Title
         {
@@ -124,16 +123,6 @@ namespace Fotografix.Uwp
             {
                 await ImportLayerCommand.ExecuteAsync();
             }
-        }
-
-        public ResizeImageParameters CreateResizeImageParameters()
-        {
-            return new ResizeImageParameters(Size);
-        }
-
-        public Task ResizeImageAsync(ResizeImageParameters resizeImageParameters)
-        {
-            return dispatcher.DispatchAsync(new ResampleImageCommand(image, resizeImageParameters.Size));
         }
 
         public Bitmap ToBitmap()

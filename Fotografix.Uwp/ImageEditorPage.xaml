@@ -134,7 +134,7 @@
             </Grid>
 
             <StackPanel Grid.Column="2" Padding="6,0" Orientation="Horizontal">
-                <Button Click="ResizeImage_Click" Style="{StaticResource CommandButtonStyle}">
+                <Button Style="{StaticResource CommandButtonStyle}" Command="{x:Bind editor.ResizeImageCommand}">
                     <StackPanel Orientation="Horizontal">
                         <SymbolIcon Symbol="FullScreen" />
                         <TextBlock Margin="4,0,0,0" HorizontalTextAlignment="Center" MinWidth="80" Text="{x:Bind FormatSize(editor.Size), Mode=OneWay}" />

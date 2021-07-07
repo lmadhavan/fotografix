@@ -141,16 +141,5 @@ namespace Fotografix.Uwp
         {
             return editor.ImportLayersAsync(files.Select(f => new StorageFileAdapter(f)));
         }
-
-        private async void ResizeImage_Click(object sender, RoutedEventArgs e)
-        {
-            ResizeImageParameters parameters = editor.CreateResizeImageParameters();
-
-            ResizeImageDialog dialog = new ResizeImageDialog(parameters);
-            if (await dialog.ShowAsync(ContentDialogPlacement.InPlace) == ContentDialogResult.Primary)
-            {
-                await editor.ResizeImageAsync(parameters);
-            }
-        }
     }
 }

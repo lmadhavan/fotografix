@@ -130,6 +130,7 @@
     <Compile Include="ColorPickerButton.xaml.cs">
       <DependentUpon>ColorPickerButton.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ContentDialogAdapter.cs" />
     <Compile Include="ErrorDialog.xaml.cs">
       <DependentUpon>ErrorDialog.xaml</DependentUpon>
     </Compile>

@@ -1,5 +1,4 @@
 ﻿using Fotografix.Editor;
-using Fotografix.Editor.Commands;
 using Fotografix.IO;
 using Fotografix.Uwp;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -31,7 +30,7 @@ namespace Fotografix.Tests.Uwp
 
             this.document = new Document(image);
 
-            this.editor = new ImageEditor(document, new CommandHandlerCollection());
+            this.editor = new ImageEditor(document);
             editor.PropertyChanged += (s, e) => this.lastPropertyChange = e;
         }
 

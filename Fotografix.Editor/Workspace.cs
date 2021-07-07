@@ -80,9 +80,13 @@ namespace Fotografix.Editor
                 return workspace.ActiveDocument != null && documentCommand.CanExecute(workspace.ActiveDocument);
             }
 
-            public override Task ExecuteAsync()
+            public override async Task ExecuteAsync()
             {
-                return documentCommand.ExecuteAsync(workspace.ActiveDocument);
+                Document document = workspace.activeDocument;
+                using (document.BeginChangeGroup())
+                {
+                    await documentCommand.ExecuteAsync(workspace.ActiveDocument);
+                }
             }
         }
     }

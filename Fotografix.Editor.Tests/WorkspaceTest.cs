@@ -40,6 +40,29 @@ namespace Fotografix.Editor
         }
 
         [Test]
+        public async Task GroupsChangesProducedByCommand()
+        {
+            Image image = document.Image;
+            image.Size = new(10, 10);
+
+            int changeCount = 0;
+            document.ContentChanged += (s, e) => changeCount++;
+
+            documentCommand.Setup(c => c.CanExecute(It.IsAny<Document>())).Returns(true);
+            documentCommand.Setup(c => c.ExecuteAsync(It.IsAny<Document>())).Callback(() =>
+            {
+                image.Size = new(20, 20);
+                image.Size = new(30, 30);
+            });
+
+            workspace.ActiveDocument = document;
+
+            await boundCommand.ExecuteAsync();
+
+            Assert.That(changeCount, Is.EqualTo(1));
+        }
+
+        [Test]
         public void CannotExecuteCommandWhenNoDocumentIsActive()
         {
             documentCommand.Setup(c => c.CanExecute(It.IsAny<Document>())).Returns(true);

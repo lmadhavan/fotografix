@@ -12,22 +12,16 @@ namespace Fotografix.Tests.Acceptance
         {
             await OpenImageAsync("flowers.jpg");
 
-            var parameters = BeginResizeImage();
-            parameters.LockAspectRatio = true;
-            parameters.Width /= 2;
-            await ResizeImageAsync(parameters);
+            await Editor.ResizeImageCommand.ExecuteAsync();
 
             await AssertImageAsync("flowers_scale50.png");
         }
 
-        private ResizeImageParameters BeginResizeImage()
+        protected override bool HandleResizeImageDialog(ResizeImageParameters parameters)
         {
-            return Editor.CreateResizeImageParameters();
-        }
-
-        private Task ResizeImageAsync(ResizeImageParameters parameters)
-        {
-            return Editor.ResizeImageAsync(parameters);
+            parameters.LockAspectRatio = true;
+            parameters.Width /= 2;
+            return true;
         }
     }
 }

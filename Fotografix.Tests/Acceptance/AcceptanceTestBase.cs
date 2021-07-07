@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Fotografix.Tests.Acceptance
 {
-    public abstract class AcceptanceTestBase
+    public abstract class AcceptanceTestBase : IDialog<ResizeImageParameters>
     {
         private readonly ImageEditorFactory imageEditorFactory;
 
@@ -20,7 +20,7 @@ namespace Fotografix.Tests.Acceptance
         protected AcceptanceTestBase()
         {
             this.Clipboard = new FakeClipboard();
-            this.imageEditorFactory = new ImageEditorFactory(Clipboard);
+            this.imageEditorFactory = new ImageEditorFactory(Clipboard) { ResizeImageDialog = this };
         }
 
         protected FakeClipboard Clipboard { get; }
@@ -60,6 +60,11 @@ namespace Fotografix.Tests.Acceptance
             viewport.Size = size;
         }
 
+        protected virtual bool HandleResizeImageDialog(ResizeImageParameters parameters)
+        {
+            return false;
+        }
+
         private async Task<IFile> GetFileAsync(string filename)
         {
             var file = await TestImages.GetFileAsync(filename);
@@ -88,6 +93,11 @@ namespace Fotografix.Tests.Acceptance
         {
             Assert.IsTrue(invalidated, message);
             this.invalidated = false;
+        }
+
+        Task<bool> IDialog<ResizeImageParameters>.ShowAsync(ResizeImageParameters parameters)
+        {
+            return Task.FromResult(HandleResizeImageDialog(parameters));
         }
     }
 }
