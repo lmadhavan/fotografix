@@ -145,7 +145,6 @@
     <Compile Include="Uwp\BlendModeListTest.cs" />
     <Compile Include="Composition\CompositionTestBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Uwp\FakeCreateImageEditorCommand.cs" />
     <Compile Include="Uwp\FakeImageCodec.cs" />
     <Compile Include="Uwp\ImageEditorTest.cs" />
     <Compile Include="Uwp\Layers\OpacitySliderToolTipValueConverterTest.cs" />

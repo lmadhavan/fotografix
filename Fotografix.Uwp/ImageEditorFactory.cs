@@ -35,22 +35,22 @@ namespace Fotografix.Uwp
         public IEnumerable<FileFormat> SupportedOpenFormats => imageDecoder.SupportedFileFormats;
         public IDialog<ResizeImageParameters> ResizeImageDialog { get; set; } = new ContentDialogAdapter<ResizeImageDialog, ResizeImageParameters>();
 
-        public ImageEditor CreateNewImage(Viewport viewport, Size size)
+        public Document CreateNewImage(Size size)
         {
             Layer layer = ImageEditor.CreateLayer(id: 1);
             Image image = new Image(size);
             image.Layers.Add(layer);
 
-            return CreateEditor(viewport, new Document(image));
+            return new Document(image);
         }
 
-        public async Task<ImageEditor> OpenImageAsync(Viewport viewport, IFile file)
+        public async Task<Document> OpenImageAsync(IFile file)
         {
             Image image = await imageDecoder.ReadImageAsync(file);
-            return CreateEditor(viewport, new Document(image) { File = file });
+            return new Document(image) { File = file };
         }
 
-        private ImageEditor CreateEditor(Viewport viewport, Document document)
+        public ImageEditor CreateEditor(Viewport viewport, Document document)
         {
             Workspace workspace = new Workspace { ActiveDocument = document };
 

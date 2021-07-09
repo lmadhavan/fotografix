@@ -137,7 +137,6 @@
     <Compile Include="FileManagement\FilePickerAdapter.cs" />
     <Compile Include="FileManagement\FilePickerFactory.cs" />
     <Compile Include="FileManagement\FilePickerOverride.cs" />
-    <Compile Include="FileManagement\ICreateImageEditorCommand.cs" />
     <Compile Include="FileManagement\NewImageParameters.cs" />
     <Compile Include="FileManagement\OpenImageEditorRequestedEventArgs.cs" />
     <Compile Include="FileManagement\RecentFile.cs" />
@@ -152,11 +151,9 @@
     <Compile Include="StorageFileAdapter.cs" />
     <Compile Include="Tab.cs" />
     <Compile Include="ITitleBarLayoutMetrics.cs" />
-    <Compile Include="FileManagement\NewImageCommand.cs" />
     <Compile Include="FileManagement\NewImageDialog.xaml.cs">
       <DependentUpon>NewImageDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="FileManagement\OpenFileCommand.cs" />
     <Compile Include="ResizeImageDialog.xaml.cs">
       <DependentUpon>ResizeImageDialog.xaml</DependentUpon>
     </Compile>

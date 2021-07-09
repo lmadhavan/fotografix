@@ -18,7 +18,7 @@ namespace Fotografix.Uwp
             this.Tabs = new TabCollection(tabView.TabItems);
 
             this.fileManager = new FileManager();
-            fileManager.OpenImageEditorRequested += (s, e) => OpenImageEditor(e.Command);
+            fileManager.OpenImageEditorRequested += (s, e) => OpenImageEditor(e.CreateFunc);
         }
 
         public IReadOnlyList<Tab> Tabs { get; }
@@ -28,9 +28,9 @@ namespace Fotografix.Uwp
             CreateEmptyTab().OpenStartPage(fileManager);
         }
 
-        public void OpenImageEditor(ICreateImageEditorCommand command)
+        public void OpenImageEditor(CreateImageEditorFunc createFunc)
         {
-            GetOrCreateEmptyTab().OpenImageEditor(command);
+            GetOrCreateEmptyTab().OpenImageEditor(createFunc);
         }
 
         private Tab GetOrCreateEmptyTab()

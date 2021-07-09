@@ -1,14 +1,17 @@
-﻿using System;
+﻿using Fotografix.Editor;
+using System;
 
 namespace Fotografix.Uwp.FileManagement
 {
+    public delegate ImageEditor CreateImageEditorFunc(Viewport viewport);
+
     public sealed class OpenImageEditorRequestedEventArgs : EventArgs
     {
-        public OpenImageEditorRequestedEventArgs(ICreateImageEditorCommand command)
+        public OpenImageEditorRequestedEventArgs(CreateImageEditorFunc createFunc)
         {
-            this.Command = command;
+            this.CreateFunc = createFunc;
         }
 
-        public ICreateImageEditorCommand Command { get; }
+        public CreateImageEditorFunc CreateFunc { get; }
     }
 }

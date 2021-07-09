@@ -37,9 +37,9 @@ namespace Fotografix.Uwp
             frame.Navigate(typeof(StartPage), fileManager, new SuppressNavigationTransitionInfo());
         }
 
-        public void OpenImageEditor(ICreateImageEditorCommand command)
+        public void OpenImageEditor(CreateImageEditorFunc createFunc)
         {
-            frame.Navigate(typeof(ImageEditorPage), command, new SuppressNavigationTransitionInfo());
+            frame.Navigate(typeof(ImageEditorPage), createFunc, new SuppressNavigationTransitionInfo());
 
             ImageEditorPage page = (ImageEditorPage)frame.Content;
             this.Header = page.Title;

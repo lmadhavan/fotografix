@@ -1,5 +1,5 @@
-﻿using Fotografix.Uwp;
-using Fotografix.Uwp.FileManagement;
+﻿using Fotografix.Editor;
+using Fotografix.Uwp;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.VisualStudio.TestTools.UnitTesting.AppContainer;
 
@@ -8,8 +8,6 @@ namespace Fotografix.Tests.Uwp
     [TestClass]
     public class TabViewContainerTest
     {
-        private readonly ICreateImageEditorCommand command = new FakeCreateImageEditorCommand();
-
         [UITestMethod]
         public void OpensStartPage()
         {
@@ -26,7 +24,7 @@ namespace Fotografix.Tests.Uwp
         {
             TabViewContainer container = new TabViewContainer();
 
-            container.OpenImageEditor(command);
+            container.OpenImageEditor(CreateEmptyImageEditor);
 
             Assert.AreEqual(1, container.Tabs.Count);
             Assert.AreEqual(typeof(ImageEditorPage), container.Tabs[0].ContentType);
@@ -38,7 +36,7 @@ namespace Fotografix.Tests.Uwp
             TabViewContainer container = new TabViewContainer();
 
             container.OpenStartPage();
-            container.OpenImageEditor(command);
+            container.OpenImageEditor(CreateEmptyImageEditor);
 
             Assert.AreEqual(1, container.Tabs.Count);
             Assert.AreEqual(typeof(ImageEditorPage), container.Tabs[0].ContentType);
@@ -49,10 +47,15 @@ namespace Fotografix.Tests.Uwp
         {
             TabViewContainer container = new TabViewContainer();
 
-            container.OpenImageEditor(command);
-            container.OpenImageEditor(command);
+            container.OpenImageEditor(CreateEmptyImageEditor);
+            container.OpenImageEditor(CreateEmptyImageEditor);
 
             Assert.AreEqual(2, container.Tabs.Count);
+        }
+
+        private ImageEditor CreateEmptyImageEditor(Viewport viewport)
+        {
+            return new ImageEditor(new Document());
         }
     }
 }

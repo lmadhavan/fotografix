@@ -31,7 +31,10 @@ namespace Fotografix.Tests.Acceptance
             Editor?.Dispose();
 
             this.viewport = new Viewport();
-            this.Editor = await imageEditorFactory.OpenImageAsync(viewport, await GetFileAsync(filename));
+
+            var file = await GetFileAsync(filename);
+            Document document = await imageEditorFactory.OpenImageAsync(file);
+            this.Editor = imageEditorFactory.CreateEditor(viewport, document);
             Editor.Invalidated += Editor_Invalidated;
             Editor.PropertyChanged += Editor_PropertyChanged;
 

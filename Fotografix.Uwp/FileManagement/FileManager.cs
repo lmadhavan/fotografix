@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Fotografix.Editor;
+using System;
 using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.Storage.Pickers;
@@ -19,7 +20,8 @@ namespace Fotografix.Uwp.FileManagement
             NewImageDialog dialog = new NewImageDialog(parameters);
             if (await dialog.ShowAsync() == ContentDialogResult.Primary)
             {
-                OpenImageEditor(new NewImageCommand(parameters.Size, imageEditorFactory));
+                Document document = imageEditorFactory.CreateNewImage(parameters.Size);
+                OpenImageEditor(document);
             }
         }
 
@@ -30,25 +32,27 @@ namespace Fotografix.Uwp.FileManagement
             StorageFile file = await picker.PickSingleFileAsync();
             if (file != null)
             {
-                OpenFile(file);
+                await OpenFileAsync(file);
             }
         }
 
         public async Task OpenRecentFileAsync(RecentFile recentFile)
         {
             StorageFile file = await RecentFileList.Default.GetFileAsync(recentFile);
-            OpenFile(file);
+            await OpenFileAsync(file);
         }
 
-        public void OpenFile(StorageFile file)
+        private async Task OpenFileAsync(StorageFile file)
         {
-            OpenImageEditor(new OpenFileCommand(new StorageFileAdapter(file), imageEditorFactory));
+            Document document = await imageEditorFactory.OpenImageAsync(new StorageFileAdapter(file));
             RecentFileList.Default.Add(file);
+            OpenImageEditor(document);
         }
 
-        private void OpenImageEditor(ICreateImageEditorCommand command)
+        private void OpenImageEditor(Document document)
         {
-            OpenImageEditorRequested?.Invoke(this, new OpenImageEditorRequestedEventArgs(command));
+            CreateImageEditorFunc createFunc = viewport => imageEditorFactory.CreateEditor(viewport, document);
+            OpenImageEditorRequested?.Invoke(this, new OpenImageEditorRequestedEventArgs(createFunc));
         }
     }
 }

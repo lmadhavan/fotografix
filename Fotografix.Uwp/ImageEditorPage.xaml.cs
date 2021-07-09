@@ -21,7 +21,7 @@ namespace Fotografix.Uwp
         private readonly Viewport viewport;
         private readonly ToolAdapter toolAdapter;
 
-        private ICreateImageEditorCommand createCommand;
+        private CreateImageEditorFunc createFunc;
         private ImageEditor editor;
 
         public ImageEditorPage()
@@ -60,14 +60,14 @@ namespace Fotografix.Uwp
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
-            this.createCommand = (ICreateImageEditorCommand)e.Parameter;
+            this.createFunc = (CreateImageEditorFunc)e.Parameter;
         }
 
         private void Canvas_CreateResources(CanvasControl sender, CanvasCreateResourcesEventArgs args)
         {
             if (args.Reason == CanvasCreateResourcesReason.FirstTime)
             {
-                args.TrackAsyncAction(LoadImageAsync().AsAsyncAction());
+                LoadImage();
             }
         }
 
@@ -81,9 +81,9 @@ namespace Fotografix.Uwp
             viewport.Size = new Size((int)canvas.ActualWidth, (int)canvas.ActualHeight);
         }
 
-        private async Task LoadImageAsync()
+        private void LoadImage()
         {
-            this.editor = await createCommand.ExecuteAsync(viewport);
+            this.editor = createFunc(viewport);
             editor.Invalidated += Editor_Invalidated;
             editor.PropertyChanged += Editor_PropertyChanged;
 
