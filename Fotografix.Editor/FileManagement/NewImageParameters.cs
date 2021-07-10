@@ -1,6 +1,6 @@
 ﻿using System.Drawing;
 
-namespace Fotografix.Uwp.FileManagement
+namespace Fotografix.Editor.FileManagement
 {
     public sealed class NewImageParameters : NotifyPropertyChangedBase
     {

@@ -137,7 +137,6 @@
     <Compile Include="FileManagement\FilePickerAdapter.cs" />
     <Compile Include="FileManagement\FilePickerFactory.cs" />
     <Compile Include="FileManagement\FilePickerOverride.cs" />
-    <Compile Include="FileManagement\NewImageParameters.cs" />
     <Compile Include="FileManagement\OpenImageEditorRequestedEventArgs.cs" />
     <Compile Include="FileManagement\RecentFile.cs" />
     <Compile Include="FileManagement\RecentFileList.cs" />

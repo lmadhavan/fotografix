@@ -4,12 +4,12 @@ using System.Threading.Tasks;
 
 namespace Fotografix.Editor.FileManagement
 {
-    public sealed class SaveCommand : IDocumentCommand
+    public sealed class SaveImageCommand : IDocumentCommand
     {
         private readonly IImageEncoder imageEncoder;
         private readonly IFilePicker filePicker;
 
-        public SaveCommand(IImageEncoder imageEncoder, IFilePicker filePicker)
+        public SaveImageCommand(IImageEncoder imageEncoder, IFilePicker filePicker)
         {
             this.imageEncoder = imageEncoder;
             this.filePicker = filePicker;

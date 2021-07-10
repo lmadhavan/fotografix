@@ -28,5 +28,15 @@ namespace Fotografix.Uwp
             var randomAccessStream = await file.OpenAsync(FileAccessMode.ReadWrite);
             return randomAccessStream.AsStream();
         }
+
+        public override bool Equals(object obj)
+        {
+            return obj is StorageFileAdapter adapter && file.IsEqual(adapter.file);
+        }
+
+        public override int GetHashCode()
+        {
+            return Name.GetHashCode();
+        }
     }
 }

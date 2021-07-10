@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace Fotografix.Editor.FileManagement
 {
     [TestFixture]
-    public class SaveCommandTest
+    public class SaveImageCommandTest
     {
         private Mock<IImageEncoder> imageEncoder;
         private Mock<IFilePicker> filePicker;
@@ -16,7 +16,7 @@ namespace Fotografix.Editor.FileManagement
         private FileFormat fileFormat;
         private FileFormat[] supportedFormats;
 
-        private SaveCommand command;
+        private SaveImageCommand command;
 
         [SetUp]
         public void SetUp()
@@ -25,7 +25,7 @@ namespace Fotografix.Editor.FileManagement
             this.filePicker = new Mock<IFilePicker>();
 
             this.document = new Document { IsDirty = true };
-            this.command = new SaveCommand(imageEncoder.Object, filePicker.Object);
+            this.command = new SaveImageCommand(imageEncoder.Object, filePicker.Object);
         }
 
         [Test]

@@ -25,6 +25,41 @@ namespace Fotografix.Editor
         }
 
         [Test]
+        public void ActivatesNewlyAddedDocument()
+        {
+            workspace.AddDocument(document);
+
+            Assert.That(workspace.ActiveDocument, Is.EqualTo(document));
+            Assert.That(workspace.Documents, Is.EqualTo(new Document[] { document }).AsCollection);
+        }
+
+        [Test]
+        public void DectivatesActiveDocumentWhenRemoved()
+        {
+            Document anotherDocument = new();
+
+            workspace.AddDocument(document);
+            workspace.AddDocument(anotherDocument);
+            workspace.RemoveDocument(anotherDocument);
+
+            Assert.That(workspace.ActiveDocument, Is.EqualTo(document));
+            Assert.That(workspace.Documents, Is.EqualTo(new Document[] { document }).AsCollection);
+        }
+
+        [Test]
+        public void DoesNotChangeActiveDocumentWhenInactiveDocumentIsRemoved()
+        {
+            Document anotherDocument = new();
+
+            workspace.AddDocument(document);
+            workspace.AddDocument(anotherDocument);
+            workspace.RemoveDocument(document);
+
+            Assert.That(workspace.ActiveDocument, Is.EqualTo(anotherDocument));
+            Assert.That(workspace.Documents, Is.EqualTo(new Document[] { anotherDocument }).AsCollection);
+        }
+
+        [Test]
         public async Task ExecutesCommandOnActiveDocument()
         {
             documentCommand.Setup(c => c.CanExecute(It.IsAny<Document>())).Returns(true);

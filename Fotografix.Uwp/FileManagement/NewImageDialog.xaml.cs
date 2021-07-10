@@ -1,4 +1,5 @@
-﻿using Windows.UI.Xaml.Controls;
+﻿using Fotografix.Editor.FileManagement;
+using Windows.UI.Xaml.Controls;
 
 namespace Fotografix.Uwp.FileManagement
 {

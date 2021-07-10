@@ -68,8 +68,8 @@ namespace Fotografix.Uwp
                 UndoCommand = workspace.Bind(new UndoCommand()),
                 RedoCommand = workspace.Bind(new RedoCommand()),
 
-                SaveCommand = workspace.Bind(new SaveCommand(imageEncoder, filePicker) { Mode = SaveCommandMode.Save }),
-                SaveAsCommand = workspace.Bind(new SaveCommand(imageEncoder, filePicker) { Mode = SaveCommandMode.SaveAs }),
+                SaveCommand = workspace.Bind(new SaveImageCommand(imageEncoder, filePicker) { Mode = SaveCommandMode.Save }),
+                SaveAsCommand = workspace.Bind(new SaveImageCommand(imageEncoder, filePicker) { Mode = SaveCommandMode.SaveAs }),
                 PasteCommand = workspace.Bind(new PasteCommand(clipboard)),
 
                 NewLayerCommand = workspace.Bind(new NewLayerCommand()),
