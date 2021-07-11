@@ -56,7 +56,8 @@ namespace Fotografix.Uwp
 
         private void OpenDocument(Document document)
         {
-            GetOrCreateEmptyTab().OpenImageEditor(vm, document);
+            ImageEditor editor = vm.CreateEditor(new Viewport(), document);
+            GetOrCreateEmptyTab().OpenImageEditor(editor);
         }
 
         private Tab GetOrCreateEmptyTab()

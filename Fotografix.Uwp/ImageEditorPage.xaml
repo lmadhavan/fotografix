@@ -114,7 +114,6 @@
             PointerReleased="{x:Bind toolAdapter.PointerReleased}"
             PointerExited="{x:Bind toolAdapter.PointerExited}"
             SizeChanged="Canvas_SizeChanged"
-            CreateResources="Canvas_CreateResources"
             Draw="Canvas_Draw" 
         />
 

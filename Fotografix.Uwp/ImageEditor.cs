@@ -74,6 +74,9 @@ namespace Fotografix.Uwp
 
         public Size Size => image.Size;
 
+        public Document Document => document;
+        public Viewport Viewport => viewport;
+
         public float ZoomFactor => viewport.ZoomFactor;
 
         public IList<Layer> Layers => layers;

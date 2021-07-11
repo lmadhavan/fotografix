@@ -1,9 +1,7 @@
 ﻿using Fotografix.Editor;
-using Microsoft.Graphics.Canvas.UI;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
@@ -15,21 +13,14 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Fotografix.Uwp
 {
-    public delegate ImageEditor CreateImageEditorFunc(Viewport viewport);
-
     public sealed partial class ImageEditorPage : Page, IDisposable
     {
-        private readonly Viewport viewport;
-        private readonly ToolAdapter toolAdapter;
-
-        private CreateImageEditorFunc createFunc;
+        private ToolAdapter toolAdapter;
         private ImageEditor editor;
 
         public ImageEditorPage()
         {
             this.InitializeComponent();
-            this.viewport = new Viewport();
-            this.toolAdapter = new ToolAdapter(canvas, viewport);
             BindNewAdjustmentMenuFlyout();
         }
 
@@ -38,9 +29,6 @@ namespace Fotografix.Uwp
             canvas.RemoveFromVisualTree();
             editor?.Dispose();
         }
-
-        public string Title => editor?.Title ?? "Loading...";
-        public event EventHandler TitleChanged;
 
         private void BindNewAdjustmentMenuFlyout()
         {
@@ -61,15 +49,18 @@ namespace Fotografix.Uwp
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
-            this.createFunc = (CreateImageEditorFunc)e.Parameter;
+            Initialize((ImageEditor)e.Parameter);
         }
 
-        private void Canvas_CreateResources(CanvasControl sender, CanvasCreateResourcesEventArgs args)
+        private void Initialize(ImageEditor editor)
         {
-            if (args.Reason == CanvasCreateResourcesReason.FirstTime)
-            {
-                LoadImage();
-            }
+            this.editor = editor;
+            editor.Invalidated += (s, e) => canvas.Invalidate();
+
+            this.toolAdapter = new ToolAdapter(canvas, editor.Viewport);
+            toolAdapter.Toolbox = editor;
+
+            Bindings.Update();
         }
 
         private void Canvas_Draw(CanvasControl sender, CanvasDrawEventArgs args)
@@ -79,37 +70,12 @@ namespace Fotografix.Uwp
 
         private void Canvas_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            viewport.Size = new Size((int)canvas.ActualWidth, (int)canvas.ActualHeight);
-        }
-
-        private void LoadImage()
-        {
-            this.editor = createFunc(viewport);
-            editor.Invalidated += Editor_Invalidated;
-            editor.PropertyChanged += Editor_PropertyChanged;
-
-            toolAdapter.Toolbox = editor;
-
-            Bindings.Update();
-            TitleChanged?.Invoke(this, EventArgs.Empty);
+            editor.Viewport.Size = new Size((int)canvas.ActualWidth, (int)canvas.ActualHeight);
         }
 
         private string FormatSize(Size size)
         {
             return $"{size.Width}×{size.Height}";
-        }
-
-        private void Editor_PropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == nameof(ImageEditor.Title))
-            {
-                TitleChanged?.Invoke(this, EventArgs.Empty);
-            }
-        }
-
-        private void Editor_Invalidated(object sender, EventArgs e)
-        {
-            canvas.Invalidate();
         }
 
         protected override void OnDragEnter(DragEventArgs e)

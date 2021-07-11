@@ -1,9 +1,10 @@
 ﻿using Fotografix.Editor;
 using Microsoft.UI.Xaml.Controls;
 using System;
+using System.ComponentModel;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Media.Animation;
+using BindableAttribute = Windows.UI.Xaml.Data.BindableAttribute;
 
 namespace Fotografix.Uwp
 {
@@ -38,16 +39,22 @@ namespace Fotografix.Uwp
             frame.Navigate(typeof(StartPage), viewModel, new SuppressNavigationTransitionInfo());
         }
 
-        public void OpenImageEditor(WorkspaceViewModel imageEditorFactory, Document document)
+        public void OpenImageEditor(ImageEditor editor)
         {
-            this.Document = document;
+            editor.PropertyChanged += Editor_PropertyChanged;
 
-            CreateImageEditorFunc createFunc = viewport => imageEditorFactory.CreateEditor(viewport, document);
-            frame.Navigate(typeof(ImageEditorPage), createFunc, new SuppressNavigationTransitionInfo());
+            this.Header = editor.Title;
+            this.Document = editor.Document;
 
-            ImageEditorPage page = (ImageEditorPage)frame.Content;
-            this.Header = page.Title;
-            page.TitleChanged += (s, e) => this.Header = page.Title;
+            frame.Navigate(typeof(ImageEditorPage), editor, new SuppressNavigationTransitionInfo());
+        }
+
+        private void Editor_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(ImageEditor.Title))
+            {
+                this.Header = ((ImageEditor)sender).Title;
+            }
         }
     }
 }
