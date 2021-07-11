@@ -16,19 +16,23 @@ namespace Fotografix.Editor
 
             set
             {
-                if (activeDocument != null)
+                Document previous = activeDocument;
+
+                if (SetProperty(ref activeDocument, value))
                 {
-                    activeDocument.ContentChanged -= ActiveDocument_ContentChanged;
+                    if (previous != null)
+                    {
+                        previous.ContentChanged -= ActiveDocument_ContentChanged;
+                    }
+
+                    if (activeDocument != null)
+                    {
+                        activeDocument.ContentChanged += ActiveDocument_ContentChanged;
+                    }
+
+                    RequerySuggested?.Invoke(this, EventArgs.Empty);
                 }
 
-                SetProperty(ref activeDocument, value);
-
-                if (activeDocument != null)
-                {
-                    activeDocument.ContentChanged += ActiveDocument_ContentChanged;
-                }
-
-                RequerySuggested?.Invoke(this, EventArgs.Empty);
             }
         }
 

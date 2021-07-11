@@ -8,10 +8,18 @@ namespace Fotografix.Tests.Uwp
     [TestClass]
     public class TabViewContainerTest
     {
+        private Workspace workspace;
+
+        [TestInitialize]
+        public void Initialize()
+        {
+            this.workspace = new Workspace();
+        }
+
         [UITestMethod]
         public void OpensStartPage()
         {
-            TabViewContainer container = new TabViewContainer();
+            TabViewContainer container = new TabViewContainer(workspace);
 
             container.OpenStartPage();
 
@@ -20,42 +28,64 @@ namespace Fotografix.Tests.Uwp
         }
 
         [UITestMethod]
-        public void OpensImageEditor()
+        public void OpensDocumentInNewTab()
         {
-            TabViewContainer container = new TabViewContainer();
+            TabViewContainer container = new TabViewContainer(workspace);
 
-            container.OpenImageEditor(CreateEmptyImageEditor);
+            workspace.AddDocument(new Document());
 
             Assert.AreEqual(1, container.Tabs.Count);
             Assert.AreEqual(typeof(ImageEditorPage), container.Tabs[0].ContentType);
         }
 
         [UITestMethod]
-        public void OpensImageEditorInExistingEmptyTab()
+        public void OpensDocumentInActiveTabIfEmpty()
         {
-            TabViewContainer container = new TabViewContainer();
+            TabViewContainer container = new TabViewContainer(workspace);
 
             container.OpenStartPage();
-            container.OpenImageEditor(CreateEmptyImageEditor);
+            workspace.AddDocument(new Document());
 
             Assert.AreEqual(1, container.Tabs.Count);
             Assert.AreEqual(typeof(ImageEditorPage), container.Tabs[0].ContentType);
         }
 
         [UITestMethod]
-        public void OpensMultipleImageEditorsInSeparateTabs()
+        public void OpensMultipleDocumentsInSeparateTabs()
         {
-            TabViewContainer container = new TabViewContainer();
+            TabViewContainer container = new TabViewContainer(workspace);
 
-            container.OpenImageEditor(CreateEmptyImageEditor);
-            container.OpenImageEditor(CreateEmptyImageEditor);
+            workspace.AddDocument(new Document());
+            workspace.AddDocument(new Document());
 
             Assert.AreEqual(2, container.Tabs.Count);
         }
 
-        private ImageEditor CreateEmptyImageEditor(Viewport viewport)
+        [UITestMethod]
+        public void SyncsActiveTabWithActiveDocument()
         {
-            return new ImageEditor(new Document());
+            TabViewContainer container = new TabViewContainer(workspace);
+
+            Document document1 = new Document();
+            Document document2 = new Document();
+
+            workspace.AddDocument(document1);
+            Tab tab1 = container.ActiveTab;
+
+            workspace.AddDocument(document2);
+            Tab tab2 = container.ActiveTab;
+
+            container.ActiveTab = tab1;
+
+            Assert.AreEqual(document1, workspace.ActiveDocument, "document1 should be active document");
+
+            workspace.RemoveDocument(document1);
+
+            Assert.AreEqual(tab2, container.ActiveTab, "tab2 should be active tab");
+
+            workspace.RemoveDocument(document2);
+
+            Assert.IsNull(container.ActiveTab, "there should be no active tab");
         }
     }
 }

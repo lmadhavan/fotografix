@@ -14,12 +14,13 @@
         Margin="0,-8,0,0"
         HorizontalAlignment="Stretch"
         VerticalAlignment="Stretch"
-        AddTabButtonClick="OnNewTabRequested"
-        TabCloseRequested="OnCloseTabRequested"
+        AddTabButtonClick="TabView_NewTabRequested"
+        TabCloseRequested="TabView_CloseTabRequested"
+        SelectionChanged="TabView_SelectionChanged"
     >
         <muxc:TabView.KeyboardAccelerators>
-            <KeyboardAccelerator Modifiers="Control" Key="N" Invoked="OnNewImageInvoked" />
-            <KeyboardAccelerator Modifiers="Control" Key="O" Invoked="OnOpenFileInvoked" />
+            <KeyboardAccelerator Modifiers="Control" Key="N" Invoked="NewImage_Invoked" />
+            <KeyboardAccelerator Modifiers="Control" Key="O" Invoked="OpenFile_Invoked" />
         </muxc:TabView.KeyboardAccelerators>
         
         <muxc:TabView.TabStripHeader>

@@ -31,7 +31,7 @@
         />
 
         <StackPanel Grid.Column="1" Grid.Row="2" Orientation="Vertical">
-            <Button x:Name="newButton" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" Click="New_Click">
+            <Button x:Name="newButton" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" Command="{x:Bind vm.NewCommand}">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
@@ -43,7 +43,7 @@
                 </Grid>
             </Button>
 
-            <Button Margin="0,16,0,0" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" Click="Open_Click">
+            <Button Margin="0,16,0,0" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" Command="{x:Bind vm.OpenCommand}">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
@@ -77,16 +77,16 @@
                        Text="Recent files" />
             <HyperlinkButton Grid.Row="0" Grid.Column="1"
                              Content="Clear"
-                             Click="{x:Bind RecentFiles.Clear}" />
+                             Click="{x:Bind vm.RecentFiles.Clear}" />
 
             <TextBlock Grid.Row="1" Grid.ColumnSpan="2"
-                       Visibility="{x:Bind VisibleWhenZero(RecentFiles.Count), Mode=OneWay}"
+                       Visibility="{x:Bind VisibleWhenZero(vm.RecentFiles.Count), Mode=OneWay}"
                        Foreground="{ThemeResource SystemBaseMediumColor}"
                        Margin="0,4,0,0"
                        Text="Files that you have recently opened will show up here." />
             
             <ListView Grid.Row="1" Grid.ColumnSpan="2"
-                      ItemsSource="{x:Bind RecentFiles, Mode=OneWay}"
+                      ItemsSource="{x:Bind vm.RecentFiles, Mode=OneWay}"
                       DisplayMemberPath="DisplayName"
                       SelectionMode="None"
                       IsItemClickEnabled="True"

@@ -1,4 +1,4 @@
-﻿using Fotografix.Uwp.FileManagement;
+﻿using Fotografix.Editor;
 using Microsoft.UI.Xaml.Controls;
 using System;
 using Windows.UI.Xaml.Controls;
@@ -17,7 +17,6 @@ namespace Fotografix.Uwp
             this.frame = new Frame();
             this.Header = " "; // TabView control blows up if this doesn't have at least one character
             this.Content = frame;
-            this.IsEmpty = true;
         }
 
         public void Dispose()
@@ -28,24 +27,27 @@ namespace Fotografix.Uwp
             }
         }
 
-        public bool IsEmpty { get; private set; }
+        public Document Document { get; private set; }
+
+        public bool IsEmpty => Document == null;
         public Type ContentType => frame.Content.GetType();
 
-        public void OpenStartPage(FileManager fileManager)
+        public void OpenStartPage(StartPageViewModel viewModel)
         {
             this.Header = "Start";
-            frame.Navigate(typeof(StartPage), fileManager, new SuppressNavigationTransitionInfo());
+            frame.Navigate(typeof(StartPage), viewModel, new SuppressNavigationTransitionInfo());
         }
 
-        public void OpenImageEditor(CreateImageEditorFunc createFunc)
+        public void OpenImageEditor(ImageEditorFactory imageEditorFactory, Document document)
         {
+            this.Document = document;
+
+            CreateImageEditorFunc createFunc = viewport => imageEditorFactory.CreateEditor(viewport, document);
             frame.Navigate(typeof(ImageEditorPage), createFunc, new SuppressNavigationTransitionInfo());
 
             ImageEditorPage page = (ImageEditorPage)frame.Content;
             this.Header = page.Title;
             page.TitleChanged += (s, e) => this.Header = page.Title;
-
-            this.IsEmpty = false;
         }
     }
 }

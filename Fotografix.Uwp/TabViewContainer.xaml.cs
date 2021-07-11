@@ -1,7 +1,10 @@
-﻿using Fotografix.Uwp.FileManagement;
+﻿using Fotografix.Editor;
+using Fotografix.Uwp.FileManagement;
 using Microsoft.UI.Xaml.Controls;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
@@ -10,32 +13,68 @@ namespace Fotografix.Uwp
 {
     public sealed partial class TabViewContainer : UserControl, ICustomTitleBarProvider
     {
-        private readonly FileManager fileManager;
+        private readonly ImageEditorFactory imageEditorFactory;
+        private readonly Workspace workspace;
+        private readonly RecentFileList recentFiles;
+        private readonly StartPageViewModel startPageViewModel;
 
-        public TabViewContainer()
+        public TabViewContainer() : this(new Workspace())
         {
-            this.InitializeComponent();
-            this.Tabs = new TabCollection(tabView.TabItems);
+        }
 
-            this.fileManager = new FileManager();
-            fileManager.OpenImageEditorRequested += (s, e) => OpenImageEditor(e.CreateFunc);
+        public TabViewContainer(Workspace workspace)
+        {
+            this.imageEditorFactory = new ImageEditorFactory(workspace, ClipboardAdapter.GetForCurrentThread());
+
+            this.workspace = workspace;
+            workspace.DocumentAdded += Workspace_DocumentAdded;
+            workspace.PropertyChanged += Workspace_PropertyChanged;
+
+            this.recentFiles = new RecentFileList();
+
+            this.startPageViewModel = new StartPageViewModel
+            {
+                NewCommand =  imageEditorFactory.NewCommand,
+                OpenCommand = imageEditorFactory.OpenCommand,
+                RecentFiles = recentFiles,
+                FilePickerOverride = imageEditorFactory.FilePickerOverride
+            };
+
+            this.InitializeComponent();
+            this.Tabs = new TabCollection(tabView);
         }
 
         public IReadOnlyList<Tab> Tabs { get; }
 
-        public void OpenStartPage()
+        public Tab ActiveTab
         {
-            CreateEmptyTab().OpenStartPage(fileManager);
+            get => (Tab)tabView.SelectedItem;
+
+            set
+            {
+                if (tabView.SelectedItem != value)
+                {
+                    tabView.SelectedItem = value;
+
+                    // TabView does not raise SelectionChanged when SelectedItem is changed programatically
+                    OnSelectionChanged();
+                }
+            }
         }
 
-        public void OpenImageEditor(CreateImageEditorFunc createFunc)
+        public void OpenStartPage()
         {
-            GetOrCreateEmptyTab().OpenImageEditor(createFunc);
+            CreateEmptyTab().OpenStartPage(startPageViewModel);
+        }
+
+        public void OpenDocument(Document document)
+        {
+            GetOrCreateEmptyTab().OpenImageEditor(imageEditorFactory, document);
         }
 
         private Tab GetOrCreateEmptyTab()
         {
-            Tab tab = (Tab)tabView.SelectedItem;
+            Tab tab = ActiveTab;
 
             if (tab != null && tab.IsEmpty)
             {
@@ -49,24 +88,47 @@ namespace Fotografix.Uwp
         {
             Tab tab = new Tab();
             tabView.TabItems.Add(tab);
-            tabView.SelectedItem = tab;
+            ActiveTab = tab;
 
             return tab;
+        }
+
+        private void OnSelectionChanged()
+        {
+            workspace.ActiveDocument = ActiveTab?.Document;
+        }
+
+        private void OnActiveDocumentChanged()
+        {
+            ActiveTab = Tabs.FirstOrDefault(t => t.Document == workspace.ActiveDocument);
+        }
+
+        private void Workspace_DocumentAdded(object sender, DocumentEventArgs e)
+        {
+            OpenDocument(e.Document);
+        }
+
+        private void Workspace_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(Workspace.ActiveDocument))
+            {
+                OnActiveDocumentChanged();
+            }
         }
 
         #region Tab collection wrapper
         private sealed class TabCollection : IReadOnlyList<Tab>
         {
-            private readonly IList<object> tabs;
+            private readonly TabView tabView;
 
-            public TabCollection(IList<object> tabs)
+            public TabCollection(TabView tabView)
             {
-                this.tabs = tabs;
+                this.tabView = tabView;
             }
 
-            public int Count => tabs.Count;
+            public int Count => tabView.TabItems.Count;
 
-            public Tab this[int index] => (Tab)tabs[index];
+            public Tab this[int index] => (Tab)tabView.TabItems[index];
 
             public IEnumerator<Tab> GetEnumerator()
             {
@@ -85,15 +147,26 @@ namespace Fotografix.Uwp
 
         #region TabView event handlers
 
-        private void OnNewTabRequested(TabView sender, object args)
+        private void TabView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            OnSelectionChanged();
+        }
+
+        private void TabView_NewTabRequested(TabView sender, object args)
         {
             OpenStartPage();
         }
 
-        private void OnCloseTabRequested(TabView sender, TabViewTabCloseRequestedEventArgs args)
+        private void TabView_CloseTabRequested(TabView sender, TabViewTabCloseRequestedEventArgs args)
         {
             Tab tab = (Tab)args.Tab;
             tabView.TabItems.Remove(tab);
+
+            if (tab.Document != null)
+            {
+                workspace.RemoveDocument(tab.Document);
+            }
+
             tab.Dispose();
         }
 
@@ -101,16 +174,16 @@ namespace Fotografix.Uwp
 
         #region Keyboard accelerator event handlers
 
-        private async void OnNewImageInvoked(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
+        private async void NewImage_Invoked(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
         {
             args.Handled = true;
-            await fileManager.NewImageAsync();
+            await imageEditorFactory.NewCommand.ExecuteAsync();
         }
 
-        private async void OnOpenFileInvoked(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
+        private async void OpenFile_Invoked(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
         {
             args.Handled = true;
-            await fileManager.OpenFileAsync();
+            await imageEditorFactory.OpenCommand.ExecuteAsync();
         }
 
         #endregion

@@ -12,6 +12,7 @@ namespace Fotografix.Tests.Acceptance
 {
     public abstract class AcceptanceTestBase : IDialog<ResizeImageParameters>
     {
+        private readonly Workspace workspace;
         private readonly ImageEditorFactory imageEditorFactory;
 
         private bool invalidated;
@@ -19,8 +20,9 @@ namespace Fotografix.Tests.Acceptance
 
         protected AcceptanceTestBase()
         {
+            this.workspace = new Workspace();
             this.Clipboard = new FakeClipboard();
-            this.imageEditorFactory = new ImageEditorFactory(Clipboard) { ResizeImageDialog = this };
+            this.imageEditorFactory = new ImageEditorFactory(workspace, Clipboard) { ResizeImageDialog = this };
         }
 
         protected FakeClipboard Clipboard { get; }
@@ -33,8 +35,13 @@ namespace Fotografix.Tests.Acceptance
             this.viewport = new Viewport();
 
             var file = await GetFileAsync(filename);
-            Document document = await imageEditorFactory.OpenImageAsync(file);
-            this.Editor = imageEditorFactory.CreateEditor(viewport, document);
+
+            using (imageEditorFactory.FilePickerOverride.OverrideOpenFile(file))
+            {
+                await imageEditorFactory.OpenCommand.ExecuteAsync();
+            }
+
+            this.Editor = imageEditorFactory.CreateEditor(viewport, workspace.ActiveDocument);
             Editor.Invalidated += Editor_Invalidated;
             Editor.PropertyChanged += Editor_PropertyChanged;
 

@@ -137,10 +137,9 @@
     <Compile Include="FileManagement\FilePickerAdapter.cs" />
     <Compile Include="FileManagement\FilePickerFactory.cs" />
     <Compile Include="FileManagement\FilePickerOverride.cs" />
-    <Compile Include="FileManagement\OpenImageEditorRequestedEventArgs.cs" />
     <Compile Include="FileManagement\RecentFile.cs" />
     <Compile Include="FileManagement\RecentFileList.cs" />
-    <Compile Include="FileManagement\FileManager.cs" />
+    <Compile Include="StartPageViewModel.cs" />
     <Compile Include="GeometryResourceConverter.cs" />
     <Compile Include="Icons.xaml.cs">
       <DependentUpon>Icons.xaml</DependentUpon>

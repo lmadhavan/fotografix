@@ -18,6 +18,11 @@ namespace Fotografix.Uwp.FileManagement
             this.filePicker = filePicker;
         }
 
+        public IDisposable OverrideOpenFile(IFile file)
+        {
+            return OverrideOpenFiles(new IFile[] { file });
+        }
+
         public IDisposable OverrideOpenFiles(IEnumerable<IFile> files)
         {
             this.openOverride = files;

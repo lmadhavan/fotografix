@@ -11,54 +11,42 @@ using Fotografix.Uwp.FileManagement;
 using Fotografix.Win2D;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Threading.Tasks;
 
 namespace Fotografix.Uwp
 {
     public sealed class ImageEditorFactory
     {
+        private readonly Workspace workspace;
+        private readonly IClipboard clipboard;
         private readonly IImageDecoder imageDecoder = new WindowsImageDecoder();
         private readonly IImageEncoder imageEncoder = new WindowsImageEncoder(new Win2DImageRenderer());
         private readonly IGraphicsDevice graphicsDevice = new Win2DGraphicsDevice();
-        private readonly IFilePicker filePicker = new FilePickerAdapter();
+        private readonly FilePickerOverride filePickerOverride = new FilePickerOverride(new FilePickerAdapter());
         private readonly CommandHandlerCollection handlerCollection = new CommandHandlerCollection();
-        private readonly IClipboard clipboard;
 
-        public ImageEditorFactory(IClipboard clipboard)
+        public ImageEditorFactory(Workspace workspace, IClipboard clipboard)
         {
+            this.workspace = workspace;
+            this.clipboard = clipboard;
+
+            this.NewCommand = workspace.Bind(new NewImageCommand(new ContentDialogAdapter<NewImageDialog, NewImageParameters>()));
+            this.OpenCommand = workspace.Bind(new OpenImageCommand(imageDecoder, filePickerOverride));
+
             handlerCollection.Register(new DrawCommandHandler(graphicsDevice));
             handlerCollection.Register(new CropCommandHandler());
-
-            this.clipboard = clipboard;
         }
 
-        public IEnumerable<FileFormat> SupportedOpenFormats => imageDecoder.SupportedFileFormats;
         public IDialog<ResizeImageParameters> ResizeImageDialog { get; set; } = new ContentDialogAdapter<ResizeImageDialog, ResizeImageParameters>();
+        public FilePickerOverride FilePickerOverride => filePickerOverride;
 
-        public Document CreateNewImage(Size size)
-        {
-            Layer layer = ImageEditor.CreateLayer(id: 1);
-            Image image = new Image(size);
-            image.Layers.Add(layer);
-
-            return new Document(image);
-        }
-
-        public async Task<Document> OpenImageAsync(IFile file)
-        {
-            Image image = await imageDecoder.ReadImageAsync(file);
-            return new Document(image) { File = file };
-        }
+        public AsyncCommand NewCommand { get; }
+        public AsyncCommand OpenCommand { get; }
 
         public ImageEditor CreateEditor(Viewport viewport, Document document)
         {
-            Workspace workspace = new Workspace { ActiveDocument = document };
-
             DocumentCommandDispatcher dispatcher = new DocumentCommandDispatcher(document, handlerCollection);
             document.Image.SetCommandDispatcher(dispatcher);
             document.Image.SetViewport(viewport);
-
-            FilePickerOverride filePickerOverride = new FilePickerOverride(filePicker);
 
             var editor = new ImageEditor(document)
             {
@@ -68,8 +56,8 @@ namespace Fotografix.Uwp
                 UndoCommand = workspace.Bind(new UndoCommand()),
                 RedoCommand = workspace.Bind(new RedoCommand()),
 
-                SaveCommand = workspace.Bind(new SaveImageCommand(imageEncoder, filePicker) { Mode = SaveCommandMode.Save }),
-                SaveAsCommand = workspace.Bind(new SaveImageCommand(imageEncoder, filePicker) { Mode = SaveCommandMode.SaveAs }),
+                SaveCommand = workspace.Bind(new SaveImageCommand(imageEncoder, filePickerOverride) { Mode = SaveCommandMode.Save }),
+                SaveAsCommand = workspace.Bind(new SaveImageCommand(imageEncoder, filePickerOverride) { Mode = SaveCommandMode.SaveAs }),
                 PasteCommand = workspace.Bind(new PasteCommand(clipboard)),
 
                 NewLayerCommand = workspace.Bind(new NewLayerCommand()),

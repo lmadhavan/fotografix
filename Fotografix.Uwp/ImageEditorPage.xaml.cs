@@ -1,5 +1,4 @@
 ﻿using Fotografix.Editor;
-using Fotografix.Uwp.FileManagement;
 using Microsoft.Graphics.Canvas.UI;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using System;
@@ -16,6 +15,8 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Fotografix.Uwp
 {
+    public delegate ImageEditor CreateImageEditorFunc(Viewport viewport);
+
     public sealed partial class ImageEditorPage : Page, IDisposable
     {
         private readonly Viewport viewport;

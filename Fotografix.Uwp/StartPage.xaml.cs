@@ -7,19 +7,18 @@ namespace Fotografix.Uwp
 {
     public sealed partial class StartPage : Page
     {
-        private FileManager fileManager;
+        private StartPageViewModel vm;
 
         public StartPage()
         {
             this.InitializeComponent();
         }
 
-        private RecentFileList RecentFiles => RecentFileList.Default;
-
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
-            this.fileManager = (FileManager)e.Parameter;
+            this.vm = (StartPageViewModel)e.Parameter;
+            Bindings.Update();
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
@@ -32,19 +31,9 @@ namespace Fotografix.Uwp
             return count == 0 ? Visibility.Visible : Visibility.Collapsed;
         }
 
-        private async void New_Click(object sender, RoutedEventArgs e)
-        {
-            await fileManager.NewImageAsync();
-        }
-
-        private async void Open_Click(object sender, RoutedEventArgs e)
-        {
-            await fileManager.OpenFileAsync();
-        }
-
         private async void RecentFileList_ItemClick(object sender, ItemClickEventArgs e)
         {
-            await fileManager.OpenRecentFileAsync((RecentFile)e.ClickedItem);
+            await vm.OpenRecentFileAsync((RecentFile)e.ClickedItem);
         }
     }
 }
