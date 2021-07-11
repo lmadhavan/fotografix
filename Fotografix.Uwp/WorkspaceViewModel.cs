@@ -11,19 +11,24 @@ using Fotografix.Uwp.FileManagement;
 using Fotografix.Win2D;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Threading.Tasks;
+using Windows.Storage;
 
 namespace Fotografix.Uwp
 {
-    public sealed class ImageEditorFactory
+    public sealed class WorkspaceViewModel : IStartPageViewModel
     {
+        private readonly Workspace workspace;
         private readonly IImageDecoder imageDecoder = new WindowsImageDecoder();
         private readonly IImageEncoder imageEncoder = new WindowsImageEncoder(new Win2DImageRenderer());
         private readonly IGraphicsDevice graphicsDevice = new Win2DGraphicsDevice();
         private readonly FilePickerOverride filePickerOverride = new FilePickerOverride(new FilePickerAdapter());
         private readonly CommandHandlerCollection handlerCollection = new CommandHandlerCollection();
 
-        public ImageEditorFactory(Workspace workspace, IClipboard clipboard, IDialog<ResizeImageParameters> resizeImageDialog)
+        public WorkspaceViewModel(Workspace workspace, IClipboard clipboard, IDialog<ResizeImageParameters> resizeImageDialog)
         {
+            this.workspace = workspace;
+
             this.NewCommand = workspace.Bind(new NewImageCommand(new ContentDialogAdapter<NewImageDialog, NewImageParameters>()));
             this.OpenCommand = workspace.Bind(new OpenImageCommand(imageDecoder, filePickerOverride));
             this.SaveCommand = workspace.Bind(new SaveImageCommand(imageEncoder, filePickerOverride) { Mode = SaveCommandMode.Save });
@@ -43,22 +48,22 @@ namespace Fotografix.Uwp
             handlerCollection.Register(new CropCommandHandler());
         }
 
-        public FilePickerOverride FilePickerOverride => filePickerOverride;
+        public RecentFileList RecentFiles { get; } = RecentFileList.Default;
 
         public AsyncCommand NewCommand { get; }
         public AsyncCommand OpenCommand { get; }
-        public AsyncCommand SaveCommand { get; set; }
-        public AsyncCommand SaveAsCommand { get; set; }
+        public AsyncCommand SaveCommand { get; }
+        public AsyncCommand SaveAsCommand { get; }
 
-        public AsyncCommand UndoCommand { get; set; }
-        public AsyncCommand RedoCommand { get; set; }
-        public AsyncCommand PasteCommand { get; set; }
+        public AsyncCommand UndoCommand { get; }
+        public AsyncCommand RedoCommand { get; }
+        public AsyncCommand PasteCommand { get; }
 
-        public AsyncCommand ResizeImageCommand { get; set; }
+        public AsyncCommand ResizeImageCommand { get; }
 
-        public AsyncCommand NewLayerCommand { get; set; }
-        public AsyncCommand DeleteLayerCommand { get; set; }
-        public AsyncCommand ImportLayerCommand { get; set; }
+        public AsyncCommand NewLayerCommand { get; }
+        public AsyncCommand DeleteLayerCommand { get; }
+        public AsyncCommand ImportLayerCommand { get; }
 
         public ImageEditor CreateEditor(Viewport viewport, Document document)
         {
@@ -77,6 +82,26 @@ namespace Fotografix.Uwp
             };
 
             return editor;
+        }
+
+        public async Task<ImageEditor> CreateEditorAsync(Viewport viewport, IFile file)
+        {
+            await OpenFileAsync(file);
+            return CreateEditor(viewport, workspace.ActiveDocument);
+        }
+
+        public async Task OpenRecentFileAsync(RecentFile recentFile)
+        {
+            StorageFile storageFile = await RecentFiles.GetFileAsync(recentFile);
+            await OpenFileAsync(new StorageFileAdapter(storageFile));
+        }
+
+        private async Task OpenFileAsync(IFile file)
+        {
+            using (filePickerOverride.OverrideOpenFile(file))
+            {
+                await OpenCommand.ExecuteAsync();
+            }
         }
 
         private IList<ITool> CreateTools()

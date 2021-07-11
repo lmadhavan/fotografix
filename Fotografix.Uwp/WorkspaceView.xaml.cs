@@ -1,5 +1,4 @@
 ﻿using Fotografix.Editor;
-using Fotografix.Uwp.FileManagement;
 using Microsoft.UI.Xaml.Controls;
 using System.Collections;
 using System.Collections.Generic;
@@ -12,12 +11,8 @@ namespace Fotografix.Uwp
 {
     public sealed partial class WorkspaceView : UserControl, ICustomTitleBarProvider
     {
-        private readonly ImageEditorFactory imageEditorFactory;
         private readonly Workspace workspace;
-        private readonly RecentFileList recentFiles;
-        private readonly StartPageViewModel startPageViewModel;
-
-        private readonly ImageEditorFactory vm;
+        private readonly WorkspaceViewModel vm;
 
         public WorkspaceView() : this(new Workspace())
         {
@@ -25,22 +20,11 @@ namespace Fotografix.Uwp
 
         public WorkspaceView(Workspace workspace)
         {
-            this.imageEditorFactory = new ImageEditorFactory(workspace, ClipboardAdapter.GetForCurrentThread(), new ContentDialogAdapter<ResizeImageDialog, ResizeImageParameters>());
-            this.vm = imageEditorFactory;
-
             this.workspace = workspace;
             workspace.DocumentAdded += Workspace_DocumentAdded;
             workspace.PropertyChanged += Workspace_PropertyChanged;
 
-            this.recentFiles = new RecentFileList();
-
-            this.startPageViewModel = new StartPageViewModel
-            {
-                NewCommand =  imageEditorFactory.NewCommand,
-                OpenCommand = imageEditorFactory.OpenCommand,
-                RecentFiles = recentFiles,
-                FilePickerOverride = imageEditorFactory.FilePickerOverride
-            };
+            this.vm = new WorkspaceViewModel(workspace, ClipboardAdapter.GetForCurrentThread(), new ContentDialogAdapter<ResizeImageDialog, ResizeImageParameters>());
 
             InitializeComponent();
             menuBar.CreateShadowAccelerators(shadowAcceleratorsContainer);
@@ -67,12 +51,12 @@ namespace Fotografix.Uwp
 
         public void OpenStartPage()
         {
-            CreateEmptyTab().OpenStartPage(startPageViewModel);
+            CreateEmptyTab().OpenStartPage(vm);
         }
 
-        public void OpenDocument(Document document)
+        private void OpenDocument(Document document)
         {
-            GetOrCreateEmptyTab().OpenImageEditor(imageEditorFactory, document);
+            GetOrCreateEmptyTab().OpenImageEditor(vm, document);
         }
 
         private Tab GetOrCreateEmptyTab()

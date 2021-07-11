@@ -7,7 +7,7 @@ namespace Fotografix.Uwp
 {
     public sealed partial class StartPage : Page
     {
-        private StartPageViewModel vm;
+        private IStartPageViewModel vm;
 
         public StartPage()
         {
@@ -17,7 +17,7 @@ namespace Fotografix.Uwp
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
-            this.vm = (StartPageViewModel)e.Parameter;
+            this.vm = (IStartPageViewModel)e.Parameter;
             Bindings.Update();
         }
 

@@ -32,13 +32,13 @@ namespace Fotografix.Uwp
         public bool IsEmpty => Document == null;
         public Type ContentType => frame.Content.GetType();
 
-        public void OpenStartPage(StartPageViewModel viewModel)
+        public void OpenStartPage(IStartPageViewModel viewModel)
         {
             this.Header = "Start";
             frame.Navigate(typeof(StartPage), viewModel, new SuppressNavigationTransitionInfo());
         }
 
-        public void OpenImageEditor(ImageEditorFactory imageEditorFactory, Document document)
+        public void OpenImageEditor(WorkspaceViewModel imageEditorFactory, Document document)
         {
             this.Document = document;
 
