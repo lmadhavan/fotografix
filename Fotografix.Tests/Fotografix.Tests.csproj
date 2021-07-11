@@ -148,7 +148,7 @@
     <Compile Include="Uwp\FakeImageCodec.cs" />
     <Compile Include="Uwp\ImageEditorTest.cs" />
     <Compile Include="Uwp\Layers\OpacitySliderToolTipValueConverterTest.cs" />
-    <Compile Include="Uwp\TabViewContainerTest.cs" />
+    <Compile Include="Uwp\WorkspaceViewTest.cs" />
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>

@@ -6,7 +6,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting.AppContainer;
 namespace Fotografix.Tests.Uwp
 {
     [TestClass]
-    public class TabViewContainerTest
+    public class WorkspaceViewTest
     {
         private Workspace workspace;
 
@@ -19,73 +19,73 @@ namespace Fotografix.Tests.Uwp
         [UITestMethod]
         public void OpensStartPage()
         {
-            TabViewContainer container = new TabViewContainer(workspace);
+            WorkspaceView workspaceView = new WorkspaceView(workspace);
 
-            container.OpenStartPage();
+            workspaceView.OpenStartPage();
 
-            Assert.AreEqual(1, container.Tabs.Count);
-            Assert.AreEqual(typeof(StartPage), container.Tabs[0].ContentType);
+            Assert.AreEqual(1, workspaceView.Tabs.Count);
+            Assert.AreEqual(typeof(StartPage), workspaceView.Tabs[0].ContentType);
         }
 
         [UITestMethod]
         public void OpensDocumentInNewTab()
         {
-            TabViewContainer container = new TabViewContainer(workspace);
+            WorkspaceView workspaceView = new WorkspaceView(workspace);
 
             workspace.AddDocument(new Document());
 
-            Assert.AreEqual(1, container.Tabs.Count);
-            Assert.AreEqual(typeof(ImageEditorPage), container.Tabs[0].ContentType);
+            Assert.AreEqual(1, workspaceView.Tabs.Count);
+            Assert.AreEqual(typeof(ImageEditorPage), workspaceView.Tabs[0].ContentType);
         }
 
         [UITestMethod]
         public void OpensDocumentInActiveTabIfEmpty()
         {
-            TabViewContainer container = new TabViewContainer(workspace);
+            WorkspaceView workspaceView = new WorkspaceView(workspace);
 
-            container.OpenStartPage();
+            workspaceView.OpenStartPage();
             workspace.AddDocument(new Document());
 
-            Assert.AreEqual(1, container.Tabs.Count);
-            Assert.AreEqual(typeof(ImageEditorPage), container.Tabs[0].ContentType);
+            Assert.AreEqual(1, workspaceView.Tabs.Count);
+            Assert.AreEqual(typeof(ImageEditorPage), workspaceView.Tabs[0].ContentType);
         }
 
         [UITestMethod]
         public void OpensMultipleDocumentsInSeparateTabs()
         {
-            TabViewContainer container = new TabViewContainer(workspace);
+            WorkspaceView workspaceView = new WorkspaceView(workspace);
 
             workspace.AddDocument(new Document());
             workspace.AddDocument(new Document());
 
-            Assert.AreEqual(2, container.Tabs.Count);
+            Assert.AreEqual(2, workspaceView.Tabs.Count);
         }
 
         [UITestMethod]
         public void SyncsActiveTabWithActiveDocument()
         {
-            TabViewContainer container = new TabViewContainer(workspace);
+            WorkspaceView workspaceView = new WorkspaceView(workspace);
 
             Document document1 = new Document();
             Document document2 = new Document();
 
             workspace.AddDocument(document1);
-            Tab tab1 = container.ActiveTab;
+            Tab tab1 = workspaceView.ActiveTab;
 
             workspace.AddDocument(document2);
-            Tab tab2 = container.ActiveTab;
+            Tab tab2 = workspaceView.ActiveTab;
 
-            container.ActiveTab = tab1;
+            workspaceView.ActiveTab = tab1;
 
             Assert.AreEqual(document1, workspace.ActiveDocument, "document1 should be active document");
 
             workspace.RemoveDocument(document1);
 
-            Assert.AreEqual(tab2, container.ActiveTab, "tab2 should be active tab");
+            Assert.AreEqual(tab2, workspaceView.ActiveTab, "tab2 should be active tab");
 
             workspace.RemoveDocument(document2);
 
-            Assert.IsNull(container.ActiveTab, "there should be no active tab");
+            Assert.IsNull(workspaceView.ActiveTab, "there should be no active tab");
         }
     }
 }

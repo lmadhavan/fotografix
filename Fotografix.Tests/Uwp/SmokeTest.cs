@@ -11,9 +11,9 @@ namespace Fotografix.Tests.Uwp
         [UITestMethod]
         public void LoadsUI()
         {
-            TabViewContainer container = new TabViewContainer();
-            Window.Current.Content = container;
-            container.OpenStartPage();
+            WorkspaceView workspaceView = new WorkspaceView();
+            Window.Current.Content = workspaceView;
+            workspaceView.OpenStartPage();
         }
     }
 }

@@ -11,18 +11,18 @@ using Windows.UI.Xaml.Input;
 
 namespace Fotografix.Uwp
 {
-    public sealed partial class TabViewContainer : UserControl, ICustomTitleBarProvider
+    public sealed partial class WorkspaceView : UserControl, ICustomTitleBarProvider
     {
         private readonly ImageEditorFactory imageEditorFactory;
         private readonly Workspace workspace;
         private readonly RecentFileList recentFiles;
         private readonly StartPageViewModel startPageViewModel;
 
-        public TabViewContainer() : this(new Workspace())
+        public WorkspaceView() : this(new Workspace())
         {
         }
 
-        public TabViewContainer(Workspace workspace)
+        public WorkspaceView(Workspace workspace)
         {
             this.imageEditorFactory = new ImageEditorFactory(workspace, ClipboardAdapter.GetForCurrentThread());
 

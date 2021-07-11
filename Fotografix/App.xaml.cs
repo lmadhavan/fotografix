@@ -17,18 +17,18 @@ namespace Fotografix
 
         protected override void OnLaunched(LaunchActivatedEventArgs e)
         {
-            TabViewContainer container = Window.Current.Content as TabViewContainer;
+            WorkspaceView workspaceView = Window.Current.Content as WorkspaceView;
 
-            if (container == null)
+            if (workspaceView == null)
             {
-                container = new TabViewContainer();
-                TitleBar.GetForCurrentView().Customize(titleBarProvider: container);
-                Window.Current.Content = container;
+                workspaceView = new WorkspaceView();
+                TitleBar.GetForCurrentView().Customize(titleBarProvider: workspaceView);
+                Window.Current.Content = workspaceView;
             }
 
             if (e.PrelaunchActivated == false)
             {
-                container.OpenStartPage();
+                workspaceView.OpenStartPage();
                 Window.Current.Activate();
             }
         }
