@@ -9,27 +9,89 @@
     d:DesignHeight="300"
     d:DesignWidth="400">
 
-    <muxc:TabView
-        x:Name="tabView"
-        Margin="0,-8,0,0"
-        HorizontalAlignment="Stretch"
-        VerticalAlignment="Stretch"
-        AddTabButtonClick="TabView_NewTabRequested"
-        TabCloseRequested="TabView_CloseTabRequested"
-        SelectionChanged="TabView_SelectionChanged"
-    >
-        <muxc:TabView.KeyboardAccelerators>
-            <KeyboardAccelerator Modifiers="Control" Key="N" Invoked="NewImage_Invoked" />
-            <KeyboardAccelerator Modifiers="Control" Key="O" Invoked="OpenFile_Invoked" />
-        </muxc:TabView.KeyboardAccelerators>
-        
-        <muxc:TabView.TabStripHeader>
-            <Grid x:Name="tabStripHeader" Background="Transparent" />
-        </muxc:TabView.TabStripHeader>
-        
-        <muxc:TabView.TabStripFooter>
-            <Grid x:Name="tabStripFooter" Background="Transparent" />
-        </muxc:TabView.TabStripFooter>
-    </muxc:TabView>
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Grid x:Name="titleBar" Grid.Row="0" Background="Transparent">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition x:Name="titleBarLeftInset" Width="0" />
+                <ColumnDefinition />
+                <ColumnDefinition x:Name="titleBarRightInset" Width="0" />
+            </Grid.ColumnDefinitions>
+        </Grid>
+
+        <StackPanel Grid.Row="0" Orientation="Horizontal">
+            <Image
+                HorizontalAlignment="Left"
+                Source="ms-appx:///Assets/Square44x44Logo.scale-200.png"
+                Width="20" Height="20" Margin="12,0" />
+
+            <muxc:MenuBar x:Name="menuBar" Margin="0,0,0,0">
+                <muxc:MenuBarItem Title="File" AccessKey="F">
+                    <MenuFlyoutItem Text="New..." Command="{x:Bind vm.NewCommand}" AccessKey="N">
+                        <MenuFlyoutItem.KeyboardAccelerators>
+                            <KeyboardAccelerator Modifiers="Control" Key="N" />
+                        </MenuFlyoutItem.KeyboardAccelerators>
+                    </MenuFlyoutItem>
+                    <MenuFlyoutItem Text="Open..." Icon="OpenFile" Command="{x:Bind vm.OpenCommand}" AccessKey="O">
+                        <MenuFlyoutItem.KeyboardAccelerators>
+                            <KeyboardAccelerator Modifiers="Control" Key="O" />
+                        </MenuFlyoutItem.KeyboardAccelerators>
+                    </MenuFlyoutItem>
+                    <MenuFlyoutItem Text="Save" Icon="Save" Command="{x:Bind vm.SaveCommand}" AccessKey="S">
+                        <MenuFlyoutItem.KeyboardAccelerators>
+                            <KeyboardAccelerator Modifiers="Control" Key="S" />
+                        </MenuFlyoutItem.KeyboardAccelerators>
+                    </MenuFlyoutItem>
+                    <MenuFlyoutItem Text="Save as..." Command="{x:Bind vm.SaveAsCommand}" AccessKey="A">
+                        <MenuFlyoutItem.KeyboardAccelerators>
+                            <KeyboardAccelerator Modifiers="Control,Shift" Key="S" />
+                        </MenuFlyoutItem.KeyboardAccelerators>
+                    </MenuFlyoutItem>
+                </muxc:MenuBarItem>
+
+                <muxc:MenuBarItem Title="Edit" AccessKey="E">
+                    <MenuFlyoutItem Text="Undo" Icon="Undo" Command="{x:Bind vm.UndoCommand}" AccessKey="U">
+                        <MenuFlyoutItem.KeyboardAccelerators>
+                            <KeyboardAccelerator Modifiers="Control" Key="Z" />
+                        </MenuFlyoutItem.KeyboardAccelerators>
+                    </MenuFlyoutItem>
+                    <MenuFlyoutItem Text="Redo" Icon="Redo" Command="{x:Bind vm.RedoCommand}" AccessKey="R">
+                        <MenuFlyoutItem.KeyboardAccelerators>
+                            <KeyboardAccelerator Modifiers="Control,Shift" Key="Z" />
+                            <KeyboardAccelerator Modifiers="Control" Key="Y" />
+                        </MenuFlyoutItem.KeyboardAccelerators>
+                    </MenuFlyoutItem>
+                    <MenuFlyoutSeparator />
+                    <MenuFlyoutItem Text="Paste" Icon="Paste" Command="{x:Bind vm.PasteCommand}" AccessKey="P">
+                        <MenuFlyoutItem.KeyboardAccelerators>
+                            <KeyboardAccelerator Modifiers="Control" Key="V" />
+                        </MenuFlyoutItem.KeyboardAccelerators>
+                    </MenuFlyoutItem>
+                </muxc:MenuBarItem>
+
+                <muxc:MenuBarItem Title="Image" AccessKey="I">
+                    <MenuFlyoutItem Text="Resize..." Icon="FullScreen" Command="{x:Bind vm.ResizeImageCommand}" />
+                    <MenuFlyoutSeparator />
+                    <MenuFlyoutItem Text="New layer" Command="{x:Bind vm.NewLayerCommand}" />
+                    <MenuFlyoutItem Text="Delete layer" Command="{x:Bind vm.DeleteLayerCommand}" />
+                </muxc:MenuBarItem>
+            </muxc:MenuBar>
+
+            <Grid x:Name="shadowAcceleratorsContainer" />
+        </StackPanel>
+
+        <muxc:TabView
+            x:Name="tabView"
+            Grid.Row="1"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Stretch"
+            AddTabButtonClick="TabView_NewTabRequested"
+            TabCloseRequested="TabView_CloseTabRequested"
+            SelectionChanged="TabView_SelectionChanged" />
+    </Grid>
 
 </UserControl>

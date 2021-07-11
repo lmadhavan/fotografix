@@ -56,13 +56,6 @@ namespace Fotografix.Uwp
 
         public FilePickerOverride FilePickerOverride { get; set; }
 
-        public AsyncCommand UndoCommand { get; set; }
-        public AsyncCommand RedoCommand { get; set; }
-        
-        public AsyncCommand SaveCommand { get; set; }
-        public AsyncCommand SaveAsCommand { get; set; }
-        public AsyncCommand PasteCommand { get; set; }
-
         public AsyncCommand NewLayerCommand { get; set; }
         public AsyncCommand DeleteLayerCommand { get; set; }
         public AsyncCommand ImportLayerCommand { get; set; }

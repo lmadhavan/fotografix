@@ -22,11 +22,12 @@ namespace Fotografix.Tests.Acceptance
         {
             this.workspace = new Workspace();
             this.Clipboard = new FakeClipboard();
-            this.imageEditorFactory = new ImageEditorFactory(workspace, Clipboard) { ResizeImageDialog = this };
+            this.imageEditorFactory = new ImageEditorFactory(workspace, Clipboard, resizeImageDialog: this);
         }
 
         protected FakeClipboard Clipboard { get; }
         protected ImageEditor Editor { get; private set; }
+        protected ImageEditorFactory Workspace => imageEditorFactory;
 
         protected async Task OpenImageAsync(string filename)
         {

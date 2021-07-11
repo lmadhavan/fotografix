@@ -7,7 +7,6 @@ using System.ComponentModel;
 using System.Linq;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Input;
 
 namespace Fotografix.Uwp
 {
@@ -18,13 +17,16 @@ namespace Fotografix.Uwp
         private readonly RecentFileList recentFiles;
         private readonly StartPageViewModel startPageViewModel;
 
+        private readonly ImageEditorFactory vm;
+
         public WorkspaceView() : this(new Workspace())
         {
         }
 
         public WorkspaceView(Workspace workspace)
         {
-            this.imageEditorFactory = new ImageEditorFactory(workspace, ClipboardAdapter.GetForCurrentThread());
+            this.imageEditorFactory = new ImageEditorFactory(workspace, ClipboardAdapter.GetForCurrentThread(), new ContentDialogAdapter<ResizeImageDialog, ResizeImageParameters>());
+            this.vm = imageEditorFactory;
 
             this.workspace = workspace;
             workspace.DocumentAdded += Workspace_DocumentAdded;
@@ -40,7 +42,8 @@ namespace Fotografix.Uwp
                 FilePickerOverride = imageEditorFactory.FilePickerOverride
             };
 
-            this.InitializeComponent();
+            InitializeComponent();
+            menuBar.CreateShadowAccelerators(shadowAcceleratorsContainer);
             this.Tabs = new TabCollection(tabView);
         }
 
@@ -172,40 +175,24 @@ namespace Fotografix.Uwp
 
         #endregion
 
-        #region Keyboard accelerator event handlers
-
-        private async void NewImage_Invoked(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
-        {
-            args.Handled = true;
-            await imageEditorFactory.NewCommand.ExecuteAsync();
-        }
-
-        private async void OpenFile_Invoked(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
-        {
-            args.Handled = true;
-            await imageEditorFactory.OpenCommand.ExecuteAsync();
-        }
-
-        #endregion
-
         #region Title bar customization
 
-        UIElement ICustomTitleBarProvider.CustomTitleBar => tabStripFooter;
+        UIElement ICustomTitleBarProvider.CustomTitleBar => titleBar;
 
         void ICustomTitleBarProvider.UpdateLayout(ITitleBarLayoutMetrics metrics)
         {
             if (FlowDirection == FlowDirection.LeftToRight)
             {
-                tabStripHeader.MinWidth = metrics.SystemOverlayLeftInset;
-                tabStripFooter.MinWidth = metrics.SystemOverlayRightInset;
+                titleBarLeftInset.Width = new GridLength(metrics.SystemOverlayLeftInset);
+                titleBarRightInset.Width = new GridLength(metrics.SystemOverlayRightInset);
             }
             else
             {
-                tabStripHeader.MinWidth = metrics.SystemOverlayRightInset;
-                tabStripFooter.MinWidth = metrics.SystemOverlayLeftInset;
+                titleBarLeftInset.Width = new GridLength(metrics.SystemOverlayRightInset);
+                titleBarRightInset.Width = new GridLength(metrics.SystemOverlayLeftInset);
             }
 
-            tabStripHeader.Height = tabStripFooter.Height = metrics.Height;
+            titleBar.Height = menuBar.Height = metrics.Height;
         }
 
         #endregion

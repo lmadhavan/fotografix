@@ -139,6 +139,7 @@
     <Compile Include="FileManagement\FilePickerOverride.cs" />
     <Compile Include="FileManagement\RecentFile.cs" />
     <Compile Include="FileManagement\RecentFileList.cs" />
+    <Compile Include="KeyboardAcceleratorWorkaround.cs" />
     <Compile Include="StartPageViewModel.cs" />
     <Compile Include="GeometryResourceConverter.cs" />
     <Compile Include="Icons.xaml.cs">

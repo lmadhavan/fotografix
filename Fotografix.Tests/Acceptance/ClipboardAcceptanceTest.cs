@@ -14,7 +14,7 @@ namespace Fotografix.Tests.Acceptance
             var bitmap = await TestImages.LoadBitmapAsync("stars_small.jpg");
             Clipboard.SetBitmap(bitmap);
 
-            await Editor.PasteCommand.ExecuteAsync();
+            await Workspace.PasteCommand.ExecuteAsync();
 
             await AssertImageAsync("flowers_stars_small_center.png");
         }

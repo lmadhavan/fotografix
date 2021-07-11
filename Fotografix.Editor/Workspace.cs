@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -104,6 +105,7 @@ namespace Fotografix.Editor
 
             public override Task ExecuteAsync()
             {
+                Debug.WriteLine("Executing " + workspaceCommand.GetType().Name);
                 return workspaceCommand.ExecuteAsync(workspace);
             }
         }
@@ -152,6 +154,7 @@ namespace Fotografix.Editor
                 Document document = workspace.activeDocument;
                 using (document.BeginChangeGroup())
                 {
+                    Debug.WriteLine("Executing " + documentCommand.GetType().Name);
                     await documentCommand.ExecuteAsync(workspace.ActiveDocument);
                 }
             }

@@ -16,31 +16,49 @@ namespace Fotografix.Uwp
 {
     public sealed class ImageEditorFactory
     {
-        private readonly Workspace workspace;
-        private readonly IClipboard clipboard;
         private readonly IImageDecoder imageDecoder = new WindowsImageDecoder();
         private readonly IImageEncoder imageEncoder = new WindowsImageEncoder(new Win2DImageRenderer());
         private readonly IGraphicsDevice graphicsDevice = new Win2DGraphicsDevice();
         private readonly FilePickerOverride filePickerOverride = new FilePickerOverride(new FilePickerAdapter());
         private readonly CommandHandlerCollection handlerCollection = new CommandHandlerCollection();
 
-        public ImageEditorFactory(Workspace workspace, IClipboard clipboard)
+        public ImageEditorFactory(Workspace workspace, IClipboard clipboard, IDialog<ResizeImageParameters> resizeImageDialog)
         {
-            this.workspace = workspace;
-            this.clipboard = clipboard;
-
             this.NewCommand = workspace.Bind(new NewImageCommand(new ContentDialogAdapter<NewImageDialog, NewImageParameters>()));
             this.OpenCommand = workspace.Bind(new OpenImageCommand(imageDecoder, filePickerOverride));
+            this.SaveCommand = workspace.Bind(new SaveImageCommand(imageEncoder, filePickerOverride) { Mode = SaveCommandMode.Save });
+            this.SaveAsCommand = workspace.Bind(new SaveImageCommand(imageEncoder, filePickerOverride) { Mode = SaveCommandMode.SaveAs });
+
+            this.UndoCommand = workspace.Bind(new UndoCommand());
+            this.RedoCommand = workspace.Bind(new RedoCommand());
+            this.PasteCommand = workspace.Bind(new PasteCommand(clipboard));
+
+            this.ResizeImageCommand = workspace.Bind(new ResizeImageCommand(resizeImageDialog, graphicsDevice));
+
+            this.NewLayerCommand = workspace.Bind(new NewLayerCommand());
+            this.DeleteLayerCommand = workspace.Bind(new DeleteLayerCommand());
+            this.ImportLayerCommand = workspace.Bind(new ImportLayerCommand(imageDecoder, filePickerOverride));
 
             handlerCollection.Register(new DrawCommandHandler(graphicsDevice));
             handlerCollection.Register(new CropCommandHandler());
         }
 
-        public IDialog<ResizeImageParameters> ResizeImageDialog { get; set; } = new ContentDialogAdapter<ResizeImageDialog, ResizeImageParameters>();
         public FilePickerOverride FilePickerOverride => filePickerOverride;
 
         public AsyncCommand NewCommand { get; }
         public AsyncCommand OpenCommand { get; }
+        public AsyncCommand SaveCommand { get; set; }
+        public AsyncCommand SaveAsCommand { get; set; }
+
+        public AsyncCommand UndoCommand { get; set; }
+        public AsyncCommand RedoCommand { get; set; }
+        public AsyncCommand PasteCommand { get; set; }
+
+        public AsyncCommand ResizeImageCommand { get; set; }
+
+        public AsyncCommand NewLayerCommand { get; set; }
+        public AsyncCommand DeleteLayerCommand { get; set; }
+        public AsyncCommand ImportLayerCommand { get; set; }
 
         public ImageEditor CreateEditor(Viewport viewport, Document document)
         {
@@ -52,19 +70,10 @@ namespace Fotografix.Uwp
             {
                 FilePickerOverride = filePickerOverride,
                 Tools = CreateTools(),
-
-                UndoCommand = workspace.Bind(new UndoCommand()),
-                RedoCommand = workspace.Bind(new RedoCommand()),
-
-                SaveCommand = workspace.Bind(new SaveImageCommand(imageEncoder, filePickerOverride) { Mode = SaveCommandMode.Save }),
-                SaveAsCommand = workspace.Bind(new SaveImageCommand(imageEncoder, filePickerOverride) { Mode = SaveCommandMode.SaveAs }),
-                PasteCommand = workspace.Bind(new PasteCommand(clipboard)),
-
-                NewLayerCommand = workspace.Bind(new NewLayerCommand()),
-                DeleteLayerCommand = workspace.Bind(new DeleteLayerCommand()),
-                ImportLayerCommand = workspace.Bind(new ImportLayerCommand(imageDecoder, filePickerOverride)),
-
-                ResizeImageCommand = workspace.Bind(new ResizeImageCommand(ResizeImageDialog, graphicsDevice))
+                NewLayerCommand = NewLayerCommand,
+                DeleteLayerCommand = DeleteLayerCommand,
+                ImportLayerCommand = ImportLayerCommand,
+                ResizeImageCommand = ResizeImageCommand
             };
 
             return editor;

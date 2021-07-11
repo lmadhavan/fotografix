@@ -11,7 +11,6 @@
     xmlns:layers="using:Fotografix.Uwp.Layers"
     xmlns:tools="using:Fotografix.Uwp.Tools"
     xmlns:sys="using:System"
-    xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     mc:Ignorable="d"
     Background="{ThemeResource AppBarBackgroundThemeBrush}"
     AllowDrop="True">
@@ -40,67 +39,11 @@
 
         <Grid Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" BorderThickness="0,1" BorderBrush="{ThemeResource ButtonBorderThemeBrush}" Background="{ThemeResource SystemChromeLowColor}">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
-            <StackPanel Grid.Column="0" Margin="6,0" Orientation="Horizontal">
-                <muxc:DropDownButton
-                    Style="{StaticResource CommandDropDownButtonStyle}"
-                    ToolTipService.ToolTip="Save">
-                    <SymbolIcon Symbol="Save" />
-
-                    <muxc:DropDownButton.Flyout>
-                        <MenuFlyout>
-                            <MenuFlyoutItem Text="Save" Command="{x:Bind editor.SaveCommand}">
-                                <MenuFlyoutItem.KeyboardAccelerators>
-                                    <KeyboardAccelerator Modifiers="Control" Key="S" />
-                                </MenuFlyoutItem.KeyboardAccelerators>
-                            </MenuFlyoutItem>
-
-                            <MenuFlyoutItem Text="Save as..." Command="{x:Bind editor.SaveAsCommand}">
-                                <MenuFlyoutItem.KeyboardAccelerators>
-                                    <KeyboardAccelerator Modifiers="Control,Shift" Key="S" />
-                                </MenuFlyoutItem.KeyboardAccelerators>
-                            </MenuFlyoutItem>
-                        </MenuFlyout>
-                    </muxc:DropDownButton.Flyout>
-                </muxc:DropDownButton>
-
-                <Button Style="{StaticResource CommandButtonStyle}"
-                        Command="{x:Bind editor.PasteCommand}"
-                        ToolTipService.ToolTip="Paste">
-                    <Button.KeyboardAccelerators>
-                        <KeyboardAccelerator Modifiers="Control" Key="V" />
-                    </Button.KeyboardAccelerators>
-
-                    <SymbolIcon Symbol="Paste" />
-                </Button>
-
-                <Button Style="{StaticResource CommandButtonStyle}"
-                        Command="{x:Bind editor.UndoCommand}"
-                        ToolTipService.ToolTip="Undo">
-                    <Button.KeyboardAccelerators>
-                        <KeyboardAccelerator Modifiers="Control" Key="Z" />
-                    </Button.KeyboardAccelerators>
-
-                    <SymbolIcon Symbol="Undo" />
-                </Button>
-
-                <Button Style="{StaticResource CommandButtonStyle}"
-                        Command="{x:Bind editor.RedoCommand}"
-                        ToolTipService.ToolTip="Redo">
-                    <Button.KeyboardAccelerators>
-                        <KeyboardAccelerator Modifiers="Control,Shift" Key="Z" />
-                        <KeyboardAccelerator Modifiers="Control" Key="Y" />
-                    </Button.KeyboardAccelerators>
-
-                    <SymbolIcon Symbol="Redo" />
-                </Button>
-            </StackPanel>
-
-            <Grid Grid.Column="1"
+            <Grid Grid.Column="0"
                   Margin="2,4"
                   Padding="8,2"
                   CornerRadius="4"
@@ -133,7 +76,7 @@
                                 Content="{x:Bind editor.ActiveTool, Mode=OneWay}" />
             </Grid>
 
-            <StackPanel Grid.Column="2" Padding="6,0" Orientation="Horizontal">
+            <StackPanel Grid.Column="1" Padding="6,0" Orientation="Horizontal">
                 <Button Style="{StaticResource CommandButtonStyle}" Command="{x:Bind editor.ResizeImageCommand}">
                     <StackPanel Orientation="Horizontal">
                         <SymbolIcon Symbol="FullScreen" />
