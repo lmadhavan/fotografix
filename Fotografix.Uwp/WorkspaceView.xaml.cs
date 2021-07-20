@@ -21,10 +21,10 @@ namespace Fotografix.Uwp
         public WorkspaceView(Workspace workspace)
         {
             this.workspace = workspace;
+            this.vm = new WorkspaceViewModel(workspace, ClipboardAdapter.GetForCurrentThread(), new ContentDialogAdapter<ResizeImageDialog, ResizeImageParameters>());
+
             workspace.DocumentAdded += Workspace_DocumentAdded;
             workspace.PropertyChanged += Workspace_PropertyChanged;
-
-            this.vm = new WorkspaceViewModel(workspace, ClipboardAdapter.GetForCurrentThread(), new ContentDialogAdapter<ResizeImageDialog, ResizeImageParameters>());
 
             InitializeComponent();
             menuBar.CreateShadowAccelerators(shadowAcceleratorsContainer);
@@ -56,8 +56,7 @@ namespace Fotografix.Uwp
 
         private void OpenDocument(Document document)
         {
-            ImageEditor editor = vm.CreateEditor(new Viewport(), document);
-            GetOrCreateEmptyTab().OpenImageEditor(editor);
+            GetOrCreateEmptyTab().OpenImageEditor(vm.ViewModelFor(document));
         }
 
         private Tab GetOrCreateEmptyTab()

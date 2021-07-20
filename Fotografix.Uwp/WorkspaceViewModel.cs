@@ -10,24 +10,29 @@ using Fotografix.Uwp.Codecs;
 using Fotografix.Uwp.FileManagement;
 using Fotografix.Win2D;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Threading.Tasks;
 using Windows.Storage;
 
 namespace Fotografix.Uwp
 {
-    public sealed class WorkspaceViewModel : IStartPageViewModel
+    public sealed class WorkspaceViewModel : NotifyPropertyChangedBase, IStartPageViewModel
     {
         private readonly Workspace workspace;
-        private readonly IImageDecoder imageDecoder = new WindowsImageDecoder();
-        private readonly IImageEncoder imageEncoder = new WindowsImageEncoder(new Win2DImageRenderer());
-        private readonly IGraphicsDevice graphicsDevice = new Win2DGraphicsDevice();
         private readonly FilePickerOverride filePickerOverride = new FilePickerOverride(new FilePickerAdapter());
         private readonly CommandHandlerCollection handlerCollection = new CommandHandlerCollection();
 
         public WorkspaceViewModel(Workspace workspace, IClipboard clipboard, IDialog<ResizeImageParameters> resizeImageDialog)
         {
             this.workspace = workspace;
+            workspace.DocumentAdded += Workspace_DocumentAdded;
+            workspace.DocumentRemoved += Workspace_DocumentRemoved;
+            workspace.PropertyChanged += Workspace_PropertyChanged;
+
+            IImageDecoder imageDecoder = new WindowsImageDecoder();
+            IImageEncoder imageEncoder = new WindowsImageEncoder(new Win2DImageRenderer());
+            IGraphicsDevice graphicsDevice = new Win2DGraphicsDevice();
 
             this.NewCommand = workspace.Bind(new NewImageCommand(new ContentDialogAdapter<NewImageDialog, NewImageParameters>()));
             this.OpenCommand = workspace.Bind(new OpenImageCommand(imageDecoder, filePickerOverride));
@@ -48,7 +53,7 @@ namespace Fotografix.Uwp
             handlerCollection.Register(new CropCommandHandler());
         }
 
-        public RecentFileList RecentFiles { get; } = RecentFileList.Default;
+        #region Commands
 
         public AsyncCommand NewCommand { get; }
         public AsyncCommand OpenCommand { get; }
@@ -65,7 +70,59 @@ namespace Fotografix.Uwp
         public AsyncCommand DeleteLayerCommand { get; }
         public AsyncCommand ImportLayerCommand { get; }
 
-        public ImageEditor CreateEditor(Viewport viewport, Document document)
+        #endregion
+
+        #region Recent files
+
+        public RecentFileList RecentFiles { get; } = RecentFileList.Default;
+
+        public async Task OpenRecentFileAsync(RecentFile recentFile)
+        {
+            StorageFile storageFile = await RecentFiles.GetFileAsync(recentFile);
+            await OpenFileAsync(new StorageFileAdapter(storageFile));
+        }
+
+        #endregion
+
+        #region Open documents
+
+        private readonly Dictionary<Document, ImageEditor> documentViewModels = new Dictionary<Document, ImageEditor>();
+        private ImageEditor activeDocument;
+
+        public ImageEditor ActiveDocument
+        {
+            get => activeDocument;
+            private set => SetProperty(ref activeDocument, value);
+        }
+
+        public ImageEditor ViewModelFor(Document document)
+        {
+            return documentViewModels[document];
+        }
+
+        private void AddDocument(Document document)
+        {
+            var vm = CreateEditor(new Viewport(), document);
+            documentViewModels[document] = vm;
+        }
+
+        private void RemoveDocument(Document document)
+        {
+            if (documentViewModels.Remove(document, out var vm))
+            {
+                vm.Dispose();
+            }
+        }
+
+        #endregion
+
+        public async Task<ImageEditor> CreateEditorAsync(Viewport viewport, IFile file)
+        {
+            await OpenFileAsync(file);
+            return CreateEditor(viewport, workspace.ActiveDocument);
+        }
+
+        private ImageEditor CreateEditor(Viewport viewport, Document document)
         {
             DocumentCommandDispatcher dispatcher = new DocumentCommandDispatcher(document, handlerCollection);
             document.Image.SetCommandDispatcher(dispatcher);
@@ -82,18 +139,6 @@ namespace Fotografix.Uwp
             };
 
             return editor;
-        }
-
-        public async Task<ImageEditor> CreateEditorAsync(Viewport viewport, IFile file)
-        {
-            await OpenFileAsync(file);
-            return CreateEditor(viewport, workspace.ActiveDocument);
-        }
-
-        public async Task OpenRecentFileAsync(RecentFile recentFile)
-        {
-            StorageFile storageFile = await RecentFiles.GetFileAsync(recentFile);
-            await OpenFileAsync(new StorageFileAdapter(storageFile));
         }
 
         private async Task OpenFileAsync(IFile file)
@@ -115,6 +160,24 @@ namespace Fotografix.Uwp
                 new BrushTool() { Size = 5, Color = Color.White },
                 new GradientTool { StartColor = Color.Black, EndColor = Color.White }
             };
+        }
+
+        private void Workspace_DocumentAdded(object sender, DocumentEventArgs e)
+        {
+            AddDocument(e.Document);
+        }
+
+        private void Workspace_DocumentRemoved(object sender, DocumentEventArgs e)
+        {
+            RemoveDocument(e.Document);
+        }
+
+        private void Workspace_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(Workspace.ActiveDocument))
+            {
+                this.ActiveDocument = workspace.ActiveDocument == null ? null : ViewModelFor(workspace.ActiveDocument);
+            }
         }
     }
 }

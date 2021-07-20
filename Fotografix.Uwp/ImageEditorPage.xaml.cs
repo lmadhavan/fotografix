@@ -27,7 +27,6 @@ namespace Fotografix.Uwp
         public void Dispose()
         {
             canvas.RemoveFromVisualTree();
-            editor?.Dispose();
         }
 
         private void BindNewAdjustmentMenuFlyout()
