@@ -162,7 +162,7 @@
                 </StackPanel>
             </Grid>
 
-            <ListView ItemsSource="{x:Bind editor.Layers}" SelectedItem="{x:Bind editor.ActiveLayer, Mode=TwoWay}"
+            <ListView x:Name="layerListView" ItemsSource="{x:Bind editor.Layers}" SelectedItem="{x:Bind editor.ActiveLayer, Mode=TwoWay}"
                       CanReorderItems="True" AllowDrop="True">
                 <ListView.ItemTemplate>
                     <DataTemplate x:DataType="c:Layer">

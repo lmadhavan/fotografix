@@ -7,7 +7,6 @@ using Fotografix.Win2D;
 using Microsoft.Graphics.Canvas;
 using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
@@ -25,8 +24,6 @@ namespace Fotografix.Uwp
         private readonly Win2DCompositor compositor;
         private readonly ReversedCollectionView<Layer> layers;
 
-        private Layer activeLayer;
-
         public ImageEditor(Document document)
         {
             this.document = document;
@@ -42,10 +39,8 @@ namespace Fotografix.Uwp
             this.layers = new ReversedCollectionView<Layer>(image.Layers);
 
             this.Tools = new List<ITool>();
-            this.ActiveLayer = image.Layers.First();
 
             image.PropertyChanged += Image_PropertyChanged;
-            image.Layers.CollectionChanged += OnLayerCollectionChanged;
         }
 
         public void Dispose()
@@ -79,20 +74,20 @@ namespace Fotografix.Uwp
 
         public float ZoomFactor => viewport.ZoomFactor;
 
-        public IList<Layer> Layers => layers;
+        public ReversedCollectionView<Layer> Layers => layers;
 
         public Layer ActiveLayer
         {
             get
             {
-                return activeLayer;
+                return document.ActiveLayer;
             }
 
             set
             {
-                if (value != null && SetProperty(ref activeLayer, value))
+                if (value != null)
                 {
-                    image.SetActiveLayer(activeLayer);
+                    document.ActiveLayer = value;
                 }
             }
         }
@@ -166,6 +161,10 @@ namespace Fotografix.Uwp
         {
             switch (e.PropertyName)
             {
+                case nameof(Document.ActiveLayer):
+                    RaisePropertyChanged(nameof(ActiveLayer));
+                    break;
+
                 case nameof(Document.File):
                 case nameof(Document.IsDirty):
                     RaisePropertyChanged(nameof(Title));
@@ -179,32 +178,6 @@ namespace Fotografix.Uwp
             {
                 viewport.ImageSize = image.Size;
                 RaisePropertyChanged(nameof(Size));
-            }
-        }
-
-        private void OnLayerCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            switch (e.Action)
-            {
-                case NotifyCollectionChangedAction.Add:
-                case NotifyCollectionChangedAction.Move:
-                    this.ActiveLayer = image.Layers[e.NewStartingIndex];
-                    break;
-
-                case NotifyCollectionChangedAction.Remove:
-                    if (ActiveLayer == e.OldItems[0])
-                    {
-                        int previousIndex = Math.Max(0, e.OldStartingIndex - 1);
-                        this.ActiveLayer = image.Layers[previousIndex];
-                    }
-                    break;
-
-                case NotifyCollectionChangedAction.Replace:
-                    if (ActiveLayer == e.OldItems[0])
-                    {
-                        this.ActiveLayer = (Layer)e.NewItems[0];
-                    }
-                    break;
             }
         }
 

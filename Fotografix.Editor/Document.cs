@@ -2,7 +2,9 @@
 using Fotografix.IO;
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Linq;
 
 namespace Fotografix.Editor
 {
@@ -10,6 +12,8 @@ namespace Fotografix.Editor
     {
         private readonly Image image;
         private readonly IAppendableHistory history;
+
+        private Layer activeLayer;
 
         private IFile file;
         private bool dirty;
@@ -29,18 +33,35 @@ namespace Fotografix.Editor
         {
             this.image = image;
             image.ContentChanged += Image_ContentChanged;
+            image.Layers.CollectionChanged += Layers_CollectionChanged;
 
             this.history = history;
             history.PropertyChanged += History_PropertyChanged;
+
+            this.ActiveLayer = image.Layers.FirstOrDefault();
         }
 
         public void Dispose()
         {
             history.PropertyChanged -= History_PropertyChanged;
+            image.Layers.CollectionChanged -= Layers_CollectionChanged;
             image.ContentChanged -= Image_ContentChanged;
         }
 
         public Image Image => image;
+
+        public Layer ActiveLayer
+        {
+            get => activeLayer;
+
+            set
+            {
+                if (SetProperty(ref activeLayer, value))
+                {
+                    image.SetActiveLayer(value);
+                }
+            }
+        }
 
         public bool CanUndo => history.CanUndo;
         public bool CanRedo => history.CanRedo;
@@ -120,6 +141,20 @@ namespace Fotografix.Editor
             }
         }
 
+        private void Layers_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            switch (e.Action)
+            {
+                case NotifyCollectionChangedAction.Add:
+                    this.ActiveLayer = image.Layers[e.NewStartingIndex];
+                    break;
+
+                case NotifyCollectionChangedAction.Remove:
+                    this.ActiveLayer = GetNearestLayer(e.OldStartingIndex);
+                    break;
+            }
+        }
+
         private void History_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             RaisePropertyChanged(e.PropertyName);
@@ -135,6 +170,23 @@ namespace Fotografix.Editor
         private void RaiseContentChanged()
         {
             ContentChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        private Layer GetNearestLayer(int index)
+        {
+            var layers = image.Layers;
+
+            if (layers.Count == 0)
+            {
+                return null;
+            }
+
+            if (index > 0)
+            {
+                return layers[index - 1];
+            }
+
+            return layers[0];
         }
     }
 }

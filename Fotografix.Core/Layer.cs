@@ -98,6 +98,11 @@ namespace Fotografix
         public Channel ContentChannel => contentChannel;
         public ImageElement Content => contentChannel.Content;
 
+        public override string ToString()
+        {
+            return $"Layer[{name}]";
+        }
+
         internal void Crop(Rectangle rectangle)
         {
             contentChannel.Crop(rectangle);

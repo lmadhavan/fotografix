@@ -106,6 +106,69 @@ namespace Fotografix.Editor
             Assert.That(contentChangedCount, Is.EqualTo(1), "Content changed");
         }
 
+        [Test]
+        public void ActivatesFirstLayerWhenInitialized()
+        {
+            Layer layer = new();
+            image.Layers.Add(layer);
+
+            this.document = new Document(image);
+
+            Assert.That(document.ActiveLayer, Is.EqualTo(layer));
+        }
+
+        [Test]
+        public void ActivatesNewlyAddedLayer()
+        {
+            Layer layer1 = new Layer { Name = "layer1" };
+            Layer layer2 = new Layer { Name = "layer2" };
+            
+            image.Layers.Add(layer1);
+            image.Layers.Add(layer2);
+
+            Assert.That(document.ActiveLayer, Is.EqualTo(layer2));
+        }
+
+        [Test]
+        public void ActivatesPreviousLayerWhenActiveLayerIsRemoved()
+        {
+            Layer layer1 = new Layer { Name = "layer1" };
+            Layer layer2 = new Layer { Name = "layer2" };
+            Layer layer3 = new Layer { Name = "layer3" };
+
+            image.Layers.Add(layer1);
+            image.Layers.Add(layer2);
+            image.Layers.Add(layer3);
+            image.Layers.Remove(layer3);
+
+            Assert.That(document.ActiveLayer, Is.EqualTo(layer2));
+        }
+
+        [Test]
+        public void ActivatesNextLayerWhenFirstLayerIsRemoved()
+        {
+            Layer layer1 = new Layer { Name = "layer1" };
+            Layer layer2 = new Layer { Name = "layer2" };
+
+            image.Layers.Add(layer1);
+            image.Layers.Add(layer2);
+            document.ActiveLayer = layer1;
+            image.Layers.Remove(layer1);
+
+            Assert.That(document.ActiveLayer, Is.EqualTo(layer2));
+        }
+
+        [Test]
+        public void UnsetsActiveLayerWhenAllLayersAreRemoved()
+        {
+            Layer layer = new();
+
+            image.Layers.Add(layer);
+            image.Layers.Remove(layer);
+
+            Assert.That(document.ActiveLayer, Is.Null);
+        }
+
         private static void ProduceChange(Image image)
         {
             image.Size *= 2;
