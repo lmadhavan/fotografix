@@ -5,187 +5,64 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:canvas="using:Microsoft.Graphics.Canvas.UI.Xaml"
-    xmlns:c="using:Fotografix"
-    xmlns:et="using:Fotografix.Editor.Tools"
-    xmlns:ui="using:Fotografix.Uwp"
-    xmlns:layers="using:Fotografix.Uwp.Layers"
-    xmlns:tools="using:Fotografix.Uwp.Tools"
     xmlns:sys="using:System"
     mc:Ignorable="d"
     Background="{ThemeResource AppBarBackgroundThemeBrush}"
     AllowDrop="True">
 
-    <Page.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="Styles.xaml" />
-            </ResourceDictionary.MergedDictionaries>
-
-            <ui:GeometryResourceConverter x:Key="ToolIconConverter" KeySuffix="Icon" />
-        </ResourceDictionary>
-    </Page.Resources>
-
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="48" />
-            <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="300" />
-        </Grid.ColumnDefinitions>
-
-        <Grid Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" BorderThickness="0,1" BorderBrush="{ThemeResource ButtonBorderThemeBrush}" Background="{ThemeResource SystemChromeLowColor}">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
-
-            <Grid Grid.Column="0"
-                  Margin="2,4"
-                  Padding="8,2"
-                  CornerRadius="4"
-                  Background="{ThemeResource SystemChromeMediumColor}">
-                <Grid.Resources>
-                    <ResourceDictionary>
-                        <ResourceDictionary.MergedDictionaries>
-                            <tools:ToolTemplatesResourceDictionary />
-                        </ResourceDictionary.MergedDictionaries>
-                    </ResourceDictionary>
-                </Grid.Resources>
-
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
-
-                <TextBlock Grid.Column="0"
-                           Margin="0,1,0,0"
-                           Padding="0,6"
-                           FontWeight="SemiBold"
-                           VerticalAlignment="Center"
-                           Text="{x:Bind editor.ActiveTool.Name, Mode=OneWay}" />
-
-                <ContentControl Grid.Column="1"
-                                Margin="8,0"
-                                Padding="0"
-                                VerticalAlignment="Center"
-                                ContentTemplateSelector="{StaticResource ToolControlsTemplateSelector}"
-                                Content="{x:Bind editor.ActiveTool, Mode=OneWay}" />
-            </Grid>
-
-            <StackPanel Grid.Column="1" Padding="6,0" Orientation="Horizontal">
-                <Button Style="{StaticResource CommandButtonStyle}" Command="{x:Bind editor.ResizeImageCommand}">
-                    <StackPanel Orientation="Horizontal">
-                        <SymbolIcon Symbol="FullScreen" />
-                        <TextBlock Margin="4,0,0,0" HorizontalTextAlignment="Center" MinWidth="80" Text="{x:Bind FormatSize(editor.Size), Mode=OneWay}" />
-                    </StackPanel>
-                </Button>
-
-                <Button Style="{StaticResource CommandButtonStyle}">
-                    <StackPanel Orientation="Horizontal">
-                        <SymbolIcon Symbol="Zoom" />
-                        <TextBlock Margin="4,0,0,0" HorizontalTextAlignment="Center" MinWidth="40" Text="{x:Bind sys:String.Format('{0:P0}', editor.ZoomFactor), Mode=OneWay}" />
-                    </StackPanel>
-                </Button>
-            </StackPanel>
-        </Grid>
-
-        <ListView Grid.Row="1" Grid.Column="0"
-                  ItemsSource="{x:Bind editor.Tools}"
-                  SelectedItem="{x:Bind editor.ActiveTool, Mode=TwoWay}">
-            <ListView.ItemTemplate>
-                <DataTemplate x:DataType="et:ITool">
-                    <PathIcon
-                        Data="{x:Bind Name, Converter={StaticResource ToolIconConverter}}"
-                        ToolTipService.ToolTip="{x:Bind Name}" />
-                </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
+        
+        <!-- Canvas -->
 
         <canvas:CanvasControl
             x:Name="canvas"
-            Grid.Row="1" Grid.Column="1"
+            Grid.Row="0"
             PointerEntered="{x:Bind toolAdapter.PointerEntered}"
             PointerPressed="{x:Bind toolAdapter.PointerPressed}"
             PointerMoved="{x:Bind toolAdapter.PointerMoved}"
             PointerReleased="{x:Bind toolAdapter.PointerReleased}"
             PointerExited="{x:Bind toolAdapter.PointerExited}"
             SizeChanged="Canvas_SizeChanged"
-            Draw="Canvas_Draw" 
-        />
+            Draw="Canvas_Draw" />
+        
+        <!-- Status bar -->
 
-        <StackPanel Grid.Row="1" Grid.Column="2" Orientation="Vertical" Background="{ThemeResource AppBarBackgroundThemeBrush}" Padding="8" BorderThickness="1,0,0,0" BorderBrush="{ThemeResource ButtonBorderThemeBrush}">
-            <StackPanel.Resources>
-                <ResourceDictionary>
-                    <ResourceDictionary.MergedDictionaries>
-                        <layers:LayerTemplatesResourceDictionary />
-                    </ResourceDictionary.MergedDictionaries>
-                </ResourceDictionary>
-            </StackPanel.Resources>
+        <Grid Grid.Row="1"
+                    Padding="6,0"
+                    BorderThickness="1,1,0,0"
+                    BorderBrush="{ThemeResource ButtonBorderThemeBrush}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
 
-            <Grid Margin="0,0,0,8">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
-                
-                <TextBlock Grid.Column="0" Margin="0,4,0,0" Style="{StaticResource PanelTitleTextBlockStyle}" Text="Layers" />
+            <Grid.Resources>
+                <Style TargetType="StackPanel">
+                    <Setter Property="Orientation" Value="Horizontal" />
+                    <Setter Property="Padding" Value="8,4" />
+                    <Setter Property="BorderThickness" Value="1,0,0,0" />
+                    <Setter Property="BorderBrush" Value="{ThemeResource ButtonBorderThemeBrush}" />
+                </Style>
+            </Grid.Resources>
+            
+            <!-- Image size -->
 
-                <StackPanel Grid.Column="1" Orientation="Horizontal">
-                    <Button Style="{StaticResource CommandButtonStyle}"
-                            ToolTipService.ToolTip="New layer"
-                            Command="{x:Bind editor.NewLayerCommand}">
-                        <SymbolIcon Symbol="Add" />
-                    </Button>
+            <StackPanel Grid.Column="1">
+                <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE740;" FontSize="18" />
+                <TextBlock Margin="4,0,0,0" HorizontalTextAlignment="Center" MinWidth="80" Text="{x:Bind FormatSize(editor.Size), Mode=OneWay}" />
+            </StackPanel>
 
-                    <Button x:Name="newAdjustmentButton"
-                            Style="{StaticResource CommandButtonStyle}"
-                            ToolTipService.ToolTip="Adjustments"
-                            Flyout="{StaticResource NewAdjustmentMenuFlyout}">
-                        <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE706;"/>
-                    </Button>
+            <!-- Zoom -->
 
-                    <Button Style="{StaticResource CommandButtonStyle}"
-                            Command="{x:Bind editor.ImportLayerCommand}"
-                            ToolTipService.ToolTip="Import">
-                        <SymbolIcon Symbol="Import" />
-                    </Button>
-
-                    <Button Style="{StaticResource CommandButtonStyle}"
-                            ToolTipService.ToolTip="Delete"
-                            Command="{x:Bind editor.DeleteLayerCommand}">
-                        <SymbolIcon Symbol="Delete" />
-                    </Button>
-                </StackPanel>
-            </Grid>
-
-            <ListView x:Name="layerListView" ItemsSource="{x:Bind editor.Layers}" SelectedItem="{x:Bind editor.ActiveLayer, Mode=TwoWay}"
-                      CanReorderItems="True" AllowDrop="True">
-                <ListView.ItemTemplate>
-                    <DataTemplate x:DataType="c:Layer">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-
-                            <CheckBox Grid.Column="0" MinWidth="0" IsChecked="{x:Bind Visible, Mode=TwoWay}" />
-                            <TextBlock Grid.Column="1" VerticalAlignment="Center" Text="{x:Bind Name, Mode=OneWay}" />
-                        </Grid>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
-
-            <Border Margin="0,16,0,0" Background="{ThemeResource NavigationViewExpandedPaneBackground}">
-                <ContentControl
-                    Padding="6"
-                    HorizontalContentAlignment="Stretch"
-                    ContentTemplate="{StaticResource LayerPropertiesTemplate}"
-                    Content="{x:Bind editor.ActiveLayer, Mode=OneWay}" />
-            </Border>
-        </StackPanel>
+            <StackPanel Grid.Column="2">
+                <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE71E;" FontSize="18" />
+                <TextBlock Margin="4,0,0,0" HorizontalTextAlignment="Center" MinWidth="40" Text="{x:Bind sys:String.Format('{0:P0}', editor.ZoomFactor), Mode=OneWay}" />
+            </StackPanel>
+        </Grid>
     </Grid>
 </Page>

@@ -12,12 +12,13 @@ using Fotografix.Win2D;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
+using System.Linq;
 using System.Threading.Tasks;
 using Windows.Storage;
 
 namespace Fotografix.Uwp
 {
-    public sealed class WorkspaceViewModel : NotifyPropertyChangedBase, IStartPageViewModel
+    public sealed class WorkspaceViewModel : NotifyPropertyChangedBase, IStartPageViewModel, IToolbox
     {
         private readonly Workspace workspace;
         private readonly FilePickerOverride filePickerOverride = new FilePickerOverride(new FilePickerAdapter());
@@ -33,6 +34,17 @@ namespace Fotografix.Uwp
             IImageDecoder imageDecoder = new WindowsImageDecoder();
             IImageEncoder imageEncoder = new WindowsImageEncoder(new Win2DImageRenderer());
             IGraphicsDevice graphicsDevice = new Win2DGraphicsDevice();
+
+            this.Tools = new List<ITool>
+            {
+                new HandTool(),
+                new MoveTool(),
+                new SelectionTool(),
+                new CropTool(),
+                new BrushTool() { Size = 5, Color = Color.White },
+                new GradientTool { StartColor = Color.Black, EndColor = Color.White }
+            };
+            this.ActiveTool = Tools.First();
 
             this.NewCommand = workspace.Bind(new NewImageCommand(new ContentDialogAdapter<NewImageDialog, NewImageParameters>()));
             this.OpenCommand = workspace.Bind(new OpenImageCommand(imageDecoder, filePickerOverride));
@@ -52,6 +64,18 @@ namespace Fotografix.Uwp
             handlerCollection.Register(new DrawCommandHandler(graphicsDevice));
             handlerCollection.Register(new CropCommandHandler());
         }
+
+        #region Tools
+
+        public IList<ITool> Tools { get; }
+
+        public ITool ActiveTool
+        {
+            get => workspace.ActiveTool;
+            set => workspace.ActiveTool = value;
+        }
+
+        #endregion
 
         #region Commands
 
@@ -116,10 +140,12 @@ namespace Fotografix.Uwp
 
         #endregion
 
-        public async Task<ImageEditor> CreateEditorAsync(Viewport viewport, IFile file)
+        public async Task OpenFileAsync(IFile file)
         {
-            await OpenFileAsync(file);
-            return CreateEditor(viewport, workspace.ActiveDocument);
+            using (filePickerOverride.OverrideOpenFile(file))
+            {
+                await OpenCommand.ExecuteAsync();
+            }
         }
 
         private ImageEditor CreateEditor(Viewport viewport, Document document)
@@ -130,36 +156,12 @@ namespace Fotografix.Uwp
 
             var editor = new ImageEditor(document)
             {
+                Toolbox = this,
                 FilePickerOverride = filePickerOverride,
-                Tools = CreateTools(),
-                NewLayerCommand = NewLayerCommand,
-                DeleteLayerCommand = DeleteLayerCommand,
-                ImportLayerCommand = ImportLayerCommand,
-                ResizeImageCommand = ResizeImageCommand
+                ImportLayerCommand = ImportLayerCommand
             };
 
             return editor;
-        }
-
-        private async Task OpenFileAsync(IFile file)
-        {
-            using (filePickerOverride.OverrideOpenFile(file))
-            {
-                await OpenCommand.ExecuteAsync();
-            }
-        }
-
-        private IList<ITool> CreateTools()
-        {
-            return new List<ITool>
-            {
-                new HandTool(),
-                new MoveTool(),
-                new SelectionTool(),
-                new CropTool(),
-                new BrushTool() { Size = 5, Color = Color.White },
-                new GradientTool { StartColor = Color.Black, EndColor = Color.White }
-            };
         }
 
         private void Workspace_DocumentAdded(object sender, DocumentEventArgs e)
@@ -174,9 +176,15 @@ namespace Fotografix.Uwp
 
         private void Workspace_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == nameof(Workspace.ActiveDocument))
+            switch (e.PropertyName)
             {
-                this.ActiveDocument = workspace.ActiveDocument == null ? null : ViewModelFor(workspace.ActiveDocument);
+                case nameof(Workspace.ActiveDocument):
+                    this.ActiveDocument = workspace.ActiveDocument == null ? null : ViewModelFor(workspace.ActiveDocument);
+                    break;
+
+                case nameof(Workspace.ActiveTool):
+                    RaisePropertyChanged(e.PropertyName);
+                    break;
             }
         }
     }

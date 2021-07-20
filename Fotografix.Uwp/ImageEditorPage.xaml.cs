@@ -1,5 +1,4 @@
-﻿using Fotografix.Editor;
-using Microsoft.Graphics.Canvas.UI.Xaml;
+﻿using Microsoft.Graphics.Canvas.UI.Xaml;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -21,28 +20,11 @@ namespace Fotografix.Uwp
         public ImageEditorPage()
         {
             this.InitializeComponent();
-            BindNewAdjustmentMenuFlyout();
         }
 
         public void Dispose()
         {
             canvas.RemoveFromVisualTree();
-        }
-
-        private void BindNewAdjustmentMenuFlyout()
-        {
-            var menuFlyout = (MenuFlyout)newAdjustmentButton.Flyout;
-            foreach (MenuFlyoutItem item in menuFlyout.Items)
-            {
-                item.Click += NewAdjustmentMenuItem_Click;
-            }
-        }
-
-        private async void NewAdjustmentMenuItem_Click(object sender, RoutedEventArgs e)
-        {
-            var item = (MenuFlyoutItem)sender;
-            var command = (IDocumentCommand)item.Tag;
-            await editor.ExecuteAsync(command);
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -57,26 +39,7 @@ namespace Fotografix.Uwp
             editor.Invalidated += (s, e) => canvas.Invalidate();
 
             this.toolAdapter = new ToolAdapter(canvas, editor.Viewport);
-            toolAdapter.Toolbox = editor;
-
-            Bindings.Update();
-
-            /*
-             * This MUST come after Bindings.Update()
-             * 
-             * There is an issue with ListView where the selection does not update
-             * if SelectedItem is set before a CollectionChanged event is received.
-             * To work around this, we need to reset the selection AFTER the ListView
-             * has processed CollectionChanged, which is why our event subscription
-             * must come after Bindings.Update()
-             */
-            editor.Layers.CollectionChanged += (s, e) => ResetSelectedLayer();
-        }
-
-        private void ResetSelectedLayer()
-        {
-            layerListView.SelectedItem = null;
-            layerListView.SelectedItem = editor.ActiveLayer;
+            toolAdapter.Toolbox = editor.Toolbox;
         }
 
         private void Canvas_Draw(CanvasControl sender, CanvasDrawEventArgs args)

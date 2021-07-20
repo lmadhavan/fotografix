@@ -10,56 +10,39 @@
 
     <Grid Margin="24">
         <Grid.RowDefinitions>
-            <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="4*" />
-            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="200" />
+            <ColumnDefinition Width="175" />
             <ColumnDefinition Width="4*" />
-            <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
         <TextBlock
-            Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="2"
+            Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2"
             Margin="0,0,0,48"
             Style="{ThemeResource HeaderTextBlockStyle}"
             Text="Fotografix"
         />
 
-        <StackPanel Grid.Column="1" Grid.Row="2" Orientation="Vertical">
-            <Button x:Name="newButton" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" Command="{x:Bind vm.NewCommand}">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
+        <StackPanel Grid.Column="0" Grid.Row="1" Orientation="Vertical">
+            <Button x:Name="newButton"
+                    HorizontalAlignment="Stretch"
+                    HorizontalContentAlignment="Stretch"
+                    Content="New..."
+                    Command="{x:Bind vm.NewCommand}" />
 
-                    <TextBlock Grid.Column="0" Text="New..." />
-                    <TextBlock Grid.Column="1" HorizontalAlignment="Right" Foreground="{ThemeResource SystemBaseMediumLowColor}" Text="Ctrl+N" />
-                </Grid>
-            </Button>
-
-            <Button Margin="0,16,0,0" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" Command="{x:Bind vm.OpenCommand}">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-
-                    <TextBlock Grid.Column="0" Text="Open..." />
-                    <TextBlock Grid.Column="1" HorizontalAlignment="Right" Foreground="{ThemeResource SystemBaseMediumLowColor}" Text="Ctrl+O" />
-                </Grid>
-            </Button>
+            <Button Margin="0,16,0,0"
+                    HorizontalAlignment="Stretch"
+                    HorizontalContentAlignment="Stretch"
+                    Content="Open..."
+                    Command="{x:Bind vm.OpenCommand}" />
         </StackPanel>
 
-        <Grid Grid.Column="2" Grid.Row="2"
+        <Grid Grid.Column="1" Grid.Row="1"
               Margin="64,-6,0,0"
               Padding="16,8"
-              CornerRadius="2"
               BorderThickness="1"
               BorderBrush="{ThemeResource SystemBaseMediumLowColor}">
             <Grid.RowDefinitions>

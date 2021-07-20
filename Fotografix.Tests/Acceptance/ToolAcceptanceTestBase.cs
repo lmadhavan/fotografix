@@ -9,18 +9,18 @@ namespace Fotografix.Tests.Acceptance
 {
     public abstract class ToolAcceptanceTestBase : AcceptanceTestBase
     {
-        private ITool ActiveTool => Editor.ActiveTool;
+        private ITool ActiveTool => Workspace.ActiveTool;
 
         protected ITool SelectTool(string name)
         {
-            ITool tool = Editor.Tools.FirstOrDefault(t => t.Name == name);
+            ITool tool = Workspace.Tools.FirstOrDefault(t => t.Name == name);
 
             if (tool == null)
             {
                 Assert.Fail($"Could not find a tool named {name}");
             }
-            
-            Editor.ActiveTool = tool;
+
+            Workspace.ActiveTool = tool;
             return tool;
         }
 

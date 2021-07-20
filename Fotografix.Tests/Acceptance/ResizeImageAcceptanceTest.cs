@@ -12,7 +12,7 @@ namespace Fotografix.Tests.Acceptance
         {
             await OpenImageAsync("flowers.jpg");
 
-            await Editor.ResizeImageCommand.ExecuteAsync();
+            await Workspace.ResizeImageCommand.ExecuteAsync();
 
             await AssertImageAsync("flowers_scale50.png");
         }

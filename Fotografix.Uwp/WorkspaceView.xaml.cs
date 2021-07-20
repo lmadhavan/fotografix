@@ -1,5 +1,6 @@
 ﻿using Fotografix.Editor;
 using Microsoft.UI.Xaml.Controls;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -13,6 +14,7 @@ namespace Fotografix.Uwp
     {
         private readonly Workspace workspace;
         private readonly WorkspaceViewModel vm;
+        private IDisposable layerListSelectedItemWorkaround;
 
         public WorkspaceView() : this(new Workspace())
         {
@@ -23,11 +25,16 @@ namespace Fotografix.Uwp
             this.workspace = workspace;
             this.vm = new WorkspaceViewModel(workspace, ClipboardAdapter.GetForCurrentThread(), new ContentDialogAdapter<ResizeImageDialog, ResizeImageParameters>());
 
-            workspace.DocumentAdded += Workspace_DocumentAdded;
             workspace.PropertyChanged += Workspace_PropertyChanged;
+            workspace.DocumentAdded += Workspace_DocumentAdded;
 
             InitializeComponent();
             menuBar.CreateShadowAccelerators(shadowAcceleratorsContainer);
+            BindNewAdjustmentMenuFlyout();
+            this.Loaded += OnLoaded;
+
+            // This MUST come after InitializeComponent - see FixLayerListSelectedItemBinding for details
+
             this.Tabs = new TabCollection(tabView);
         }
 
@@ -80,6 +87,11 @@ namespace Fotografix.Uwp
             return tab;
         }
 
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            vm.PropertyChanged += ViewModel_PropertyChanged_ListViewWorkaround;
+        }
+
         private void OnSelectionChanged()
         {
             workspace.ActiveDocument = ActiveTab?.Document;
@@ -100,6 +112,30 @@ namespace Fotografix.Uwp
             if (e.PropertyName == nameof(Workspace.ActiveDocument))
             {
                 OnActiveDocumentChanged();
+            }
+        }
+
+        private void ViewModel_PropertyChanged_ListViewWorkaround(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(WorkspaceViewModel.ActiveDocument))
+            {
+                layerListSelectedItemWorkaround?.Dispose();
+
+                var activeDocument = vm.ActiveDocument;
+                if (activeDocument != null)
+                {
+                    this.layerListSelectedItemWorkaround = layerListView.BindSelectedItem(() => activeDocument.ActiveLayer, activeDocument.Layers);
+                }
+            }
+        }
+
+        private void BindNewAdjustmentMenuFlyout()
+        {
+            var menuFlyout = (MenuFlyout)newAdjustmentButton.Flyout;
+            foreach (MenuFlyoutItem item in menuFlyout.Items)
+            {
+                var command = (IDocumentCommand)item.Tag;
+                item.Command = workspace.Bind(command);
             }
         }
 

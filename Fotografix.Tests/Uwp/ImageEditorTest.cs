@@ -23,7 +23,7 @@ namespace Fotografix.Tests.Uwp
         public void Initialize()
         {
             this.image = new Image(ImageSize);
-            image.Layers.Add(ImageEditor.CreateLayer(id: 1));
+            image.Layers.Add(new Layer());
 
             this.viewport = new Viewport();
             image.SetViewport(viewport);

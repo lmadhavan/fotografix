@@ -145,6 +145,8 @@
     <Compile Include="Icons.xaml.cs">
       <DependentUpon>Icons.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ListViewWorkaround.cs" />
+    <Compile Include="NullToVisibilityConverter.cs" />
     <Compile Include="WorkspaceViewModel.cs" />
     <Compile Include="IToolbox.cs" />
     <Compile Include="StorageFileAdapter.cs" />

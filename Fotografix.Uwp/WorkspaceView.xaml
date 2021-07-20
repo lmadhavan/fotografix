@@ -5,25 +5,50 @@
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d"
-    d:DesignHeight="300"
-    d:DesignWidth="400">
+    xmlns:c="using:Fotografix"
+    xmlns:et="using:Fotografix.Editor.Tools"
+    xmlns:ui="using:Fotografix.Uwp"
+    xmlns:layers="using:Fotografix.Uwp.Layers"
+    xmlns:tools="using:Fotografix.Uwp.Tools"
+    mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Styles.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+
+            <ui:GeometryResourceConverter x:Key="ToolIconConverter" KeySuffix="Icon" />
+            <ui:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
+        </ResourceDictionary>
+    </UserControl.Resources>
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <Grid x:Name="titleBar" Grid.Row="0" Background="Transparent">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="48" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="300" />
+        </Grid.ColumnDefinitions>
+
+        <!-- Title bar -->
+        
+        <Grid x:Name="titleBar" Grid.Row="0" Grid.ColumnSpan="3" Background="Transparent">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition x:Name="titleBarLeftInset" Width="0" />
                 <ColumnDefinition />
                 <ColumnDefinition x:Name="titleBarRightInset" Width="0" />
             </Grid.ColumnDefinitions>
         </Grid>
+        
+        <!-- Menu bar -->
 
-        <StackPanel Grid.Row="0" Orientation="Horizontal">
+        <StackPanel Grid.Row="0" Grid.ColumnSpan="3" Orientation="Horizontal">
             <Image
                 HorizontalAlignment="Left"
                 Source="ms-appx:///Assets/Square44x44Logo.scale-200.png"
@@ -83,15 +108,151 @@
 
             <Grid x:Name="shadowAcceleratorsContainer" />
         </StackPanel>
+        
+        <!-- Tab strip -->
 
         <muxc:TabView
             x:Name="tabView"
-            Grid.Row="1"
+            Grid.Row="2" Grid.Column="1"
             HorizontalAlignment="Stretch"
             VerticalAlignment="Stretch"
             AddTabButtonClick="TabView_NewTabRequested"
             TabCloseRequested="TabView_CloseTabRequested"
             SelectionChanged="TabView_SelectionChanged" />
+
+        <!-- Toolbox -->
+
+        <ListView Grid.Row="2" Grid.Column="0"
+                  Background="{ThemeResource AppBarBackgroundThemeBrush}"
+                  ItemsSource="{x:Bind vm.Tools}"
+                  SelectedItem="{x:Bind vm.ActiveTool, Mode=TwoWay}">
+            <ListView.ItemTemplate>
+                <DataTemplate x:DataType="et:ITool">
+                    <PathIcon
+                        Data="{x:Bind Name, Converter={StaticResource ToolIconConverter}}"
+                        ToolTipService.ToolTip="{x:Bind Name}" />
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+
+        <!-- Tool settings -->
+
+        <Grid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3"
+              Background="{ThemeResource AppBarBackgroundThemeBrush}"
+              BorderThickness="0,0,0,1"
+              BorderBrush="{ThemeResource ButtonBorderThemeBrush}"
+              Padding="12,6">
+
+            <Grid.Resources>
+                <ResourceDictionary>
+                    <ResourceDictionary.MergedDictionaries>
+                        <tools:ToolTemplatesResourceDictionary />
+                    </ResourceDictionary.MergedDictionaries>
+                </ResourceDictionary>
+            </Grid.Resources>
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Grid.Column="0"
+                        Margin="0,1,0,0"
+                        Padding="0,6"
+                        FontWeight="SemiBold"
+                        VerticalAlignment="Center"
+                        Text="{x:Bind vm.ActiveTool.Name, Mode=OneWay}" />
+
+            <ContentControl Grid.Column="1"
+                            Margin="8,0"
+                            Padding="0"
+                            VerticalAlignment="Center"
+                            ContentTemplateSelector="{StaticResource ToolControlsTemplateSelector}"
+                            Content="{x:Bind vm.ActiveTool, Mode=OneWay}" />
+        </Grid>
+        
+        <!-- Right panel -->
+
+        <StackPanel Grid.Row="2" Grid.Column="2" Orientation="Vertical" Background="{ThemeResource AppBarBackgroundThemeBrush}" Padding="8" BorderThickness="1,0,0,0" BorderBrush="{ThemeResource ButtonBorderThemeBrush}">
+            <StackPanel.Resources>
+                <ResourceDictionary>
+                    <ResourceDictionary.MergedDictionaries>
+                        <layers:LayerTemplatesResourceDictionary />
+                    </ResourceDictionary.MergedDictionaries>
+                </ResourceDictionary>
+            </StackPanel.Resources>
+
+            <!-- Layers panel -->
+
+            <StackPanel Orientation="Vertical" Visibility="{x:Bind vm.ActiveDocument, Converter={StaticResource NullToVisibilityConverter}, Mode=OneWay}">
+                <Grid Margin="0,0,0,8">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Column="0" Margin="0,4,0,0" Style="{StaticResource PanelTitleTextBlockStyle}" Text="Layers" />
+
+                    <StackPanel Grid.Column="1" Orientation="Horizontal">
+                        <Button Style="{StaticResource CommandButtonStyle}"
+                            ToolTipService.ToolTip="New layer"
+                            Command="{x:Bind vm.NewLayerCommand}">
+                            <SymbolIcon Symbol="Add" />
+                        </Button>
+
+                        <Button x:Name="newAdjustmentButton"
+                            Style="{StaticResource CommandButtonStyle}"
+                            ToolTipService.ToolTip="Adjustments"
+                            Flyout="{StaticResource NewAdjustmentMenuFlyout}">
+                            <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE706;"/>
+                        </Button>
+
+                        <Button Style="{StaticResource CommandButtonStyle}"
+                            Command="{x:Bind vm.ImportLayerCommand}"
+                            ToolTipService.ToolTip="Import">
+                            <SymbolIcon Symbol="Import" />
+                        </Button>
+
+                        <Button Style="{StaticResource CommandButtonStyle}"
+                            ToolTipService.ToolTip="Delete"
+                            Command="{x:Bind vm.DeleteLayerCommand}">
+                            <SymbolIcon Symbol="Delete" />
+                        </Button>
+                    </StackPanel>
+                </Grid>
+
+                <ListView
+                    x:Name="layerListView"
+                    Height="162"
+                    Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}"
+                    BorderThickness="1"
+                    BorderBrush="{ThemeResource SystemBaseMediumLowColor}"
+                    ItemsSource="{x:Bind vm.ActiveDocument.Layers, Mode=OneWay}"
+                    SelectedItem="{x:Bind vm.ActiveDocument.ActiveLayer, Mode=TwoWay}"
+                    CanReorderItems="True"
+                    AllowDrop="True">
+                    <ListView.ItemTemplate>
+                        <DataTemplate x:DataType="c:Layer">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+
+                                <CheckBox Grid.Column="0" MinWidth="0" IsChecked="{x:Bind Visible, Mode=TwoWay}" />
+                                <TextBlock Grid.Column="1" VerticalAlignment="Center" Text="{x:Bind Name, Mode=OneWay}" />
+                            </Grid>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+
+                <ContentControl
+                    Margin="0,16,0,0"
+                    HorizontalContentAlignment="Stretch"
+                    ContentTemplate="{StaticResource LayerPropertiesTemplate}"
+                    Content="{x:Bind vm.ActiveDocument.ActiveLayer, Mode=OneWay}" />
+            </StackPanel>
+        </StackPanel>
     </Grid>
 
 </UserControl>

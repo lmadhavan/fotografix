@@ -12,30 +12,26 @@ namespace Fotografix.Tests.Acceptance
 {
     public abstract class AcceptanceTestBase : IDialog<ResizeImageParameters>
     {
-        private readonly WorkspaceViewModel workspaceViewModel;
-
         private bool invalidated;
-        private Viewport viewport;
 
         protected AcceptanceTestBase()
         {
             this.Clipboard = new FakeClipboard();
-            this.workspaceViewModel = new WorkspaceViewModel(new Workspace(), Clipboard, resizeImageDialog: this);
+            this.Workspace = new WorkspaceViewModel(new Workspace(), Clipboard, resizeImageDialog: this);
         }
 
+        protected WorkspaceViewModel Workspace { get; }
         protected FakeClipboard Clipboard { get; }
         protected ImageEditor Editor { get; private set; }
-        protected WorkspaceViewModel Workspace => workspaceViewModel;
 
         protected async Task OpenImageAsync(string filename)
         {
             Editor?.Dispose();
 
-            this.viewport = new Viewport();
-
             var file = await GetFileAsync(filename);
+            await Workspace.OpenFileAsync(file);
 
-            this.Editor = await workspaceViewModel.CreateEditorAsync(viewport, file);
+            this.Editor = Workspace.ActiveDocument;
             Editor.Invalidated += Editor_Invalidated;
             Editor.PropertyChanged += Editor_PropertyChanged;
 
@@ -61,7 +57,7 @@ namespace Fotografix.Tests.Acceptance
 
         protected void ResizeViewport(Size size)
         {
-            viewport.Size = size;
+            Editor.Viewport.Size = size;
         }
 
         protected virtual bool HandleResizeImageDialog(ResizeImageParameters parameters)
@@ -90,7 +86,7 @@ namespace Fotografix.Tests.Acceptance
 
         private void SyncViewportSize()
         {
-            viewport.Size = Editor.Size;
+            Editor.Viewport.Size = Editor.Size;
         }
 
         private void AssertInvalidated(string message)

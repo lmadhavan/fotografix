@@ -1,6 +1,5 @@
 ﻿using Fotografix.Editor;
 using Fotografix.Editor.Collections;
-using Fotografix.Editor.Tools;
 using Fotografix.IO;
 using Fotografix.Uwp.FileManagement;
 using Fotografix.Win2D;
@@ -9,12 +8,11 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Fotografix.Uwp
 {
-    public sealed class ImageEditor : NotifyPropertyChangedBase, IDisposable, IToolbox
+    public sealed class ImageEditor : NotifyPropertyChangedBase, IDisposable
     {
         private static readonly Win2DCompositorSettings CompositorSettings = new Win2DCompositorSettings { TransparencyGridSize = 8, InteractiveMode = true };
 
@@ -30,17 +28,13 @@ namespace Fotografix.Uwp
             document.PropertyChanged += Document_PropertyChanged;
 
             this.image = document.Image;
+            image.PropertyChanged += Image_PropertyChanged;
 
             this.viewport = image.GetViewport();
             viewport.ImageSize = image.Size;
 
             this.compositor = new Win2DCompositor(image, viewport, CompositorSettings);
-
             this.layers = new ReversedCollectionView<Layer>(image.Layers);
-
-            this.Tools = new List<ITool>();
-
-            image.PropertyChanged += Image_PropertyChanged;
         }
 
         public void Dispose()
@@ -49,13 +43,10 @@ namespace Fotografix.Uwp
             compositor.Dispose();
         }
 
+        public IToolbox Toolbox { get; set; }
         public FilePickerOverride FilePickerOverride { get; set; }
 
-        public AsyncCommand NewLayerCommand { get; set; }
-        public AsyncCommand DeleteLayerCommand { get; set; }
         public AsyncCommand ImportLayerCommand { get; set; }
-
-        public AsyncCommand ResizeImageCommand { get; set; }
 
         public string Title
         {
@@ -121,42 +112,6 @@ namespace Fotografix.Uwp
             return compositor.ToBitmap();
         }
 
-        #region Tools
-
-        private IList<ITool> tools;
-        private ITool activeTool;
-
-        public IList<ITool> Tools
-        {
-            get => tools;
-
-            set
-            {
-                if (SetProperty(ref tools, value))
-                {
-                    this.ActiveTool = Tools.FirstOrDefault();
-                }
-            }
-        }
-
-        public ITool ActiveTool
-        {
-            get => activeTool;
-
-            set
-            {
-                ITool oldTool = activeTool;
-
-                if (SetProperty(ref activeTool, value))
-                {
-                    oldTool?.Deactivated();
-                    activeTool.Activated(image);
-                }
-            }
-        }
-
-        #endregion
-
         private void Document_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             switch (e.PropertyName)
@@ -179,11 +134,6 @@ namespace Fotografix.Uwp
                 viewport.ImageSize = image.Size;
                 RaisePropertyChanged(nameof(Size));
             }
-        }
-
-        public static Layer CreateLayer(int id)
-        {
-            return new Layer { Name = "Layer " + id };
         }
     }
 }

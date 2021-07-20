@@ -16,32 +16,42 @@
 
     <DataTemplate x:Key="LayerPropertiesTemplate" x:DataType="c:Layer">
         <StackPanel Orientation="Vertical">
-            <TextBox Text="{x:Bind Name, Mode=TwoWay}" />
+            <StackPanel Orientation="Vertical"
+                        Padding="6"
+                        CornerRadius="4"
+                        Background="{ThemeResource NavigationViewExpandedPaneBackground}">
+                <TextBox Text="{x:Bind Name, Mode=TwoWay}" />
 
-            <Grid Margin="0,4">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="100" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
+                <Grid Margin="0,4">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="100" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
 
-                <ComboBox
-                    Grid.Column="0"
-                    HorizontalAlignment="Stretch"
-                    ItemsSource="{StaticResource BlendModeList}"
-                    SelectedItem="{x:Bind BlendMode, Mode=TwoWay, Converter={StaticResource BlendModeListItemConverter}}"
-                    ItemTemplateSelector="{StaticResource BlendModeListItemTemplateSelector}"
-                    ItemContainerStyleSelector="{StaticResource BlendModeListItemStyleSelector}">
-                </ComboBox>
-                <TextBlock Grid.Column="1" Margin="12,4" Text="Opacity:" />
-                <Slider Grid.Column="2"
+                    <ComboBox
+                        Grid.Column="0"
+                        HorizontalAlignment="Stretch"
+                        ItemsSource="{StaticResource BlendModeList}"
+                        SelectedItem="{x:Bind BlendMode, Mode=TwoWay, Converter={StaticResource BlendModeListItemConverter}}"
+                        ItemTemplateSelector="{StaticResource BlendModeListItemTemplateSelector}"
+                        ItemContainerStyleSelector="{StaticResource BlendModeListItemStyleSelector}" />
+
+                    <TextBlock Grid.Column="1" Margin="12,4" Text="Opacity:" />
+                    <Slider Grid.Column="2"
                             Style="{StaticResource AdjustmentSliderStyle}"
                             Minimum="0"
                             Value="{x:Bind Opacity, Mode=TwoWay}"
                             ThumbToolTipValueConverter="{StaticResource OpacitySliderToolTipValueConverter}" />
-            </Grid>
+                </Grid>
+            </StackPanel>
 
-            <ContentControl Margin="0,8,0,0" HorizontalContentAlignment="Stretch" ContentTemplateSelector="{StaticResource AdjustmentTemplateSelector}" Content="{x:Bind Content}" />
+            <Border Margin="0,8,0,0" Padding="6">
+                <ContentControl
+                    HorizontalContentAlignment="Stretch"
+                    ContentTemplateSelector="{StaticResource AdjustmentTemplateSelector}"
+                    Content="{x:Bind Content}" />
+            </Border>
         </StackPanel>
     </DataTemplate>
 </ResourceDictionary>
