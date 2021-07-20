@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Fotografix.Editor.Tools;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -10,6 +11,7 @@ namespace Fotografix.Editor
     {
         private readonly HashSet<Document> documents = new();
         private Document activeDocument;
+        private ITool activeTool;
 
         public Document ActiveDocument
         {
@@ -24,10 +26,12 @@ namespace Fotografix.Editor
                     if (previous != null)
                     {
                         previous.ContentChanged -= ActiveDocument_ContentChanged;
+                        activeTool?.Deactivated();
                     }
 
                     if (activeDocument != null)
                     {
+                        activeTool?.Activated(activeDocument.Image);
                         activeDocument.ContentChanged += ActiveDocument_ContentChanged;
                     }
 
@@ -38,6 +42,25 @@ namespace Fotografix.Editor
         }
 
         public IReadOnlyCollection<Document> Documents => documents;
+
+        public ITool ActiveTool
+        {
+            get => activeTool;
+
+            set
+            {
+                ITool previous = activeTool;
+
+                if (SetProperty(ref activeTool, value))
+                {
+                    if (activeDocument != null)
+                    {
+                        previous?.Deactivated();
+                        activeTool?.Activated(activeDocument.Image);
+                    }
+                }
+            }
+        }
 
         public event EventHandler<DocumentEventArgs> DocumentAdded;
         public event EventHandler<DocumentEventArgs> DocumentRemoved;

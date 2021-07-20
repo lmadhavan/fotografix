@@ -1,4 +1,5 @@
-﻿using Moq;
+﻿using Fotografix.Editor.Tools;
+using Moq;
 using NUnit.Framework;
 using System;
 using System.Threading.Tasks;
@@ -10,6 +11,7 @@ namespace Fotografix.Editor
     {
         private Document document;
         private Mock<IObservableDocumentCommand> documentCommand;
+        private Mock<ITool> tool;
 
         private Workspace workspace;
         private AsyncCommand boundCommand;
@@ -19,9 +21,68 @@ namespace Fotografix.Editor
         {
             this.document = new();
             this.documentCommand = new();
+            this.tool = new();
 
             this.workspace = new();
             this.boundCommand = workspace.Bind(documentCommand.Object);
+        }
+
+        [Test]
+        public void ActivatesToolWhenActiveDocumentIsSet()
+        {
+            workspace.ActiveTool = tool.Object;
+            workspace.ActiveDocument = document;
+
+            tool.Verify(t => t.Activated(document.Image));
+            tool.VerifyNoOtherCalls();
+        }
+
+        [Test]
+        public void DeactivatesToolWhenActiveDocumentIsReset()
+        {
+            workspace.ActiveDocument = document;
+            workspace.ActiveTool = tool.Object;
+            workspace.ActiveDocument = null;
+
+            tool.Verify(t => t.Deactivated());
+        }
+
+        [Test]
+        public void ActivatesToolWhenActiveToolIsSet()
+        {
+            workspace.ActiveDocument = document;
+            workspace.ActiveTool = tool.Object;
+
+            tool.Verify(t => t.Activated(document.Image));
+            tool.VerifyNoOtherCalls();
+        }
+
+        [Test]
+        public void DeactivatesToolWhenActiveToolIsReset()
+        {
+            workspace.ActiveDocument = document;
+            workspace.ActiveTool = tool.Object;
+            workspace.ActiveTool = null;
+
+            tool.Verify(t => t.Deactivated());
+        }
+
+        [Test]
+        public void DoesNotDeactivateToolWhenNoDocumentIsActive()
+        {
+            workspace.ActiveTool = tool.Object;
+            workspace.ActiveTool = null;
+
+            tool.VerifyNoOtherCalls();
+        }
+
+        [Test]
+        public void DoesNotAttemptToDeactivateWhenNoToolIsActive()
+        {
+            workspace.ActiveDocument = document;
+            workspace.ActiveDocument = null;
+
+            Assert.Pass();
         }
 
         [Test]
