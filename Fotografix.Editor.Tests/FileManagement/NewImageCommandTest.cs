@@ -1,5 +1,4 @@
-﻿using Moq;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
@@ -9,29 +8,18 @@ namespace Fotografix.Editor.FileManagement
     [TestFixture]
     public class NewImageCommandTest
     {
-        private Mock<IDialog<NewImageParameters>> newImageDialog;
-        private NewImageCommand command;
-
-        [SetUp]
-        public void SetUp()
-        {
-            this.newImageDialog = new();
-            this.command = new(newImageDialog.Object);
-        }
-
         [Test]
         public async Task CreatesNewDocumentInWorkspace()
         {
-            newImageDialog.Setup(d => d.ShowAsync(It.IsAny<NewImageParameters>()))
-                .Callback((NewImageParameters p) =>
-                {
-                    p.Width = 200;
-                    p.Height = 100;
-                })
-                .Returns(Task.FromResult(true));
-
+            static bool NewImageDialog(NewImageParameters p)
+            {
+                p.Width = 200;
+                p.Height = 100;
+                return true;
+            }
 
             Workspace workspace = new();
+            NewImageCommand command = new(new Dialog<NewImageParameters>(NewImageDialog));
             await command.ExecuteAsync(workspace);
 
             Assert.That(workspace.Documents, Has.Count.EqualTo(1));

@@ -10,14 +10,14 @@ using System.Threading.Tasks;
 
 namespace Fotografix.Tests.Acceptance
 {
-    public abstract class AcceptanceTestBase : IDialog<ResizeImageParameters>
+    public abstract class AcceptanceTestBase
     {
         private bool invalidated;
 
         protected AcceptanceTestBase()
         {
             this.Clipboard = new FakeClipboard();
-            this.Workspace = new WorkspaceViewModel(new Workspace(), Clipboard, resizeImageDialog: this);
+            this.Workspace = new WorkspaceViewModel(new Workspace(), Clipboard, new Dialog<ResizeImageParameters>(HandleResizeImageDialog));
         }
 
         protected WorkspaceViewModel Workspace { get; }
@@ -93,11 +93,6 @@ namespace Fotografix.Tests.Acceptance
         {
             Assert.IsTrue(invalidated, message);
             this.invalidated = false;
-        }
-
-        Task<bool> IDialog<ResizeImageParameters>.ShowAsync(ResizeImageParameters parameters)
-        {
-            return Task.FromResult(HandleResizeImageDialog(parameters));
         }
     }
 }

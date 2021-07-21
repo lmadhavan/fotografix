@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Fotografix.Editor
+namespace Fotografix
 {
     public sealed class DisposableAction : IDisposable
     {

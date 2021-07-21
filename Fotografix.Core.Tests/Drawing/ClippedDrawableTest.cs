@@ -1,6 +1,4 @@
-﻿using Moq;
-using NUnit.Framework;
-using System;
+﻿using NUnit.Framework;
 using System.Drawing;
 
 namespace Fotografix.Drawing
@@ -11,25 +9,20 @@ namespace Fotografix.Drawing
         private static readonly Rectangle DrawableBounds = Rectangle.FromLTRB(0, 0, 50, 50);
         private static readonly Rectangle ClipRectangle = Rectangle.FromLTRB(20, 20, 100, 100);
 
-        private Mock<IDrawable> drawable;
-        private Mock<IDrawingContext> drawingContext;
-        private Mock<IDisposable> clipContext;
+        private TestDrawable drawable;
+        private TestGraphicsDevice device;
 
         [SetUp]
         public void SetUp()
         {
-            this.drawable = new Mock<IDrawable>();
-            drawable.SetupGet(d => d.Bounds).Returns(DrawableBounds);
-
-            this.drawingContext = new Mock<IDrawingContext>();
-            this.clipContext = new Mock<IDisposable>();
-            drawingContext.Setup(dc => dc.BeginClip(It.IsAny<Rectangle>())).Returns(clipContext.Object);
+            this.drawable = new(DrawableBounds);
+            this.device = new();
         }
 
         [Test]
         public void ComputesClippedBounds()
         {
-            IDrawable clippedDrawable = ClippedDrawable.Create(drawable.Object, ClipRectangle);
+            IDrawable clippedDrawable = ClippedDrawable.Create(drawable, ClipRectangle);
 
             Assert.That(clippedDrawable.Bounds, Is.EqualTo(Rectangle.Intersect(DrawableBounds, ClipRectangle)));
         }
@@ -37,13 +30,15 @@ namespace Fotografix.Drawing
         [Test]
         public void ClipsDrawingToClipRectangle()
         {
-            IDrawable clippedDrawable = ClippedDrawable.Create(drawable.Object, ClipRectangle);
+            IDrawable clippedDrawable = ClippedDrawable.Create(drawable, ClipRectangle);
 
-            clippedDrawable.Draw(drawingContext.Object);
+            clippedDrawable.Draw(device);
 
-            drawingContext.Verify(dc => dc.BeginClip(ClipRectangle));
-            drawable.Verify(d => d.Draw(drawingContext.Object));
-            clipContext.Verify(cc => cc.Dispose());
+            device.VerifySequence(
+                ("BeginClip", ClipRectangle),
+                ("Draw", drawable),
+                ("EndClip")
+            );
         }
 
         [Test]
@@ -51,10 +46,10 @@ namespace Fotografix.Drawing
         {
             bool changed = false;
 
-            IDrawable clippedDrawable = ClippedDrawable.Create(drawable.Object, ClipRectangle);
+            IDrawable clippedDrawable = ClippedDrawable.Create(drawable, ClipRectangle);
             clippedDrawable.Changed += (s, e) => changed = true;
 
-            drawable.Raise(d => d.Changed += null, EventArgs.Empty);
+            drawable.RaiseChanged();
 
             Assert.IsTrue(changed);
         }
@@ -62,8 +57,8 @@ namespace Fotografix.Drawing
         [Test]
         public void DoesNotWrapDrawableWhenClipRectangleIsEmpty()
         {
-            IDrawable clippedDrawable = ClippedDrawable.Create(drawable.Object, Rectangle.Empty);
-            Assert.That(clippedDrawable, Is.SameAs(drawable.Object));
+            IDrawable clippedDrawable = ClippedDrawable.Create(drawable, Rectangle.Empty);
+            Assert.That(clippedDrawable, Is.SameAs(drawable));
         }
     }
 }
