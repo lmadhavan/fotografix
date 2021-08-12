@@ -7,30 +7,30 @@ namespace Fotografix.Editor.Tools
         public abstract string Name { get; }
         public abstract ToolCursor Cursor { get; }
 
-        protected Image Image { get; private set; }
+        protected Document Document { get; private set; }
         protected Channel ActiveChannel { get; private set; }
 
-        public void Activated(Image image)
+        public void Activated(Document document)
         {
-            this.Image = image;
+            this.Document = document;
             UpdateActiveChannel();
-            image.UserPropertyChanged += Image_PropertyChanged;
+            Document.PropertyChanged += Document_PropertyChanged;
         }
 
         public void Deactivated()
         {
-            Image.UserPropertyChanged -= Image_PropertyChanged;
+            Document.PropertyChanged -= Document_PropertyChanged;
             this.ActiveChannel = null;
-            this.Image = null;
+            this.Document = null;
         }
 
         public abstract void PointerPressed(PointerState p);
         public abstract void PointerMoved(PointerState p);
         public abstract void PointerReleased(PointerState p);
 
-        private void Image_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        private void Document_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == EditorProperties.ActiveLayer)
+            if (e.PropertyName == nameof(Document.ActiveLayer))
             {
                 UpdateActiveChannel();
             }
@@ -38,8 +38,7 @@ namespace Fotografix.Editor.Tools
 
         private void UpdateActiveChannel()
         {
-            Layer layer = Image.GetActiveLayer();
-            this.ActiveChannel = layer.ContentChannel;
+            this.ActiveChannel = Document.ActiveLayer.ContentChannel;
         }
     }
 }

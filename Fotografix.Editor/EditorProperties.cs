@@ -7,25 +7,13 @@ namespace Fotografix.Editor
 {
     public static class EditorProperties
     {
-        private static readonly UserProperty<Layer> ActiveLayerProperty = new();
         private static readonly UserProperty<ICommandDispatcher> CommandDispatcherProperty = new();
         private static readonly UserProperty<Viewport> ViewportProperty = new();
         private static readonly UserProperty<IDrawable> DrawingPreviewProperty = new();
         private static readonly UserProperty<Rectangle?> CropPreviewProperty = new();
 
-        public static string ActiveLayer => ActiveLayerProperty.Id;
         public static string DrawingPreview => DrawingPreviewProperty.Id;
         public static string CropPreview => CropPreviewProperty.Id;
-
-        public static Layer GetActiveLayer(this Image image)
-        {
-            return image.GetUserProperty(ActiveLayerProperty);
-        }
-
-        public static void SetActiveLayer(this Image image, Layer layer)
-        {
-            image.SetUserProperty(ActiveLayerProperty, layer);
-        }
 
         public static Task DispatchAsync<T>(this Image image, T command)
         {

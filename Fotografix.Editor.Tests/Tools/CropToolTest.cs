@@ -11,6 +11,7 @@ namespace Fotografix.Editor.Tools
         private static readonly Size ImageSize = new Size(100, 100);
 
         private Image image;
+        private Document document;
         private Mock<ICommandDispatcher> commandDispatcher;
         private CropTool tool;
 
@@ -18,6 +19,7 @@ namespace Fotografix.Editor.Tools
         public void SetUp()
         {
             this.image = new Image(ImageSize);
+            this.document = new Document(image);
             this.commandDispatcher = new Mock<ICommandDispatcher>();
             this.tool = new CropTool();
 
@@ -27,7 +29,7 @@ namespace Fotografix.Editor.Tools
         [Test]
         public void BeginsCropPreviewWhenActivated()
         {
-            tool.Activated(image);
+            tool.Activated(document);
 
             Assert.That(image.GetCropPreview(), Is.EqualTo(new Rectangle(Point.Empty, ImageSize)));
         }
@@ -35,7 +37,7 @@ namespace Fotografix.Editor.Tools
         [Test]
         public void UpdatesCropPreviewWhenHandleMoved()
         {
-            tool.Activated(image);
+            tool.Activated(document);
             tool.PointerPressed(new Point(0, 0));
             tool.PointerMoved(new Point(10, 10));
 
@@ -45,7 +47,7 @@ namespace Fotografix.Editor.Tools
         [Test]
         public void UpdatesCropPreviewWhenImageSizeChanges()
         {
-            tool.Activated(image);
+            tool.Activated(document);
 
             Size newImageSize = new Size(50, 50);
             image.Size = newImageSize;
@@ -56,7 +58,7 @@ namespace Fotografix.Editor.Tools
         [Test]
         public void EndsCropPreviewWhenDeactivated()
         {
-            tool.Activated(image);
+            tool.Activated(document);
             tool.Deactivated();
 
             Assert.That(image.GetCropPreview(), Is.Null);
@@ -65,7 +67,7 @@ namespace Fotografix.Editor.Tools
         [Test]
         public void CommitsCropOperation()
         {
-            tool.Activated(image);
+            tool.Activated(document);
             tool.Commit();
 
             commandDispatcher.Verify(d => d.DispatchAsync(new CropCommand(image, new Rectangle(Point.Empty, ImageSize))));

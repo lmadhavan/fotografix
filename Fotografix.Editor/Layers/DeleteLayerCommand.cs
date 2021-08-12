@@ -12,7 +12,7 @@ namespace Fotografix.Editor.Layers
         public Task ExecuteAsync(Document document)
         {
             Image image = document.Image;
-            image.Layers.Remove(image.GetActiveLayer());
+            image.Layers.Remove(document.ActiveLayer);
 
             return Task.CompletedTask;
         }

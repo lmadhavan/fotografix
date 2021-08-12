@@ -8,6 +8,7 @@ namespace Fotografix.Editor.Tools
     {
         private HandTool tool;
         private Image image;
+        private Document document;
         private Viewport viewport;
 
         [SetUp]
@@ -16,6 +17,7 @@ namespace Fotografix.Editor.Tools
             this.tool = new HandTool();
 
             this.image = new Image(Size.Empty);
+            this.document = new Document(image);
             this.viewport = new Viewport
             {
                 Size = new Size(100, 100),
@@ -27,7 +29,7 @@ namespace Fotografix.Editor.Tools
         [Test]
         public void TranslatesPointerDragIntoViewportScroll()
         {
-            tool.Activated(image);
+            tool.Activated(document);
             viewport.ScrollOffset = new Point(10, 10);
 
             tool.PointerPressed(ViewportPoint(30, 30));
@@ -39,7 +41,7 @@ namespace Fotografix.Editor.Tools
         [Test]
         public void IgnoresMovementWhenPointerNotPressed()
         {
-            tool.Activated(image);
+            tool.Activated(document);
             viewport.ScrollOffset = new Point(10, 10);
 
             tool.PointerMoved(ViewportPoint(20, 20));
@@ -50,7 +52,7 @@ namespace Fotografix.Editor.Tools
         [Test]
         public void IgnoresMovementAfterPointerReleased()
         {
-            tool.Activated(image);
+            tool.Activated(document);
             tool.PointerPressed(ViewportPoint(10, 10));
             tool.PointerMoved(ViewportPoint(20, 20));
             tool.PointerReleased(ViewportPoint(30, 30));

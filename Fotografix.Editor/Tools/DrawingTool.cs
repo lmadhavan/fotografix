@@ -15,8 +15,8 @@ namespace Fotografix.Editor.Tools
         {
             if (CanDraw)
             {
-                this.drawable = CreateDrawable(Image, p);
-                this.clippedDrawable = ClippedDrawable.Create(drawable, Image.Selection);
+                this.drawable = CreateDrawable(Document.Image, p);
+                this.clippedDrawable = ClippedDrawable.Create(drawable, Document.Image.Selection);
                 ActiveChannel.SetDrawingPreview(clippedDrawable);
             }
         }
@@ -34,7 +34,7 @@ namespace Fotografix.Editor.Tools
             if (drawable != null)
             {
                 ActiveChannel.SetDrawingPreview(null);
-                await Image.DispatchAsync(new DrawCommand(ActiveChannel, clippedDrawable));
+                await Document.Image.DispatchAsync(new DrawCommand(ActiveChannel, clippedDrawable));
                 this.drawable = null;
                 this.clippedDrawable = null;
             }

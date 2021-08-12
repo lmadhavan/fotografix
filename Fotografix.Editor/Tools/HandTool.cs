@@ -11,9 +11,9 @@ namespace Fotografix.Editor.Tools
         public string Name => "Hand";
         public ToolCursor Cursor => tracking ? ToolCursor.ClosedHand : ToolCursor.OpenHand;
 
-        public void Activated(Image image)
+        public void Activated(Document document)
         {
-            this.viewport = image.GetViewport();
+            this.viewport = document.Image.GetViewport();
         }
 
         public void Deactivated()

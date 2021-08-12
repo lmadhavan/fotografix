@@ -31,7 +31,7 @@ namespace Fotografix.Editor
 
                     if (activeDocument != null)
                     {
-                        activeTool?.Activated(activeDocument.Image);
+                        activeTool?.Activated(activeDocument);
                         activeDocument.ContentChanged += ActiveDocument_ContentChanged;
                     }
 
@@ -56,7 +56,7 @@ namespace Fotografix.Editor
                     if (activeDocument != null)
                     {
                         previous?.Deactivated();
-                        activeTool?.Activated(activeDocument.Image);
+                        activeTool?.Activated(activeDocument);
                     }
                 }
             }

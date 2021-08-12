@@ -22,9 +22,9 @@ namespace Fotografix.Editor.Tools
             this.activeHandler = selectHandler;
         }
 
-        public void Activated(Image image)
+        public void Activated(Document document)
         {
-            this.image = image;
+            this.image = document.Image;
         }
 
         public void Deactivated()

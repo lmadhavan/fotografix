@@ -2,7 +2,6 @@
 using Fotografix.Editor.Commands;
 using Moq;
 using NUnit.Framework;
-using System;
 using System.Drawing;
 
 namespace Fotografix.Editor.Tools

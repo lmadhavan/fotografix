@@ -14,9 +14,9 @@ namespace Fotografix.Editor.Tools
 
         public ToolCursor Cursor => tracker?.Cursor ?? ToolCursor.Disabled;
 
-        public void Activated(Image image)
+        public void Activated(Document document)
         {
-            this.image = image;
+            this.image = document.Image;
             image.PropertyChanged += Image_PropertyChanged;
             InitializeTracker();
         }

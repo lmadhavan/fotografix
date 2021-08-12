@@ -33,7 +33,7 @@ namespace Fotografix.Editor
             workspace.ActiveTool = tool.Object;
             workspace.ActiveDocument = document;
 
-            tool.Verify(t => t.Activated(document.Image));
+            tool.Verify(t => t.Activated(document));
             tool.VerifyNoOtherCalls();
         }
 
@@ -53,7 +53,7 @@ namespace Fotografix.Editor
             workspace.ActiveDocument = document;
             workspace.ActiveTool = tool.Object;
 
-            tool.Verify(t => t.Activated(document.Image));
+            tool.Verify(t => t.Activated(document));
             tool.VerifyNoOtherCalls();
         }
 

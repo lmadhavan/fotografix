@@ -4,7 +4,7 @@
     {
         string Name { get; }
 
-        void Activated(Image image);
+        void Activated(Document document);
         void Deactivated();
     }
 }

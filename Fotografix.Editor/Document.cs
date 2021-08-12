@@ -53,14 +53,7 @@ namespace Fotografix.Editor
         public Layer ActiveLayer
         {
             get => activeLayer;
-
-            set
-            {
-                if (SetProperty(ref activeLayer, value))
-                {
-                    image.SetActiveLayer(value);
-                }
-            }
+            set => SetProperty(ref activeLayer, value);
         }
 
         public bool CanUndo => history.CanUndo;
