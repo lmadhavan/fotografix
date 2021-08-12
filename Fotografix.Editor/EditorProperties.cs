@@ -8,7 +8,6 @@ namespace Fotografix.Editor
     public static class EditorProperties
     {
         private static readonly UserProperty<ICommandDispatcher> CommandDispatcherProperty = new();
-        private static readonly UserProperty<Viewport> ViewportProperty = new();
         private static readonly UserProperty<IDrawable> DrawingPreviewProperty = new();
         private static readonly UserProperty<Rectangle?> CropPreviewProperty = new();
 
@@ -23,16 +22,6 @@ namespace Fotografix.Editor
         public static void SetCommandDispatcher(this Image image, ICommandDispatcher commandDispatcher)
         {
             image.SetUserProperty(CommandDispatcherProperty, commandDispatcher);
-        }
-
-        public static Viewport GetViewport(this Image image)
-        {
-            return image.GetUserProperty(ViewportProperty);
-        }
-
-        public static void SetViewport(this Image image, Viewport viewport)
-        {
-            image.SetUserProperty(ViewportProperty, viewport);
         }
 
         public static IDrawable GetDrawingPreview(this Channel channel)

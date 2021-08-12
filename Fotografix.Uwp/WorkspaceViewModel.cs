@@ -126,7 +126,7 @@ namespace Fotografix.Uwp
 
         private void AddDocument(Document document)
         {
-            var vm = CreateEditor(new Viewport(), document);
+            var vm = CreateEditor(document);
             documentViewModels[document] = vm;
         }
 
@@ -148,11 +148,10 @@ namespace Fotografix.Uwp
             }
         }
 
-        private ImageEditor CreateEditor(Viewport viewport, Document document)
+        private ImageEditor CreateEditor(Document document)
         {
             DocumentCommandDispatcher dispatcher = new DocumentCommandDispatcher(document, handlerCollection);
             document.Image.SetCommandDispatcher(dispatcher);
-            document.Image.SetViewport(viewport);
 
             var editor = new ImageEditor(document)
             {

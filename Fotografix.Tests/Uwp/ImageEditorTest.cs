@@ -14,7 +14,6 @@ namespace Fotografix.Tests.Uwp
         private static readonly Size ImageSize = new Size(10, 10);
 
         private Image image;
-        private Viewport viewport;
         private Document document;
         private ImageEditor editor;
         private PropertyChangedEventArgs lastPropertyChange;
@@ -24,9 +23,6 @@ namespace Fotografix.Tests.Uwp
         {
             this.image = new Image(ImageSize);
             image.Layers.Add(new Layer());
-
-            this.viewport = new Viewport();
-            image.SetViewport(viewport);
 
             this.document = new Document(image);
 
@@ -38,13 +34,6 @@ namespace Fotografix.Tests.Uwp
         public void Cleanup()
         {
             editor.Dispose();
-        }
-
-        [TestMethod]
-        public void SynchronizesViewportWhenImageSizeChanges()
-        {
-            image.Size = new Size(100, 100);
-            Assert.AreEqual(viewport.ImageSize, image.Size);
         }
 
         [TestMethod]

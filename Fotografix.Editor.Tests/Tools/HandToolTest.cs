@@ -7,7 +7,6 @@ namespace Fotografix.Editor.Tools
     public class HandToolTest
     {
         private HandTool tool;
-        private Image image;
         private Document document;
         private Viewport viewport;
 
@@ -16,14 +15,10 @@ namespace Fotografix.Editor.Tools
         {
             this.tool = new HandTool();
 
-            this.image = new Image(Size.Empty);
-            this.document = new Document(image);
-            this.viewport = new Viewport
-            {
-                Size = new Size(100, 100),
-                ImageSize = new Size(200, 200)
-            };
-            image.SetViewport(viewport);
+            this.document = new Document();
+            this.viewport = document.Viewport;
+            viewport.Size = new Size(100, 100);
+            viewport.ImageSize = new Size(200, 200);
         }
 
         [Test]

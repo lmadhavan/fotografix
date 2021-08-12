@@ -11,6 +11,7 @@ namespace Fotografix.Editor
     public sealed class Document : NotifyPropertyChangedBase, IDisposable, IHistory
     {
         private readonly Image image;
+        private readonly Viewport viewport;
         private readonly IAppendableHistory history;
 
         private Layer activeLayer;
@@ -32,8 +33,12 @@ namespace Fotografix.Editor
         public Document(Image image, IAppendableHistory history)
         {
             this.image = image;
+            image.PropertyChanged += Image_PropertyChanged;
             image.ContentChanged += Image_ContentChanged;
             image.Layers.CollectionChanged += Layers_CollectionChanged;
+
+            this.viewport = new Viewport();
+            viewport.ImageSize = image.Size;
 
             this.history = history;
             history.PropertyChanged += History_PropertyChanged;
@@ -46,9 +51,11 @@ namespace Fotografix.Editor
             history.PropertyChanged -= History_PropertyChanged;
             image.Layers.CollectionChanged -= Layers_CollectionChanged;
             image.ContentChanged -= Image_ContentChanged;
+            image.PropertyChanged -= Image_PropertyChanged;
         }
 
         public Image Image => image;
+        public Viewport Viewport => viewport;
 
         public Layer ActiveLayer
         {
@@ -117,6 +124,14 @@ namespace Fotografix.Editor
             }
 
             this.changeGroup = null;
+        }
+
+        private void Image_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(Image.Size))
+            {
+                viewport.ImageSize = image.Size;
+            }
         }
 
         private void Image_ContentChanged(object sender, ContentChangedEventArgs e)

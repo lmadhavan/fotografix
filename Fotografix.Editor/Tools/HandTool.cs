@@ -13,7 +13,7 @@ namespace Fotografix.Editor.Tools
 
         public void Activated(Document document)
         {
-            this.viewport = document.Image.GetViewport();
+            this.viewport = document.Viewport;
         }
 
         public void Deactivated()

@@ -169,6 +169,20 @@ namespace Fotografix.Editor
             Assert.That(document.ActiveLayer, Is.Null);
         }
 
+        [Test]
+        public void InitializesViewport()
+        {
+            Assert.That(document.Viewport.ImageSize, Is.EqualTo(image.Size));
+        }
+
+        [Test]
+        public void UpdatesViewportWhenImageSizeChanges()
+        {
+            image.Size *= 2;
+
+            Assert.That(document.Viewport.ImageSize, Is.EqualTo(image.Size));
+        }
+
         private static void ProduceChange(Image image)
         {
             image.Size *= 2;
