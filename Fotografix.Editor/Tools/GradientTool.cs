@@ -5,6 +5,10 @@ namespace Fotografix.Editor.Tools
 {
     public sealed class GradientTool : DrawingTool<LinearGradient>, IGradientToolControls
     {
+        public GradientTool(IDocumentCommand drawCommand) : base(drawCommand)
+        {
+        }
+
         public Color StartColor { get; set; }
         public Color EndColor { get; set; }
 

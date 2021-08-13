@@ -1,7 +1,6 @@
 ﻿using Fotografix.Editor;
 using Fotografix.Editor.ChangeTracking;
 using Fotografix.Editor.Clipboard;
-using Fotografix.Editor.Commands;
 using Fotografix.Editor.FileManagement;
 using Fotografix.Editor.Layers;
 using Fotografix.Editor.Tools;
@@ -22,7 +21,6 @@ namespace Fotografix.Uwp
     {
         private readonly Workspace workspace;
         private readonly FilePickerOverride filePickerOverride = new FilePickerOverride(new FilePickerAdapter());
-        private readonly CommandHandlerCollection handlerCollection = new CommandHandlerCollection();
 
         public WorkspaceViewModel(Workspace workspace, IClipboard clipboard, IDialog<ResizeImageParameters> resizeImageDialog)
         {
@@ -34,15 +32,18 @@ namespace Fotografix.Uwp
             IImageDecoder imageDecoder = new WindowsImageDecoder();
             IImageEncoder imageEncoder = new WindowsImageEncoder(new Win2DImageRenderer());
             IGraphicsDevice graphicsDevice = new Win2DGraphicsDevice();
+            
+            IDocumentCommand drawCommand = new DrawCommand(graphicsDevice);
+            IDocumentCommand cropCommand = new CropCommand();
 
             this.Tools = new List<ITool>
             {
                 new HandTool(),
                 new MoveTool(),
                 new SelectionTool(),
-                new CropTool(),
-                new BrushTool() { Size = 5, Color = Color.White },
-                new GradientTool { StartColor = Color.Black, EndColor = Color.White }
+                new CropTool(cropCommand),
+                new BrushTool(drawCommand) { Size = 5, Color = Color.White },
+                new GradientTool(drawCommand) { StartColor = Color.Black, EndColor = Color.White }
             };
             this.ActiveTool = Tools.First();
 
@@ -60,9 +61,6 @@ namespace Fotografix.Uwp
             this.NewLayerCommand = workspace.Bind(new NewLayerCommand());
             this.DeleteLayerCommand = workspace.Bind(new DeleteLayerCommand());
             this.ImportLayerCommand = workspace.Bind(new ImportLayerCommand(imageDecoder, filePickerOverride));
-
-            handlerCollection.Register(new DrawCommandHandler(graphicsDevice));
-            handlerCollection.Register(new CropCommandHandler());
         }
 
         #region Tools
@@ -150,9 +148,6 @@ namespace Fotografix.Uwp
 
         private ImageEditor CreateEditor(Document document)
         {
-            DocumentCommandDispatcher dispatcher = new DocumentCommandDispatcher(document, handlerCollection);
-            document.Image.SetCommandDispatcher(dispatcher);
-
             var editor = new ImageEditor(document)
             {
                 Toolbox = this,

@@ -5,6 +5,10 @@ namespace Fotografix.Editor.Tools
 {
     public sealed class BrushTool : DrawingTool<BrushStroke>, IBrushToolControls
     {
+        public BrushTool(IDocumentCommand drawCommand) : base(drawCommand)
+        {
+        }
+
         public int Size { get; set; }
         public Color Color { get; set; }
 

@@ -14,7 +14,7 @@ namespace Fotografix.Editor.Tools
         [SetUp]
         public void SetUp()
         {
-            this.tool = new GradientTool()
+            this.tool = new GradientTool(DrawCommand)
             {
                 StartColor = Color.Red,
                 EndColor = Color.Green

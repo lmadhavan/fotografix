@@ -30,7 +30,7 @@ namespace Fotografix.Editor.Tools
 
         private void Document_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == nameof(Document.ActiveLayer))
+            if (e.PropertyName == nameof(Document.ActiveChannel))
             {
                 UpdateActiveChannel();
             }
@@ -38,7 +38,7 @@ namespace Fotografix.Editor.Tools
 
         private void UpdateActiveChannel()
         {
-            this.ActiveChannel = Document.ActiveLayer.ContentChannel;
+            this.ActiveChannel = Document.ActiveChannel;
         }
     }
 }

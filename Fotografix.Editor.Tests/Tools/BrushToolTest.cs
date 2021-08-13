@@ -14,7 +14,7 @@ namespace Fotografix.Editor.Tools
         [SetUp]
         public void SetUp()
         {
-            this.tool = new BrushTool()
+            this.tool = new BrushTool(DrawCommand)
             {
                 Size = 5,
                 Color = Color.Red

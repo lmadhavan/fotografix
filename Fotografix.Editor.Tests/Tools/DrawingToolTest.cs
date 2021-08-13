@@ -1,5 +1,4 @@
 ﻿using Fotografix.Drawing;
-using Fotografix.Editor.Commands;
 using Moq;
 using NUnit.Framework;
 using System.Drawing;
@@ -12,15 +11,15 @@ namespace Fotografix.Editor.Tools
         private static readonly PointerState End = new(20, 20);
         private static readonly Rectangle Selection = new(5, 5, 10, 10);
 
-        private Mock<ICommandDispatcher> commandDispatcher;
+        private Mock<IDocumentCommand> drawCommand;
 
+        protected IDocumentCommand DrawCommand => drawCommand.Object;
         protected abstract void AssertDrawable(IDrawable drawable, PointerState start, PointerState end);
 
         [SetUp]
         public void SetUp_DrawingToolTest()
         {
-            this.commandDispatcher = new Mock<ICommandDispatcher>();
-            Image.SetCommandDispatcher(commandDispatcher.Object);
+            this.drawCommand = new();
             Image.Selection = Selection;
         }
 
@@ -57,7 +56,7 @@ namespace Fotografix.Editor.Tools
 
             Tool.PointerReleased(End);
 
-            commandDispatcher.Verify(d => d.DispatchAsync(new DrawCommand(BitmapLayer.ContentChannel, drawable)));
+            drawCommand.Verify(c => c.ExecuteAsync(Document));
             Assert.That(ActiveChannel.GetDrawingPreview(), Is.Null);
         }
 

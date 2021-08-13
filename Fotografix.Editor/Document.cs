@@ -60,8 +60,17 @@ namespace Fotografix.Editor
         public Layer ActiveLayer
         {
             get => activeLayer;
-            set => SetProperty(ref activeLayer, value);
+
+            set
+            {
+                if (SetProperty(ref activeLayer, value))
+                {
+                    RaisePropertyChanged(nameof(ActiveChannel));
+                }
+            }
         }
+
+        public Channel ActiveChannel => activeLayer?.ContentChannel;
 
         public bool CanUndo => history.CanUndo;
         public bool CanRedo => history.CanRedo;

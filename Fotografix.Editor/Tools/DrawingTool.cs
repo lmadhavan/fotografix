@@ -1,12 +1,18 @@
 ﻿using Fotografix.Drawing;
-using Fotografix.Editor.Commands;
 
 namespace Fotografix.Editor.Tools
 {
     public abstract class DrawingTool<T> : ChannelTool where T : class, IDrawable
     {
+        private readonly IDocumentCommand drawCommand;
+
         private T drawable;
         private IDrawable clippedDrawable;
+
+        protected DrawingTool(IDocumentCommand drawCommand)
+        {
+            this.drawCommand = drawCommand;
+        }
 
         private bool CanDraw => ActiveChannel?.CanDraw ?? false;
         public override ToolCursor Cursor => CanDraw ? ToolCursor.Crosshair : ToolCursor.Disabled;
@@ -33,8 +39,8 @@ namespace Fotografix.Editor.Tools
         {
             if (drawable != null)
             {
+                await drawCommand.ExecuteAsync(Document);
                 ActiveChannel.SetDrawingPreview(null);
-                await Document.Image.DispatchAsync(new DrawCommand(ActiveChannel, clippedDrawable));
                 this.drawable = null;
                 this.clippedDrawable = null;
             }

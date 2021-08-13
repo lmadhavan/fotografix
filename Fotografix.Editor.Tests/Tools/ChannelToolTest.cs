@@ -6,8 +6,7 @@ namespace Fotografix.Editor.Tools
 {
     public abstract class ChannelToolTest
     {
-        private Document document;
-
+        protected Document Document { get; private set; }
         protected Image Image { get; private set; }
         protected Layer BitmapLayer { get; private set; }
         protected Layer NonBitmapLayer { get; private set; }
@@ -21,8 +20,7 @@ namespace Fotografix.Editor.Tools
             this.Image = new Image(new Size(10, 10));
             this.BitmapLayer = new Layer(new Bitmap(Size.Empty));
             this.NonBitmapLayer = new Layer(new BlackAndWhiteAdjustment());
-
-            this.document = new Document(Image);
+            this.Document = new Document(Image);
         }
 
         [Test]
@@ -51,7 +49,7 @@ namespace Fotografix.Editor.Tools
         public void DisabledWhenActiveLayerChangesToNonBitmapLayerAfterActivation()
         {
             Activate(BitmapLayer);
-            document.ActiveLayer = NonBitmapLayer;
+            Document.ActiveLayer = NonBitmapLayer;
 
             Assert.That(Tool.Cursor, Is.EqualTo(ToolCursor.Disabled));
         }
@@ -71,8 +69,8 @@ namespace Fotografix.Editor.Tools
 
         protected void Activate(Layer layer)
         {
-            document.ActiveLayer = layer;
-            Tool.Activated(document);
+            Document.ActiveLayer = layer;
+            Tool.Activated(Document);
             this.ActiveChannel = layer.ContentChannel;
         }
     }

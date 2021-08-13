@@ -1,5 +1,4 @@
-﻿using Fotografix.Editor.Commands;
-using System;
+﻿using System;
 using System.ComponentModel;
 using System.Drawing;
 
@@ -7,15 +6,23 @@ namespace Fotografix.Editor.Tools
 {
     public sealed class CropTool : ITool, ICropToolControls
     {
+        private readonly IDocumentCommand cropCommand;
+
+        private Document document;
         private Image image;
         private RectangleTracker tracker;
 
-        public string Name => "Crop";
+        public CropTool(IDocumentCommand cropCommand)
+        {
+            this.cropCommand = cropCommand;
+        }
 
+        public string Name => "Crop";
         public ToolCursor Cursor => tracker?.Cursor ?? ToolCursor.Disabled;
 
         public void Activated(Document document)
         {
+            this.document = document;
             this.image = document.Image;
             image.PropertyChanged += Image_PropertyChanged;
             InitializeTracker();
@@ -47,7 +54,7 @@ namespace Fotografix.Editor.Tools
 
         public async void Commit()
         {
-            await image.DispatchAsync(new CropCommand(image, tracker.Rectangle));
+            await cropCommand.ExecuteAsync(document);
         }
 
         private void Image_PropertyChanged(object sender, PropertyChangedEventArgs e)

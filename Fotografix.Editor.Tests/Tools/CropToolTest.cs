@@ -1,5 +1,4 @@
-﻿using Fotografix.Editor.Commands;
-using Moq;
+﻿using Moq;
 using NUnit.Framework;
 using System.Drawing;
 
@@ -12,7 +11,7 @@ namespace Fotografix.Editor.Tools
 
         private Image image;
         private Document document;
-        private Mock<ICommandDispatcher> commandDispatcher;
+        private Mock<IDocumentCommand> cropCommand;
         private CropTool tool;
 
         [SetUp]
@@ -20,10 +19,8 @@ namespace Fotografix.Editor.Tools
         {
             this.image = new Image(ImageSize);
             this.document = new Document(image);
-            this.commandDispatcher = new Mock<ICommandDispatcher>();
-            this.tool = new CropTool();
-
-            image.SetCommandDispatcher(commandDispatcher.Object);
+            this.cropCommand = new();
+            this.tool = new CropTool(cropCommand.Object);
         }
 
         [Test]
@@ -70,7 +67,7 @@ namespace Fotografix.Editor.Tools
             tool.Activated(document);
             tool.Commit();
 
-            commandDispatcher.Verify(d => d.DispatchAsync(new CropCommand(image, new Rectangle(Point.Empty, ImageSize))));
+            cropCommand.Verify(c => c.ExecuteAsync(document));
         }
     }
 }
