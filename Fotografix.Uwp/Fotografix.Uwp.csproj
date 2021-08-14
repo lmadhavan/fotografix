@@ -147,6 +147,10 @@
     </Compile>
     <Compile Include="ListViewWorkaround.cs" />
     <Compile Include="NullToVisibilityConverter.cs" />
+    <Compile Include="ProgressDialog.xaml.cs">
+      <DependentUpon>ProgressDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ProgressViewModel.cs" />
     <Compile Include="WorkspaceViewModel.cs" />
     <Compile Include="IToolbox.cs" />
     <Compile Include="StorageFileAdapter.cs" />
@@ -237,6 +241,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="FileManagement\NewImageDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ProgressDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

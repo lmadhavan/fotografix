@@ -85,16 +85,8 @@ namespace Fotografix.Editor
             dispatcher.CancelActiveCommand();
             editorCommand.Unblock();
 
-            try
-            {
-                await task;
-            }
-            catch (OperationCanceledException)
-            {
-                Assert.Pass();
-            }
-
-            Assert.Fail("expected cancellation exception");
+            await task;
+            Assert.That(editorCommand.ExecuteCount, Is.Zero, "command should have been cancelled");
         }
 
         private void AssertCanExecuteChanged(Action action)

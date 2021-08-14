@@ -39,6 +39,8 @@ namespace Fotografix.Uwp
             var drawCommand = dispatcher.Bind(new DrawCommand(graphicsDevice));
             var cropCommand = dispatcher.Bind(new CropCommand());
 
+            this.Progress = new ProgressViewModel(dispatcher);
+
             this.Tools = new List<ITool>
             {
                 new HandTool(),
@@ -66,6 +68,8 @@ namespace Fotografix.Uwp
             this.DeleteLayerCommand = dispatcher.Bind(new DeleteLayerCommand());
             this.ImportLayerCommand = dispatcher.Bind(new ImportLayerCommand(imageDecoder, filePickerOverride));
         }
+
+        public ProgressViewModel Progress { get; }
 
         #region Tools
 

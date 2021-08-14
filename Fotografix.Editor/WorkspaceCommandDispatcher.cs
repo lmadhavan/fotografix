@@ -47,6 +47,7 @@ namespace Fotografix.Editor
         public void CancelActiveCommand()
         {
             cts?.Cancel();
+            Debug.WriteLine("Cancellation requested");
         }
 
         public bool CanExecute(EditorCommand command, object parameter)
@@ -69,6 +70,10 @@ namespace Fotografix.Editor
 
                 Debug.WriteLine($"Executing {command.GetType().Name} with parameter [{parameter}]");
                 await command.ExecuteAsync(workspace, parameter, cts.Token, progress);
+            }
+            catch (OperationCanceledException)
+            {
+                // ignored
             }
             finally
             {

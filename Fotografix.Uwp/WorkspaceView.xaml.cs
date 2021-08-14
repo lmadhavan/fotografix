@@ -14,6 +14,8 @@ namespace Fotografix.Uwp
     {
         private readonly Workspace workspace;
         private readonly WorkspaceViewModel vm;
+        private readonly ProgressDialog progressDialog;
+        
         private IDisposable layerListSelectedItemWorkaround;
 
         public WorkspaceView() : this(new Workspace())
@@ -24,6 +26,7 @@ namespace Fotografix.Uwp
         {
             this.workspace = workspace;
             this.vm = new WorkspaceViewModel(workspace, ClipboardAdapter.GetForCurrentThread(), new ContentDialogAdapter<ResizeImageDialog, ResizeImageParameters>());
+            this.progressDialog = new ProgressDialog(vm.Progress);
 
             workspace.PropertyChanged += Workspace_PropertyChanged;
             workspace.DocumentAdded += Workspace_DocumentAdded;
@@ -32,8 +35,6 @@ namespace Fotografix.Uwp
             menuBar.CreateShadowAccelerators(shadowAcceleratorsContainer);
             BindNewAdjustmentMenuFlyout();
             this.Loaded += OnLoaded;
-
-            // This MUST come after InitializeComponent - see FixLayerListSelectedItemBinding for details
 
             this.Tabs = new TabCollection(tabView);
         }
