@@ -4,7 +4,6 @@ using Fotografix.Editor.Clipboard;
 using Fotografix.Editor.FileManagement;
 using Fotografix.Editor.Layers;
 using Fotografix.Editor.Tools;
-using Fotografix.IO;
 using Fotografix.Uwp.Codecs;
 using Fotografix.Uwp.FileManagement;
 using Fotografix.Win2D;
@@ -21,7 +20,6 @@ namespace Fotografix.Uwp
     {
         private readonly Workspace workspace;
         private readonly WorkspaceCommandDispatcher dispatcher;
-        private readonly FilePickerOverride filePickerOverride = new FilePickerOverride(new FilePickerAdapter());
 
         public WorkspaceViewModel(Workspace workspace, IClipboard clipboard, IDialog<ResizeImageParameters> resizeImageDialog)
         {
@@ -35,6 +33,7 @@ namespace Fotografix.Uwp
             var imageDecoder = new WindowsImageDecoder();
             var imageEncoder = new WindowsImageEncoder(new Win2DImageRenderer());
             var graphicsDevice = new Win2DGraphicsDevice();
+            var filePicker = new FilePickerAdapter();
 
             var drawCommand = dispatcher.Bind(new DrawCommand(graphicsDevice));
             var cropCommand = dispatcher.Bind(new CropCommand());
@@ -53,9 +52,9 @@ namespace Fotografix.Uwp
             this.ActiveTool = Tools.First();
 
             this.NewCommand = dispatcher.Bind(new NewImageCommand(new ContentDialogAdapter<NewImageDialog, NewImageParameters>()));
-            this.OpenCommand = dispatcher.Bind(new OpenImageCommand(imageDecoder, filePickerOverride));
-            this.SaveCommand = dispatcher.Bind(new SaveImageCommand(imageEncoder, filePickerOverride) { Mode = SaveCommandMode.Save });
-            this.SaveAsCommand = dispatcher.Bind(new SaveImageCommand(imageEncoder, filePickerOverride) { Mode = SaveCommandMode.SaveAs });
+            this.OpenCommand = dispatcher.Bind(new OpenImageCommand(imageDecoder, filePicker));
+            this.SaveCommand = dispatcher.Bind(new SaveImageCommand(imageEncoder, filePicker) { Mode = SaveCommandMode.Save });
+            this.SaveAsCommand = dispatcher.Bind(new SaveImageCommand(imageEncoder, filePicker) { Mode = SaveCommandMode.SaveAs });
 
             this.UndoCommand = dispatcher.Bind(new UndoCommand());
             this.RedoCommand = dispatcher.Bind(new RedoCommand());
@@ -66,7 +65,7 @@ namespace Fotografix.Uwp
             this.NewLayerCommand = dispatcher.Bind(new NewLayerCommand());
             this.NewAdjustmentLayerCommand = dispatcher.Bind(new NewAdjustmentLayerCommand());
             this.DeleteLayerCommand = dispatcher.Bind(new DeleteLayerCommand());
-            this.ImportLayerCommand = dispatcher.Bind(new ImportLayerCommand(imageDecoder, filePickerOverride));
+            this.ImportLayerCommand = dispatcher.Bind(new ImportLayerCommand(imageDecoder, filePicker));
         }
 
         public ProgressViewModel Progress { get; }
@@ -110,7 +109,7 @@ namespace Fotografix.Uwp
         public async Task OpenRecentFileAsync(RecentFile recentFile)
         {
             StorageFile storageFile = await RecentFiles.GetFileAsync(recentFile);
-            await OpenFileAsync(new StorageFileAdapter(storageFile));
+            await OpenCommand.ExecuteAsync(new StorageFileAdapter(storageFile));
         }
 
         #endregion
@@ -147,20 +146,11 @@ namespace Fotografix.Uwp
 
         #endregion
 
-        public async Task OpenFileAsync(IFile file)
-        {
-            using (filePickerOverride.OverrideOpenFile(file))
-            {
-                await OpenCommand.ExecuteAsync();
-            }
-        }
-
         private ImageEditor CreateEditor(Document document)
         {
             var editor = new ImageEditor(document)
             {
                 Toolbox = this,
-                FilePickerOverride = filePickerOverride,
                 ImportLayerCommand = ImportLayerCommand
             };
 

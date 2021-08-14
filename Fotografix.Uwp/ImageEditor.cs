@@ -1,14 +1,10 @@
 ﻿using Fotografix.Editor;
 using Fotografix.Editor.Collections;
-using Fotografix.IO;
-using Fotografix.Uwp.FileManagement;
 using Fotografix.Win2D;
 using Microsoft.Graphics.Canvas;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
-using System.Threading.Tasks;
 
 namespace Fotografix.Uwp
 {
@@ -40,7 +36,6 @@ namespace Fotografix.Uwp
         }
 
         public IToolbox Toolbox { get; set; }
-        public FilePickerOverride FilePickerOverride { get; set; }
 
         public AsyncCommand ImportLayerCommand { get; set; }
 
@@ -88,14 +83,6 @@ namespace Fotografix.Uwp
         public void Draw(CanvasDrawingSession ds)
         {
             compositor.Draw(ds);
-        }
-
-        public async Task ImportLayersAsync(IEnumerable<IFile> files)
-        {
-            using (FilePickerOverride.OverrideOpenFiles(files))
-            {
-                await ImportLayerCommand.ExecuteAsync();
-            }
         }
 
         public Bitmap ToBitmap()

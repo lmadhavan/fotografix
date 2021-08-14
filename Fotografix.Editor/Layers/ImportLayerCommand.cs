@@ -1,7 +1,6 @@
 ﻿using Fotografix.Editor.FileManagement;
 using Fotografix.IO;
 using System;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -9,30 +8,32 @@ namespace Fotografix.Editor.Layers
 {
     public sealed class ImportLayerCommand : DocumentCommand
     {
-        private readonly IImageDecoder imageDecoder;
-        private readonly IFilePicker filePicker;
+        private readonly ImportProcessor processor;
 
         public ImportLayerCommand(IImageDecoder imageDecoder, IFilePicker filePicker)
         {
-            this.imageDecoder = imageDecoder;
-            this.filePicker = filePicker;
+            this.processor = new(imageDecoder, filePicker);
         }
 
-        public async override Task ExecuteAsync(Document document, object parameter, CancellationToken cancellationToken, IProgress<EditorCommandProgress> progress)
+        public override Task ExecuteAsync(Document document, object parameter, CancellationToken cancellationToken, IProgress<EditorCommandProgress> progress)
         {
-            var files = (await filePicker.PickOpenFilesAsync(imageDecoder.SupportedFileFormats)).ToList();
+            return processor.ProcessBatchAsync(document, parameter, cancellationToken, progress);
+        }
 
-            for (int i = 0; i < files.Count; i++)
+        private sealed class ImportProcessor : BatchImageProcessor<Document>
+        {
+            public ImportProcessor(IImageDecoder imageDecoder, IFilePicker filePicker) : base(imageDecoder, filePicker)
             {
-                if (cancellationToken.IsCancellationRequested)
-                {
-                    return;
-                }
+            }
 
-                var file = files[i];
-                progress?.Report(new("Importing " + file.Name, i, files.Count));
+            protected override string GetProgressDescription(IFile file)
+            {
+                return "Importing " + file.Name;
+            }
 
-                Image importedImage = await imageDecoder.ReadImageAsync(file);
+            protected async override Task ProcessAsync(Document document, IFile file)
+            {
+                Image importedImage = await ReadImageAsync(file);
                 foreach (Layer layer in importedImage.DetachLayers())
                 {
                     document.Image.Layers.Add(layer);

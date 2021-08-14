@@ -85,7 +85,7 @@ namespace Fotografix.Uwp
 
         private Task ImportLayersAsync(IEnumerable<StorageFile> files)
         {
-            return editor.ImportLayersAsync(files.Select(f => new StorageFileAdapter(f)));
+            return editor.ImportLayerCommand.ExecuteAsync(files.Select(f => new StorageFileAdapter(f)));
         }
     }
 }

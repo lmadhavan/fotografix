@@ -8,37 +8,39 @@ namespace Fotografix.Editor.FileManagement
 {
     public sealed class OpenImageCommand : EditorCommand
     {
-        private readonly IImageDecoder imageDecoder;
-        private readonly IFilePicker filePicker;
+        private readonly OpenProcessor processor;
 
         public OpenImageCommand(IImageDecoder imageDecoder, IFilePicker filePicker)
         {
-            this.imageDecoder = imageDecoder;
-            this.filePicker = filePicker;
+            this.processor = new(imageDecoder, filePicker);
         }
 
-        public async override Task ExecuteAsync(Workspace workspace, object parameter, CancellationToken cancellationToken, IProgress<EditorCommandProgress> progress)
+        public override Task ExecuteAsync(Workspace workspace, object parameter, CancellationToken cancellationToken, IProgress<EditorCommandProgress> progress)
         {
-            var files = (await filePicker.PickOpenFilesAsync(imageDecoder.SupportedFileFormats)).ToList();
+            return processor.ProcessBatchAsync(workspace, parameter, cancellationToken, progress);
+        }
 
-            for (int i = 0; i < files.Count; i++)
+        private sealed class OpenProcessor : BatchImageProcessor<Workspace>
+        {
+            public OpenProcessor(IImageDecoder imageDecoder, IFilePicker filePicker) : base(imageDecoder, filePicker)
             {
-                if (cancellationToken.IsCancellationRequested)
-                {
-                    return;
-                }
+            }
 
-                var file = files[i];
-                progress?.Report(new("Opening " + file.Name, i, files.Count));
+            protected override string GetProgressDescription(IFile file)
+            {
+                return "Opening " + file.Name;
+            }
 
+            protected async override Task ProcessAsync(Workspace workspace, IFile file)
+            {
                 Document existingDocument = workspace.Documents.FirstOrDefault(d => file.Equals(d.File));
                 if (existingDocument != null)
                 {
                     workspace.ActiveDocument = existingDocument;
-                    continue;
+                    return;
                 }
 
-                Image image = await imageDecoder.ReadImageAsync(file);
+                Image image = await ReadImageAsync(file);
                 Document document = new Document(image) { File = file };
                 workspace.AddDocument(document);
             }

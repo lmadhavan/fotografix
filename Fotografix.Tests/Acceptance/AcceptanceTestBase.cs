@@ -29,7 +29,7 @@ namespace Fotografix.Tests.Acceptance
             Editor?.Dispose();
 
             var file = await GetFileAsync(filename);
-            await Workspace.OpenFileAsync(file);
+            await Workspace.OpenCommand.ExecuteAsync(file);
 
             this.Editor = Workspace.ActiveDocument;
             Editor.Invalidated += Editor_Invalidated;
@@ -41,7 +41,7 @@ namespace Fotografix.Tests.Acceptance
         protected async Task ImportLayerAsync(string filename)
         {
             var file = await GetFileAsync(filename);
-            await Editor.ImportLayersAsync(new IFile[] { file });
+            await Workspace.ImportLayerCommand.ExecuteAsync(file);
         }
 
         protected async Task SaveToTempFolderAsync(string filename)
