@@ -1,9 +1,6 @@
 ﻿using Fotografix.Editor.Tools;
 using Moq;
 using NUnit.Framework;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Fotografix.Editor
 {
@@ -11,21 +8,15 @@ namespace Fotografix.Editor
     public class WorkspaceTest
     {
         private Document document;
-        private Mock<EditorCommand> editorCommand;
         private Mock<ITool> tool;
-
         private Workspace workspace;
-        private AsyncCommand boundCommand;
 
         [SetUp]
         public void SetUp()
         {
             this.document = new();
-            this.editorCommand = new();
             this.tool = new();
-
             this.workspace = new();
-            this.boundCommand = workspace.Bind(editorCommand.Object);
         }
 
         [Test]
@@ -119,45 +110,6 @@ namespace Fotografix.Editor
 
             Assert.That(workspace.ActiveDocument, Is.EqualTo(anotherDocument));
             Assert.That(workspace.Documents, Is.EqualTo(new Document[] { anotherDocument }).AsCollection);
-        }
-
-        [Test]
-        public async Task BindsEditorCommandToWorkspace()
-        {
-            object parameter = new();
-            editorCommand.Setup(c => c.CanExecute(It.IsAny<Workspace>(), It.IsAny<object>())).Returns(true);
-
-            Assert.IsTrue(boundCommand.CanExecute(parameter));
-            editorCommand.Verify(c => c.CanExecute(workspace, parameter));
-
-            await boundCommand.ExecuteAsync(parameter);
-
-            editorCommand.Verify(c => c.ExecuteAsync(workspace, parameter, It.IsAny<CancellationToken>(), It.IsAny<IProgress<EditorCommandProgress>>()));
-        }
-
-        [Test]
-        public void RaisesCanExecuteChangedWhenActiveDocumentIsSet()
-        {
-            AssertCanExecuteChanged(() => workspace.ActiveDocument = document);
-        }
-
-        [Test]
-        public void RaisesCanExecuteChangedWhenDocumentContentChanges()
-        {
-            document.Image.Size = new(10, 10);
-            workspace.ActiveDocument = document;
-
-            AssertCanExecuteChanged(() => document.Image.Size = new(20, 20));
-        }
-
-        private void AssertCanExecuteChanged(Action action)
-        {
-            bool canExecuteChanged = false;
-            boundCommand.CanExecuteChanged += (s, e) => canExecuteChanged = true;
-
-            action();
-
-            Assert.IsTrue(canExecuteChanged);
         }
     }
 }

@@ -20,6 +20,7 @@ namespace Fotografix.Uwp
     public sealed class WorkspaceViewModel : NotifyPropertyChangedBase, IStartPageViewModel, IToolbox
     {
         private readonly Workspace workspace;
+        private readonly WorkspaceCommandDispatcher dispatcher;
         private readonly FilePickerOverride filePickerOverride = new FilePickerOverride(new FilePickerAdapter());
 
         public WorkspaceViewModel(Workspace workspace, IClipboard clipboard, IDialog<ResizeImageParameters> resizeImageDialog)
@@ -29,12 +30,14 @@ namespace Fotografix.Uwp
             workspace.DocumentRemoved += Workspace_DocumentRemoved;
             workspace.PropertyChanged += Workspace_PropertyChanged;
 
+            this.dispatcher = new(workspace);
+
             var imageDecoder = new WindowsImageDecoder();
             var imageEncoder = new WindowsImageEncoder(new Win2DImageRenderer());
             var graphicsDevice = new Win2DGraphicsDevice();
 
-            var drawCommand = workspace.Bind(new DrawCommand(graphicsDevice));
-            var cropCommand = workspace.Bind(new CropCommand());
+            var drawCommand = dispatcher.Bind(new DrawCommand(graphicsDevice));
+            var cropCommand = dispatcher.Bind(new CropCommand());
 
             this.Tools = new List<ITool>
             {
@@ -47,21 +50,21 @@ namespace Fotografix.Uwp
             };
             this.ActiveTool = Tools.First();
 
-            this.NewCommand = workspace.Bind(new NewImageCommand(new ContentDialogAdapter<NewImageDialog, NewImageParameters>()));
-            this.OpenCommand = workspace.Bind(new OpenImageCommand(imageDecoder, filePickerOverride));
-            this.SaveCommand = workspace.Bind(new SaveImageCommand(imageEncoder, filePickerOverride) { Mode = SaveCommandMode.Save });
-            this.SaveAsCommand = workspace.Bind(new SaveImageCommand(imageEncoder, filePickerOverride) { Mode = SaveCommandMode.SaveAs });
+            this.NewCommand = dispatcher.Bind(new NewImageCommand(new ContentDialogAdapter<NewImageDialog, NewImageParameters>()));
+            this.OpenCommand = dispatcher.Bind(new OpenImageCommand(imageDecoder, filePickerOverride));
+            this.SaveCommand = dispatcher.Bind(new SaveImageCommand(imageEncoder, filePickerOverride) { Mode = SaveCommandMode.Save });
+            this.SaveAsCommand = dispatcher.Bind(new SaveImageCommand(imageEncoder, filePickerOverride) { Mode = SaveCommandMode.SaveAs });
 
-            this.UndoCommand = workspace.Bind(new UndoCommand());
-            this.RedoCommand = workspace.Bind(new RedoCommand());
-            this.PasteCommand = workspace.Bind(new PasteCommand(clipboard));
+            this.UndoCommand = dispatcher.Bind(new UndoCommand());
+            this.RedoCommand = dispatcher.Bind(new RedoCommand());
+            this.PasteCommand = dispatcher.Bind(new PasteCommand(clipboard));
 
-            this.ResizeImageCommand = workspace.Bind(new ResizeImageCommand(resizeImageDialog, graphicsDevice));
+            this.ResizeImageCommand = dispatcher.Bind(new ResizeImageCommand(resizeImageDialog, graphicsDevice));
 
-            this.NewLayerCommand = workspace.Bind(new NewLayerCommand());
-            this.NewAdjustmentLayerCommand = workspace.Bind(new NewAdjustmentLayerCommand());
-            this.DeleteLayerCommand = workspace.Bind(new DeleteLayerCommand());
-            this.ImportLayerCommand = workspace.Bind(new ImportLayerCommand(imageDecoder, filePickerOverride));
+            this.NewLayerCommand = dispatcher.Bind(new NewLayerCommand());
+            this.NewAdjustmentLayerCommand = dispatcher.Bind(new NewAdjustmentLayerCommand());
+            this.DeleteLayerCommand = dispatcher.Bind(new DeleteLayerCommand());
+            this.ImportLayerCommand = dispatcher.Bind(new ImportLayerCommand(imageDecoder, filePickerOverride));
         }
 
         #region Tools
