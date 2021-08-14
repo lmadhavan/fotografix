@@ -90,11 +90,6 @@ namespace Fotografix.Uwp
             compositor.Draw(ds);
         }
 
-        public Task ExecuteAsync(IDocumentCommand command)
-        {
-            return command.ExecuteAsync(document);
-        }
-
         public async Task ImportLayersAsync(IEnumerable<IFile> files)
         {
             using (FilePickerOverride.OverrideOpenFiles(files))

@@ -1,19 +1,28 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Drawing;
 
 namespace Fotografix.Editor
 {
-    public sealed class CropCommand : IDocumentCommand
+    public sealed class CropCommand : SynchronousDocumentCommand
     {
-        public bool CanExecute(Document document)
+        public override bool CanExecute(Document document, object parameter)
         {
-            return document.Image.GetCropPreview() != null;
+            return parameter is CropCommandArgs args
+                && args.Image == document.Image;
         }
 
-        public Task ExecuteAsync(Document document)
+        public override void Execute(Document document, object parameter)
         {
-            var image = document.Image;
-            image.Crop(image.GetCropPreview().Value);
-            return Task.CompletedTask;
+            var args = (CropCommandArgs)parameter;
+
+            if (args.Image != document.Image)
+            {
+                throw new InvalidOperationException();
+            }
+
+            args.Image.Crop(args.Rectangle);
         }
     }
+
+    public sealed record CropCommandArgs(Image Image, Rectangle Rectangle);
 }

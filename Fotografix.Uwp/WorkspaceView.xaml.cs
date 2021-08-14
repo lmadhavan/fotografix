@@ -132,10 +132,10 @@ namespace Fotografix.Uwp
         private void BindNewAdjustmentMenuFlyout()
         {
             var menuFlyout = (MenuFlyout)newAdjustmentButton.Flyout;
+
             foreach (MenuFlyoutItem item in menuFlyout.Items)
             {
-                var command = (IDocumentCommand)item.Tag;
-                item.Command = workspace.Bind(command);
+                item.Command = vm.NewAdjustmentLayerCommand;
             }
         }
 

@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Drawing;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Fotografix.Editor.Clipboard
 {
-    public sealed class PasteCommand : IObservableDocumentCommand
+    public sealed class PasteCommand : DocumentCommand
     {
         private readonly IClipboard clipboard;
 
@@ -13,18 +14,12 @@ namespace Fotografix.Editor.Clipboard
             this.clipboard = clipboard;
         }
 
-        public event EventHandler CanExecuteChanged
-        {
-            add => clipboard.ContentChanged += value;
-            remove => clipboard.ContentChanged -= value;
-        }
-
-        public bool CanExecute(Document document)
+        public override bool CanExecute(Document document, object parameter)
         {
             return clipboard.HasBitmap;
         }
 
-        public async Task ExecuteAsync(Document document)
+        public async override Task ExecuteAsync(Document document, object parameter, CancellationToken cancellationToken, IProgress<EditorCommandProgress> progress)
         {
             Image image = document.Image;
 

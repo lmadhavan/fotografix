@@ -1,10 +1,12 @@
 ﻿using Fotografix.IO;
+using System;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Fotografix.Editor.FileManagement
 {
-    public sealed class SaveImageCommand : IDocumentCommand
+    public sealed class SaveImageCommand : DocumentCommand
     {
         private readonly IImageEncoder imageEncoder;
         private readonly IFilePicker filePicker;
@@ -17,12 +19,7 @@ namespace Fotografix.Editor.FileManagement
 
         public SaveCommandMode Mode { get; set; } = SaveCommandMode.Save;
 
-        public bool CanExecute(Document document)
-        {
-            return true;
-        }
-
-        public async Task ExecuteAsync(Document document)
+        public async override Task ExecuteAsync(Document document, object parameter, CancellationToken cancellationToken, IProgress<EditorCommandProgress> progress)
         {
             IFile file = null;
 

@@ -2,6 +2,7 @@
 using Moq;
 using NUnit.Framework;
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Fotografix.Editor
@@ -10,7 +11,7 @@ namespace Fotografix.Editor
     public class WorkspaceTest
     {
         private Document document;
-        private Mock<IObservableDocumentCommand> documentCommand;
+        private Mock<EditorCommand> editorCommand;
         private Mock<ITool> tool;
 
         private Workspace workspace;
@@ -20,11 +21,11 @@ namespace Fotografix.Editor
         public void SetUp()
         {
             this.document = new();
-            this.documentCommand = new();
+            this.editorCommand = new();
             this.tool = new();
 
             this.workspace = new();
-            this.boundCommand = workspace.Bind(documentCommand.Object);
+            this.boundCommand = workspace.Bind(editorCommand.Object);
         }
 
         [Test]
@@ -121,59 +122,17 @@ namespace Fotografix.Editor
         }
 
         [Test]
-        public async Task ExecutesCommandOnActiveDocument()
+        public async Task BindsEditorCommandToWorkspace()
         {
-            documentCommand.Setup(c => c.CanExecute(It.IsAny<Document>())).Returns(true);
+            object parameter = new();
+            editorCommand.Setup(c => c.CanExecute(It.IsAny<Workspace>(), It.IsAny<object>())).Returns(true);
 
-            workspace.ActiveDocument = document;
+            Assert.IsTrue(boundCommand.CanExecute(parameter));
+            editorCommand.Verify(c => c.CanExecute(workspace, parameter));
 
-            Assert.IsTrue(boundCommand.CanExecute());
-            documentCommand.Verify(c => c.CanExecute(document));
+            await boundCommand.ExecuteAsync(parameter);
 
-            await boundCommand.ExecuteAsync();
-
-            documentCommand.Verify(c => c.ExecuteAsync(document));
-        }
-
-        [Test]
-        public async Task GroupsChangesProducedByCommand()
-        {
-            Image image = document.Image;
-            image.Size = new(10, 10);
-
-            int changeCount = 0;
-            document.ContentChanged += (s, e) => changeCount++;
-
-            documentCommand.Setup(c => c.CanExecute(It.IsAny<Document>())).Returns(true);
-            documentCommand.Setup(c => c.ExecuteAsync(It.IsAny<Document>())).Callback(() =>
-            {
-                image.Size = new(20, 20);
-                image.Size = new(30, 30);
-            });
-
-            workspace.ActiveDocument = document;
-
-            await boundCommand.ExecuteAsync();
-
-            Assert.That(changeCount, Is.EqualTo(1));
-        }
-
-        [Test]
-        public void CannotExecuteCommandWhenNoDocumentIsActive()
-        {
-            documentCommand.Setup(c => c.CanExecute(It.IsAny<Document>())).Returns(true);
-
-            Assert.IsFalse(boundCommand.CanExecute());
-        }
-
-        [Test]
-        public void CannotExecuteCommandIfNotValidForActiveDocument()
-        {
-            documentCommand.Setup(c => c.CanExecute(It.IsAny<Document>())).Returns(false);
-
-            workspace.ActiveDocument = document;
-
-            Assert.IsFalse(boundCommand.CanExecute());
+            editorCommand.Verify(c => c.ExecuteAsync(workspace, parameter, It.IsAny<CancellationToken>(), It.IsAny<IProgress<EditorCommandProgress>>()));
         }
 
         [Test]
@@ -189,12 +148,6 @@ namespace Fotografix.Editor
             workspace.ActiveDocument = document;
 
             AssertCanExecuteChanged(() => document.Image.Size = new(20, 20));
-        }
-
-        [Test]
-        public void PassesThroughCanExecuteChangedFromUnderlyingCommand()
-        {
-            AssertCanExecuteChanged(() => documentCommand.Raise(c => c.CanExecuteChanged += null, EventArgs.Empty));
         }
 
         private void AssertCanExecuteChanged(Action action)

@@ -5,7 +5,7 @@ namespace Fotografix.Editor.Tools
 {
     public sealed class BrushTool : DrawingTool<BrushStroke>, IBrushToolControls
     {
-        public BrushTool(IDocumentCommand drawCommand) : base(drawCommand)
+        public BrushTool(AsyncCommand drawCommand) : base(drawCommand)
         {
         }
 

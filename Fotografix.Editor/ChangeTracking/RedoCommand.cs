@@ -1,18 +1,15 @@
-﻿using System.Threading.Tasks;
-
-namespace Fotografix.Editor.ChangeTracking
+﻿namespace Fotografix.Editor.ChangeTracking
 {
-    public sealed class RedoCommand : IDocumentCommand
+    public sealed class RedoCommand : SynchronousDocumentCommand
     {
-        public bool CanExecute(Document document)
+        public override bool CanExecute(Document document, object parameter)
         {
             return document.CanRedo;
         }
 
-        public Task ExecuteAsync(Document document)
+        public override void Execute(Document document, object parameter)
         {
             document.Redo();
-            return Task.CompletedTask;
         }
     }
 }

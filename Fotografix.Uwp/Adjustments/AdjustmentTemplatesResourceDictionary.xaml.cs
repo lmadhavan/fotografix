@@ -1,5 +1,4 @@
 ﻿using Fotografix.Adjustments;
-using Fotografix.Editor.Layers;
 using Windows.UI.Xaml.Controls;
 
 namespace Fotografix.Uwp.Adjustments
@@ -29,7 +28,7 @@ namespace Fotografix.Uwp.Adjustments
             newAdjustmentMenuFlyout.Items.Add(new MenuFlyoutItem()
             {
                 Text = name,
-                Tag = new NewAdjustmentLayerCommand<T>(name)
+                CommandParameter = typeof(T)
             });
         }
     }

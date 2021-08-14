@@ -8,17 +8,22 @@ namespace Fotografix.Editor
     {
         public abstract event EventHandler CanExecuteChanged;
 
-        public abstract bool CanExecute();
-        public abstract Task ExecuteAsync();
+        public abstract bool CanExecute(object parameter);
+        public abstract Task ExecuteAsync(object parameter);
 
-        bool ICommand.CanExecute(object parameter)
+        public bool CanExecute()
         {
-            return CanExecute();
+            return CanExecute(null);
+        }
+
+        public Task ExecuteAsync()
+        {
+            return ExecuteAsync(null);
         }
 
         async void ICommand.Execute(object parameter)
         {
-            await ExecuteAsync();
+            await ExecuteAsync(parameter);
         }
     }
 }

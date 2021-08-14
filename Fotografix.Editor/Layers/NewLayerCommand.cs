@@ -1,21 +1,12 @@
-﻿using System.Threading.Tasks;
-
-namespace Fotografix.Editor.Layers
+﻿namespace Fotografix.Editor.Layers
 {
-    public sealed class NewLayerCommand : IDocumentCommand
+    public sealed class NewLayerCommand : SynchronousDocumentCommand
     {
-        public bool CanExecute(Document document)
-        {
-            return true;
-        }
-
-        public Task ExecuteAsync(Document document)
+        public override void Execute(Document document, object parameter)
         {
             var layers = document.Image.Layers;
             string newLayerName = "Layer " + (layers.Count + 1);
             layers.Add(new Layer { Name = newLayerName });
-
-            return Task.CompletedTask;
         }
     }
 }

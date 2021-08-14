@@ -29,12 +29,12 @@ namespace Fotografix.Uwp
             workspace.DocumentRemoved += Workspace_DocumentRemoved;
             workspace.PropertyChanged += Workspace_PropertyChanged;
 
-            IImageDecoder imageDecoder = new WindowsImageDecoder();
-            IImageEncoder imageEncoder = new WindowsImageEncoder(new Win2DImageRenderer());
-            IGraphicsDevice graphicsDevice = new Win2DGraphicsDevice();
-            
-            IDocumentCommand drawCommand = new DrawCommand(graphicsDevice);
-            IDocumentCommand cropCommand = new CropCommand();
+            var imageDecoder = new WindowsImageDecoder();
+            var imageEncoder = new WindowsImageEncoder(new Win2DImageRenderer());
+            var graphicsDevice = new Win2DGraphicsDevice();
+
+            var drawCommand = workspace.Bind(new DrawCommand(graphicsDevice));
+            var cropCommand = workspace.Bind(new CropCommand());
 
             this.Tools = new List<ITool>
             {
@@ -59,6 +59,7 @@ namespace Fotografix.Uwp
             this.ResizeImageCommand = workspace.Bind(new ResizeImageCommand(resizeImageDialog, graphicsDevice));
 
             this.NewLayerCommand = workspace.Bind(new NewLayerCommand());
+            this.NewAdjustmentLayerCommand = workspace.Bind(new NewAdjustmentLayerCommand());
             this.DeleteLayerCommand = workspace.Bind(new DeleteLayerCommand());
             this.ImportLayerCommand = workspace.Bind(new ImportLayerCommand(imageDecoder, filePickerOverride));
         }
@@ -89,6 +90,7 @@ namespace Fotografix.Uwp
         public AsyncCommand ResizeImageCommand { get; }
 
         public AsyncCommand NewLayerCommand { get; }
+        public AsyncCommand NewAdjustmentLayerCommand { get; }
         public AsyncCommand DeleteLayerCommand { get; }
         public AsyncCommand ImportLayerCommand { get; }
 

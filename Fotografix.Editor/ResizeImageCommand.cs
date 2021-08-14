@@ -1,8 +1,10 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Fotografix.Editor
 {
-    public sealed class ResizeImageCommand : IDocumentCommand
+    public sealed class ResizeImageCommand : DocumentCommand
     {
         private readonly IDialog<ResizeImageParameters> resizeImageDialog;
         private readonly IGraphicsDevice graphicsDevice;
@@ -13,12 +15,7 @@ namespace Fotografix.Editor
             this.graphicsDevice = graphicsDevice;
         }
 
-        public bool CanExecute(Document document)
-        {
-            return true;
-        }
-
-        public async Task ExecuteAsync(Document document)
+        public async override Task ExecuteAsync(Document document, object parameter, CancellationToken cancellationToken, IProgress<EditorCommandProgress> progress)
         {
             ResizeImageParameters parameters = new(document.Image.Size);
 

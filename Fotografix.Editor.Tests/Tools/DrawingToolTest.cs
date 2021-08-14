@@ -11,9 +11,9 @@ namespace Fotografix.Editor.Tools
         private static readonly PointerState End = new(20, 20);
         private static readonly Rectangle Selection = new(5, 5, 10, 10);
 
-        private Mock<IDocumentCommand> drawCommand;
+        private Mock<AsyncCommand> drawCommand;
 
-        protected IDocumentCommand DrawCommand => drawCommand.Object;
+        protected AsyncCommand DrawCommand => drawCommand.Object;
         protected abstract void AssertDrawable(IDrawable drawable, PointerState start, PointerState end);
 
         [SetUp]
@@ -56,7 +56,7 @@ namespace Fotografix.Editor.Tools
 
             Tool.PointerReleased(End);
 
-            drawCommand.Verify(c => c.ExecuteAsync(Document));
+            drawCommand.Verify(c => c.ExecuteAsync(new DrawCommandArgs(ActiveChannel, drawable)));
             Assert.That(ActiveChannel.GetDrawingPreview(), Is.Null);
         }
 

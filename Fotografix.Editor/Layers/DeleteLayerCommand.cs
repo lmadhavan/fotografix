@@ -1,20 +1,16 @@
-﻿using System.Threading.Tasks;
-
-namespace Fotografix.Editor.Layers
+﻿namespace Fotografix.Editor.Layers
 {
-    public sealed class DeleteLayerCommand : IDocumentCommand
+    public sealed class DeleteLayerCommand : SynchronousDocumentCommand
     {
-        public bool CanExecute(Document document)
+        public override bool CanExecute(Document document, object parameter)
         {
             return document.Image.Layers.Count > 1;
         }
 
-        public Task ExecuteAsync(Document document)
+        public override void Execute(Document document, object parameter)
         {
             Image image = document.Image;
             image.Layers.Remove(document.ActiveLayer);
-
-            return Task.CompletedTask;
         }
     }
 }

@@ -1,8 +1,10 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Fotografix.Editor.FileManagement
 {
-    public sealed class NewImageCommand : IWorkspaceCommand
+    public sealed class NewImageCommand : EditorCommand
     {
         private readonly IDialog<NewImageParameters> newImageDialog;
 
@@ -11,7 +13,7 @@ namespace Fotografix.Editor.FileManagement
             this.newImageDialog = newImageDialog;
         }
 
-        public async Task ExecuteAsync(Workspace workspace)
+        public async override Task ExecuteAsync(Workspace workspace, object parameter, CancellationToken cancellationToken, IProgress<EditorCommandProgress> progress)
         {
             NewImageParameters parameters = new();
 

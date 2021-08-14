@@ -1,10 +1,13 @@
 ﻿using Fotografix.Editor.FileManagement;
 using Fotografix.IO;
+using System;
+using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Fotografix.Editor.Layers
 {
-    public sealed class ImportLayerCommand : IDocumentCommand
+    public sealed class ImportLayerCommand : DocumentCommand
     {
         private readonly IImageDecoder imageDecoder;
         private readonly IFilePicker filePicker;
@@ -15,17 +18,20 @@ namespace Fotografix.Editor.Layers
             this.filePicker = filePicker;
         }
 
-        public bool CanExecute(Document document)
+        public async override Task ExecuteAsync(Document document, object parameter, CancellationToken cancellationToken, IProgress<EditorCommandProgress> progress)
         {
-            return true;
-        }
+            var files = (await filePicker.PickOpenFilesAsync(imageDecoder.SupportedFileFormats)).ToList();
 
-        public async Task ExecuteAsync(Document document)
-        {
-            var files = await filePicker.PickOpenFilesAsync(imageDecoder.SupportedFileFormats);
-
-            foreach (var file in files)
+            for (int i = 0; i < files.Count; i++)
             {
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    return;
+                }
+
+                var file = files[i];
+                progress?.Report(new("Importing " + file.Name, i, files.Count));
+
                 Image importedImage = await imageDecoder.ReadImageAsync(file);
                 foreach (Layer layer in importedImage.DetachLayers())
                 {

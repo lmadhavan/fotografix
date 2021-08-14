@@ -1,28 +1,22 @@
 ﻿using Fotografix.Adjustments;
-using System.Threading.Tasks;
+using System;
 
 namespace Fotografix.Editor.Layers
 {
-    public sealed class NewAdjustmentLayerCommand<T> : IDocumentCommand where T : Adjustment, new()
+    public sealed class NewAdjustmentLayerCommand : SynchronousDocumentCommand
     {
-        private readonly string name;
-
-        public NewAdjustmentLayerCommand(string name)
+        public override bool CanExecute(Document document, object parameter)
         {
-            this.name = name;
+            return parameter is Type type && type.IsSubclassOf(typeof(Adjustment));
         }
 
-        public bool CanExecute(Document document)
+        public override void Execute(Document document, object parameter)
         {
-            return true;
-        }
+            var type = (Type)parameter;
+            var adjustment = (Adjustment)Activator.CreateInstance(type);
 
-        public Task ExecuteAsync(Document document)
-        {
-            Layer layer = new Layer(new T()) { Name = name };
+            Layer layer = new Layer(adjustment) { Name = type.Name };
             document.Image.Layers.Add(layer);
-
-            return Task.CompletedTask;
         }
     }
 }

@@ -11,7 +11,7 @@ namespace Fotografix.Editor.Tools
 
         private Image image;
         private Document document;
-        private Mock<IDocumentCommand> cropCommand;
+        private Mock<AsyncCommand> cropCommand;
         private CropTool tool;
 
         [SetUp]
@@ -67,7 +67,7 @@ namespace Fotografix.Editor.Tools
             tool.Activated(document);
             tool.Commit();
 
-            cropCommand.Verify(c => c.ExecuteAsync(document));
+            cropCommand.Verify(c => c.ExecuteAsync(new CropCommandArgs(image, new Rectangle(Point.Empty, ImageSize))));
         }
     }
 }

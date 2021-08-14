@@ -1,5 +1,4 @@
 ﻿using Fotografix.Adjustments;
-using Fotografix.Editor.Layers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Drawing;
@@ -86,7 +85,7 @@ namespace Fotografix.Tests.Acceptance
 
         private Task AddAdjustmentLayerAsync<T>() where T : Adjustment, new()
         {
-            return Editor.ExecuteAsync(new NewAdjustmentLayerCommand<T>(""));
+            return Workspace.NewAdjustmentLayerCommand.ExecuteAsync(typeof(T));
         }
 
         private void SetAdjustmentProperties<T>(Action<T> action) where T : Adjustment

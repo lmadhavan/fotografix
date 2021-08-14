@@ -1,8 +1,9 @@
-﻿using System.Threading.Tasks;
+﻿using Fotografix.Drawing;
+using System;
 
 namespace Fotografix.Editor
 {
-    public sealed class DrawCommand : IDocumentCommand
+    public sealed class DrawCommand : SynchronousDocumentCommand
     {
         private readonly IGraphicsDevice graphicsDevice;
 
@@ -11,17 +12,25 @@ namespace Fotografix.Editor
             this.graphicsDevice = graphicsDevice;
         }
 
-        public bool CanExecute(Document document)
+        public override bool CanExecute(Document document, object parameter)
         {
-            var channel = document.ActiveChannel;
-            return channel != null && channel.CanDraw && channel.GetDrawingPreview() != null;
+            return parameter is DrawCommandArgs args
+                && args.Channel == document.ActiveChannel
+                && args.Channel.CanDraw;
         }
 
-        public Task ExecuteAsync(Document document)
+        public override void Execute(Document document, object parameter)
         {
-            var channel = document.ActiveChannel;
-            channel.Draw(channel.GetDrawingPreview(), graphicsDevice);
-            return Task.CompletedTask;
+            var args = (DrawCommandArgs)parameter;
+
+            if (args.Channel != document.ActiveChannel)
+            {
+                throw new InvalidOperationException();
+            }
+
+            args.Channel.Draw(args.Drawable, graphicsDevice);
         }
     }
+
+    public sealed record DrawCommandArgs(Channel Channel, IDrawable Drawable);
 }

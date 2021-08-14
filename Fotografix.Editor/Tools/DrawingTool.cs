@@ -4,12 +4,12 @@ namespace Fotografix.Editor.Tools
 {
     public abstract class DrawingTool<T> : ChannelTool where T : class, IDrawable
     {
-        private readonly IDocumentCommand drawCommand;
+        private readonly AsyncCommand drawCommand;
 
         private T drawable;
         private IDrawable clippedDrawable;
 
-        protected DrawingTool(IDocumentCommand drawCommand)
+        protected DrawingTool(AsyncCommand drawCommand)
         {
             this.drawCommand = drawCommand;
         }
@@ -39,7 +39,7 @@ namespace Fotografix.Editor.Tools
         {
             if (drawable != null)
             {
-                await drawCommand.ExecuteAsync(Document);
+                await drawCommand.ExecuteAsync(new DrawCommandArgs(ActiveChannel, clippedDrawable));
                 ActiveChannel.SetDrawingPreview(null);
                 this.drawable = null;
                 this.clippedDrawable = null;

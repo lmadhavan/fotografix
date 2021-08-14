@@ -94,92 +94,37 @@ namespace Fotografix.Editor
             RequerySuggested?.Invoke(this, EventArgs.Empty);
         }
 
-        public AsyncCommand Bind(IWorkspaceCommand command)
+        public AsyncCommand Bind(EditorCommand command)
         {
-            return new WorkspaceCommandAdapter(command, this);
+            return new EditorCommandAdapter(command, this);
         }
 
-        public AsyncCommand Bind(IDocumentCommand command)
+        private sealed class EditorCommandAdapter : AsyncCommand
         {
-            return new DocumentCommandAdapter(command, this);
-        }
-
-        private sealed class WorkspaceCommandAdapter : AsyncCommand
-        {
-            private readonly IWorkspaceCommand workspaceCommand;
+            private readonly EditorCommand editorCommand;
             private readonly Workspace workspace;
 
-            public WorkspaceCommandAdapter(IWorkspaceCommand workspaceCommand, Workspace workspace)
+            public EditorCommandAdapter(EditorCommand editorCommand, Workspace workspace)
             {
-                this.workspaceCommand = workspaceCommand;
+                this.editorCommand = editorCommand;
                 this.workspace = workspace;
             }
 
             public override event EventHandler CanExecuteChanged
             {
-                add { }
-                remove { }
+                add => workspace.RequerySuggested += value;
+                remove => workspace.RequerySuggested -= value;
             }
 
-            public override bool CanExecute()
+            public override bool CanExecute(object parameter)
             {
-                return true;
+                return editorCommand.CanExecute(workspace, parameter);
             }
 
-            public override Task ExecuteAsync()
+            public override Task ExecuteAsync(object parameter)
             {
-                Debug.WriteLine("Executing " + workspaceCommand.GetType().Name);
-                return workspaceCommand.ExecuteAsync(workspace);
-            }
-        }
-
-        private sealed class DocumentCommandAdapter : AsyncCommand
-        {
-            private readonly IDocumentCommand documentCommand;
-            private readonly Workspace workspace;
-
-            public DocumentCommandAdapter(IDocumentCommand documentCommand, Workspace workspace)
-            {
-                this.documentCommand = documentCommand;
-                this.workspace = workspace;
-            }
-
-            public override event EventHandler CanExecuteChanged
-            {
-                add
-                {
-                    workspace.RequerySuggested += value;
-
-                    if (documentCommand is IObservableDocumentCommand o)
-                    {
-                        o.CanExecuteChanged += value;
-                    }
-                }
-
-                remove
-                {
-                    workspace.RequerySuggested -= value;
-
-                    if (documentCommand is IObservableDocumentCommand o)
-                    {
-                        o.CanExecuteChanged -= value;
-                    }
-                }
-            }
-
-            public override bool CanExecute()
-            {
-                return workspace.ActiveDocument != null && documentCommand.CanExecute(workspace.ActiveDocument);
-            }
-
-            public override async Task ExecuteAsync()
-            {
-                Document document = workspace.activeDocument;
-                using (document.BeginChangeGroup())
-                {
-                    Debug.WriteLine("Executing " + documentCommand.GetType().Name);
-                    await documentCommand.ExecuteAsync(workspace.ActiveDocument);
-                }
+                Debug.WriteLine($"Executing {editorCommand.GetType().Name} with parameter [{parameter}]");
+                return editorCommand.ExecuteAsync(workspace, parameter);
             }
         }
     }
