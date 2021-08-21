@@ -101,9 +101,12 @@
 
                 <muxc:MenuBarItem Title="Image" AccessKey="I">
                     <MenuFlyoutItem Text="Resize..." Icon="FullScreen" Command="{x:Bind vm.ResizeImageCommand}" />
-                    <MenuFlyoutSeparator />
+                </muxc:MenuBarItem>
+
+                <muxc:MenuBarItem Title="Layer" AccessKey="L">
                     <MenuFlyoutItem Text="New layer" Command="{x:Bind vm.NewLayerCommand}" />
-                    <MenuFlyoutItem Text="Delete layer" Command="{x:Bind vm.DeleteLayerCommand}" />
+                    <MenuFlyoutItem Text="Import from file..." Icon="Import" Command="{x:Bind vm.ImportLayerCommand}" />
+                    <MenuFlyoutItem Text="Delete layer" Icon="Delete" Command="{x:Bind vm.DeleteLayerCommand}" />
                 </muxc:MenuBarItem>
             </muxc:MenuBar>
 
@@ -295,12 +298,6 @@
                             ToolTipService.ToolTip="Adjustments"
                             Flyout="{StaticResource NewAdjustmentMenuFlyout}">
                             <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE706;"/>
-                        </Button>
-
-                        <Button Style="{StaticResource CommandButtonStyle}"
-                            Command="{x:Bind vm.ImportLayerCommand}"
-                            ToolTipService.ToolTip="Import">
-                            <SymbolIcon Symbol="Import" />
                         </Button>
 
                         <Button Style="{StaticResource CommandButtonStyle}"
