@@ -204,7 +204,7 @@
       <Version>6.2.9</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.UI.Xaml">
-      <Version>2.4.2</Version>
+      <Version>2.6.2</Version>
     </PackageReference>
     <PackageReference Include="Win2d.uwp">
       <Version>1.24.0</Version>

@@ -213,7 +213,7 @@ namespace Fotografix.Uwp
                 titleBarRightInset.Width = new GridLength(metrics.SystemOverlayLeftInset);
             }
 
-            titleBar.Height = menuBar.Height = metrics.Height;
+            titleBar.Height = metrics.Height;
         }
 
         #endregion

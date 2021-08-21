@@ -53,9 +53,9 @@
             <Image
                 HorizontalAlignment="Left"
                 Source="ms-appx:///Assets/Square44x44Logo.scale-200.png"
-                Width="20" Height="20" Margin="12,0" />
+                Width="20" Height="20" Margin="12,1,12,0" />
 
-            <muxc:MenuBar x:Name="menuBar" Margin="0,0,0,0">
+            <muxc:MenuBar x:Name="menuBar" Margin="0,-4">
                 <muxc:MenuBarItem Title="File" AccessKey="F">
                     <MenuFlyoutItem Text="New..." Command="{x:Bind vm.NewCommand}" AccessKey="N">
                         <MenuFlyoutItem.KeyboardAccelerators>
@@ -143,10 +143,9 @@
 
         <Grid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3"
               Background="{ThemeResource AppBarBackgroundThemeBrush}"
-              BorderThickness="0,0,0,1"
+              BorderThickness="0,1"
               BorderBrush="{ThemeResource ButtonBorderThemeBrush}"
               Padding="12,6">
-
             <Grid.Resources>
                 <ResourceDictionary>
                     <ResourceDictionary.MergedDictionaries>
@@ -199,14 +198,26 @@
                 </Grid>
 
                 <Grid Margin="2,4,2,8">
+                    <Grid.Resources>
+                        <ResourceDictionary>
+                            <Style x:Key="ColorPickerButtonBorder" TargetType="Border">
+                                <Setter Property="BorderThickness" Value="1" />
+                                <Setter Property="BorderBrush" Value="LightGray" />
+                                <Setter Property="CornerRadius" Value="2" />
+                                <Setter Property="Width" Value="24" />
+                                <Setter Property="Height" Value="24" />
+                            </Style>
+                        </ResourceDictionary>
+                    </Grid.Resources>
+                    
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="60" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
-
+                    
                     <ToggleButton Padding="1" VerticalAlignment="Top" Margin="12,12"
                                   IsChecked="{x:Bind vm.Colors.IsBackgroundColorActive, Mode=TwoWay}">
-                        <Border BorderThickness="1" BorderBrush="LightGray" Width="24" Height="24">
+                        <Border Style="{StaticResource ColorPickerButtonBorder}">
                             <Border.Background>
                                 <SolidColorBrush Color="{x:Bind vm.Colors.BackgroundColor, Mode=OneWay, Converter={StaticResource ColorConverter}}" />
                             </Border.Background>
@@ -215,7 +226,7 @@
 
                     <ToggleButton Padding="1" VerticalAlignment="Top"
                                   IsChecked="{x:Bind vm.Colors.IsForegroundColorActive, Mode=TwoWay}">
-                        <Border BorderThickness="1" BorderBrush="LightGray" Width="24" Height="24">
+                        <Border Style="{StaticResource ColorPickerButtonBorder}">
                             <Border.Background>
                                 <SolidColorBrush Color="{x:Bind vm.Colors.ForegroundColor, Mode=OneWay, Converter={StaticResource ColorConverter}}" />
                             </Border.Background>
@@ -326,7 +337,10 @@
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
 
-                                <CheckBox Grid.Column="0" MinWidth="0" IsChecked="{x:Bind Visible, Mode=TwoWay}" />
+                                <Border Grid.Column="0" Margin="0,0,8,0" CornerRadius="4"
+                                        BorderThickness="1" BorderBrush="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}">
+                                    <CheckBox MinWidth="0" MinHeight="0" Padding="0" IsChecked="{x:Bind Visible, Mode=TwoWay}" />
+                                </Border>
                                 <TextBlock Grid.Column="1" VerticalAlignment="Center" Text="{x:Bind Name, Mode=OneWay}" />
                             </Grid>
                         </DataTemplate>
