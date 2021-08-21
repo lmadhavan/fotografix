@@ -23,25 +23,12 @@
                 SpinButtonPlacementMode="Inline"
                 Value="{x:Bind Size, Mode=TwoWay}"
             />
-
-            <TextBlock Text="Color:" VerticalAlignment="Center" Margin="8,0" />
-            <ui:ColorPickerButton Color="{x:Bind Color, Converter={StaticResource ColorConverter}, Mode=TwoWay}" />
         </StackPanel>
     </DataTemplate>
 
     <DataTemplate x:Name="cropControlsTemplate" x:DataType="et:ICropToolControls">
         <StackPanel Orientation="Horizontal">
             <Button Content="Apply" Click="{x:Bind Commit}" />
-        </StackPanel>
-    </DataTemplate>
-
-    <DataTemplate x:Name="gradientControlsTemplate" x:DataType="et:IGradientToolControls">
-        <StackPanel Orientation="Horizontal">
-            <TextBlock Text="Start:" VerticalAlignment="Center" Margin="8,0" />
-            <ui:ColorPickerButton Margin="0,0,8,0" Width="32" Color="{x:Bind StartColor, Converter={StaticResource ColorConverter}, Mode=TwoWay}" />
-
-            <TextBlock Text="End:" VerticalAlignment="Center" Margin="8,0" />
-            <ui:ColorPickerButton Color="{x:Bind EndColor, Converter={StaticResource ColorConverter}, Mode=TwoWay}" />
         </StackPanel>
     </DataTemplate>
 

@@ -47,8 +47,8 @@ namespace Fotografix.Uwp
                 new MoveTool(),
                 new SelectionTool(),
                 new CropTool(cropCommand),
-                new BrushTool(drawCommand) { Size = 5, Color = Color.White },
-                new GradientTool(drawCommand) { StartColor = Color.Black, EndColor = Color.White }
+                new BrushTool(workspace.Colors, drawCommand) { Size = 5 },
+                new GradientTool(workspace.Colors,drawCommand)
             };
             this.ActiveTool = Tools.First();
 

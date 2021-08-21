@@ -10,7 +10,7 @@ namespace Fotografix.Uwp.Tools
 
             toolControlsTemplateSelector.SetTemplate<BrushTool>(brushControlsTemplate);
             toolControlsTemplateSelector.SetTemplate<CropTool>(cropControlsTemplate);
-            toolControlsTemplateSelector.SetTemplate<GradientTool>(gradientControlsTemplate);
+            toolControlsTemplateSelector.SetTemplate<GradientTool>(emptyControlsTemplate);
             toolControlsTemplateSelector.SetTemplate<HandTool>(emptyControlsTemplate);
         }
     }

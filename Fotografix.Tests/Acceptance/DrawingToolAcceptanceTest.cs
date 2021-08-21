@@ -16,7 +16,7 @@ namespace Fotografix.Tests.Acceptance
 
             var brushControls = SelectTool<IBrushToolControls>("Brush");
             brushControls.Size = 15;
-            brushControls.Color = Color.White;
+            Workspace.Colors.ForegroundColor = Color.White;
 
             AssertToolCursor(ToolCursor.Crosshair);
 
@@ -36,9 +36,9 @@ namespace Fotografix.Tests.Acceptance
         {
             await OpenImageAsync("flowers.jpg");
 
-            var gradientControls = SelectTool<IGradientToolControls>("Gradient");
-            gradientControls.StartColor = Color.Red;
-            gradientControls.EndColor = Color.Green;
+            SelectTool("Gradient");
+            Workspace.Colors.ForegroundColor = Color.Red;
+            Workspace.Colors.BackgroundColor = Color.Green;
 
             AssertToolCursor(ToolCursor.Crosshair);
 
@@ -61,9 +61,9 @@ namespace Fotografix.Tests.Acceptance
                 new Point(200, 350)
             );
 
-            var gradientControls = SelectTool<IGradientToolControls>("Gradient");
-            gradientControls.StartColor = Color.Red;
-            gradientControls.EndColor = Color.Green;
+            SelectTool("Gradient");
+            Workspace.Colors.ForegroundColor = Color.Red;
+            Workspace.Colors.BackgroundColor = Color.Green;
 
             DragAndReleasePointer(
                 new Point(100, 100),

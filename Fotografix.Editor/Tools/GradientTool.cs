@@ -1,23 +1,24 @@
 ﻿using Fotografix.Drawing;
+using Fotografix.Editor.Colors;
 using System.Drawing;
 
 namespace Fotografix.Editor.Tools
 {
-    public sealed class GradientTool : DrawingTool<LinearGradient>, IGradientToolControls
+    public sealed class GradientTool : DrawingTool<LinearGradient>
     {
-        public GradientTool(AsyncCommand drawCommand) : base(drawCommand)
-        {
-        }
+        private readonly IColorProvider colorProvider;
 
-        public Color StartColor { get; set; }
-        public Color EndColor { get; set; }
+        public GradientTool(IColorProvider colorProvider, AsyncCommand drawCommand) : base(drawCommand)
+        {
+            this.colorProvider = colorProvider;
+        }
 
         public override string Name => "Gradient";
 
         protected override LinearGradient CreateDrawable(Image image, PointerState p)
         {
             Rectangle bounds = new Rectangle(Point.Empty, image.Size);
-            return new LinearGradient(bounds, StartColor, EndColor) { StartPoint = p.Location };
+            return new LinearGradient(bounds, colorProvider.ForegroundColor, colorProvider.BackgroundColor) { StartPoint = p.Location };
         }
 
         protected override void UpdateDrawable(LinearGradient gradient, PointerState p)

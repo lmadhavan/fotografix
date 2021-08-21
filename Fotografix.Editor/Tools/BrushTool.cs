@@ -1,22 +1,24 @@
 ﻿using Fotografix.Drawing;
-using System.Drawing;
+using Fotografix.Editor.Colors;
 
 namespace Fotografix.Editor.Tools
 {
     public sealed class BrushTool : DrawingTool<BrushStroke>, IBrushToolControls
     {
-        public BrushTool(AsyncCommand drawCommand) : base(drawCommand)
+        private readonly IColorProvider colorProvider;
+
+        public BrushTool(IColorProvider colorProvider, AsyncCommand drawCommand) : base(drawCommand)
         {
+            this.colorProvider = colorProvider;
         }
 
         public int Size { get; set; }
-        public Color Color { get; set; }
 
         public override string Name => "Brush";
 
         protected override BrushStroke CreateDrawable(Image image, PointerState p)
         {
-            return new BrushStroke(p.Location, Size, Color);
+            return new BrushStroke(p.Location, Size, colorProvider.ForegroundColor);
         }
 
         protected override void UpdateDrawable(BrushStroke brushStroke, PointerState p)

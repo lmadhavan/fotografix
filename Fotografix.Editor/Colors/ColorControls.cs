@@ -2,7 +2,7 @@
 
 namespace Fotografix.Editor.Colors
 {
-    public sealed class ColorControls : NotifyPropertyChangedBase
+    public sealed class ColorControls : NotifyPropertyChangedBase, IColorProvider
     {
         public static readonly Color DefaultForegroundColor = Color.Black;
         public static readonly Color DefaultBackgroundColor = Color.White;
