@@ -1,5 +1,7 @@
-﻿using Windows.ApplicationModel.Core;
+﻿using System;
+using Windows.ApplicationModel.Core;
 using Windows.UI;
+using Windows.UI.Core;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 
@@ -10,6 +12,7 @@ namespace Fotografix.Uwp
         private readonly ApplicationViewTitleBar applicationViewTitleBar;
         private readonly CoreApplicationViewTitleBar coreTitleBar;
         private readonly Window window;
+        private readonly UISettings uiSettings;
 
         private ICustomTitleBarProvider titleBarProvider;
 
@@ -18,8 +21,10 @@ namespace Fotografix.Uwp
             this.applicationViewTitleBar = applicationViewTitleBar;
             this.coreTitleBar = coreTitleBar;
             this.window = window;
+            this.uiSettings = new UISettings();
             
             coreTitleBar.LayoutMetricsChanged += OnLayoutMetricsChanged;
+            uiSettings.ColorValuesChanged += OnColorValuesChanged;
         }
 
         public static TitleBar GetForCurrentView()
@@ -33,10 +38,7 @@ namespace Fotografix.Uwp
 
         public void Customize(ICustomTitleBarProvider titleBarProvider)
         {
-            applicationViewTitleBar.ButtonBackgroundColor = Colors.Transparent;
-            applicationViewTitleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
-            applicationViewTitleBar.ButtonForegroundColor = GetSystemColor("ChromeAltLow");
-            applicationViewTitleBar.ButtonInactiveForegroundColor = GetSystemColor("ChromeDisabledLow");
+            UpdateTitleBarColors();
 
             coreTitleBar.ExtendViewIntoTitleBar = true;
 
@@ -44,9 +46,22 @@ namespace Fotografix.Uwp
             this.titleBarProvider = titleBarProvider;
         }
 
+        private void UpdateTitleBarColors()
+        {
+            applicationViewTitleBar.ButtonBackgroundColor = Colors.Transparent;
+            applicationViewTitleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
+            applicationViewTitleBar.ButtonForegroundColor = GetSystemColor("ChromeAltLow");
+            applicationViewTitleBar.ButtonInactiveForegroundColor = GetSystemColor("ChromeDisabledLow");
+        }
+
         private void OnLayoutMetricsChanged(CoreApplicationViewTitleBar sender, object args)
         {
             titleBarProvider?.UpdateLayout(this);
+        }
+
+        private async void OnColorValuesChanged(UISettings sender, object args)
+        {
+            await window.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, UpdateTitleBarColors);
         }
 
         private static Color GetSystemColor(string name)
