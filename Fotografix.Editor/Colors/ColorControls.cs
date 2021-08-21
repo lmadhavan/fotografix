@@ -81,5 +81,18 @@ namespace Fotografix.Editor.Colors
                 }
             }
         }
+
+        public void Reset()
+        {
+            this.ForegroundColor = DefaultForegroundColor;
+            this.BackgroundColor = DefaultBackgroundColor;
+        }
+
+        public void Swap()
+        {
+            var temp = ForegroundColor;
+            this.ForegroundColor = BackgroundColor;
+            this.BackgroundColor = temp;
+        }
     }
 }

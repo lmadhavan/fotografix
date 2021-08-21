@@ -53,6 +53,41 @@ namespace Fotografix.Editor.Colors
             );
         }
 
+        [Test]
+        public void ResetsToDefaultColors()
+        {
+            colors.ForegroundColor = Color.Red;
+            colors.BackgroundColor = Color.Blue;
+
+            updatedProperties.Clear();
+
+            colors.Reset();
+
+            Assert.That(colors.ForegroundColor, Is.EqualTo(ColorControls.DefaultForegroundColor));
+            Assert.That(colors.BackgroundColor, Is.EqualTo(ColorControls.DefaultBackgroundColor));
+
+            AssertUpdatedProperties(
+                nameof(colors.ActiveColor),
+                nameof(colors.ForegroundColor),
+                nameof(colors.BackgroundColor)
+            );
+        }
+
+        [Test]
+        public void SwapsForegroundAndBackgroundColors()
+        {
+            colors.Swap();
+
+            Assert.That(colors.ForegroundColor, Is.EqualTo(ColorControls.DefaultBackgroundColor));
+            Assert.That(colors.BackgroundColor, Is.EqualTo(ColorControls.DefaultForegroundColor));
+
+            AssertUpdatedProperties(
+                nameof(colors.ActiveColor),
+                nameof(colors.ForegroundColor),
+                nameof(colors.BackgroundColor)
+            );
+        }
+
         private void AssertUpdatedProperties(params string[] properties)
         {
             foreach (string prop in properties)

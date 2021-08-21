@@ -219,7 +219,32 @@
                         </Border>
                     </ToggleButton>
 
-                    <StackPanel VerticalAlignment="Bottom" Margin="2,0,0,0">
+                    <StackPanel Margin="3,48,0,0">
+                        <Button Style="{StaticResource CommandButtonStyle}"
+                                Padding="9"
+                                ToolTipService.ToolTip="Swap colors (X)"
+                                Click="{x:Bind vm.Colors.Swap}">
+                            <FontIcon FontFamily="Segoe MDL2 Assets" FontSize="18" Glyph="&#xe895;"/>
+
+                            <Button.KeyboardAccelerators>
+                                <KeyboardAccelerator Key="X" />
+                            </Button.KeyboardAccelerators>
+                        </Button>
+                        
+                        <Button Style="{StaticResource CommandButtonStyle}"
+                                Padding="4,4,0,0" Width="36" Height="36"
+                                ToolTipService.ToolTip="Default colors (D)"
+                                Click="{x:Bind vm.Colors.Reset}">
+                            <Grid>
+                                <Border Width="10" Height="10" Background="White" Margin="5,5" BorderThickness="1" BorderBrush="Black" />
+                                <Border Width="10" Height="10" Background="Black" HorizontalAlignment="Left" VerticalAlignment="Top" />
+                            </Grid>
+
+                            <Button.KeyboardAccelerators>
+                                <KeyboardAccelerator Key="D" />
+                            </Button.KeyboardAccelerators>
+                        </Button>
+                        
                         <Button Style="{StaticResource CommandButtonStyle}" ToolTipService.ToolTip="Manual input">
                             <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xf742;"/>
 
