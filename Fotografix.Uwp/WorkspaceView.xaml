@@ -20,6 +20,7 @@
 
             <ui:GeometryResourceConverter x:Key="ToolIconConverter" KeySuffix="Icon" />
             <ui:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
+            <ui:ColorConverter x:Key="ColorConverter" />
         </ResourceDictionary>
     </UserControl.Resources>
 
@@ -181,7 +182,71 @@
                     </ResourceDictionary.MergedDictionaries>
                 </ResourceDictionary>
             </StackPanel.Resources>
+            
+            <!-- Color panel -->
 
+            <StackPanel Orientation="Vertical">
+                <Grid Margin="0,0,0,8">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Column="0" Margin="0,4,0,0" Style="{StaticResource PanelTitleTextBlockStyle}" Text="Colors" />
+                </Grid>
+
+                <Grid Margin="2,4,2,8">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="60" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <ToggleButton Padding="1" VerticalAlignment="Top" Margin="12,12"
+                                  IsChecked="{x:Bind vm.Colors.IsBackgroundColorActive, Mode=TwoWay}">
+                        <Border BorderThickness="1" BorderBrush="LightGray" Width="24" Height="24">
+                            <Border.Background>
+                                <SolidColorBrush Color="{x:Bind vm.Colors.BackgroundColor, Mode=OneWay, Converter={StaticResource ColorConverter}}" />
+                            </Border.Background>
+                        </Border>
+                    </ToggleButton>
+
+                    <ToggleButton Padding="1" VerticalAlignment="Top"
+                                  IsChecked="{x:Bind vm.Colors.IsForegroundColorActive, Mode=TwoWay}">
+                        <Border BorderThickness="1" BorderBrush="LightGray" Width="24" Height="24">
+                            <Border.Background>
+                                <SolidColorBrush Color="{x:Bind vm.Colors.ForegroundColor, Mode=OneWay, Converter={StaticResource ColorConverter}}" />
+                            </Border.Background>
+                        </Border>
+                    </ToggleButton>
+
+                    <StackPanel VerticalAlignment="Bottom" Margin="2,0,0,0">
+                        <Button Style="{StaticResource CommandButtonStyle}" ToolTipService.ToolTip="Manual input">
+                            <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xf742;"/>
+
+                            <Button.Flyout>
+                                <Flyout>
+                                    <ColorPicker
+                                        IsColorSpectrumVisible="False"
+                                        IsColorSliderVisible="False"
+                                        Color="{x:Bind vm.Colors.ActiveColor, Mode=TwoWay, Converter={StaticResource ColorConverter}}"
+                                        />
+                                </Flyout>
+                            </Button.Flyout>
+                        </Button>
+                    </StackPanel>
+
+                    <Viewbox Grid.Column="1" Stretch="Uniform">
+                        <ColorPicker
+                            ColorSpectrumComponents="SaturationValue"
+                            IsColorPreviewVisible="False"
+                            IsColorChannelTextInputVisible="False"
+                            IsHexInputVisible="False"
+                            Color="{x:Bind vm.Colors.ActiveColor, Mode=TwoWay, Converter={StaticResource ColorConverter}}"
+                            />
+                    </Viewbox>
+                </Grid>
+            </StackPanel>
+            
             <!-- Layers panel -->
 
             <StackPanel Orientation="Vertical" Visibility="{x:Bind vm.ActiveDocument, Converter={StaticResource NullToVisibilityConverter}, Mode=OneWay}">

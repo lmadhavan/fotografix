@@ -1,4 +1,5 @@
-﻿using Fotografix.Editor.Tools;
+﻿using Fotografix.Editor.Colors;
+using Fotografix.Editor.Tools;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -55,6 +56,8 @@ namespace Fotografix.Editor
                 }
             }
         }
+
+        public ColorControls Colors { get; } = new();
 
         public event EventHandler<DocumentEventArgs> DocumentAdded;
         public event EventHandler<DocumentEventArgs> DocumentRemoved;

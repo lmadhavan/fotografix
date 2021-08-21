@@ -1,6 +1,7 @@
 ﻿using Fotografix.Editor;
 using Fotografix.Editor.ChangeTracking;
 using Fotografix.Editor.Clipboard;
+using Fotografix.Editor.Colors;
 using Fotografix.Editor.FileManagement;
 using Fotografix.Editor.Layers;
 using Fotografix.Editor.Tools;
@@ -69,6 +70,7 @@ namespace Fotografix.Uwp
         }
 
         public ProgressViewModel Progress { get; }
+        public ColorControls Colors => workspace.Colors;
 
         #region Tools
 
