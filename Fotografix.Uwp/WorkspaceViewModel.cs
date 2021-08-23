@@ -5,12 +5,12 @@ using Fotografix.Editor.Colors;
 using Fotografix.Editor.FileManagement;
 using Fotografix.Editor.Layers;
 using Fotografix.Editor.Tools;
+using Fotografix.Editor.ViewManagement;
 using Fotografix.Uwp.Codecs;
 using Fotografix.Uwp.FileManagement;
 using Fotografix.Win2D;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.Storage;
@@ -61,6 +61,11 @@ namespace Fotografix.Uwp
             this.RedoCommand = dispatcher.Bind(new RedoCommand());
             this.PasteCommand = dispatcher.Bind(new PasteCommand(clipboard));
 
+            this.ZoomInCommand = dispatcher.Bind(new ZoomInCommand());
+            this.ZoomOutCommand = dispatcher.Bind(new ZoomOutCommand());
+            this.ZoomToFitCommand = dispatcher.Bind(new ZoomToFitCommand());
+            this.ResetZoomCommand = dispatcher.Bind(new ResetZoomCommand());
+
             this.ResizeImageCommand = dispatcher.Bind(new ResizeImageCommand(resizeImageDialog, graphicsDevice));
 
             this.NewLayerCommand = dispatcher.Bind(new NewLayerCommand());
@@ -94,6 +99,11 @@ namespace Fotografix.Uwp
         public AsyncCommand UndoCommand { get; }
         public AsyncCommand RedoCommand { get; }
         public AsyncCommand PasteCommand { get; }
+
+        public AsyncCommand ZoomInCommand { get; }
+        public AsyncCommand ZoomOutCommand { get; }
+        public AsyncCommand ZoomToFitCommand { get; }
+        public AsyncCommand ResetZoomCommand { get; }
 
         public AsyncCommand ResizeImageCommand { get; }
 

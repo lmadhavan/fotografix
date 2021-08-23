@@ -138,8 +138,9 @@
     <Compile Include="FileManagement\FilePickerFactory.cs" />
     <Compile Include="FileManagement\RecentFile.cs" />
     <Compile Include="FileManagement\RecentFileList.cs" />
+    <Compile Include="Input\ExtendedVirtualKeys.cs" />
     <Compile Include="IStartPageViewModel.cs" />
-    <Compile Include="KeyboardAcceleratorWorkaround.cs" />
+    <Compile Include="Input\KeyboardAcceleratorWorkaround.cs" />
     <Compile Include="GeometryResourceConverter.cs" />
     <Compile Include="Icons.xaml.cs">
       <DependentUpon>Icons.xaml</DependentUpon>

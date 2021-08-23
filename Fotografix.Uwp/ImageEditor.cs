@@ -54,8 +54,6 @@ namespace Fotografix.Uwp
         public Document Document => document;
         public Viewport Viewport => document.Viewport;
 
-        public float ZoomFactor => document.Viewport.ZoomFactor;
-
         public ReversedCollectionView<Layer> Layers => layers;
 
         public Layer ActiveLayer

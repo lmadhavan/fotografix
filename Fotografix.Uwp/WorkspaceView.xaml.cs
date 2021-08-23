@@ -1,4 +1,5 @@
 ﻿using Fotografix.Editor;
+using Fotografix.Uwp.Input;
 using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections;
@@ -38,6 +39,8 @@ namespace Fotografix.Uwp
 
             this.Tabs = new TabCollection(tabView);
         }
+
+        public ExtendedVirtualKeys ExtendedVirtualKeys { get; } = new ExtendedVirtualKeys();
 
         public IReadOnlyList<Tab> Tabs { get; }
 

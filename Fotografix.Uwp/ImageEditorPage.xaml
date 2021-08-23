@@ -61,7 +61,7 @@
 
             <StackPanel Grid.Column="2">
                 <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE71E;" FontSize="18" />
-                <TextBlock Margin="4,0,0,0" HorizontalTextAlignment="Center" MinWidth="40" Text="{x:Bind sys:String.Format('{0:P0}', editor.ZoomFactor), Mode=OneWay}" />
+                <TextBlock Margin="4,0,0,0" HorizontalTextAlignment="Center" MinWidth="40" Text="{x:Bind sys:String.Format('{0:P0}', editor.Viewport.ZoomFactor), Mode=OneWay}" />
             </StackPanel>
         </Grid>
     </Grid>

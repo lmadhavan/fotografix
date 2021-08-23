@@ -4,7 +4,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 using MenuBar = Microsoft.UI.Xaml.Controls.MenuBar;
 
-namespace Fotografix.Uwp
+namespace Fotografix.Uwp.Input
 {
     /// <summary>
     /// This is a workaround for https://github.com/microsoft/microsoft-ui-xaml/issues/5437.

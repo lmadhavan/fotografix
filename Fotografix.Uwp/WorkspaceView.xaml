@@ -99,14 +99,37 @@
                     </MenuFlyoutItem>
                 </muxc:MenuBarItem>
 
+                <muxc:MenuBarItem Title="View" AccessKey="V">
+                    <MenuFlyoutItem x:Name="zoomInCommand" Text="Zoom in" Command="{x:Bind vm.ZoomInCommand}" AccessKey="I" KeyboardAcceleratorTextOverride="Ctrl+Plus">
+                        <MenuFlyoutItem.KeyboardAccelerators>
+                            <KeyboardAccelerator Modifiers="Control" Key="{x:Bind ExtendedVirtualKeys.Plus}" />
+                        </MenuFlyoutItem.KeyboardAccelerators>
+                    </MenuFlyoutItem>
+                    <MenuFlyoutItem Text="Zoom out" Command="{x:Bind vm.ZoomOutCommand}" AccessKey="O" KeyboardAcceleratorTextOverride="Ctrl+Minus">
+                        <MenuFlyoutItem.KeyboardAccelerators>
+                            <KeyboardAccelerator Modifiers="Control" Key="{x:Bind ExtendedVirtualKeys.Minus}" />
+                        </MenuFlyoutItem.KeyboardAccelerators>
+                    </MenuFlyoutItem>
+                    <MenuFlyoutItem Text="Fit to screen" Command="{x:Bind vm.ZoomToFitCommand}" AccessKey="F">
+                        <MenuFlyoutItem.KeyboardAccelerators>
+                            <KeyboardAccelerator Modifiers="Control" Key="Number0" />
+                        </MenuFlyoutItem.KeyboardAccelerators>
+                    </MenuFlyoutItem>
+                    <MenuFlyoutItem Text="100%" Command="{x:Bind vm.ResetZoomCommand}" AccessKey="1">
+                        <MenuFlyoutItem.KeyboardAccelerators>
+                            <KeyboardAccelerator Modifiers="Control" Key="Number1" />
+                        </MenuFlyoutItem.KeyboardAccelerators>
+                    </MenuFlyoutItem>
+                </muxc:MenuBarItem>
+
                 <muxc:MenuBarItem Title="Image" AccessKey="I">
-                    <MenuFlyoutItem Text="Resize..." Icon="FullScreen" Command="{x:Bind vm.ResizeImageCommand}" />
+                    <MenuFlyoutItem Text="Resize..." Icon="FullScreen" Command="{x:Bind vm.ResizeImageCommand}" AccessKey="R" />
                 </muxc:MenuBarItem>
 
                 <muxc:MenuBarItem Title="Layer" AccessKey="L">
-                    <MenuFlyoutItem Text="New layer" Command="{x:Bind vm.NewLayerCommand}" />
-                    <MenuFlyoutItem Text="Import from file..." Icon="Import" Command="{x:Bind vm.ImportLayerCommand}" />
-                    <MenuFlyoutItem Text="Delete layer" Icon="Delete" Command="{x:Bind vm.DeleteLayerCommand}" />
+                    <MenuFlyoutItem Text="New layer" Command="{x:Bind vm.NewLayerCommand}" AccessKey="N" />
+                    <MenuFlyoutItem Text="Import from file..." Icon="Import" Command="{x:Bind vm.ImportLayerCommand}" AccessKey="I" />
+                    <MenuFlyoutItem Text="Delete layer" Icon="Delete" Command="{x:Bind vm.DeleteLayerCommand}" AccessKey="D" />
                 </muxc:MenuBarItem>
             </muxc:MenuBar>
 
