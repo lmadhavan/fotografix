@@ -4,7 +4,7 @@
     {
         public override void Execute(Document document, object parameter)
         {
-            document.Viewport.ZoomToFit();
+            document.Viewport.ZoomToFit = true;
         }
     }
 }

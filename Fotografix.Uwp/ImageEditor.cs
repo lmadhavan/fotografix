@@ -14,6 +14,7 @@ namespace Fotografix.Uwp
 
         private readonly Document document;
         private readonly Image image;
+        private readonly Viewport viewport;
         private readonly Win2DCompositor compositor;
         private readonly ReversedCollectionView<Layer> layers;
 
@@ -24,6 +25,10 @@ namespace Fotografix.Uwp
 
             this.image = document.Image;
             image.PropertyChanged += Image_PropertyChanged;
+
+            this.viewport = document.Viewport;
+            viewport.ZoomToFit = true;
+            viewport.PropertyChanged += Viewport_PropertyChanged;
 
             this.compositor = new Win2DCompositor(image, document.Viewport, CompositorSettings);
             this.layers = new ReversedCollectionView<Layer>(image.Layers);
@@ -52,7 +57,10 @@ namespace Fotografix.Uwp
         public Size Size => image.Size;
 
         public Document Document => document;
-        public Viewport Viewport => document.Viewport;
+        public Viewport Viewport => viewport;
+
+        public string ZoomFactor => viewport.ZoomFactor.ToString("P0");
+        public bool ZoomToFit => viewport.ZoomToFit;
 
         public ReversedCollectionView<Layer> Layers => layers;
 
@@ -108,6 +116,17 @@ namespace Fotografix.Uwp
             if (e.PropertyName == nameof(Image.Size))
             {
                 RaisePropertyChanged(nameof(Size));
+            }
+        }
+
+        private void Viewport_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            switch (e.PropertyName)
+            {
+                case nameof(Viewport.ZoomFactor):
+                case nameof(Viewport.ZoomToFit):
+                    RaisePropertyChanged(e.PropertyName);
+                    break;
             }
         }
     }

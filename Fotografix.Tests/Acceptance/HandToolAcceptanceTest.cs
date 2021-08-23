@@ -12,6 +12,7 @@ namespace Fotografix.Tests.Acceptance
         public async Task PansViewport()
         {
             await OpenImageAsync("flowers.jpg");
+            await Workspace.ResetZoomCommand.ExecuteAsync();
             ResizeViewport(new Size(200, 200));
             SelectTool("Hand");
 

@@ -126,6 +126,7 @@
     <Compile Include="BlendModes\BlendModeList.cs" />
     <Compile Include="BlendModes\BlendModeListItem.cs" />
     <Compile Include="BlendModes\BlendModeListItemConverter.cs" />
+    <Compile Include="BoolToObjectConverter.cs" />
     <Compile Include="ClipboardAdapter.cs" />
     <Compile Include="ColorPickerButton.xaml.cs">
       <DependentUpon>ColorPickerButton.xaml</DependentUpon>

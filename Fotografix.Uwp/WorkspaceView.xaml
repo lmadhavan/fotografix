@@ -21,6 +21,12 @@
             <ui:GeometryResourceConverter x:Key="ToolIconConverter" KeySuffix="Icon" />
             <ui:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
             <ui:ColorConverter x:Key="ColorConverter" />
+
+            <ui:BoolToObjectConverter x:Key="CheckMarkVisibilityConverter">
+                <ui:BoolToObjectConverter.TrueValue>
+                    <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xe73e;" />
+                </ui:BoolToObjectConverter.TrueValue>
+            </ui:BoolToObjectConverter>
         </ResourceDictionary>
     </UserControl.Resources>
 
@@ -100,17 +106,18 @@
                 </muxc:MenuBarItem>
 
                 <muxc:MenuBarItem Title="View" AccessKey="V">
-                    <MenuFlyoutItem x:Name="zoomInCommand" Text="Zoom in" Command="{x:Bind vm.ZoomInCommand}" AccessKey="I" KeyboardAcceleratorTextOverride="Ctrl+Plus">
+                    <MenuFlyoutItem Text="Zoom in" Icon="ZoomIn" Command="{x:Bind vm.ZoomInCommand}" AccessKey="I" KeyboardAcceleratorTextOverride="Ctrl+Plus">
                         <MenuFlyoutItem.KeyboardAccelerators>
                             <KeyboardAccelerator Modifiers="Control" Key="{x:Bind ExtendedVirtualKeys.Plus}" />
                         </MenuFlyoutItem.KeyboardAccelerators>
                     </MenuFlyoutItem>
-                    <MenuFlyoutItem Text="Zoom out" Command="{x:Bind vm.ZoomOutCommand}" AccessKey="O" KeyboardAcceleratorTextOverride="Ctrl+Minus">
+                    <MenuFlyoutItem Text="Zoom out" Icon="ZoomOut" Command="{x:Bind vm.ZoomOutCommand}" AccessKey="O" KeyboardAcceleratorTextOverride="Ctrl+Minus">
                         <MenuFlyoutItem.KeyboardAccelerators>
                             <KeyboardAccelerator Modifiers="Control" Key="{x:Bind ExtendedVirtualKeys.Minus}" />
                         </MenuFlyoutItem.KeyboardAccelerators>
                     </MenuFlyoutItem>
-                    <MenuFlyoutItem Text="Fit to screen" Command="{x:Bind vm.ZoomToFitCommand}" AccessKey="F">
+                    <MenuFlyoutItem Text="Fit to screen" Command="{x:Bind vm.ZoomToFitCommand}" AccessKey="F"
+                                    Icon="{x:Bind vm.ActiveDocument.ZoomToFit, Mode=OneWay, Converter={StaticResource CheckMarkVisibilityConverter}}">
                         <MenuFlyoutItem.KeyboardAccelerators>
                             <KeyboardAccelerator Modifiers="Control" Key="Number0" />
                         </MenuFlyoutItem.KeyboardAccelerators>

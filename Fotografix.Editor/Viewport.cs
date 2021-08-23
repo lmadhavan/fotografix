@@ -8,8 +8,10 @@ namespace Fotografix.Editor
         private Size size;
         private Size imageSize;
         private float zoomFactor;
+        private bool zoomToFit;
         private Point scrollOffset;
 
+        private bool computingOffsets;
         private Point maxScrollOffset;
         private Point centerOffset;
 
@@ -58,6 +60,24 @@ namespace Fotografix.Editor
             {
                 if (SetProperty(ref zoomFactor, value))
                 {
+                    if (!computingOffsets)
+                    {
+                        // manually setting zoom factor turns off zoom to fit
+                        this.ZoomToFit = false;
+                        ComputeOffsets();
+                    }
+                }
+            }
+        }
+
+        public bool ZoomToFit
+        {
+            get => zoomToFit;
+
+            set
+            {
+                if (SetProperty(ref zoomToFit, value))
+                {
                     ComputeOffsets();
                 }
             }
@@ -103,15 +123,17 @@ namespace Fotografix.Editor
             );
         }
 
-        public void ZoomToFit()
-        {
-            float zx = (float)size.Width / imageSize.Width;
-            float zy = (float)size.Height / imageSize.Height;
-            this.ZoomFactor = Math.Min(1, Math.Min(zx, zy));
-        }
-
         private void ComputeOffsets()
         {
+            this.computingOffsets = true;
+
+            if (zoomToFit)
+            {
+                float zx = (float)size.Width / imageSize.Width;
+                float zy = (float)size.Height / imageSize.Height;
+                this.ZoomFactor = Math.Min(1, Math.Min(zx, zy));
+            }
+
             int dx = (int)(imageSize.Width * zoomFactor - size.Width);
             int dy = (int)(imageSize.Height * zoomFactor - size.Height);
 
@@ -124,6 +146,11 @@ namespace Fotografix.Editor
                 Math.Max(0, -dx / 2),
                 Math.Max(0, -dy / 2)
             );
+
+            // ensure scroll offset is still valid
+            this.ScrollOffset = ScrollOffset;
+
+            this.computingOffsets = false;
         }
 
         private Point Clamp(Point pt, Point min, Point max)

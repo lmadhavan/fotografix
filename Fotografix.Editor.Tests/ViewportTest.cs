@@ -76,6 +76,22 @@ namespace Fotografix.Editor
         }
 
         [Test]
+        public void ResetsScrollOffsetWhenRenderedImageSizeChanges()
+        {
+            Viewport viewport = new Viewport
+            {
+                Size = new Size(100, 100),
+                ImageSize = new Size(125, 125),
+                ZoomFactor = 10,
+                ScrollOffset = new Point(200, 200)
+            };
+
+            viewport.ZoomFactor = 2;
+
+            Assert.That(viewport.ScrollOffset, Is.EqualTo(new Point(150, 150)));
+        }
+
+        [Test]
         public void CentersImageWhenSmallerThanViewport()
         {
             Viewport viewport = new Viewport
@@ -93,11 +109,11 @@ namespace Fotografix.Editor
         {
             Viewport viewport = new Viewport
             {
-                Size = new Size(100, 100),
                 ImageSize = new Size(200, 50)
             };
 
-            viewport.ZoomToFit();
+            viewport.ZoomToFit = true;
+            viewport.Size = new Size(100, 100);
 
             Assert.That(viewport.ZoomFactor, Is.EqualTo(0.5f));
         }
@@ -107,27 +123,41 @@ namespace Fotografix.Editor
         {
             Viewport viewport = new Viewport
             {
-                Size = new Size(100, 100),
                 ImageSize = new Size(50, 200)
             };
 
-            viewport.ZoomToFit();
+            viewport.ZoomToFit = true;
+            viewport.Size = new Size(100, 100);
 
             Assert.That(viewport.ZoomFactor, Is.EqualTo(0.5f));
         }
 
         [Test]
-        public void ZoomToFitDoesNothingWhenImageIsSmallerThanViewport()
+        public void ZoomToFitRetainsDefaultZoomWhenImageIsSmallerThanViewport()
         {
             Viewport viewport = new Viewport
             {
-                Size = new Size(100, 100),
                 ImageSize = new Size(50, 50)
             };
 
-            viewport.ZoomToFit();
+            viewport.ZoomToFit = true;
+            viewport.Size = new Size(100, 100);
 
             Assert.That(viewport.ZoomFactor, Is.EqualTo(1.0f));
+        }
+
+        [Test]
+        public void SettingZoomFactorManuallyDisablesZoomToFit()
+        {
+            Viewport viewport = new Viewport
+            {
+                ImageSize = new Size(50, 50)
+            };
+
+            viewport.ZoomToFit = true;
+            viewport.ZoomFactor = 1.5f;
+
+            Assert.IsFalse(viewport.ZoomToFit);
         }
     }
 }
