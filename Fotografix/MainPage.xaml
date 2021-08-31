@@ -9,6 +9,30 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
 
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <StackPanel Orientation="Horizontal">
+            <Button Click="{x:Bind vm.OpenFolder}">Open folder</Button>
+        </StackPanel>
+
+        <ListView Grid.Row="1" Width="155" HorizontalAlignment="Left"
+                  ItemsSource="{x:Bind vm.Photos.Result, Mode=OneWay}"
+                  SelectedItem="{x:Bind vm.SelectedPhoto, Mode=TwoWay}">
+            <ListView.ItemTemplate>
+                <DataTemplate x:DataType="local:PhotoViewModel">
+                    <Image Width="128" MaxHeight="128" Source="{x:Bind Thumbnail.Result, Mode=OneWay}" />
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+
+        <Image Grid.Row="1" Grid.Column="1" Source="{x:Bind vm.SelectedPhoto.Preview.Result, Mode=OneWay}" />
     </Grid>
 </Page>

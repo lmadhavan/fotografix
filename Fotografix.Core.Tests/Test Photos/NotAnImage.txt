@@ -1,0 +1,1 @@
+﻿This file shouldn't get picked up when scanning for photos.
