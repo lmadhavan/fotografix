@@ -120,8 +120,10 @@
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="PhotoAdjustment.cs" />
     <Compile Include="NotifyPropertyChangedBase.cs" />
     <Compile Include="Photo.cs" />
+    <Compile Include="PhotoEditor.cs" />
     <Compile Include="PhotoFolder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Properties\Fotografix.Core.rd.xml" />
@@ -129,6 +131,9 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
       <Version>6.2.12</Version>
+    </PackageReference>
+    <PackageReference Include="Win2D.uwp">
+      <Version>1.26.0</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup />

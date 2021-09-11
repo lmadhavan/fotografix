@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.Storage;
-using Windows.Storage.BulkAccess;
-using Windows.Storage.FileProperties;
 using Windows.Storage.Search;
 
 namespace Fotografix
@@ -17,9 +15,7 @@ namespace Fotografix
             queryOptions.FileTypeFilter.Add(".jpg");
 
             var query = folder.CreateFileQueryWithOptions(queryOptions);
-            var fileInformationFactory = new FileInformationFactory(query, ThumbnailMode.SingleItem);
-
-            var files = await fileInformationFactory.GetFilesAsync();
+            var files = await query.GetFilesAsync();
             return files.Select(file => new Photo(file)).ToList();
         }
     }

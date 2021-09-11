@@ -11,6 +11,12 @@ namespace Fotografix
     {
         private NotifyTaskCompletion<IList<PhotoViewModel>> photos;
         private PhotoViewModel selectedPhoto;
+        private NotifyTaskCompletion<EditorViewModel> editor;
+
+        public Task DisposeAsync()
+        {
+            return DisposeEditorAsync();
+        }
 
         public async void OpenFolder()
         {
@@ -33,13 +39,50 @@ namespace Fotografix
         public PhotoViewModel SelectedPhoto
         {
             get => selectedPhoto;
-            set => SetProperty(ref selectedPhoto, value);
+
+            set
+            {
+                if (SetProperty(ref selectedPhoto, value))
+                {
+                    this.Editor = new NotifyTaskCompletion<EditorViewModel>(LoadEditorAsync());
+                    Editor.Task.ContinueWith(t => InvalidateEditor());
+                }
+            }
         }
+
+        public NotifyTaskCompletion<EditorViewModel> Editor
+        {
+            get => editor;
+            private set => SetProperty(ref editor, value);
+        }
+
+        public event EventHandler EditorInvalidated;
 
         private async Task<IList<PhotoViewModel>> LoadPhotosAsync(StorageFolder folder)
         {
             var photos = await PhotoFolder.GetPhotosAsync(folder);
             return photos.Select(p => new PhotoViewModel(p)).ToList();
+        }
+
+        private async Task<EditorViewModel> LoadEditorAsync()
+        {
+            await DisposeEditorAsync();
+            var editor = await selectedPhoto.CreateEditorAsync();
+            editor.Invalidated += (s, e) => InvalidateEditor();
+            return editor;
+        }
+
+        private void InvalidateEditor()
+        {
+            EditorInvalidated?.Invoke(this, EventArgs.Empty);
+        }
+
+        private async Task DisposeEditorAsync()
+        {
+            if (editor != null)
+            {
+                (await editor.Task).Dispose();
+            }
         }
     }
 }

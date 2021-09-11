@@ -1,19 +1,26 @@
-﻿using Windows.Storage.BulkAccess;
+﻿using System;
+using System.Threading.Tasks;
+using Windows.Storage;
+using Windows.Storage.FileProperties;
 using Windows.Storage.Streams;
 
 namespace Fotografix
 {
     public sealed class Photo
     {
-        private readonly FileInformation file;
+        private readonly StorageFile file;
 
-        public Photo(FileInformation file)
+        public Photo(StorageFile file)
         {
             this.file = file;
         }
 
         public string Name => file.Name;
-        public IRandomAccessStreamReference Thumbnail => RandomAccessStreamReference.CreateFromStream(file.Thumbnail);
         public IRandomAccessStreamReference Content => file;
+
+        public Task<StorageItemThumbnail> GetThumbnailAsync()
+        {
+            return file.GetThumbnailAsync(ThumbnailMode.SingleItem).AsTask();
+        }
     }
 }

@@ -1,7 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
 using System.Threading.Tasks;
-using Windows.ApplicationModel;
 
 namespace Fotografix
 {
@@ -11,7 +9,7 @@ namespace Fotografix
         [TestMethod]
         public async Task RetrievesPhotosInFolder()
         {
-            var folder = await Package.Current.InstalledLocation.GetFolderAsync("Test Photos");
+            var folder = await TestData.GetFolderAsync("Photos");
 
             var photos = await PhotoFolder.GetPhotosAsync(folder);
 
