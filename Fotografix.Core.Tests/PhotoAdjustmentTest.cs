@@ -12,7 +12,7 @@ namespace Fotografix
     [TestClass]
     public class PhotoAdjustmentTest
     {
-        private const float Tolerance = 1.5f;
+        private const float Tolerance = 1.75f;
 
         private CanvasBitmap bitmap;
         private PhotoAdjustment adjustment;
@@ -45,6 +45,40 @@ namespace Fotografix
             await VerifyOutputAsync("Barn_exposure.jpg");
         }
 
+        [TestMethod]
+        public async Task Temperature()
+        {
+            adjustment.Temperature = 0.5f;
+            await VerifyOutputAsync("Barn_temperature.jpg");
+        }
+
+        [TestMethod]
+        public async Task Tint()
+        {
+            adjustment.Tint = 0.5f;
+            await VerifyOutputAsync("Barn_tint.jpg");
+        }
+
+        private async Task VerifyOutputAsync(string filename)
+        {
+            try
+            {
+                var file = await TestData.GetFileAsync(filename);
+
+                using (var stream = await file.OpenReadAsync())
+                using (var expected = await CanvasBitmap.LoadAsync(CanvasDevice.GetSharedDevice(), stream))
+                using (var actual = Render())
+                {
+                    VerifyBytes(expected.GetPixelBytes(), actual.GetPixelBytes());
+                }
+            }
+            catch
+            {
+                await CaptureOutputAsync(filename);
+                throw;
+            }
+        }
+
         private async Task CaptureOutputAsync(string filename)
         {
             var tempFolder = ApplicationData.Current.TemporaryFolder;
@@ -55,20 +89,8 @@ namespace Fotografix
             {
                 await output.SaveAsync(stream, CanvasBitmapFileFormat.Jpeg);
             }
-            
+
             await CoreApplication.MainView.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () => await Launcher.LaunchFolderAsync(tempFolder));
-        }
-
-        private async Task VerifyOutputAsync(string filename)
-        {
-            var file = await TestData.GetFileAsync(filename);
-
-            using (var stream = await file.OpenReadAsync())
-            using (var expected = await CanvasBitmap.LoadAsync(CanvasDevice.GetSharedDevice(), stream))
-            using (var actual = Render())
-            {
-                VerifyBytes(expected.GetPixelBytes(), actual.GetPixelBytes());
-            }
         }
 
         private CanvasBitmap Render()

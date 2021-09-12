@@ -23,18 +23,13 @@ namespace Fotografix
             editor.Dispose();
         }
 
+        public PhotoAdjustment Adjustment => adjustment;
         public Size Size => editor.Size;
         public event EventHandler Invalidated;
 
         public void Draw(CanvasDrawingSession ds)
         {
             editor.Draw(ds);
-        }
-
-        public float Exposure
-        {
-            get => adjustment.Exposure;
-            set => adjustment.Exposure = value;
         }
 
         private void Adjustment_PropertyChanged(object sender, PropertyChangedEventArgs e)

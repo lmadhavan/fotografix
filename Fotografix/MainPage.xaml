@@ -41,12 +41,18 @@
             <win2d:CanvasControl x:Name="canvas" Width="1" Height="1" Draw="CanvasControl_Draw" />
         </Viewbox>
 
-        <ContentControl Grid.Row="1" Grid.Column="2" HorizontalContentAlignment="Stretch" Padding="8" Content="{x:Bind vm.Editor.Result}">
+        <ContentControl Grid.Row="1" Grid.Column="2" HorizontalContentAlignment="Stretch" Padding="8" Content="{x:Bind vm.Editor.Result.Adjustment}">
             <ContentControl.ContentTemplate>
-                <DataTemplate x:DataType="local:EditorViewModel" x:DefaultBindMode="TwoWay">
+                <DataTemplate x:DataType="local:PhotoAdjustment" x:DefaultBindMode="TwoWay">
                     <StackPanel>
                         <StackPanel.Resources>
                             <ResourceDictionary>
+                                <Style x:Key="SectionHeaderTextBlockStyle" TargetType="TextBlock">
+                                    <Setter Property="FontSize" Value="24" />
+                                    <Setter Property="FontWeight" Value="SemiLight" />
+                                    <Setter Property="Margin" Value="0,16" />
+                                </Style>
+                                
                                 <Style TargetType="Slider" BasedOn="{StaticResource DefaultSliderStyle}">
                                     <Setter Property="Minimum" Value="-1" />
                                     <Setter Property="Maximum" Value="1" />
@@ -55,7 +61,12 @@
                             </ResourceDictionary>
                         </StackPanel.Resources>
 
+                        <TextBlock Style="{ThemeResource SectionHeaderTextBlockStyle}" Text="Light" />
                         <Slider Header="Exposure" Value="{x:Bind Exposure}" />
+
+                        <TextBlock Style="{ThemeResource SectionHeaderTextBlockStyle}" Text="Color" />
+                        <Slider Header="Temperature" Value="{x:Bind Temperature}" />
+                        <Slider Header="Tint" Value="{x:Bind Tint}" />
                     </StackPanel>
                 </DataTemplate>
             </ContentControl.ContentTemplate>
