@@ -7,18 +7,21 @@ namespace Fotografix
     public sealed class PhotoAdjustment : NotifyPropertyChangedBase, IDisposable
     {
         private readonly ExposureEffect exposureEffect;
+        private readonly HighlightsAndShadowsEffect highlightsAndShadowsEffect;
         private readonly TemperatureAndTintEffect temperatureAndTintEffect;
 
         public PhotoAdjustment()
         {
             this.exposureEffect = new ExposureEffect();
-            this.temperatureAndTintEffect = new TemperatureAndTintEffect { Source = exposureEffect };
+            this.highlightsAndShadowsEffect = new HighlightsAndShadowsEffect { Source = exposureEffect };
+            this.temperatureAndTintEffect = new TemperatureAndTintEffect { Source = highlightsAndShadowsEffect };
         }
 
         public void Dispose()
         {
-            exposureEffect.Dispose();
             temperatureAndTintEffect.Dispose();
+            highlightsAndShadowsEffect.Dispose();
+            exposureEffect.Dispose();
         }
 
         public void Render(CanvasDrawingSession ds, ICanvasImage image)
@@ -41,6 +44,34 @@ namespace Fotografix
                 if (exposureEffect.Exposure != value)
                 {
                     exposureEffect.Exposure = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        public float Highlights
+        {
+            get => highlightsAndShadowsEffect.Highlights;
+
+            set
+            {
+                if (highlightsAndShadowsEffect.Highlights != value)
+                {
+                    highlightsAndShadowsEffect.Highlights = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        public float Shadows
+        {
+            get => highlightsAndShadowsEffect.Shadows;
+
+            set
+            {
+                if (highlightsAndShadowsEffect.Shadows != value)
+                {
+                    highlightsAndShadowsEffect.Shadows = value;
                     RaisePropertyChanged();
                 }
             }

@@ -1,6 +1,7 @@
 ﻿using Microsoft.Graphics.Canvas;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Core;
 using Windows.Storage;
@@ -46,6 +47,20 @@ namespace Fotografix
         }
 
         [TestMethod]
+        public async Task Highlights()
+        {
+            adjustment.Highlights = 0.5f;
+            await VerifyOutputAsync("Barn_highlights.jpg");
+        }
+
+        [TestMethod]
+        public async Task Shadows()
+        {
+            adjustment.Shadows = 0.5f;
+            await VerifyOutputAsync("Barn_shadows.jpg");
+        }
+
+        [TestMethod]
         public async Task Temperature()
         {
             adjustment.Temperature = 0.5f;
@@ -69,7 +84,7 @@ namespace Fotografix
                 using (var expected = await CanvasBitmap.LoadAsync(CanvasDevice.GetSharedDevice(), stream))
                 using (var actual = Render())
                 {
-                    VerifyBytes(expected.GetPixelBytes(), actual.GetPixelBytes());
+                    VerifyBytes(expected.GetPixelBytes(), actual.GetPixelBytes(), filename);
                 }
             }
             catch
@@ -105,11 +120,11 @@ namespace Fotografix
             return rt;
         }
 
-        private static void VerifyBytes(byte[] expected, byte[] actual)
+        private static void VerifyBytes(byte[] expected, byte[] actual, string filename)
         {
             if (expected.Length != actual.Length)
             {
-                Assert.Fail($"Content length differs: expected = {expected.Length}, actual = {actual.Length}");
+                Assert.Fail($"Content length differs: expected = {expected.Length} ({filename}), actual = {actual.Length}");
             }
 
             int totalDelta = 0;
@@ -124,8 +139,10 @@ namespace Fotografix
 
             if (avgDelta > Tolerance)
             {
-                Assert.Fail($"Average delta exceeds tolerance: {avgDelta} > {Tolerance}");
+                Assert.Fail($"Average delta exceeds tolerance ({filename}): {avgDelta} > {Tolerance}");
             }
+
+            Debug.WriteLine($"Average delta for {filename} = {avgDelta}");
         }
     }
 }
