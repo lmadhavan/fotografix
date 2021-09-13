@@ -61,6 +61,20 @@ namespace Fotografix
         }
 
         [TestMethod]
+        public async Task Whites()
+        {
+            adjustment.Whites = 0.5f;
+            await VerifyOutputAsync("Barn_whites.jpg");
+        }
+
+        [TestMethod]
+        public async Task Blacks()
+        {
+            adjustment.Blacks = -0.5f;
+            await VerifyOutputAsync("Barn_blacks.jpg");
+        }
+
+        [TestMethod]
         public async Task Temperature()
         {
             adjustment.Temperature = 0.5f;

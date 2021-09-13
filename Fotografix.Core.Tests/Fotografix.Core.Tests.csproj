@@ -147,11 +147,13 @@
     <Content Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png" />
     <Content Include="Assets\StoreLogo.png" />
     <Content Include="Assets\Wide310x150Logo.scale-200.png" />
+    <Content Include="TestData\Barn_blacks.jpg" />
     <Content Include="TestData\Barn_exposure.jpg" />
     <Content Include="TestData\Barn_highlights.jpg" />
     <Content Include="TestData\Barn_shadows.jpg" />
     <Content Include="TestData\Barn_temperature.jpg" />
     <Content Include="TestData\Barn_tint.jpg" />
+    <Content Include="TestData\Barn_whites.jpg" />
     <Content Include="TestData\Photos\Barn.jpg" />
     <Content Include="TestData\Photos\NotAnImage.txt" />
     <Content Include="TestData\Photos\Snow.jpg" />

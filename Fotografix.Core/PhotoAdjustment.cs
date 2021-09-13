@@ -6,14 +6,14 @@ namespace Fotografix
 {
     public sealed class PhotoAdjustment : NotifyPropertyChangedBase, IDisposable
     {
-        private readonly ExposureEffect exposureEffect;
+        private readonly GammaTransferEffect transferEffect;
         private readonly HighlightsAndShadowsEffect highlightsAndShadowsEffect;
         private readonly TemperatureAndTintEffect temperatureAndTintEffect;
 
         public PhotoAdjustment()
         {
-            this.exposureEffect = new ExposureEffect();
-            this.highlightsAndShadowsEffect = new HighlightsAndShadowsEffect { Source = exposureEffect };
+            this.transferEffect = new GammaTransferEffect();
+            this.highlightsAndShadowsEffect = new HighlightsAndShadowsEffect { Source = transferEffect };
             this.temperatureAndTintEffect = new TemperatureAndTintEffect { Source = highlightsAndShadowsEffect };
         }
 
@@ -21,12 +21,12 @@ namespace Fotografix
         {
             temperatureAndTintEffect.Dispose();
             highlightsAndShadowsEffect.Dispose();
-            exposureEffect.Dispose();
+            transferEffect.Dispose();
         }
 
         public void Render(CanvasDrawingSession ds, ICanvasImage image)
         {
-            var firstEffect = exposureEffect;
+            var firstEffect = transferEffect;
             var lastEffect = temperatureAndTintEffect;
 
             firstEffect.Source = image;
@@ -35,18 +35,64 @@ namespace Fotografix
 
         #region Light
 
+        private float exposure;
+        private float whites;
+        private float blacks;
+
         public float Exposure
         {
-            get => exposureEffect.Exposure;
+            get => exposure;
 
             set
             {
-                if (exposureEffect.Exposure != value)
+                if (SetProperty(ref exposure, value))
                 {
-                    exposureEffect.Exposure = value;
-                    RaisePropertyChanged();
+                    UpdateTransferEffect();
                 }
             }
+        }
+
+        public float Whites
+        {
+            get => whites;
+
+            set
+            {
+                if (SetProperty(ref whites, value))
+                {
+                    UpdateTransferEffect();
+                }
+            }
+        }
+
+        public float Blacks
+        {
+            get => blacks;
+
+            set
+            {
+                if (SetProperty(ref blacks, value))
+                {
+                    UpdateTransferEffect();
+                }
+            }
+        }
+
+        private void UpdateTransferEffect()
+        {
+            // Scale white/black point adjustments so they are at a similar level as highlights/shadows adjustments
+            var wp = 1 - whites / 4;
+            var bp = 0 - blacks / 4;
+
+            /*
+             * Gamma transfer effect does pow(input, exponent) * amplitude + offset
+             * We want ((input * 2^exposure) - bp) / (wp - bp)
+             */
+            var amplitude = Math.Pow(2, exposure) / (wp - bp);
+            var offset = -bp / (wp - bp);
+
+            transferEffect.RedAmplitude = transferEffect.GreenAmplitude = transferEffect.BlueAmplitude = (float)amplitude;
+            transferEffect.RedOffset = transferEffect.GreenOffset = transferEffect.BlueOffset = offset;
         }
 
         public float Highlights

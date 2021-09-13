@@ -65,6 +65,8 @@
                         <Slider Header="Exposure" Value="{x:Bind Exposure}" />
                         <Slider Header="Highlights" Value="{x:Bind Highlights}" />
                         <Slider Header="Shadows" Value="{x:Bind Shadows}" />
+                        <Slider Header="Whites" Value="{x:Bind Whites}" />
+                        <Slider Header="Blacks" Value="{x:Bind Blacks}" />
 
                         <TextBlock Style="{ThemeResource SectionHeaderTextBlockStyle}" Text="Color" />
                         <Slider Header="Temperature" Value="{x:Bind Temperature}" />
