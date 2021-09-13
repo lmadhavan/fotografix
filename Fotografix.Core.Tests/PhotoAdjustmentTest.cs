@@ -47,6 +47,13 @@ namespace Fotografix
         }
 
         [TestMethod]
+        public async Task Contrast()
+        {
+            adjustment.Contrast = 0.5f;
+            await VerifyOutputAsync("Barn_contrast.jpg");
+        }
+
+        [TestMethod]
         public async Task Highlights()
         {
             adjustment.Highlights = 0.5f;

@@ -63,6 +63,7 @@
 
                         <TextBlock Style="{ThemeResource SectionHeaderTextBlockStyle}" Text="Light" />
                         <Slider Header="Exposure" Value="{x:Bind Exposure}" />
+                        <Slider Header="Contrast" Value="{x:Bind Contrast}" />
                         <Slider Header="Highlights" Value="{x:Bind Highlights}" />
                         <Slider Header="Shadows" Value="{x:Bind Shadows}" />
                         <Slider Header="Whites" Value="{x:Bind Whites}" />

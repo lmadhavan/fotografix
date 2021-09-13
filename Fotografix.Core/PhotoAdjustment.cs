@@ -8,18 +8,21 @@ namespace Fotografix
     {
         private readonly GammaTransferEffect transferEffect;
         private readonly HighlightsAndShadowsEffect highlightsAndShadowsEffect;
+        private readonly ContrastEffect contrastEffect;
         private readonly TemperatureAndTintEffect temperatureAndTintEffect;
 
         public PhotoAdjustment()
         {
             this.transferEffect = new GammaTransferEffect();
             this.highlightsAndShadowsEffect = new HighlightsAndShadowsEffect { Source = transferEffect };
-            this.temperatureAndTintEffect = new TemperatureAndTintEffect { Source = highlightsAndShadowsEffect };
+            this.contrastEffect = new ContrastEffect { Source = highlightsAndShadowsEffect };
+            this.temperatureAndTintEffect = new TemperatureAndTintEffect { Source = contrastEffect };
         }
 
         public void Dispose()
         {
             temperatureAndTintEffect.Dispose();
+            contrastEffect.Dispose();
             highlightsAndShadowsEffect.Dispose();
             transferEffect.Dispose();
         }
@@ -48,6 +51,20 @@ namespace Fotografix
                 if (SetProperty(ref exposure, value))
                 {
                     UpdateTransferEffect();
+                }
+            }
+        }
+
+        public float Contrast
+        {
+            get => contrastEffect.Contrast;
+
+            set
+            {
+                if (contrastEffect.Contrast != value)
+                {
+                    contrastEffect.Contrast = value;
+                    RaisePropertyChanged();
                 }
             }
         }

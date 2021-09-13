@@ -148,6 +148,7 @@
     <Content Include="Assets\StoreLogo.png" />
     <Content Include="Assets\Wide310x150Logo.scale-200.png" />
     <Content Include="TestData\Barn_blacks.jpg" />
+    <Content Include="TestData\Barn_contrast.jpg" />
     <Content Include="TestData\Barn_exposure.jpg" />
     <Content Include="TestData\Barn_highlights.jpg" />
     <Content Include="TestData\Barn_shadows.jpg" />
