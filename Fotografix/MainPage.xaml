@@ -24,7 +24,7 @@
         </Grid.ColumnDefinitions>
 
         <StackPanel Orientation="Horizontal">
-            <Button Click="{x:Bind vm.OpenFolder}">Open folder</Button>
+            <Button Click="{x:Bind vm.PickFolder}">Open folder</Button>
         </StackPanel>
 
         <ListView Grid.Row="1" Width="155" HorizontalAlignment="Left"

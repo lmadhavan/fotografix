@@ -18,7 +18,7 @@ namespace Fotografix
             return DisposeEditorAsync();
         }
 
-        public async void OpenFolder()
+        public async void PickFolder()
         {
             FolderPicker picker = new FolderPicker();
             picker.FileTypeFilter.Add("*");
@@ -26,8 +26,13 @@ namespace Fotografix
             var folder = await picker.PickSingleFolderAsync();
             if (folder != null)
             {
-                this.Photos = new NotifyTaskCompletion<IList<PhotoViewModel>>(LoadPhotosAsync(folder));
+                OpenFolder(folder);
             }
+        }
+
+        public void OpenFolder(StorageFolder folder)
+        {
+            this.Photos = new NotifyTaskCompletion<IList<PhotoViewModel>>(LoadPhotosAsync(folder));
         }
 
         public NotifyTaskCompletion<IList<PhotoViewModel>> Photos
@@ -67,6 +72,12 @@ namespace Fotografix
         private async Task<EditorViewModel> LoadEditorAsync()
         {
             await DisposeEditorAsync();
+
+            if (selectedPhoto == null)
+            {
+                return null;
+            }
+
             var editor = await selectedPhoto.CreateEditorAsync();
             editor.Invalidated += (s, e) => InvalidateEditor();
             return editor;
@@ -81,7 +92,7 @@ namespace Fotografix
         {
             if (editor != null)
             {
-                (await editor.Task).Dispose();
+                (await editor.Task)?.Dispose();
             }
         }
     }

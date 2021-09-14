@@ -5,14 +5,14 @@
   xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
   IgnorableNamespaces="uap mp">
 
-  <Identity Name="be9e2d9b-2a55-41d5-9d1e-03e2f7ee7b68"
+  <Identity Name="c599d332-1805-4485-b0fa-fc2eca38f026"
             Publisher="CN=UnitTest"
             Version="1.0.0.0" />
 
-  <mp:PhoneIdentity PhoneProductId="be9e2d9b-2a55-41d5-9d1e-03e2f7ee7b68" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
+  <mp:PhoneIdentity PhoneProductId="c599d332-1805-4485-b0fa-fc2eca38f026" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
   <Properties>
-    <DisplayName>Fotografix.Core.Tests</DisplayName>
+    <DisplayName>Fotografix.Tests</DisplayName>
     <PublisherDisplayName>UnitTest</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
@@ -27,12 +27,12 @@
   <Applications>
     <Application Id="vstest.executionengine.universal.App"
         Executable="$targetnametoken$.exe"
-        EntryPoint="Fotografix.Core.Tests.App">
+        EntryPoint="Fotografix.Tests.App">
       <uap:VisualElements
-        DisplayName="Fotografix.Core.Tests"
+        DisplayName="Fotografix.Tests"
         Square150x150Logo="Assets\Square150x150Logo.png"
         Square44x44Logo="Assets\Square44x44Logo.png"
-        Description="Fotografix.Core.Tests"
+        Description="Fotografix.Tests"
         BackgroundColor="transparent">
         <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png"/>
         <uap:SplashScreen Image="Assets\SplashScreen.png" />
