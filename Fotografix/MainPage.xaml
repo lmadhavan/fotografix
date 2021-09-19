@@ -41,6 +41,10 @@
             <win2d:CanvasControl x:Name="canvas" Width="1" Height="1" Draw="CanvasControl_Draw" />
         </Viewbox>
 
+        <StackPanel Grid.Column="2" Orientation="Horizontal">
+            <Button Click="{x:Bind vm.Editor.Result.ResetAdjustment}">Reset</Button>
+        </StackPanel>
+
         <ContentControl Grid.Row="1" Grid.Column="2" HorizontalContentAlignment="Stretch" Padding="8" Content="{x:Bind vm.Editor.Result.Adjustment}">
             <ContentControl.ContentTemplate>
                 <DataTemplate x:DataType="local:PhotoAdjustment" x:DefaultBindMode="TwoWay">

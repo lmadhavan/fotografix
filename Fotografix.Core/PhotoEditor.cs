@@ -5,15 +5,15 @@ using Windows.Foundation;
 
 namespace Fotografix
 {
-    public sealed class PhotoEditor : IDisposable
+    public sealed class PhotoEditor : NotifyPropertyChangedBase, IDisposable
     {
         private readonly CanvasBitmap bitmap;
-        private readonly PhotoAdjustment adjustment;
+        private PhotoAdjustment adjustment;
 
         private PhotoEditor(CanvasBitmap bitmap)
         {
             this.bitmap = bitmap;
-            this.adjustment = new PhotoAdjustment();
+            ResetAdjustment();
         }
 
         public void Dispose()
@@ -33,10 +33,25 @@ namespace Fotografix
 
         public Size Size => bitmap.Size;
         public PhotoAdjustment Adjustment => adjustment;
+        public event EventHandler Invalidated;
 
         public void Draw(CanvasDrawingSession ds)
         {
             adjustment.Render(ds, bitmap);
+        }
+
+        public void ResetAdjustment()
+        {
+            adjustment?.Dispose();
+            this.adjustment = new PhotoAdjustment();
+            adjustment.PropertyChanged += (s, e) => Invalidate();
+            RaisePropertyChanged(nameof(Adjustment));
+            Invalidate();
+        }
+        
+        private void Invalidate()
+        {
+            Invalidated?.Invoke(this, EventArgs.Empty);
         }
     }
 }

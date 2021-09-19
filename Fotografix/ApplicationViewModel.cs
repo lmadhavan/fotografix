@@ -11,7 +11,7 @@ namespace Fotografix
     {
         private NotifyTaskCompletion<IList<PhotoViewModel>> photos;
         private PhotoViewModel selectedPhoto;
-        private NotifyTaskCompletion<EditorViewModel> editor;
+        private NotifyTaskCompletion<PhotoEditor> editor;
 
         public Task DisposeAsync()
         {
@@ -49,13 +49,13 @@ namespace Fotografix
             {
                 if (SetProperty(ref selectedPhoto, value))
                 {
-                    this.Editor = new NotifyTaskCompletion<EditorViewModel>(LoadEditorAsync());
+                    this.Editor = new NotifyTaskCompletion<PhotoEditor>(LoadEditorAsync());
                     Editor.Task.ContinueWith(t => InvalidateEditor());
                 }
             }
         }
 
-        public NotifyTaskCompletion<EditorViewModel> Editor
+        public NotifyTaskCompletion<PhotoEditor> Editor
         {
             get => editor;
             private set => SetProperty(ref editor, value);
@@ -69,7 +69,7 @@ namespace Fotografix
             return photos.Select(p => new PhotoViewModel(p)).ToList();
         }
 
-        private async Task<EditorViewModel> LoadEditorAsync()
+        private async Task<PhotoEditor> LoadEditorAsync()
         {
             await DisposeEditorAsync();
 

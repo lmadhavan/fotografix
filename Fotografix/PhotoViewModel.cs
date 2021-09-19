@@ -25,10 +25,9 @@ namespace Fotografix
             return bitmap;
         }
 
-        internal async Task<EditorViewModel> CreateEditorAsync()
+        internal Task<PhotoEditor> CreateEditorAsync()
         {
-            var editor = await PhotoEditor.CreateAsync(photo);
-            return new EditorViewModel(editor);
+            return PhotoEditor.CreateAsync(photo);
         }
     }
 }
