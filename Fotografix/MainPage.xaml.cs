@@ -1,18 +1,26 @@
 ﻿using Microsoft.Graphics.Canvas.UI.Xaml;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Navigation;
 
 namespace Fotografix
 {
     public sealed partial class MainPage : Page
     {
-        private readonly ApplicationViewModel vm;
+        private ApplicationViewModel vm;
 
         public MainPage()
         {
             this.InitializeComponent();
-            this.vm = new ApplicationViewModel();
-            vm.EditorInvalidated += (s, e) => canvas.Invalidate();
+            
+        }
+
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            base.OnNavigatedTo(e);
+
+            this.vm = (ApplicationViewModel)e.Parameter;
+            vm.EditorInvalidated += (s, e2) => canvas.Invalidate();
         }
 
         private async void Page_Unloaded(object sender, RoutedEventArgs e)

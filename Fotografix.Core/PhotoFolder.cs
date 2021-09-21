@@ -7,16 +7,32 @@ using Windows.Storage.Search;
 
 namespace Fotografix
 {
-    public static class PhotoFolder
+    public sealed class PhotoFolder
     {
-        public static async Task<IReadOnlyList<Photo>> GetPhotosAsync(StorageFolder folder)
+        private readonly StorageFolder contentFolder;
+        private readonly StorageFolder sidecarFolder;
+
+        public PhotoFolder(StorageFolder contentFolder, StorageFolder sidecarFolder)
+        {
+            this.contentFolder = contentFolder;
+            this.sidecarFolder = sidecarFolder;
+        }
+
+        public async Task<IReadOnlyList<Photo>> GetPhotosAsync()
         {
             var queryOptions = new QueryOptions();
             queryOptions.FileTypeFilter.Add(".jpg");
 
-            var query = folder.CreateFileQueryWithOptions(queryOptions);
+            var query = contentFolder.CreateFileQueryWithOptions(queryOptions);
             var files = await query.GetFilesAsync();
-            return files.Select(file => new Photo(file)).ToList();
+
+            return files.Select(CreatePhoto).ToList();
+        }
+
+        private Photo CreatePhoto(StorageFile content)
+        {
+            StorageFileReference sidecar = new StorageFileReference(sidecarFolder, content.DisplayName + ".dat");
+            return new Photo(content, sidecar);
         }
     }
 }

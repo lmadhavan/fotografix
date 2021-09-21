@@ -2,6 +2,7 @@
 using System;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
+using Windows.Storage;
 
 namespace Fotografix
 {
@@ -15,8 +16,9 @@ namespace Fotografix
         {
             var testData = await Package.Current.InstalledLocation.GetFolderAsync("TestData");
             var photosFolder = await testData.GetFolderAsync("Photos");
+            var sidecarStrategy = new FixedSidecarStrategy(ApplicationData.Current.TemporaryFolder);
             
-            this.app = new ApplicationViewModel();
+            this.app = new ApplicationViewModel(sidecarStrategy);
             app.OpenFolder(photosFolder);
         }
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.Storage;
@@ -9,13 +10,20 @@ namespace Fotografix
 {
     public sealed class ApplicationViewModel : NotifyPropertyChangedBase
     {
+        private readonly ISidecarStrategy sidecarStrategy;
+
         private NotifyTaskCompletion<IList<PhotoViewModel>> photos;
         private PhotoViewModel selectedPhoto;
         private NotifyTaskCompletion<PhotoEditor> editor;
 
+        public ApplicationViewModel(ISidecarStrategy sidecarStrategy)
+        {
+            this.sidecarStrategy = sidecarStrategy;
+        }
+
         public Task DisposeAsync()
         {
-            return DisposeEditorAsync();
+            return SaveAsync(dispose: true);
         }
 
         public async void PickFolder()
@@ -63,15 +71,27 @@ namespace Fotografix
 
         public event EventHandler EditorInvalidated;
 
+        public Task SaveAsync()
+        {
+            return SaveAsync(dispose: false);
+        }
+
         private async Task<IList<PhotoViewModel>> LoadPhotosAsync(StorageFolder folder)
         {
-            var photos = await PhotoFolder.GetPhotosAsync(folder);
+            Debug.WriteLine($"Opening {folder.Path}");
+
+            var sidecarFolder = await sidecarStrategy.GetSidecarFolderAsync(folder);
+            var photoFolder = new PhotoFolder(folder, sidecarFolder);
+            var photos = await photoFolder.GetPhotosAsync();
+
+            Debug.WriteLine($"Loaded {photos.Count} photos from {folder.Name}");
+
             return photos.Select(p => new PhotoViewModel(p)).ToList();
         }
 
         private async Task<PhotoEditor> LoadEditorAsync()
         {
-            await DisposeEditorAsync();
+            await SaveAsync(dispose: true);
 
             if (selectedPhoto == null)
             {
@@ -88,11 +108,20 @@ namespace Fotografix
             EditorInvalidated?.Invoke(this, EventArgs.Empty);
         }
 
-        private async Task DisposeEditorAsync()
+        private async Task SaveAsync(bool dispose)
         {
             if (editor != null)
             {
-                (await editor.Task)?.Dispose();
+                var photoEditor = await editor.Task;
+                if (photoEditor != null)
+                {
+                    await photoEditor.SaveAsync();
+
+                    if (dispose)
+                    {
+                        photoEditor.Dispose();
+                    }
+                }
             }
         }
     }

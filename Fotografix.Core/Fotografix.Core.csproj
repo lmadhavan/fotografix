@@ -120,17 +120,22 @@
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="SidecarStrategy.cs" />
     <Compile Include="PhotoAdjustment.cs" />
     <Compile Include="NotifyPropertyChangedBase.cs" />
     <Compile Include="Photo.cs" />
     <Compile Include="PhotoEditor.cs" />
     <Compile Include="PhotoFolder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="StorageFileReference.cs" />
     <EmbeddedResource Include="Properties\Fotografix.Core.rd.xml" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
       <Version>6.2.12</Version>
+    </PackageReference>
+    <PackageReference Include="Newtonsoft.Json">
+      <Version>13.0.1</Version>
     </PackageReference>
     <PackageReference Include="Win2D.uwp">
       <Version>1.26.0</Version>

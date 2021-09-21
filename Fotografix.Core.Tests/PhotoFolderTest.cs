@@ -11,7 +11,8 @@ namespace Fotografix
         {
             var folder = await TestData.GetFolderAsync("Photos");
 
-            var photos = await PhotoFolder.GetPhotosAsync(folder);
+            var photoFolder = new PhotoFolder(folder, folder);
+            var photos = await photoFolder.GetPhotosAsync();
 
             Assert.AreEqual(2, photos.Count);
             Assert.AreEqual("Barn.jpg", photos[0].Name);
