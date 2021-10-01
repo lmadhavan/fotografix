@@ -43,6 +43,7 @@
 
         <StackPanel Grid.Column="2" Orientation="Horizontal">
             <Button Click="{x:Bind vm.Editor.Result.ResetAdjustment}">Reset</Button>
+            <ToggleSwitch Margin="48,0,0,0" IsOn="{x:Bind vm.Editor.Result.ShowOriginal, Mode=TwoWay}" OnContent="View original" OffContent="View original" />
         </StackPanel>
 
         <ContentControl Grid.Row="1" Grid.Column="2" HorizontalContentAlignment="Stretch" Padding="8" Content="{x:Bind vm.Editor.Result.Adjustment}">

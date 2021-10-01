@@ -12,6 +12,7 @@ namespace Fotografix
         private readonly CanvasBitmap bitmap;
         private PhotoAdjustment adjustment;
         private State state;
+        private bool showOriginal;
 
         private PhotoEditor(Photo photo, CanvasBitmap bitmap)
         {
@@ -78,11 +79,31 @@ namespace Fotografix
             }
         }
 
+        public bool ShowOriginal
+        {
+            get => showOriginal;
+
+            set
+            {
+                if (SetProperty(ref showOriginal, value))
+                {
+                    Invalidate();
+                }
+            }
+        }
+
         public event EventHandler Invalidated;
 
         public void Draw(CanvasDrawingSession ds)
         {
-            adjustment.Render(ds, bitmap);
+            if (showOriginal)
+            {
+                ds.DrawImage(bitmap);
+            }
+            else
+            {
+                adjustment.Render(ds, bitmap);
+            }
         }
 
         public void ResetAdjustment()
