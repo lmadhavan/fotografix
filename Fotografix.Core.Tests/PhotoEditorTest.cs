@@ -1,5 +1,4 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
 using System.Threading.Tasks;
 using Windows.Storage;
 
@@ -14,8 +13,7 @@ namespace Fotografix
         [TestInitialize]
         public async Task Initialize()
         {
-            var folder = await TestData.GetFolderAsync("Photos");
-            var content = await folder.GetFileAsync("Barn.jpg");
+            var content = await TestData.GetFileAsync("Photos\\Barn.jpg");
             this.sidecar = new StorageFileReference(ApplicationData.Current.TemporaryFolder, "Barn.dat");
 
             this.photo = new Photo(content, sidecar);
@@ -28,7 +26,39 @@ namespace Fotografix
         }
 
         [TestMethod]
-        public async Task LoadsPreviouslySavedAdjustment()
+        public async Task AppliesAdjustmentToPhoto()
+        {
+            using (var editor = await PhotoEditor.CreateAsync(photo))
+            {
+                editor.Adjustment.Exposure = 0.5f;
+                await VerifyOutputAsync(editor, "Barn_exposure.jpg");
+            }
+        }
+
+        [TestMethod]
+        public async Task HidesAdjustmentWhenShowOriginalFlagIsEnabled()
+        {
+            using (var editor = await PhotoEditor.CreateAsync(photo))
+            {
+                editor.Adjustment.Exposure = 0.5f;
+                editor.ShowOriginal = true;
+                await VerifyOutputAsync(editor, "Photos\\Barn.jpg");
+            }
+        }
+
+        [TestMethod]
+        public async Task ResetsAdjustment()
+        {
+            using (var editor = await PhotoEditor.CreateAsync(photo))
+            {
+                editor.Adjustment.Exposure = 0.5f;
+                editor.ResetAdjustment();
+                await VerifyOutputAsync(editor, "Photos\\Barn.jpg");
+            }
+        }
+
+        [TestMethod]
+        public async Task SavesThumbnailToSidecar()
         {
             using (var editor = await PhotoEditor.CreateAsync(photo))
             {
@@ -36,7 +66,19 @@ namespace Fotografix
                 await editor.SaveAsync();
             }
 
-            Assert.IsNotNull(await sidecar.TryGetFileAsync());
+            var file = await sidecar.TryGetFileAsync();
+            Assert.IsNotNull(file);
+            await BitmapAssert.VerifyAsync(file, "Barn_exposure_thumbnail.jpg");
+        }
+
+        [TestMethod]
+        public async Task LoadsPreviouslySavedAdjustment()
+        {
+            using (var editor = await PhotoEditor.CreateAsync(photo))
+            {
+                editor.Adjustment.Exposure = 0.5f;
+                await editor.SaveAsync();
+            }
 
             using (var editor = await PhotoEditor.CreateAsync(photo))
             {
@@ -71,6 +113,19 @@ namespace Fotografix
             }
 
             Assert.IsNull(await sidecar.TryGetFileAsync());
+        }
+
+        private async Task VerifyOutputAsync(PhotoEditor editor, string filename)
+        {
+            using (var output = editor.CreateCompatibleRenderTarget())
+            {
+                using (var ds = output.CreateDrawingSession())
+                {
+                    editor.Draw(ds);
+                }
+
+                await BitmapAssert.VerifyAsync(output, filename);
+            }
         }
     }
 }

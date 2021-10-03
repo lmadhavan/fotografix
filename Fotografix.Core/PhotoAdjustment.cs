@@ -1,6 +1,8 @@
 ﻿using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Effects;
+using Newtonsoft.Json;
 using System;
+using Windows.Graphics.Effects;
 
 namespace Fotografix
 {
@@ -27,14 +29,15 @@ namespace Fotografix
             transferEffect.Dispose();
         }
 
-        public void Render(CanvasDrawingSession ds, ICanvasImage image)
+        [JsonIgnore]
+        public IGraphicsEffectSource Source
         {
-            var firstEffect = transferEffect;
-            var lastEffect = temperatureAndTintEffect;
-
-            firstEffect.Source = image;
-            ds.DrawImage(lastEffect);
+            get => transferEffect.Source;
+            set => transferEffect.Source = value;
         }
+
+        [JsonIgnore]
+        public ICanvasImage Output => temperatureAndTintEffect;
 
         #region Light
 

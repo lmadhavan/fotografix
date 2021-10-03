@@ -1,8 +1,10 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Threading.Tasks;
+using Windows.Foundation;
+using Windows.Graphics.Imaging;
 using Windows.Storage;
 using Windows.Storage.FileProperties;
 using Windows.Storage.Streams;
@@ -11,6 +13,8 @@ namespace Fotografix
 {
     public sealed class Photo
     {
+        private const string AdjustmentMetadataKey = "/xmp/{wstr=https://ns.fotografix.org/}:Adjustment";
+
         private readonly StorageFile content;
         private readonly StorageFileReference sidecar;
 
@@ -29,8 +33,17 @@ namespace Fotografix
 
         public async Task<IRandomAccessStream> GetThumbnailAsync()
         {
+            var file = await sidecar.TryGetFileAsync();
+
+            if (file != null)
+            {
+                return await file.OpenReadAsync();
+            }
+
             return await content.GetThumbnailAsync(ThumbnailMode.SingleItem);
         }
+
+        public event EventHandler ThumbnailUpdated;
 
         internal async Task<PhotoAdjustment> LoadAdjustmentAsync()
         {
@@ -44,31 +57,44 @@ namespace Fotografix
             Debug.WriteLine($"{Name}: Loading saved adjustment from {file.Path}");
 
             using (var stream = await file.OpenReadAsync())
-            using (var reader = new StreamReader(stream.AsStream()))
             {
-                JsonSerializer serializer = new JsonSerializer();
-                return (PhotoAdjustment)serializer.Deserialize(reader, typeof(PhotoAdjustment));
+                var decoder = await BitmapDecoder.CreateAsync(stream);
+                var metadata = await decoder.BitmapProperties.GetPropertiesAsync(new string[] { AdjustmentMetadataKey });
+
+                var serializedAdjustment = metadata[AdjustmentMetadataKey].Value as string;
+                return (PhotoAdjustment)JsonConvert.DeserializeObject(serializedAdjustment, typeof(PhotoAdjustment));
             }
         }
 
-        internal async Task SaveAdjustmentAsync(PhotoAdjustment adjustment)
+        internal async Task SaveAdjustmentAsync(PhotoAdjustment adjustment, SoftwareBitmap thumbnail)
         {
             var file = await sidecar.GetOrCreateFileAsync();
 
             Debug.WriteLine($"{Name}: Saving adjustment to {file.Path}");
 
             using (var stream = await file.OpenAsync(FileAccessMode.ReadWrite))
-            using (var writer = new StreamWriter(stream.AsStream()))
             {
-                JsonSerializer serializer = new JsonSerializer();
-                serializer.Serialize(writer, adjustment);
+                var encoder = await BitmapEncoder.CreateAsync(BitmapEncoder.JpegEncoderId, stream);
+                encoder.SetSoftwareBitmap(thumbnail);
+
+                var serializedAdjustment = JsonConvert.SerializeObject(adjustment);
+                var metadata = new Dictionary<string, BitmapTypedValue>
+                {
+                    [AdjustmentMetadataKey] = new BitmapTypedValue(serializedAdjustment, PropertyType.String)
+                };
+
+                await encoder.BitmapProperties.SetPropertiesAsync(metadata);
+                await encoder.FlushAsync();
             }
+
+            ThumbnailUpdated?.Invoke(this, EventArgs.Empty);
         }
 
-        internal Task DeleteAdjustmentAsync()
+        internal async Task DeleteAdjustmentAsync()
         {
             Debug.WriteLine($"{Name}: Deleting saved adjustment");
-            return sidecar.DeleteAsync();
+            await sidecar.DeleteAsync();
+            ThumbnailUpdated?.Invoke(this, EventArgs.Empty);
         }
     }
 }

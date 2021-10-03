@@ -128,6 +128,7 @@
     <Compile Include="PhotoFolder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StorageFileReference.cs" />
+    <Compile Include="ThumbnailRenderer.cs" />
     <EmbeddedResource Include="Properties\Fotografix.Core.rd.xml" />
   </ItemGroup>
   <ItemGroup>

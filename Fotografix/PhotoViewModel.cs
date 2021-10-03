@@ -11,6 +11,7 @@ namespace Fotografix
         public PhotoViewModel(Photo photo)
         {
             this.photo = photo;
+            photo.ThumbnailUpdated += (s, e) => RaisePropertyChanged(nameof(Thumbnail));
         }
 
         public NotifyTaskCompletion<BitmapSource> Thumbnail => new NotifyTaskCompletion<BitmapSource>(LoadThumbnailAsync());

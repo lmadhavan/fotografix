@@ -3,11 +3,14 @@ using System;
 using System.ComponentModel;
 using System.Threading.Tasks;
 using Windows.Foundation;
+using Windows.Graphics.Imaging;
 
 namespace Fotografix
 {
     public sealed class PhotoEditor : NotifyPropertyChangedBase, IDisposable
     {
+        private static readonly ThumbnailRenderer ThumbnailRenderer = new ThumbnailRenderer(512);
+
         private readonly Photo photo;
         private readonly CanvasBitmap bitmap;
         private PhotoAdjustment adjustment;
@@ -33,6 +36,7 @@ namespace Fotografix
             {
                 var bitmap = await CanvasBitmap.LoadAsync(CanvasDevice.GetSharedDevice(), stream);
                 var adjustment = await photo.LoadAdjustmentAsync();
+                adjustment.Source = bitmap;
                 return new PhotoEditor(photo, bitmap) { Adjustment = adjustment };
             }
         }
@@ -48,7 +52,7 @@ namespace Fotografix
                     break;
 
                 case State.Dirty:
-                    result = photo.SaveAdjustmentAsync(adjustment);
+                    result = SaveInternalAsync();
                     break;
 
                 case State.Reset:
@@ -96,20 +100,27 @@ namespace Fotografix
 
         public void Draw(CanvasDrawingSession ds)
         {
-            if (showOriginal)
-            {
-                ds.DrawImage(bitmap);
-            }
-            else
-            {
-                adjustment.Render(ds, bitmap);
-            }
+            ds.DrawImage(showOriginal ? bitmap : adjustment.Output);
+        }
+
+        public CanvasRenderTarget CreateCompatibleRenderTarget()
+        {
+            return new CanvasRenderTarget(bitmap, bitmap.Size);
         }
 
         public void ResetAdjustment()
         {
-            this.Adjustment = new PhotoAdjustment();
+            this.Adjustment = new PhotoAdjustment { Source = bitmap };
             this.state = State.Reset;
+        }
+
+        private async Task SaveInternalAsync()
+        {
+            using (var thumbnail = ThumbnailRenderer.RenderThumbnail(image: adjustment.Output, resourceCreator: bitmap))
+            using (var softwareBitmap = await SoftwareBitmap.CreateCopyFromSurfaceAsync(thumbnail))
+            {
+                await photo.SaveAdjustmentAsync(adjustment, softwareBitmap);
+            }
         }
 
         private void OnAdjustmentPropertyChanged(object sender, PropertyChangedEventArgs e)
