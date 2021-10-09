@@ -12,6 +12,7 @@ namespace Fotografix
         private readonly HighlightsAndShadowsEffect highlightsAndShadowsEffect;
         private readonly ContrastEffect contrastEffect;
         private readonly TemperatureAndTintEffect temperatureAndTintEffect;
+        private readonly SharpenEffect sharpenEffect;
 
         public PhotoAdjustment()
         {
@@ -19,6 +20,7 @@ namespace Fotografix
             this.highlightsAndShadowsEffect = new HighlightsAndShadowsEffect { Source = transferEffect };
             this.contrastEffect = new ContrastEffect { Source = highlightsAndShadowsEffect };
             this.temperatureAndTintEffect = new TemperatureAndTintEffect { Source = contrastEffect };
+            this.sharpenEffect = new SharpenEffect { Source = temperatureAndTintEffect };
         }
 
         public void Dispose()
@@ -37,7 +39,7 @@ namespace Fotografix
         }
 
         [JsonIgnore]
-        public ICanvasImage Output => temperatureAndTintEffect;
+        public ICanvasImage Output => sharpenEffect;
 
         #region Light
 
@@ -171,6 +173,39 @@ namespace Fotografix
                 {
                     temperatureAndTintEffect.Tint = value;
                     RaisePropertyChanged();
+                }
+            }
+        }
+
+        #endregion
+
+        #region Clarity
+
+        private float sharpness;
+
+        public float Clarity
+        {
+            get => highlightsAndShadowsEffect.Clarity;
+
+            set
+            {
+                if (highlightsAndShadowsEffect.Clarity != value)
+                {
+                    highlightsAndShadowsEffect.Clarity = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        public float Sharpness
+        {
+            get => sharpness;
+
+            set
+            {
+                if (SetProperty(ref sharpness, value))
+                {
+                    sharpenEffect.Amount = sharpness * 10;
                 }
             }
         }

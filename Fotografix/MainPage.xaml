@@ -77,6 +77,10 @@
                         <TextBlock Style="{ThemeResource SectionHeaderTextBlockStyle}" Text="Color" />
                         <Slider Header="Temperature" Value="{x:Bind Temperature}" />
                         <Slider Header="Tint" Value="{x:Bind Tint}" />
+
+                        <TextBlock Style="{ThemeResource SectionHeaderTextBlockStyle}" Text="Detail" />
+                        <Slider Header="Clarity" Value="{x:Bind Clarity}" />
+                        <Slider Header="Sharpness" Value="{x:Bind Sharpness}" Minimum="0" />
                     </StackPanel>
                 </DataTemplate>
             </ContentControl.ContentTemplate>

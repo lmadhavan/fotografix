@@ -87,6 +87,20 @@ namespace Fotografix
             await VerifyOutputAsync("Barn_tint.jpg");
         }
 
+        [TestMethod]
+        public async Task Clarity()
+        {
+            adjustment.Clarity = 0.5f;
+            await VerifyOutputAsync("Barn_clarity.jpg");
+        }
+
+        [TestMethod]
+        public async Task Sharpness()
+        {
+            adjustment.Sharpness = 0.5f;
+            await VerifyOutputAsync("Barn_sharpness.jpg");
+        }
+
         private async Task VerifyOutputAsync(string filename)
         {
             using (var output = new CanvasRenderTarget(bitmap, bitmap.Size))
