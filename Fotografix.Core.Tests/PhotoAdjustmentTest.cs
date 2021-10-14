@@ -95,6 +95,20 @@ namespace Fotografix
         }
 
         [TestMethod]
+        public async Task Vibrance()
+        {
+            adjustment.Vibrance = 1f;
+            await VerifyOutputAsync("Barn_vibrance.jpg");
+        }
+
+        [TestMethod]
+        public async Task Saturation()
+        {
+            adjustment.Saturation = 1f;
+            await VerifyOutputAsync("Barn_saturation.jpg");
+        }
+
+        [TestMethod]
         public async Task Sharpness()
         {
             adjustment.Sharpness = 0.5f;

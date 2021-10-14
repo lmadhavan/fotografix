@@ -157,11 +157,13 @@
     <Content Include="TestData\Barn_exposure.jpg" />
     <Content Include="TestData\Barn_exposure_thumbnail.jpg" />
     <Content Include="TestData\Barn_highlights.jpg" />
+    <Content Include="TestData\Barn_saturation.jpg" />
     <Content Include="TestData\Barn_shadows.jpg" />
     <Content Include="TestData\Barn_sharpness.jpg" />
     <Content Include="TestData\Barn_temperature.jpg" />
     <Content Include="TestData\Barn_thumbnail.jpg" />
     <Content Include="TestData\Barn_tint.jpg" />
+    <Content Include="TestData\Barn_vibrance.jpg" />
     <Content Include="TestData\Barn_whites.jpg" />
     <Content Include="TestData\Photos\Barn.jpg" />
     <Content Include="TestData\Photos\NotAnImage.txt" />

@@ -96,6 +96,8 @@
                             <StackPanel>
                                 <Slider Header="Temperature" Value="{x:Bind Temperature}" />
                                 <Slider Header="Tint" Value="{x:Bind Tint}" />
+                                <Slider Header="Vibrance" Value="{x:Bind Vibrance}" />
+                                <Slider Header="Saturation" Value="{x:Bind Saturation}" />
                             </StackPanel>
                         </winui:Expander>
                         

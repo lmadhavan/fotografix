@@ -1,4 +1,5 @@
-﻿using Microsoft.Graphics.Canvas;
+﻿using Fotografix.Shaders;
+using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Effects;
 using Newtonsoft.Json;
 using System;
@@ -12,6 +13,9 @@ namespace Fotografix
         private readonly HighlightsAndShadowsEffect highlightsAndShadowsEffect;
         private readonly ContrastEffect contrastEffect;
         private readonly TemperatureAndTintEffect temperatureAndTintEffect;
+        private readonly RgbToHueEffect rgbToHueEffect;
+        private readonly PixelShaderEffect hslAdjustmentEffect;
+        private readonly HueToRgbEffect hueToRgbEffect;
         private readonly SharpenEffect sharpenEffect;
 
         public PhotoAdjustment()
@@ -20,7 +24,13 @@ namespace Fotografix
             this.highlightsAndShadowsEffect = new HighlightsAndShadowsEffect { Source = transferEffect };
             this.contrastEffect = new ContrastEffect { Source = highlightsAndShadowsEffect };
             this.temperatureAndTintEffect = new TemperatureAndTintEffect { Source = contrastEffect };
-            this.sharpenEffect = new SharpenEffect { Source = temperatureAndTintEffect };
+            this.rgbToHueEffect = new RgbToHueEffect { Source = temperatureAndTintEffect, OutputColorSpace = EffectHueColorSpace.Hsl };
+
+            this.hslAdjustmentEffect = ShaderFactory.CreatePixelShaderEffect("HSLAdjustment");
+            hslAdjustmentEffect.Source1 = rgbToHueEffect;
+
+            this.hueToRgbEffect = new HueToRgbEffect { Source = hslAdjustmentEffect, SourceColorSpace = EffectHueColorSpace.Hsl };
+            this.sharpenEffect = new SharpenEffect { Source = hueToRgbEffect };
         }
 
         public void Dispose()
@@ -149,6 +159,9 @@ namespace Fotografix
 
         #region Color
 
+        private float vibrance;
+        private float saturation;
+
         public float Temperature
         {
             get => temperatureAndTintEffect.Temperature;
@@ -177,9 +190,35 @@ namespace Fotografix
             }
         }
 
+        public float Vibrance
+        {
+            get => vibrance;
+
+            set
+            {
+                if (SetProperty(ref vibrance, value))
+                {
+                    hslAdjustmentEffect.Properties["vibrance"] = vibrance;
+                }
+            }
+        }
+
+        public float Saturation
+        {
+            get => saturation;
+
+            set
+            {
+                if (SetProperty(ref saturation, value))
+                {
+                    hslAdjustmentEffect.Properties["saturation"] = saturation;
+                }
+            }
+        }
+
         #endregion
 
-        #region Clarity
+        #region Detail
 
         private float sharpness;
 
