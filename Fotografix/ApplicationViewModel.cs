@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.Storage;
-using Windows.Storage.Pickers;
 
 namespace Fotografix
 {
@@ -25,18 +24,6 @@ namespace Fotografix
         public Task DisposeAsync()
         {
             return SaveAsync(dispose: true);
-        }
-
-        public async void PickFolder()
-        {
-            FolderPicker picker = new FolderPicker();
-            picker.FileTypeFilter.Add("*");
-
-            var folder = await picker.PickSingleFolderAsync();
-            if (folder != null)
-            {
-                OpenFolder(folder);
-            }
         }
 
         public void OpenFolder(StorageFolder folder)

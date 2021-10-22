@@ -129,6 +129,7 @@
     <Compile Include="NotifyTaskCompletion.cs" />
     <Compile Include="PhotoViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RecentFolderMenuFlyout.cs" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">

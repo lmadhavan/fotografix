@@ -24,16 +24,29 @@
             <ColumnDefinition Width="300" />
         </Grid.ColumnDefinitions>
 
-        <StackPanel Orientation="Horizontal">
-            <Button Content="Open folder" Click="{x:Bind vm.PickFolder}" />
-        </StackPanel>
+        <winui:DropDownButton Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <Grid>
+                <TextBlock Text="No folder selected" Visibility="{x:Bind ShowIfNull(vm.Photos)}" />
 
-        <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="{x:Bind HideIfNull(vm.Photos)}">
-            <TextBlock Margin="4,0" FontWeight="Bold" Text="{x:Bind vm.FolderName}" />
-            <winui:ProgressRing Width="16" Height="16" Visibility="{x:Bind vm.Photos.IsNotCompleted}" />
-            <TextBlock Text="{x:Bind FormatPhotoCount(vm.Photos.Result.Count)}" Visibility="{x:Bind vm.Photos.IsCompleted}" />
-        </StackPanel>
+                <StackPanel Orientation="Horizontal" Visibility="{x:Bind HideIfNull(vm.Photos)}">
+                    <TextBlock Margin="4,0" FontWeight="Bold" Text="{x:Bind vm.FolderName}" />
+                    <winui:ProgressRing Width="16" Height="16" Visibility="{x:Bind vm.Photos.IsNotCompleted}" />
+                    <TextBlock Text="{x:Bind FormatPhotoCount(vm.Photos.Result.Count)}" Visibility="{x:Bind vm.Photos.IsCompleted}" />
+                </StackPanel>
+            </Grid>
 
+            <winui:DropDownButton.Flyout>
+                <local:RecentFolderMenuFlyout x:Name="recentFolderFlyout" FolderActivated="RecentFolderFlyout_FolderActivated">
+                    <MenuFlyoutItem Text="Browse..." Click="{x:Bind PickFolder}">
+                        <MenuFlyoutItem.KeyboardAccelerators>
+                            <KeyboardAccelerator Modifiers="Control" Key="O" />
+                        </MenuFlyoutItem.KeyboardAccelerators>
+                    </MenuFlyoutItem>
+                    <MenuFlyoutSeparator />
+                </local:RecentFolderMenuFlyout>
+            </winui:DropDownButton.Flyout>
+        </winui:DropDownButton>
+        
         <ListView Grid.Row="1" Width="155" HorizontalAlignment="Left"
                   ItemsSource="{x:Bind vm.Photos.Result}"
                   SelectedItem="{x:Bind vm.SelectedPhoto, Mode=TwoWay}">

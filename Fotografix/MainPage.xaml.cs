@@ -1,4 +1,7 @@
 ﻿using Microsoft.Graphics.Canvas.UI.Xaml;
+using System;
+using Windows.Storage;
+using Windows.Storage.Pickers;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
@@ -12,7 +15,6 @@ namespace Fotografix
         public MainPage()
         {
             this.InitializeComponent();
-            
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -38,6 +40,24 @@ namespace Fotografix
                 canvas.Width = editor.Size.Width;
                 canvas.Height = editor.Size.Height;
                 editor.Draw(args.DrawingSession);
+            }
+        }
+
+        private void RecentFolderFlyout_FolderActivated(object sender, StorageFolder folder)
+        {
+            vm.OpenFolder(folder);
+        }
+
+        private async void PickFolder()
+        {
+            FolderPicker picker = new FolderPicker();
+            picker.FileTypeFilter.Add("*");
+
+            var folder = await picker.PickSingleFolderAsync();
+            if (folder != null)
+            {
+                recentFolderFlyout.Add(folder);
+                vm.OpenFolder(folder);
             }
         }
 
