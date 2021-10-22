@@ -109,6 +109,27 @@ namespace Fotografix
         }
 
         [TestMethod]
+        public async Task ColorRange_Hue()
+        {
+            adjustment.ColorRanges.HueView.Yellow = -0.5f;
+            await VerifyOutputAsync("Barn_hue_yellow.jpg");
+        }
+
+        [TestMethod]
+        public async Task ColorRange_Saturation()
+        {
+            adjustment.ColorRanges.SaturationView.Yellow = 1f;
+            await VerifyOutputAsync("Barn_saturation_yellow.jpg");
+        }
+
+        [TestMethod]
+        public async Task ColorRange_Luminance()
+        {
+            adjustment.ColorRanges.LuminanceView.Yellow = 1f;
+            await VerifyOutputAsync("Barn_luminance_yellow.jpg");
+        }
+
+        [TestMethod]
         public async Task Sharpness()
         {
             adjustment.Sharpness = 0.5f;

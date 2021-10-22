@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
@@ -62,7 +61,7 @@ namespace Fotografix
                 var metadata = await decoder.BitmapProperties.GetPropertiesAsync(new string[] { AdjustmentMetadataKey });
 
                 var serializedAdjustment = metadata[AdjustmentMetadataKey].Value as string;
-                return (PhotoAdjustment)JsonConvert.DeserializeObject(serializedAdjustment, typeof(PhotoAdjustment));
+                return PhotoAdjustment.Deserialize(serializedAdjustment);
             }
         }
 
@@ -77,7 +76,7 @@ namespace Fotografix
                 var encoder = await BitmapEncoder.CreateAsync(BitmapEncoder.JpegEncoderId, stream);
                 encoder.SetSoftwareBitmap(thumbnail);
 
-                var serializedAdjustment = JsonConvert.SerializeObject(adjustment);
+                var serializedAdjustment = adjustment.Serialize();
                 var metadata = new Dictionary<string, BitmapTypedValue>
                 {
                     [AdjustmentMetadataKey] = new BitmapTypedValue(serializedAdjustment, PropertyType.String)

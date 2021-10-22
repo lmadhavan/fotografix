@@ -31,15 +31,26 @@ namespace Fotografix
 
             this.hueToRgbEffect = new HueToRgbEffect { Source = hslAdjustmentEffect, SourceColorSpace = EffectHueColorSpace.Hsl };
             this.sharpenEffect = new SharpenEffect { Source = hueToRgbEffect };
+
+            this.PropertyChanged += (s, e) => RaiseChanged();
+            this.ColorRanges = new ColorRangeAdjustment();
         }
 
         public void Dispose()
         {
+            UnsubscribeColorRanges();
+
+            sharpenEffect.Dispose();
+            hueToRgbEffect.Dispose();
+            hslAdjustmentEffect.Dispose();
+            rgbToHueEffect.Dispose();
             temperatureAndTintEffect.Dispose();
             contrastEffect.Dispose();
             highlightsAndShadowsEffect.Dispose();
             transferEffect.Dispose();
         }
+
+        public event EventHandler Changed;
 
         [JsonIgnore]
         public IGraphicsEffectSource Source
@@ -161,6 +172,7 @@ namespace Fotografix
 
         private float vibrance;
         private float saturation;
+        private ColorRangeAdjustment colorRanges;
 
         public float Temperature
         {
@@ -216,6 +228,40 @@ namespace Fotografix
             }
         }
 
+        public ColorRangeAdjustment ColorRanges
+        {
+            get => colorRanges;
+
+            set
+            {
+                UnsubscribeColorRanges();
+
+                this.colorRanges = value ?? throw new ArgumentNullException();
+                colorRanges.Changed += ColorRanges_Changed;
+
+                UpdateHslAdjustment();
+            }
+        }
+
+        private void UnsubscribeColorRanges()
+        {
+            if (colorRanges != null)
+            {
+                colorRanges.Changed -= ColorRanges_Changed;
+            }
+        }
+
+        private void ColorRanges_Changed(object sender, EventArgs e)
+        {
+            UpdateHslAdjustment();
+        }
+
+        private void UpdateHslAdjustment()
+        {
+            hslAdjustmentEffect.Properties["hsl"] = colorRanges.vectors;
+            RaiseChanged();
+        }
+
         #endregion
 
         #region Detail
@@ -250,5 +296,24 @@ namespace Fotografix
         }
 
         #endregion
+
+        #region Serialization
+
+        public string Serialize()
+        {
+            return JsonConvert.SerializeObject(this, new JsonSerializerSettings { DefaultValueHandling = DefaultValueHandling.Ignore });
+        }
+
+        public static PhotoAdjustment Deserialize(string str)
+        {
+            return (PhotoAdjustment)JsonConvert.DeserializeObject(str, typeof(PhotoAdjustment));
+        }
+
+        #endregion
+
+        private void RaiseChanged()
+        {
+            Changed?.Invoke(this, EventArgs.Empty);
+        }
     }
 }

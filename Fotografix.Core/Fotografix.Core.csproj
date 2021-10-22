@@ -120,6 +120,10 @@
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="ColorRange.cs" />
+    <Compile Include="ColorRangeAdjustment.cs" />
+    <Compile Include="ColorRangeView.cs" />
+    <Compile Include="HslValue.cs" />
     <Compile Include="Shaders\ShaderFactory.cs" />
     <Compile Include="SidecarStrategy.cs" />
     <Compile Include="PhotoAdjustment.cs" />

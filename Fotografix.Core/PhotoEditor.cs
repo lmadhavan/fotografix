@@ -1,6 +1,5 @@
 ﻿using Microsoft.Graphics.Canvas;
 using System;
-using System.ComponentModel;
 using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Graphics.Imaging;
@@ -77,7 +76,7 @@ namespace Fotografix
             {
                 adjustment?.Dispose();
                 this.adjustment = value;
-                adjustment.PropertyChanged += OnAdjustmentPropertyChanged;
+                adjustment.Changed += OnAdjustmentChanged;
                 RaisePropertyChanged(nameof(Adjustment));
                 Invalidate();
             }
@@ -123,7 +122,7 @@ namespace Fotografix
             }
         }
 
-        private void OnAdjustmentPropertyChanged(object sender, PropertyChangedEventArgs e)
+        private void OnAdjustmentChanged(object sender, EventArgs e)
         {
             this.state = State.Dirty;
             Invalidate();

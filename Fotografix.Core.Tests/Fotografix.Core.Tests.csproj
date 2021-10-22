@@ -120,6 +120,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BitmapAssert.cs" />
+    <Compile Include="PhotoAdjustmentSerializationTest.cs" />
     <Compile Include="PhotoAdjustmentTest.cs" />
     <Compile Include="PhotoEditorTest.cs" />
     <Compile Include="PhotoFolderTest.cs" />
@@ -157,7 +158,10 @@
     <Content Include="TestData\Barn_exposure.jpg" />
     <Content Include="TestData\Barn_exposure_thumbnail.jpg" />
     <Content Include="TestData\Barn_highlights.jpg" />
+    <Content Include="TestData\Barn_hue_yellow.jpg" />
+    <Content Include="TestData\Barn_luminance_yellow.jpg" />
     <Content Include="TestData\Barn_saturation.jpg" />
+    <Content Include="TestData\Barn_saturation_yellow.jpg" />
     <Content Include="TestData\Barn_shadows.jpg" />
     <Content Include="TestData\Barn_sharpness.jpg" />
     <Content Include="TestData\Barn_temperature.jpg" />
@@ -189,7 +193,9 @@
       <Name>Fotografix.Core</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Content Include="TestData\adjustment.json" />
+  </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>
