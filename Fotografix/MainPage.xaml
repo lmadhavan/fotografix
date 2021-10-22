@@ -3,6 +3,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Fotografix"
+    xmlns:winui="using:Microsoft.UI.Xaml.Controls"
     xmlns:win2d="using:Microsoft.Graphics.Canvas.UI.Xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -24,11 +25,17 @@
         </Grid.ColumnDefinitions>
 
         <StackPanel Orientation="Horizontal">
-            <Button Click="{x:Bind vm.PickFolder}">Open folder</Button>
+            <Button Content="Open folder" Click="{x:Bind vm.PickFolder}" />
+        </StackPanel>
+
+        <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="{x:Bind HideIfNull(vm.Photos)}">
+            <TextBlock Margin="4,0" FontWeight="Bold" Text="{x:Bind vm.FolderName}" />
+            <winui:ProgressRing Width="16" Height="16" Visibility="{x:Bind vm.Photos.IsNotCompleted}" />
+            <TextBlock Text="{x:Bind FormatPhotoCount(vm.Photos.Result.Count)}" Visibility="{x:Bind vm.Photos.IsCompleted}" />
         </StackPanel>
 
         <ListView Grid.Row="1" Width="155" HorizontalAlignment="Left"
-                  ItemsSource="{x:Bind vm.Photos.Result, Mode=OneWay}"
+                  ItemsSource="{x:Bind vm.Photos.Result}"
                   SelectedItem="{x:Bind vm.SelectedPhoto, Mode=TwoWay}">
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="local:PhotoViewModel">
@@ -36,7 +43,7 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
-
+        
         <Viewbox Grid.Row="1" Grid.Column="1">
             <win2d:CanvasControl x:Name="canvas" Width="1" Height="1" Draw="CanvasControl_Draw" />
         </Viewbox>

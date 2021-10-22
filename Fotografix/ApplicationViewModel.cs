@@ -12,6 +12,7 @@ namespace Fotografix
     {
         private readonly ISidecarStrategy sidecarStrategy;
 
+        private string folderName;
         private NotifyTaskCompletion<IList<PhotoViewModel>> photos;
         private PhotoViewModel selectedPhoto;
         private NotifyTaskCompletion<PhotoEditor> editor;
@@ -40,7 +41,14 @@ namespace Fotografix
 
         public void OpenFolder(StorageFolder folder)
         {
+            this.FolderName = folder.DisplayName;
             this.Photos = new NotifyTaskCompletion<IList<PhotoViewModel>>(LoadPhotosAsync(folder));
+        }
+
+        public string FolderName
+        {
+            get => folderName;
+            private set => SetProperty(ref folderName, value);
         }
 
         public NotifyTaskCompletion<IList<PhotoViewModel>> Photos
