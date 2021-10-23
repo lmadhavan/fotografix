@@ -130,6 +130,7 @@
     <Compile Include="PhotoViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RecentFolderMenuFlyout.cs" />
+    <Compile Include="NullToVisibilityConverter.cs" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">

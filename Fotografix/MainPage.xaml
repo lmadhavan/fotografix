@@ -12,9 +12,20 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
     Unloaded="Page_Unloaded">
 
+    <Page.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <local:EditorTemplates />
+            </ResourceDictionary.MergedDictionaries>
+            
+            <local:ShowIfNullConverter x:Key="ShowIfNull" />
+            <local:HideIfNullConverter x:Key="HideIfNull" />
+        </ResourceDictionary>
+    </Page.Resources>
+
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
+            <RowDefinition Height="40" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
@@ -26,9 +37,9 @@
 
         <winui:DropDownButton Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center">
             <Grid>
-                <TextBlock Text="No folder selected" Visibility="{x:Bind ShowIfNull(vm.Photos)}" />
+                <TextBlock Text="No folder selected" Visibility="{x:Bind vm.Photos, Converter={StaticResource ShowIfNull}}" />
 
-                <StackPanel Orientation="Horizontal" Visibility="{x:Bind HideIfNull(vm.Photos)}">
+                <StackPanel Orientation="Horizontal" Visibility="{x:Bind vm.Photos, Converter={StaticResource HideIfNull}}">
                     <TextBlock Margin="4,0" FontWeight="Bold" Text="{x:Bind vm.FolderName}" />
                     <winui:ProgressRing Width="16" Height="16" Visibility="{x:Bind vm.Photos.IsNotCompleted}" />
                     <TextBlock Text="{x:Bind FormatPhotoCount(vm.Photos.Result.Count)}" Visibility="{x:Bind vm.Photos.IsCompleted}" />
@@ -47,7 +58,7 @@
             </winui:DropDownButton.Flyout>
         </winui:DropDownButton>
         
-        <ListView Grid.Row="1" Width="155" HorizontalAlignment="Left"
+        <ListView Grid.Row="1" Width="155" Margin="0,8"
                   ItemsSource="{x:Bind vm.Photos.Result}"
                   SelectedItem="{x:Bind vm.SelectedPhoto, Mode=TwoWay}">
             <ListView.ItemTemplate>
@@ -56,22 +67,30 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
-        
-        <Viewbox Grid.Row="1" Grid.Column="1">
-            <win2d:CanvasControl x:Name="canvas" Width="1" Height="1" Draw="CanvasControl_Draw" />
-        </Viewbox>
 
-        <StackPanel Grid.Column="2" Orientation="Horizontal">
-            <Button Click="{x:Bind vm.Editor.Result.ResetAdjustment}">Reset</Button>
-            <ToggleSwitch Margin="48,0,0,0" IsOn="{x:Bind vm.Editor.Result.ShowOriginal, Mode=TwoWay}" OnContent="View original" OffContent="View original" />
-        </StackPanel>
+        <Grid Grid.Row="1" Grid.Column="1"
+              Margin="8" Padding="8"
+              Background="{ThemeResource LayerFillColorDefaultBrush}"
+              BorderThickness="1" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" CornerRadius="8">
+            <Viewbox>
+                <win2d:CanvasControl x:Name="canvas" Width="1" Height="1" Draw="CanvasControl_Draw" />
+            </Viewbox>
 
-        <ScrollViewer Grid.Row="1" Grid.Column="2">
-            <ScrollViewer.Resources>
-                <local:EditorTemplates />
-            </ScrollViewer.Resources>
+            <TextBlock HorizontalAlignment="Center"
+                       VerticalAlignment="Center"
+                       FontSize="48"
+                       Foreground="{ThemeResource ButtonDisabledForegroundThemeBrush}"
+                       Text="No photo selected"
+                       Visibility="{x:Bind vm.SelectedPhoto, Converter={StaticResource ShowIfNull}}" />
 
-            <ContentControl HorizontalContentAlignment="Stretch" Padding="8" Content="{x:Bind vm.Editor.Result.Adjustment}" ContentTemplate="{StaticResource PhotoAdjustmentTemplate}" />
-        </ScrollViewer>
+            <ProgressBar MaxWidth="400" IsIndeterminate="True" Visibility="{x:Bind vm.Editor.IsNotCompleted, FallbackValue=Collapsed}" />
+        </Grid>
+
+        <ContentControl 
+                    Grid.Column="2" Grid.RowSpan="2"
+                    HorizontalContentAlignment="Stretch"
+                    Visibility="{x:Bind vm.Editor.Result, Converter={StaticResource HideIfNull}, FallbackValue=Collapsed}"
+                    Content="{x:Bind vm.Editor.Result}"
+                    ContentTemplate="{StaticResource EditorControlsTemplate}" />
     </Grid>
 </Page>

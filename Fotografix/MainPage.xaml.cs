@@ -61,16 +61,6 @@ namespace Fotografix
             }
         }
 
-        private Visibility HideIfNull(object value)
-        {
-            return value == null ? Visibility.Collapsed : Visibility.Visible;
-        }
-
-        private Visibility ShowIfNull(object value)
-        {
-            return value == null ? Visibility.Visible : Visibility.Collapsed;
-        }
-
         private string FormatPhotoCount(int count)
         {
             string suffix = count == 1 ? "" : "s";

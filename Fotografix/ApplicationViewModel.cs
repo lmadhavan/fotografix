@@ -41,7 +41,14 @@ namespace Fotografix
         public NotifyTaskCompletion<IList<PhotoViewModel>> Photos
         {
             get => photos;
-            private set => SetProperty(ref photos, value);
+
+            private set
+            {
+                if (SetProperty(ref photos, value))
+                {
+                    this.SelectedPhoto = null;
+                }
+            }
         }
 
         public PhotoViewModel SelectedPhoto
