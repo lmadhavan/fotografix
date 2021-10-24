@@ -33,9 +33,9 @@
     <DataTemplate x:Key="EditorControlsTemplate" x:DataType="local:PhotoEditor" x:DefaultBindMode="OneWay">
         <Grid>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
             <Grid.RowDefinitions>
@@ -49,11 +49,19 @@
                     <TextBlock Margin="8,0,0,0" Text="Reset" />
                 </StackPanel>
             </Button>
-            <ToggleSwitch Grid.Column="2" Margin="0,0,-12,0" HorizontalAlignment="Right" IsOn="{x:Bind ShowOriginal, Mode=TwoWay}" OnContent="View original" OffContent="View original" />
+            <ToggleButton Grid.Column="2" Margin="0,0,8,0"
+                          IsChecked="{x:Bind ShowOriginal, Mode=TwoWay}"
+                          ToolTipService.ToolTip="Toggle before/after (B)">
+                <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE8AF;" />
+
+                <ToggleButton.KeyboardAccelerators>
+                    <KeyboardAccelerator Key="B" />
+                </ToggleButton.KeyboardAccelerators>
+            </ToggleButton>
 
             <ScrollViewer Grid.Row="1" Grid.ColumnSpan="3">
                 <ContentControl HorizontalContentAlignment="Stretch"
-                            Padding="8"
+                            Padding="8,4"
                             Content="{x:Bind Adjustment}"
                             ContentTemplate="{StaticResource PhotoAdjustmentTemplate}" />
             </ScrollViewer>

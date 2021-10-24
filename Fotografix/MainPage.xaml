@@ -23,7 +23,7 @@
         </ResourceDictionary>
     </Page.Resources>
 
-    <Grid>
+    <Grid Margin="0,4,0,0">
         <Grid.RowDefinitions>
             <RowDefinition Height="40" />
             <RowDefinition Height="*" />
@@ -69,7 +69,7 @@
         </ListView>
 
         <Grid Grid.Row="1" Grid.Column="1"
-              Margin="8" Padding="8"
+              Margin="8,4" Padding="8"
               Background="{ThemeResource LayerFillColorDefaultBrush}"
               BorderThickness="1" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" CornerRadius="8">
             <Viewbox>
@@ -84,6 +84,14 @@
                        Visibility="{x:Bind vm.SelectedPhoto, Converter={StaticResource ShowIfNull}}" />
 
             <ProgressBar MaxWidth="400" IsIndeterminate="True" Visibility="{x:Bind vm.Editor.IsNotCompleted, FallbackValue=Collapsed}" />
+
+            <Border HorizontalAlignment="Right"
+                    VerticalAlignment="Top"
+                    Margin="0" Padding="8"
+                    Background="{ThemeResource SystemControlBackgroundChromeBlackMediumBrush}" CornerRadius="4"
+                    Visibility="{x:Bind vm.Editor.Result.ShowOriginal, FallbackValue=Collapsed}">
+                <TextBlock Foreground="{ThemeResource SystemChromeWhiteColor}" FontSize="16" Text="Before" />
+            </Border>
         </Grid>
 
         <ContentControl 
