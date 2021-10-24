@@ -123,6 +123,7 @@
     <Compile Include="EditorTemplates.xaml.cs">
       <DependentUpon>EditorTemplates.xaml</DependentUpon>
     </Compile>
+    <Compile Include="FlyoutExtensions.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>

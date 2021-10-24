@@ -42,17 +42,24 @@
                 <RowDefinition Height="40" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
-            
-            <Button Grid.Column="0" Click="{x:Bind ResetAdjustment}">
-                <StackPanel Orientation="Horizontal">
-                    <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE81C;" />
-                    <TextBlock Margin="8,0,0,0" Text="Reset" />
-                </StackPanel>
+
+            <Button Grid.Column="1" Margin="0,0,4,0" ToolTipService.ToolTip="Reset">
+                <FontIcon Glyph="&#xE81C;" />
+
+                <Button.Flyout>
+                    <Flyout>
+                        <StackPanel>
+                            <TextBlock Text="All adjustments to this photo will be lost." />
+                            <Button Margin="0,8,0,0" HorizontalAlignment="Right" Content="Reset" Click="ResetButton_Click" />
+                        </StackPanel>
+                    </Flyout>
+                </Button.Flyout>
             </Button>
+
             <ToggleButton Grid.Column="2" Margin="0,0,8,0"
                           IsChecked="{x:Bind ShowOriginal, Mode=TwoWay}"
                           ToolTipService.ToolTip="Toggle before/after (B)">
-                <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE8AF;" />
+                <FontIcon Glyph="&#xE8AF;" />
 
                 <ToggleButton.KeyboardAccelerators>
                     <KeyboardAccelerator Key="B" />
