@@ -33,14 +33,7 @@ namespace Fotografix
 
         private void CanvasControl_Draw(CanvasControl sender, CanvasDrawEventArgs args)
         {
-            var editor = vm.Editor?.Result;
-
-            if (editor != null)
-            {
-                canvas.Width = editor.Size.Width;
-                canvas.Height = editor.Size.Height;
-                editor.Draw(args.DrawingSession);
-            }
+            vm.Editor?.Result?.Draw(args.DrawingSession);
         }
 
         private void RecentFolderFlyout_FolderActivated(object sender, StorageFolder folder)

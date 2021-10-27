@@ -1,5 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using System.Threading.Tasks;
+using Windows.Foundation;
 using Windows.Storage;
 
 namespace Fotografix
@@ -32,17 +34,6 @@ namespace Fotografix
             {
                 editor.Adjustment.Exposure = 0.5f;
                 await VerifyOutputAsync(editor, "Barn_exposure.jpg");
-            }
-        }
-
-        [TestMethod]
-        public async Task HidesAdjustmentWhenShowOriginalFlagIsEnabled()
-        {
-            using (var editor = await PhotoEditor.CreateAsync(photo))
-            {
-                editor.Adjustment.Exposure = 0.5f;
-                editor.ShowOriginal = true;
-                await VerifyOutputAsync(editor, "Photos\\Barn.jpg");
             }
         }
 
@@ -115,15 +106,18 @@ namespace Fotografix
             Assert.IsNull(await sidecar.TryGetFileAsync());
         }
 
+        [TestMethod]
+        public void ScalesSizeToFitMaxDimension()
+        {
+            Assert.AreEqual(new Size(100, 25), PhotoEditor.ScaleDimensions(new Size(200, 50), 100), "width > maxDimension: should scale width to maxDimension");
+            Assert.AreEqual(new Size(25, 100), PhotoEditor.ScaleDimensions(new Size(50, 200), 100), "height > maxDimension: should scale height to maxDimension");
+            Assert.AreEqual(new Size(100, 50), PhotoEditor.ScaleDimensions(new Size(100, 50), 200), "originalSize < maxDimension: should not scale");
+        }
+
         private async Task VerifyOutputAsync(PhotoEditor editor, string filename)
         {
-            using (var output = editor.CreateCompatibleRenderTarget())
+            using (var output = editor.RenderToCanvasBitmap())
             {
-                using (var ds = output.CreateDrawingSession())
-                {
-                    editor.Draw(ds);
-                }
-
                 await BitmapAssert.VerifyAsync(output, filename);
             }
         }

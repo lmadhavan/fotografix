@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.Storage;
@@ -31,7 +32,7 @@ namespace Fotografix
 
         private Photo CreatePhoto(StorageFile content)
         {
-            StorageFileReference sidecar = new StorageFileReference(sidecarFolder, content.DisplayName + ".dat");
+            StorageFileReference sidecar = new StorageFileReference(sidecarFolder, Path.GetFileNameWithoutExtension(content.Name) + ".dat");
             return new Photo(content, sidecar);
         }
     }

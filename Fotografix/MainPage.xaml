@@ -73,7 +73,9 @@
               Background="{ThemeResource LayerFillColorDefaultBrush}"
               BorderThickness="1" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" CornerRadius="8">
             <Viewbox>
-                <win2d:CanvasControl x:Name="canvas" Width="1" Height="1" Draw="CanvasControl_Draw" />
+                <win2d:CanvasControl x:Name="canvas" Draw="CanvasControl_Draw"
+                                     Width="{x:Bind vm.Editor.Result.Width}"
+                                     Height="{x:Bind vm.Editor.Result.Height}" />
             </Viewbox>
 
             <TextBlock HorizontalAlignment="Center"

@@ -14,7 +14,7 @@ namespace Fotografix
         private string folderName;
         private NotifyTaskCompletion<IList<PhotoViewModel>> photos;
         private PhotoViewModel selectedPhoto;
-        private NotifyTaskCompletion<PhotoEditor> editor;
+        private NotifyTaskCompletion<EditorViewModel> editor;
 
         public ApplicationViewModel(ISidecarStrategy sidecarStrategy)
         {
@@ -59,13 +59,13 @@ namespace Fotografix
             {
                 if (SetProperty(ref selectedPhoto, value))
                 {
-                    this.Editor = new NotifyTaskCompletion<PhotoEditor>(LoadEditorAsync());
+                    this.Editor = new NotifyTaskCompletion<EditorViewModel>(LoadEditorAsync());
                     Editor.Task.ContinueWith(t => InvalidateEditor());
                 }
             }
         }
 
-        public NotifyTaskCompletion<PhotoEditor> Editor
+        public NotifyTaskCompletion<EditorViewModel> Editor
         {
             get => editor;
             private set => SetProperty(ref editor, value);
@@ -91,7 +91,7 @@ namespace Fotografix
             return photos.Select(p => new PhotoViewModel(p)).ToList();
         }
 
-        private async Task<PhotoEditor> LoadEditorAsync()
+        private async Task<EditorViewModel> LoadEditorAsync()
         {
             await SaveAsync(dispose: true);
 
@@ -102,7 +102,7 @@ namespace Fotografix
 
             var editor = await selectedPhoto.CreateEditorAsync();
             editor.Invalidated += (s, e) => InvalidateEditor();
-            return editor;
+            return new EditorViewModel(editor);
         }
 
         private void InvalidateEditor()
@@ -114,14 +114,14 @@ namespace Fotografix
         {
             if (editor != null)
             {
-                var photoEditor = await editor.Task;
-                if (photoEditor != null)
+                var vm = await editor.Task;
+                if (vm != null)
                 {
-                    await photoEditor.SaveAsync();
+                    await vm.SaveAsync();
 
                     if (dispose)
                     {
-                        photoEditor.Dispose();
+                        vm.Dispose();
                     }
                 }
             }

@@ -30,7 +30,7 @@
         </Setter>
     </Style>
 
-    <DataTemplate x:Key="EditorControlsTemplate" x:DataType="local:PhotoEditor" x:DefaultBindMode="OneWay">
+    <DataTemplate x:Key="EditorControlsTemplate" x:DataType="local:EditorViewModel" x:DefaultBindMode="OneWay">
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
@@ -42,6 +42,13 @@
                 <RowDefinition Height="40" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
+
+            <Button Grid.Column="0" Click="ExportButton_Click">
+                <StackPanel Orientation="Horizontal">
+                    <FontIcon Glyph="&#xE72D;" />
+                    <TextBlock Margin="8,0,0,0" Text="Export" />
+                </StackPanel>
+            </Button>
 
             <Button Grid.Column="1" Margin="0,0,4,0" ToolTipService.ToolTip="Reset">
                 <FontIcon Glyph="&#xE81C;" />

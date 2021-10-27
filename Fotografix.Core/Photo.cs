@@ -23,7 +23,7 @@ namespace Fotografix
             this.sidecar = sidecar;
         }
 
-        public string Name => content.Name;
+        public string Name => content.DisplayName;
 
         public async Task<IRandomAccessStream> OpenContentAsync()
         {

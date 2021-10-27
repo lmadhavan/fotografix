@@ -1,5 +1,4 @@
 ﻿using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
 
 namespace Fotografix
 {
@@ -12,12 +11,18 @@ namespace Fotografix
 
         private void ResetButton_Click(object sender, RoutedEventArgs e)
         {
-            Button button = (Button)sender;
+            EditorFor(sender).ResetAdjustment();
+            ((FrameworkElement)sender).CloseParentFlyout();
+        }
 
-            PhotoEditor editor = (PhotoEditor)button.DataContext;
-            editor.ResetAdjustment();
+        private async void ExportButton_Click(object sender, RoutedEventArgs e)
+        {
+            await EditorFor(sender).ExportAsync();
+        }
 
-            button.CloseParentFlyout();
+        private EditorViewModel EditorFor(object sender)
+        {
+            return (EditorViewModel)((FrameworkElement)sender).DataContext;
         }
     }
 }
