@@ -120,6 +120,7 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="ApplicationViewModel.cs" />
+    <Compile Include="CustomTitleBar.cs" />
     <Compile Include="EditorTemplates.xaml.cs">
       <DependentUpon>EditorTemplates.xaml</DependentUpon>
     </Compile>

@@ -9,7 +9,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     x:DefaultBindMode="OneWay"
     mc:Ignorable="d"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+    winui:BackdropMaterial.ApplyToRootOrPageBackground="True"
     Unloaded="Page_Unloaded">
 
     <Page.Resources>
@@ -23,9 +23,9 @@
         </ResourceDictionary>
     </Page.Resources>
 
-    <Grid Margin="0,4,0,0">
+    <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="40" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
@@ -35,7 +35,19 @@
             <ColumnDefinition Width="300" />
         </Grid.ColumnDefinitions>
 
-        <winui:DropDownButton Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center">
+        <Border x:Name="appTitleBar"
+                Grid.ColumnSpan="3"
+                IsHitTestVisible="True"
+                VerticalAlignment="Top"
+                Background="Transparent"
+                Height="40">
+            <StackPanel Orientation="Horizontal">
+                <Image HorizontalAlignment="Left" VerticalAlignment="Center" Source="Assets/Square44x44Logo.png" Margin="8,8,0,0" Width="20" Height="20" />
+                <TextBlock x:Name="appTitle" Text="Fotografix" VerticalAlignment="Center" Margin="12,5,0,0" FontSize="16" />
+            </StackPanel>
+        </Border>
+
+        <winui:DropDownButton Grid.Column="1" Margin="0,4,0,0" HorizontalAlignment="Center" VerticalAlignment="Center">
             <Grid>
                 <TextBlock Text="No folder selected" Visibility="{x:Bind vm.Photos, Converter={StaticResource ShowIfNull}}" />
 
@@ -96,11 +108,10 @@
             </Border>
         </Grid>
 
-        <ContentControl 
-                    Grid.Column="2" Grid.RowSpan="2"
-                    HorizontalContentAlignment="Stretch"
-                    Visibility="{x:Bind vm.Editor.Result, Converter={StaticResource HideIfNull}, FallbackValue=Collapsed}"
-                    Content="{x:Bind vm.Editor.Result}"
-                    ContentTemplate="{StaticResource EditorControlsTemplate}" />
+        <ContentControl Grid.Row="1" Grid.Column="2" Grid.RowSpan="2"
+                        HorizontalContentAlignment="Stretch"
+                        Visibility="{x:Bind vm.Editor.Result, Converter={StaticResource HideIfNull}, FallbackValue=Collapsed}"
+                        Content="{x:Bind vm.Editor.Result}"
+                        ContentTemplate="{StaticResource EditorControlsTemplate}" />
     </Grid>
 </Page>

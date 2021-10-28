@@ -15,6 +15,7 @@ namespace Fotografix
         public MainPage()
         {
             this.InitializeComponent();
+            CustomTitleBar.Initialize(appTitleBar, appTitle);
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
