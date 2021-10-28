@@ -46,5 +46,25 @@ namespace Fotografix
             app.SelectedPhoto = photos[1];
             Assert.IsNotNull(await app.Editor.Task);
         }
+
+        /// <summary>
+        /// Ensure that changes to EditorViewModel properties (such as ShowOriginal) and underlying
+        /// PhotoAdjustment properties are propagated to ApplicationViewModel.
+        /// </summary>
+        [TestMethod]
+        public async Task ForwardsEditorInvalidatedEvents()
+        {
+            var photos = await app.Photos.Task;
+            app.SelectedPhoto = photos[0];
+            var editor = await app.Editor.Task;
+
+            int invalidatedCount = 0;
+            app.EditorInvalidated += (s, e) => invalidatedCount++;
+
+            editor.Adjustment.Exposure = 0.5f;
+            editor.ShowOriginal = true;
+
+            Assert.AreEqual(2, invalidatedCount);
+        }
     }
 }

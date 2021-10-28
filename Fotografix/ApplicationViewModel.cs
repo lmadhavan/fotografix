@@ -101,8 +101,9 @@ namespace Fotografix
             }
 
             var editor = await selectedPhoto.CreateEditorAsync();
-            editor.Invalidated += (s, e) => InvalidateEditor();
-            return new EditorViewModel(editor);
+            var vm = new EditorViewModel(editor);
+            vm.Invalidated += (s, e) => InvalidateEditor();
+            return vm;
         }
 
         private void InvalidateEditor()
