@@ -42,8 +42,8 @@
                 Background="Transparent"
                 Height="40">
             <StackPanel Orientation="Horizontal">
-                <Image HorizontalAlignment="Left" VerticalAlignment="Center" Source="Assets/Square44x44Logo.png" Margin="8,8,0,0" Width="20" Height="20" />
-                <TextBlock x:Name="appTitle" Text="Fotografix" VerticalAlignment="Center" Margin="12,5,0,0" FontSize="16" />
+                <Image HorizontalAlignment="Left" VerticalAlignment="Center" Source="Assets/Square44x44Logo.png" Margin="12,0,0,0" Width="20" Height="20" />
+                <TextBlock x:Name="appTitle" Text="Fotografix" VerticalAlignment="Center" Margin="10,0,0,0" FontSize="16" />
             </StackPanel>
         </Border>
 
