@@ -1,6 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
-using Windows.UI.Xaml.Media.Imaging;
+﻿using System.Threading.Tasks;
 
 namespace Fotografix
 {
@@ -14,17 +12,7 @@ namespace Fotografix
             photo.ThumbnailUpdated += (s, e) => RaisePropertyChanged(nameof(Thumbnail));
         }
 
-        public NotifyTaskCompletion<BitmapSource> Thumbnail => new NotifyTaskCompletion<BitmapSource>(LoadThumbnailAsync());
-
-        private async Task<BitmapSource> LoadThumbnailAsync()
-        {
-            var bitmap = new BitmapImage();
-            using (var stream = await photo.GetThumbnailAsync())
-            {
-                await bitmap.SetSourceAsync(stream);
-            }
-            return bitmap;
-        }
+        public NotifyTaskCompletion<ThumbnailViewModel> Thumbnail => new NotifyTaskCompletion<ThumbnailViewModel>(ThumbnailViewModel.CreateAsync(photo));
 
         internal Task<PhotoEditor> CreateEditorAsync()
         {

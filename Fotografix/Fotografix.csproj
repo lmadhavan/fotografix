@@ -134,6 +134,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RecentFolderMenuFlyout.cs" />
     <Compile Include="NullToVisibilityConverter.cs" />
+    <Compile Include="ThumbnailViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">

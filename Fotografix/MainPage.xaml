@@ -27,27 +27,29 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="300" />
         </Grid.ColumnDefinitions>
 
+        <!-- Title bar -->
         <Border x:Name="appTitleBar"
-                Grid.ColumnSpan="3"
+                Grid.ColumnSpan="2"
                 IsHitTestVisible="True"
                 VerticalAlignment="Top"
                 Background="Transparent"
                 Height="40">
             <StackPanel Orientation="Horizontal">
-                <Image HorizontalAlignment="Left" VerticalAlignment="Center" Source="Assets/Square44x44Logo.png" Margin="12,0,0,0" Width="20" Height="20" />
-                <TextBlock x:Name="appTitle" Text="Fotografix" VerticalAlignment="Center" Margin="10,0,0,0" FontSize="16" />
+                <Image HorizontalAlignment="Left" VerticalAlignment="Center" Source="Assets/Square44x44Logo.png" Margin="12,1,0,0" Width="20" Height="20" />
+                <TextBlock x:Name="appTitle" Text="Fotografix" VerticalAlignment="Center" Margin="10,0,0,0" FontSize="16"  />
             </StackPanel>
         </Border>
 
-        <winui:DropDownButton Grid.Column="1" Margin="0,4,0,0" HorizontalAlignment="Center" VerticalAlignment="Center">
+        <!-- Folder dropdown -->
+        <winui:DropDownButton Margin="0,4,0,0" HorizontalAlignment="Center" VerticalAlignment="Center">
             <Grid>
                 <TextBlock Text="No folder selected" Visibility="{x:Bind vm.Photos, Converter={StaticResource ShowIfNull}}" />
 
@@ -69,19 +71,43 @@
                 </local:RecentFolderMenuFlyout>
             </winui:DropDownButton.Flyout>
         </winui:DropDownButton>
-        
-        <ListView Grid.Row="1" Width="155" Margin="0,8"
+
+        <!-- Filmstrip -->
+        <ListView Grid.Row="2" Grid.ColumnSpan="1"
+                  Height="104" Margin="8,2"
                   ItemsSource="{x:Bind vm.Photos.Result}"
-                  SelectedItem="{x:Bind vm.SelectedPhoto, Mode=TwoWay}">
+                  SelectedItem="{x:Bind vm.SelectedPhoto, Mode=TwoWay}"
+                  ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                  ScrollViewer.HorizontalScrollMode="Auto"
+                  ScrollViewer.VerticalScrollBarVisibility="Hidden"
+                  ScrollViewer.VerticalScrollMode="Disabled"
+                  Visibility="{x:Bind vm.Photos, Converter={StaticResource HideIfNull}}">
+            <ListView.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <ItemsStackPanel Orientation="Horizontal" />
+                </ItemsPanelTemplate>
+            </ListView.ItemsPanel>
+
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="Margin" Value="-1" />
+                    <Setter Property="Padding" Value="3" />
+                    <Setter Property="MinWidth" Value="12" />
+                </Style>
+            </ListView.ItemContainerStyle>
+
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="local:PhotoViewModel">
-                    <Image Width="128" MaxHeight="128" Source="{x:Bind Thumbnail.Result}" />
+                    <Image Source="{x:Bind Thumbnail.Result.Source}"
+                           Width="{x:Bind Thumbnail.Result.Width}"
+                           Height="{x:Bind Thumbnail.Result.Height}"
+                           MaxWidth="192" Stretch="UniformToFill" />
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
 
-        <Grid Grid.Row="1" Grid.Column="1"
-              Margin="8,4" Padding="8"
+        <!-- Photo view -->
+        <Grid Grid.Row="1" Margin="8,4" Padding="8"
               Background="{ThemeResource LayerFillColorDefaultBrush}"
               BorderThickness="1" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" CornerRadius="8">
             <Viewbox>
@@ -108,6 +134,7 @@
             </Border>
         </Grid>
 
+        <!-- Editor controls -->
         <ContentControl Grid.Row="1" Grid.Column="2" Grid.RowSpan="2"
                         HorizontalContentAlignment="Stretch"
                         Visibility="{x:Bind vm.Editor.Result, Converter={StaticResource HideIfNull}, FallbackValue=Collapsed}"
