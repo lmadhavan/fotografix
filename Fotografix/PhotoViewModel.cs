@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using Microsoft.Graphics.Canvas;
+using System.Threading.Tasks;
 
 namespace Fotografix
 {
@@ -14,9 +15,9 @@ namespace Fotografix
 
         public NotifyTaskCompletion<ThumbnailViewModel> Thumbnail => new NotifyTaskCompletion<ThumbnailViewModel>(ThumbnailViewModel.CreateAsync(photo));
 
-        internal Task<PhotoEditor> CreateEditorAsync()
+        internal Task<PhotoEditor> CreateEditorAsync(ICanvasResourceCreatorWithDpi canvasResourceCreator)
         {
-            return PhotoEditor.CreateAsync(photo);
+            return PhotoEditor.CreateAsync(photo, canvasResourceCreator);
         }
     }
 }

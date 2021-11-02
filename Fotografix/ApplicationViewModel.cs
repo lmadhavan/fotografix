@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Graphics.Canvas;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -26,11 +27,7 @@ namespace Fotografix
             return SaveAsync(dispose: true);
         }
 
-        public void OpenFolder(StorageFolder folder)
-        {
-            this.FolderName = folder.DisplayName;
-            this.Photos = new NotifyTaskCompletion<IList<PhotoViewModel>>(LoadPhotosAsync(folder));
-        }
+        public ICanvasResourceCreatorWithDpi CanvasResourceCreator { get; set; }
 
         public string FolderName
         {
@@ -60,7 +57,6 @@ namespace Fotografix
                 if (SetProperty(ref selectedPhoto, value))
                 {
                     this.Editor = new NotifyTaskCompletion<EditorViewModel>(LoadEditorAsync());
-                    Editor.Task.ContinueWith(t => InvalidateEditor());
                 }
             }
         }
@@ -71,7 +67,13 @@ namespace Fotografix
             private set => SetProperty(ref editor, value);
         }
 
-        public event EventHandler EditorInvalidated;
+        public event EventHandler<EditorViewModel> EditorLoaded;
+
+        public void OpenFolder(StorageFolder folder)
+        {
+            this.FolderName = folder.DisplayName;
+            this.Photos = new NotifyTaskCompletion<IList<PhotoViewModel>>(LoadPhotosAsync(folder));
+        }
 
         public Task SaveAsync()
         {
@@ -100,15 +102,10 @@ namespace Fotografix
                 return null;
             }
 
-            var editor = await selectedPhoto.CreateEditorAsync();
-            var vm = new EditorViewModel(editor);
-            vm.Invalidated += (s, e) => InvalidateEditor();
+            var editor = await selectedPhoto.CreateEditorAsync(CanvasResourceCreator);
+            var vm = new EditorViewModel(editor, CanvasResourceCreator);
+            EditorLoaded?.Invoke(this, vm);
             return vm;
-        }
-
-        private void InvalidateEditor()
-        {
-            EditorInvalidated?.Invoke(this, EventArgs.Empty);
         }
 
         private async Task SaveAsync(bool dispose)

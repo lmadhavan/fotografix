@@ -153,6 +153,7 @@
     <Content Include="Assets\Wide310x150Logo.scale-200.png" />
     <Content Include="TestData\Barn_blacks.jpg" />
     <Content Include="TestData\Barn_clarity.jpg" />
+    <Content Include="TestData\Barn_clarity_scaled.jpg" />
     <Content Include="TestData\Barn_contrast.jpg" />
     <Content Include="TestData\Barn_exposure.jpg" />
     <Content Include="TestData\Barn_exposure_thumbnail.jpg" />
@@ -163,6 +164,7 @@
     <Content Include="TestData\Barn_saturation_yellow.jpg" />
     <Content Include="TestData\Barn_shadows.jpg" />
     <Content Include="TestData\Barn_sharpness.jpg" />
+    <Content Include="TestData\Barn_sharpness_scaled.jpg" />
     <Content Include="TestData\Barn_temperature.jpg" />
     <Content Include="TestData\Barn_thumbnail.jpg" />
     <Content Include="TestData\Barn_tint.jpg" />

@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.Graphics.Canvas;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
@@ -19,6 +20,7 @@ namespace Fotografix
             var sidecarStrategy = new FixedSidecarStrategy(ApplicationData.Current.TemporaryFolder);
             
             this.app = new ApplicationViewModel(sidecarStrategy);
+            app.CanvasResourceCreator = new StubCanvasResourceCreator();
             app.OpenFolder(photosFolder);
         }
 
@@ -47,24 +49,20 @@ namespace Fotografix
             Assert.IsNotNull(await app.Editor.Task);
         }
 
-        /// <summary>
-        /// Ensure that changes to EditorViewModel properties (such as ShowOriginal) and underlying
-        /// PhotoAdjustment properties are propagated to ApplicationViewModel.
-        /// </summary>
-        [TestMethod]
-        public async Task ForwardsEditorInvalidatedEvents()
+        private sealed class StubCanvasResourceCreator : ICanvasResourceCreatorWithDpi
         {
-            var photos = await app.Photos.Task;
-            app.SelectedPhoto = photos[0];
-            var editor = await app.Editor.Task;
+            public float ConvertPixelsToDips(int pixels)
+            {
+                throw new NotImplementedException();
+            }
 
-            int invalidatedCount = 0;
-            app.EditorInvalidated += (s, e) => invalidatedCount++;
+            public int ConvertDipsToPixels(float dips, CanvasDpiRounding dpiRounding)
+            {
+                throw new NotImplementedException();
+            }
 
-            editor.Adjustment.Exposure = 0.5f;
-            editor.ShowOriginal = true;
-
-            Assert.AreEqual(2, invalidatedCount);
+            public float Dpi => 96;
+            public CanvasDevice Device => CanvasDevice.GetSharedDevice();
         }
     }
 }

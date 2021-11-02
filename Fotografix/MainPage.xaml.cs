@@ -1,5 +1,6 @@
 ﻿using Microsoft.Graphics.Canvas.UI.Xaml;
 using System;
+using Windows.Foundation;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.UI.Xaml;
@@ -11,6 +12,7 @@ namespace Fotografix
     public sealed partial class MainPage : Page
     {
         private ApplicationViewModel vm;
+        private EditorViewModel editor;
 
         public MainPage()
         {
@@ -23,7 +25,16 @@ namespace Fotografix
             base.OnNavigatedTo(e);
 
             this.vm = (ApplicationViewModel)e.Parameter;
-            vm.EditorInvalidated += (s, e2) => canvas.Invalidate();
+            vm.CanvasResourceCreator = canvas;
+            vm.EditorLoaded += OnEditorLoaded;
+        }
+
+        private void OnEditorLoaded(object sender, EditorViewModel e)
+        {
+            this.editor = e;
+            editor.Invalidated += (s, _) => canvas.Invalidate();
+            editor.SetViewportSize(new Size(viewport.ActualWidth, viewport.ActualHeight));
+            canvas.Invalidate();
         }
 
         private async void Page_Unloaded(object sender, RoutedEventArgs e)
@@ -32,9 +43,15 @@ namespace Fotografix
             await vm.DisposeAsync();
         }
 
+
         private void CanvasControl_Draw(CanvasControl sender, CanvasDrawEventArgs args)
         {
-            vm.Editor?.Result?.Draw(args.DrawingSession);
+            editor?.Draw(args.DrawingSession);
+        }
+
+        private void Viewport_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            editor?.SetViewportSize(e.NewSize);
         }
 
         private void RecentFolderFlyout_FolderActivated(object sender, StorageFolder folder)

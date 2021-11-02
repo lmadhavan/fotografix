@@ -95,6 +95,14 @@ namespace Fotografix
         }
 
         [TestMethod]
+        public async Task Clarity_Scaled()
+        {
+            adjustment.Clarity = 0.5f;
+            adjustment.RenderScale = 0.5f;
+            await VerifyOutputAsync("Barn_clarity_scaled.jpg");
+        }
+
+        [TestMethod]
         public async Task Vibrance()
         {
             adjustment.Vibrance = 1f;
@@ -136,16 +144,24 @@ namespace Fotografix
             await VerifyOutputAsync("Barn_sharpness.jpg");
         }
 
-        private async Task VerifyOutputAsync(string filename)
+        [TestMethod]
+        public async Task Sharpness_Scaled()
         {
-            using (var output = new CanvasRenderTarget(bitmap, bitmap.Size))
+            adjustment.Sharpness = 0.5f;
+            adjustment.RenderScale = 0.5f;
+            await VerifyOutputAsync("Barn_sharpness_scaled.jpg", 1.9f);
+        }
+
+        private async Task VerifyOutputAsync(string filename, float tolerance = BitmapAssert.DefaultTolerance)
+        {
+            using (var output = new CanvasRenderTarget(bitmap, adjustment.GetOutputSize(bitmap)))
             {
                 using (var ds = output.CreateDrawingSession())
                 {
                     ds.DrawImage(adjustment.Output);
                 }
 
-                await BitmapAssert.VerifyAsync(output, filename);
+                await BitmapAssert.VerifyAsync(output, filename, tolerance);
             }
         }
     }

@@ -12,13 +12,13 @@ namespace Fotografix
         private readonly Photo photo;
         private readonly CanvasBitmap bitmap;
         private PhotoAdjustment adjustment;
-        private State state;
+        private SaveState saveState;
 
         private PhotoEditor(Photo photo, CanvasBitmap bitmap)
         {
             this.photo = photo;
             this.bitmap = bitmap;
-            this.state = State.Clean;
+            this.saveState = SaveState.Clean;
         }
 
         public void Dispose()
@@ -27,62 +27,93 @@ namespace Fotografix
             bitmap.Dispose();
         }
 
-        public static async Task<PhotoEditor> CreateAsync(Photo photo)
+        public static Task<PhotoEditor> CreateAsync(Photo photo)
+        {
+            return CreateAsync(photo, CanvasDevice.GetSharedDevice());
+        }
+
+        public static async Task<PhotoEditor> CreateAsync(Photo photo, ICanvasResourceCreator canvasResourceCreator)
         {
             using (var stream = await photo.OpenContentAsync())
             {
-                var bitmap = await CanvasBitmap.LoadAsync(CanvasDevice.GetSharedDevice(), stream);
+                var bitmap = await CanvasBitmap.LoadAsync(canvasResourceCreator, stream);
                 var adjustment = await photo.LoadAdjustmentAsync();
                 adjustment.Source = bitmap;
-                return new PhotoEditor(photo, bitmap) { Adjustment = adjustment };
+
+                var editor = new PhotoEditor(photo, bitmap);
+                editor.SetAdjustment(adjustment);
+                return editor;
             }
         }
 
         public int ThumbnailSize { get; set; } = 512;
-        public Size Size => bitmap.Size;
 
-        public PhotoAdjustment Adjustment
+        public IPhotoAdjustment Adjustment => adjustment;
+
+        public bool AdjustmentEnabled
         {
-            get => adjustment;
+            get => adjustment.Enabled;
 
-            private set
+            set
             {
-                adjustment?.Dispose();
-                this.adjustment = value;
-                adjustment.Changed += OnAdjustmentChanged;
-                RaisePropertyChanged(nameof(Adjustment));
-                Invalidate();
+                if (adjustment.Enabled != value)
+                {
+                    PreserveSaveState(() => adjustment.Enabled = value);
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        public Size RenderSize => adjustment.GetOutputSize(resourceCreator: bitmap);
+
+        public float RenderScale
+        {
+            get => adjustment.RenderScale;
+
+            set
+            {
+                if (adjustment.RenderScale != value)
+                {
+                    PreserveSaveState(() => adjustment.RenderScale = value);
+                    RaisePropertyChanged();
+                    RaisePropertyChanged(nameof(RenderSize));
+                }
             }
         }
 
         public event EventHandler Invalidated;
 
-        public void Draw(CanvasDrawingSession ds, bool hideAdjustment = false)
+        public void Draw(CanvasDrawingSession ds)
         {
-            ds.DrawImage(hideAdjustment ? bitmap : adjustment.Output);
+            ds.DrawImage(adjustment.Output);
+        }
+
+        public void SetRenderSize(Size size)
+        {
+            this.RenderScale = (float)Math.Min(size.Width / bitmap.Size.Width, size.Height / bitmap.Size.Height);
         }
 
         public void ResetAdjustment()
         {
-            this.Adjustment = new PhotoAdjustment { Source = bitmap };
-            this.state = State.Reset;
+            SetAdjustment(new PhotoAdjustment { Source = bitmap, RenderScale = adjustment.RenderScale });
+            this.saveState = SaveState.PendingDelete;
         }
 
         public Task SaveAsync()
         {
             Task result;
 
-            switch (state)
+            switch (saveState)
             {
-                case State.Clean:
+                case SaveState.Clean:
                     result = Task.CompletedTask;
                     break;
 
-                case State.Dirty:
+                case SaveState.Dirty:
                     result = SaveInternalAsync();
                     break;
 
-                case State.Reset:
+                case SaveState.PendingDelete:
                     result = photo.DeleteAdjustmentAsync();
                     break;
 
@@ -90,13 +121,13 @@ namespace Fotografix
                     throw new InvalidOperationException();
             }
 
-            this.state = State.Clean;
+            this.saveState = SaveState.Clean;
             return result;
         }
 
         public async Task<StorageFile> ExportAsync(StorageFolder folder)
         {
-            using (var bitmap = await RenderToSoftwareBitmapAsync())
+            using (var bitmap = await ExportToSoftwareBitmapAsync())
             {
                 var file = await folder.CreateFileAsync(photo.Name + ".jpg", CreationCollisionOption.GenerateUniqueName);
 
@@ -113,14 +144,19 @@ namespace Fotografix
 
         private async Task SaveInternalAsync()
         {
-            using (var thumbnail = await RenderToSoftwareBitmapAsync(ThumbnailSize))
+            using (var thumbnail = await ExportToSoftwareBitmapAsync(ThumbnailSize))
             {
                 await photo.SaveAdjustmentAsync(adjustment, thumbnail);
             }
         }
 
-        public CanvasBitmap RenderToCanvasBitmap(int? maxDimension = null)
+        public CanvasBitmap ExportToCanvasBitmap(int? maxDimension = null)
         {
+            this.AdjustmentEnabled = true;
+
+            var originalRenderScale = adjustment.RenderScale;
+            adjustment.RenderScale = 1;
+
             var originalBounds = adjustment.Output.GetBounds(resourceCreator: bitmap);
             var scaledSize = ScaleDimensions(new Size(originalBounds.Width, originalBounds.Height), maxDimension);
             var rt = new CanvasRenderTarget(resourceCreator: bitmap, size: scaledSize);
@@ -130,21 +166,39 @@ namespace Fotografix
                 ds.DrawImage(adjustment.Output, rt.Bounds, originalBounds);
             }
 
+            adjustment.RenderScale = originalRenderScale;
             return rt;
         }
 
-        public async Task<SoftwareBitmap> RenderToSoftwareBitmapAsync(int? maxDimension = null)
+        public async Task<SoftwareBitmap> ExportToSoftwareBitmapAsync(int? maxDimension = null)
         {
-            using (var bitmap = RenderToCanvasBitmap(maxDimension))
+            using (var bitmap = ExportToCanvasBitmap(maxDimension))
             {
                 return await SoftwareBitmap.CreateCopyFromSurfaceAsync(bitmap);
             }
         }
 
+        private void SetAdjustment(PhotoAdjustment value)
+        {
+            adjustment?.Dispose();
+            this.adjustment = value;
+            adjustment.Changed += OnAdjustmentChanged;
+            RaisePropertyChanged(nameof(Adjustment));
+            RaisePropertyChanged(nameof(AdjustmentEnabled));
+            Invalidate();
+        }
+
         private void OnAdjustmentChanged(object sender, EventArgs e)
         {
-            this.state = State.Dirty;
+            this.saveState = SaveState.Dirty;
             Invalidate();
+        }
+
+        private void PreserveSaveState(Action action)
+        {
+            var oldSaveState = saveState;
+            action();
+            this.saveState = oldSaveState;
         }
 
         private void Invalidate()
@@ -176,11 +230,11 @@ namespace Fotografix
             }
         }
 
-        private enum State
+        private enum SaveState
         {
             Clean,
             Dirty,
-            Reset
+            PendingDelete
         }
     }
 }

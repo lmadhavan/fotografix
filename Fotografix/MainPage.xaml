@@ -110,11 +110,13 @@
         <Grid Grid.Row="1" Margin="8,4" Padding="8"
               Background="{ThemeResource LayerFillColorDefaultBrush}"
               BorderThickness="1" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" CornerRadius="8">
-            <Viewbox>
-                <win2d:CanvasControl x:Name="canvas" Draw="CanvasControl_Draw"
-                                     Width="{x:Bind vm.Editor.Result.Width}"
-                                     Height="{x:Bind vm.Editor.Result.Height}" />
-            </Viewbox>
+            <Border x:Name="viewport" SizeChanged="Viewport_SizeChanged">
+                <win2d:CanvasControl x:Name="canvas"
+                                     Draw="CanvasControl_Draw"
+                                     Width="{x:Bind vm.Editor.Result.RenderWidth}"
+                                     Height="{x:Bind vm.Editor.Result.RenderHeight}"
+                                     Visibility="{x:Bind vm.SelectedPhoto, Converter={StaticResource HideIfNull}}" />
+            </Border>
 
             <TextBlock HorizontalAlignment="Center"
                        VerticalAlignment="Center"

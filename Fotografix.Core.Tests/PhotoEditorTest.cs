@@ -1,5 +1,4 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
 using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Storage;
@@ -49,6 +48,65 @@ namespace Fotografix
         }
 
         [TestMethod]
+        public async Task PreservesRenderScaleWhenAdjustmentIsReset()
+        {
+            using (var editor = await PhotoEditor.CreateAsync(photo))
+            {
+                editor.RenderScale = 0.5f;
+                editor.ResetAdjustment();
+
+                Assert.AreEqual(0.5f, editor.RenderScale);
+            }
+        }
+
+        [TestMethod]
+        public async Task ComputesRenderScaleBasedOnSize()
+        {
+            using (var editor = await PhotoEditor.CreateAsync(photo))
+            {
+                editor.SetRenderSize(new Size(300, 150));
+
+                // original photo is 900x600, so 300x150 should result in 25% scale
+                Assert.AreEqual(0.25f, editor.RenderScale);
+            }
+        }
+
+        [TestMethod]
+        public async Task ExportSizeOverridesRenderScale()
+        {
+            using (var editor = await PhotoEditor.CreateAsync(photo))
+            {
+                editor.Adjustment.Exposure = 0.5f;
+                editor.RenderScale = 0.1f;
+
+                using (var output = editor.ExportToCanvasBitmap(512))
+                {
+                    await BitmapAssert.VerifyAsync(output, "Barn_exposure_thumbnail.jpg", 1.8f);
+                }
+
+                // ensure that configured render scale is retained
+                Assert.AreEqual(0.1f, editor.RenderScale);
+            }
+        }
+
+        [TestMethod]
+        public async Task ExportEnablesAdjustmentIfDisabled()
+        {
+            using (var editor = await PhotoEditor.CreateAsync(photo))
+            {
+                editor.Adjustment.Exposure = 0.5f;
+                editor.AdjustmentEnabled = false;
+
+                using (var output = editor.ExportToCanvasBitmap(512))
+                {
+                    await BitmapAssert.VerifyAsync(output, "Barn_exposure_thumbnail.jpg", 1.8f);
+                }
+
+                Assert.IsTrue(editor.AdjustmentEnabled);
+            }
+        }
+
+        [TestMethod]
         public async Task SavesThumbnailToSidecar()
         {
             using (var editor = await PhotoEditor.CreateAsync(photo))
@@ -82,6 +140,11 @@ namespace Fotografix
         {
             using (var editor = await PhotoEditor.CreateAsync(photo))
             {
+                // the "meta" properties below are not serialized, make
+                // sure that changing them does not create a sidecar
+                editor.AdjustmentEnabled = false;
+                editor.RenderScale = 0.5f;
+
                 await editor.SaveAsync();
             }
 
@@ -116,7 +179,7 @@ namespace Fotografix
 
         private async Task VerifyOutputAsync(PhotoEditor editor, string filename)
         {
-            using (var output = editor.RenderToCanvasBitmap())
+            using (var output = editor.ExportToCanvasBitmap())
             {
                 await BitmapAssert.VerifyAsync(output, filename);
             }

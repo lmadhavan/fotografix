@@ -95,7 +95,7 @@
         </StackPanel>
     </DataTemplate>
 
-    <DataTemplate x:Key="PhotoAdjustmentTemplate" x:DataType="local:PhotoAdjustment" x:DefaultBindMode="TwoWay">
+    <DataTemplate x:Key="PhotoAdjustmentTemplate" x:DataType="local:IPhotoAdjustment" x:DefaultBindMode="TwoWay">
         <StackPanel>
             <winui:Expander IsExpanded="True" Header="Light">
                 <StackPanel>

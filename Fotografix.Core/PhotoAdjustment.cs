@@ -3,12 +3,15 @@ using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Effects;
 using Newtonsoft.Json;
 using System;
+using System.Numerics;
+using Windows.Foundation;
 using Windows.Graphics.Effects;
 
 namespace Fotografix
 {
-    public sealed class PhotoAdjustment : NotifyPropertyChangedBase, IDisposable
+    public sealed class PhotoAdjustment : NotifyPropertyChangedBase, IDisposable, IPhotoAdjustment
     {
+        private readonly Transform2DEffect transformEffect;
         private readonly GammaTransferEffect transferEffect;
         private readonly HighlightsAndShadowsEffect highlightsAndShadowsEffect;
         private readonly ContrastEffect contrastEffect;
@@ -20,7 +23,8 @@ namespace Fotografix
 
         public PhotoAdjustment()
         {
-            this.transferEffect = new GammaTransferEffect();
+            this.transformEffect = new Transform2DEffect();
+            this.transferEffect = new GammaTransferEffect { Source = transformEffect };
             this.highlightsAndShadowsEffect = new HighlightsAndShadowsEffect { Source = transferEffect };
             this.contrastEffect = new ContrastEffect { Source = highlightsAndShadowsEffect };
             this.temperatureAndTintEffect = new TemperatureAndTintEffect { Source = contrastEffect };
@@ -48,19 +52,60 @@ namespace Fotografix
             contrastEffect.Dispose();
             highlightsAndShadowsEffect.Dispose();
             transferEffect.Dispose();
+            transformEffect.Dispose();
         }
 
         public event EventHandler Changed;
 
+        #region Rendering parameters
+
+        private bool enabled = true;
+        private float renderScale = 1;
+
         [JsonIgnore]
         public IGraphicsEffectSource Source
         {
-            get => transferEffect.Source;
-            set => transferEffect.Source = value;
+            get => transformEffect.Source;
+            set => transformEffect.Source = value;
         }
 
         [JsonIgnore]
-        public ICanvasImage Output => sharpenEffect;
+        public ICanvasImage Output => enabled ? (ICanvasImage)sharpenEffect : (ICanvasImage)transformEffect;
+
+        [JsonIgnore]
+        public bool Enabled
+        {
+            get => enabled;
+            set => SetProperty(ref enabled, value);
+        }
+
+        [JsonIgnore]
+        public float RenderScale
+        {
+            get => renderScale;
+
+            set
+            {
+                value = Math.Min(1, value);
+
+                if (SetProperty(ref renderScale, value))
+                {
+                    transformEffect.TransformMatrix = Matrix3x2.CreateScale(value);
+
+                    // scale radius-based adjustments to match the input scale
+                    highlightsAndShadowsEffect.MaskBlurAmount = 1.25f * renderScale;
+                    UpdateSharpness();
+                }
+            }
+        }
+
+        public Size GetOutputSize(ICanvasResourceCreator resourceCreator)
+        {
+            var bounds = transformEffect.GetBounds(resourceCreator);
+            return new Size(bounds.Width, bounds.Height);
+        }
+
+        #endregion
 
         #region Light
 
@@ -290,9 +335,14 @@ namespace Fotografix
             {
                 if (SetProperty(ref sharpness, value))
                 {
-                    sharpenEffect.Amount = sharpness * 10;
+                    UpdateSharpness();
                 }
             }
+        }
+
+        private void UpdateSharpness()
+        {
+            sharpenEffect.Amount = sharpness * renderScale * renderScale * 10;
         }
 
         #endregion

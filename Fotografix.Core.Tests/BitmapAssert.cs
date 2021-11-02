@@ -13,25 +13,25 @@ namespace Fotografix
 {
     internal static class BitmapAssert
     {
-        private const float Tolerance = 1.75f;
+        internal const float DefaultTolerance = 1.75f;
 
-        internal static async Task VerifyAsync(StorageFile actual, string fileWithExpectedBitmap)
+        internal static async Task VerifyAsync(StorageFile actual, string fileWithExpectedBitmap, float tolerance = DefaultTolerance)
         {
             using (var stream = await actual.OpenReadAsync())
             {
-                await VerifyAsync(stream, fileWithExpectedBitmap);
+                await VerifyAsync(stream, fileWithExpectedBitmap, tolerance);
             }
         }
 
-        internal static async Task VerifyAsync(IRandomAccessStream actual, string fileWithExpectedBitmap)
+        internal static async Task VerifyAsync(IRandomAccessStream actual, string fileWithExpectedBitmap, float tolerance = DefaultTolerance)
         {
             using (var actualBitmap = await CanvasBitmap.LoadAsync(CanvasDevice.GetSharedDevice(), actual))
             {
-                await VerifyAsync(actualBitmap, fileWithExpectedBitmap);
+                await VerifyAsync(actualBitmap, fileWithExpectedBitmap, tolerance);
             }
         }
 
-        internal static async Task VerifyAsync(CanvasBitmap actual, string fileWithExpectedBitmap)
+        internal static async Task VerifyAsync(CanvasBitmap actual, string fileWithExpectedBitmap, float tolerance = DefaultTolerance)
         {
             try
             {
@@ -40,7 +40,7 @@ namespace Fotografix
                 using (var stream = await file.OpenReadAsync())
                 using (var expected = await CanvasBitmap.LoadAsync(CanvasDevice.GetSharedDevice(), stream))
                 {
-                    VerifyBytes(expected.GetPixelBytes(), actual.GetPixelBytes(), fileWithExpectedBitmap);
+                    VerifyBytes(expected.GetPixelBytes(), actual.GetPixelBytes(), tolerance, fileWithExpectedBitmap);
                 }
             }
             catch
@@ -63,7 +63,7 @@ namespace Fotografix
             await CoreApplication.MainView.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () => await Launcher.LaunchFolderAsync(tempFolder));
         }
 
-        private static void VerifyBytes(byte[] expected, byte[] actual, string filename)
+        private static void VerifyBytes(byte[] expected, byte[] actual, float tolerance, string filename)
         {
             if (expected.Length != actual.Length)
             {
@@ -80,9 +80,9 @@ namespace Fotografix
 
             float avgDelta = (float)totalDelta / expected.Length;
 
-            if (avgDelta > Tolerance)
+            if (avgDelta > tolerance)
             {
-                Assert.Fail($"Average delta exceeds tolerance ({filename}): {avgDelta} > {Tolerance}");
+                Assert.Fail($"Average delta exceeds tolerance ({filename}): {avgDelta} > {tolerance}");
             }
 
             Debug.WriteLine($"Average delta for {filename} = {avgDelta}");
