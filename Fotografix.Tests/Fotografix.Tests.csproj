@@ -146,6 +146,9 @@
     <Content Include="..\Fotografix.Core.Tests\TestData\Photos\Snow.jpg">
       <Link>TestData\Photos\Snow.jpg</Link>
     </Content>
+    <Content Include="..\Fotografix.Core.Tests\TestData\Photos\ZZZ_BadImage.jpg">
+      <Link>TestData\Photos\ZZZ_BadImage.jpg</Link>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">

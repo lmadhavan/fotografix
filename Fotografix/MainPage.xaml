@@ -51,7 +51,7 @@
         <!-- Folder dropdown -->
         <winui:DropDownButton Margin="0,4,0,0" HorizontalAlignment="Center" VerticalAlignment="Center">
             <Grid>
-                <TextBlock Text="No folder selected" Visibility="{x:Bind vm.Photos, Converter={StaticResource ShowIfNull}}" />
+                <TextBlock Text="Select a folder" Visibility="{x:Bind vm.Photos, Converter={StaticResource ShowIfNull}}" />
 
                 <StackPanel Orientation="Horizontal" Visibility="{x:Bind vm.Photos, Converter={StaticResource HideIfNull}}">
                     <TextBlock Margin="4,0" FontWeight="Bold" Text="{x:Bind vm.FolderName}" />
@@ -110,20 +110,29 @@
         <Grid Grid.Row="1" Margin="8,4" Padding="8"
               Background="{ThemeResource LayerFillColorDefaultBrush}"
               BorderThickness="1" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" CornerRadius="8">
-            <Border x:Name="viewport" SizeChanged="Viewport_SizeChanged">
+            <Border x:Name="viewport"
+                    Visibility="{x:Bind vm.Editor.Result, Converter={StaticResource HideIfNull}}"
+                    SizeChanged="Viewport_SizeChanged">
                 <win2d:CanvasControl x:Name="canvas"
                                      Draw="CanvasControl_Draw"
                                      Width="{x:Bind vm.Editor.Result.RenderWidth}"
-                                     Height="{x:Bind vm.Editor.Result.RenderHeight}"
-                                     Visibility="{x:Bind vm.SelectedPhoto, Converter={StaticResource HideIfNull}}" />
+                                     Height="{x:Bind vm.Editor.Result.RenderHeight}" />
             </Border>
 
-            <TextBlock HorizontalAlignment="Center"
-                       VerticalAlignment="Center"
-                       FontSize="48"
-                       Foreground="{ThemeResource ButtonDisabledForegroundThemeBrush}"
-                       Text="No photo selected"
-                       Visibility="{x:Bind vm.SelectedPhoto, Converter={StaticResource ShowIfNull}}" />
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="{x:Bind vm.SelectedPhoto, Converter={StaticResource ShowIfNull}}">
+                <FontIcon FontSize="72" Glyph="&#xEB9F;" Foreground="{ThemeResource ButtonDisabledForegroundThemeBrush}" />
+                <TextBlock FontSize="24" Text="No photo selected" Foreground="{ThemeResource ButtonDisabledForegroundThemeBrush}" />
+            </StackPanel>
+
+
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="{x:Bind vm.Editor.IsFaulted, FallbackValue=Collapsed}">
+                <FontIcon FontSize="48" Glyph="&#xEB90;" Foreground="DarkRed" />
+                <TextBlock HorizontalAlignment="Center" FontSize="20">
+                    <Run Text="Couldn't open" />
+                    <Run Text="{x:Bind vm.SelectedPhoto.Name}" />
+                </TextBlock>
+                <TextBlock HorizontalAlignment="Center" Text="{x:Bind vm.Editor.Exception.Message}" />
+            </StackPanel>
 
             <ProgressBar MaxWidth="400" IsIndeterminate="True" Visibility="{x:Bind vm.Editor.IsNotCompleted, FallbackValue=Collapsed}" />
 

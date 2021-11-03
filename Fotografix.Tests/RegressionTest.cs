@@ -31,7 +31,6 @@ namespace Fotografix
         }
 
         /// <summary>
-        /// When switching folders, XAML sets SelectedPhoto to null when the Photos list is reset.
         /// A missing null check in the view model breaks the editor load task for the rest of the session.
         /// </summary>
         [TestMethod]
@@ -46,6 +45,20 @@ namespace Fotografix
             Assert.IsNull(await app.Editor.Task);
 
             app.SelectedPhoto = photos[1];
+            Assert.IsNotNull(await app.Editor.Task);
+        }
+
+        /// <summary>
+        /// Missing error handling in the view model breaks the editor load task for the rest of the session.
+        /// </summary>
+        [TestMethod]
+        public async Task HandlesFailedEditorLoadTask()
+        {
+            var photos = await app.Photos.Task;
+
+            app.SelectedPhoto = photos[2]; // ZZZ_BadImage.jpg
+            app.SelectedPhoto = photos[0];
+
             Assert.IsNotNull(await app.Editor.Task);
         }
 

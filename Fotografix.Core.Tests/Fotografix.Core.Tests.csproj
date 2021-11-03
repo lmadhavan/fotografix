@@ -173,6 +173,7 @@
     <Content Include="TestData\Photos\Barn.jpg" />
     <Content Include="TestData\Photos\NotAnImage.txt" />
     <Content Include="TestData\Photos\Snow.jpg" />
+    <Content Include="TestData\Photos\ZZZ_BadImage.jpg" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">

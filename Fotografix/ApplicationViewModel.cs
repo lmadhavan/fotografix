@@ -112,15 +112,24 @@ namespace Fotografix
         {
             if (editor != null)
             {
-                var vm = await editor.Task;
-                if (vm != null)
+                try
                 {
-                    await vm.SaveAsync();
+                    var vm = await editor.Task;
 
-                    if (dispose)
+                    if (vm != null)
                     {
-                        vm.Dispose();
+                        await vm.SaveAsync();
+
+                        if (dispose)
+                        {
+                            vm.Dispose();
+                        }
                     }
+                }
+                catch
+                {
+                    // if the editor fails to load, there is nothing to save
+                    // actual error notification happens through the UI
                 }
             }
         }
