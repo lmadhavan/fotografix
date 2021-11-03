@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Windows.Graphics.Imaging;
 using Windows.Storage;
 using Windows.Storage.Search;
 
@@ -10,8 +11,23 @@ namespace Fotografix
 {
     public sealed class PhotoFolder
     {
+        private static QueryOptions QueryOptions;
+
         private readonly StorageFolder contentFolder;
         private readonly StorageFolder sidecarFolder;
+
+        static PhotoFolder()
+        {
+            QueryOptions = new QueryOptions();
+
+            foreach (var info in BitmapDecoder.GetDecoderInformationEnumerator())
+            {
+                foreach (var extension in info.FileExtensions)
+                {
+                    QueryOptions.FileTypeFilter.Add(extension);
+                }
+            }
+        }
 
         public PhotoFolder(StorageFolder contentFolder, StorageFolder sidecarFolder)
         {
@@ -21,10 +37,7 @@ namespace Fotografix
 
         public async Task<IReadOnlyList<Photo>> GetPhotosAsync()
         {
-            var queryOptions = new QueryOptions();
-            queryOptions.FileTypeFilter.Add(".jpg");
-
-            var query = contentFolder.CreateFileQueryWithOptions(queryOptions);
+            var query = contentFolder.CreateFileQueryWithOptions(QueryOptions);
             var files = await query.GetFilesAsync();
 
             return files.Select(CreatePhoto).ToList();
