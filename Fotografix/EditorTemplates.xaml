@@ -108,30 +108,30 @@
                 </StackPanel>
             </winui:Expander>
 
-            <winui:Expander IsExpanded="True" Header="Color">
+            <winui:Expander Header="Color">
                 <StackPanel>
                     <Slider Header="Temperature" Value="{x:Bind Temperature}" />
                     <Slider Header="Tint" Value="{x:Bind Tint}" />
                     <Slider Header="Vibrance" Value="{x:Bind Vibrance}" />
                     <Slider Header="Saturation" Value="{x:Bind Saturation}" />
-
-                    <winui:Expander IsExpanded="False" Header="HSL" Margin="0,8,0,0">
-                        <Pivot x:DefaultBindMode="OneWay" Margin="-4">
-                            <Pivot.HeaderTemplate>
-                                <DataTemplate>
-                                    <TextBlock FontSize="14" Text="{Binding}" />
-                                </DataTemplate>
-                            </Pivot.HeaderTemplate>
-
-                            <PivotItem Header="Hue" Content="{x:Bind ColorRanges.HueView}" ContentTemplate="{StaticResource ColorRangeViewTemplate}" />
-                            <PivotItem Header="Saturation" Content="{x:Bind ColorRanges.SaturationView}" ContentTemplate="{StaticResource ColorRangeViewTemplate}" />
-                            <PivotItem Header="Luminance" Content="{x:Bind ColorRanges.LuminanceView}" ContentTemplate="{StaticResource ColorRangeViewTemplate}" />
-                        </Pivot>
-                    </winui:Expander>
                 </StackPanel>
             </winui:Expander>
 
-            <winui:Expander IsExpanded="False" Header="Detail">
+            <winui:Expander Header="HSL">
+                <Pivot x:DefaultBindMode="OneWay" Margin="-4">
+                    <Pivot.HeaderTemplate>
+                        <DataTemplate>
+                            <TextBlock FontSize="14" Text="{Binding}" />
+                        </DataTemplate>
+                    </Pivot.HeaderTemplate>
+
+                    <PivotItem Header="Hue" Content="{x:Bind ColorRanges.HueView}" ContentTemplate="{StaticResource ColorRangeViewTemplate}" />
+                    <PivotItem Header="Saturation" Content="{x:Bind ColorRanges.SaturationView}" ContentTemplate="{StaticResource ColorRangeViewTemplate}" />
+                    <PivotItem Header="Luminance" Content="{x:Bind ColorRanges.LuminanceView}" ContentTemplate="{StaticResource ColorRangeViewTemplate}" />
+                </Pivot>
+            </winui:Expander>
+
+            <winui:Expander Header="Detail">
                 <StackPanel>
                     <Slider Header="Clarity" Value="{x:Bind Clarity}" />
                     <Slider Header="Sharpness" Value="{x:Bind Sharpness}" Minimum="0" />
