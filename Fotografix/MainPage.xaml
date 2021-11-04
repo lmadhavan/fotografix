@@ -72,6 +72,12 @@
             </winui:DropDownButton.Flyout>
         </winui:DropDownButton>
 
+        <!-- Zoom controls -->
+        <ContentControl HorizontalAlignment="Right" Margin="0,4,8,0"
+                        Visibility="{x:Bind vm.Editor.Result, Converter={StaticResource HideIfNull}, FallbackValue=Collapsed}"
+                        Content="{x:Bind vm.Editor.Result}"
+                        ContentTemplate="{StaticResource EditorZoomControlsTemplate}" />
+
         <!-- Filmstrip -->
         <ListView Grid.Row="2" Grid.ColumnSpan="1"
                   Height="104" Margin="8,2"
@@ -118,25 +124,29 @@
             </ListView.ItemTemplate>
         </ListView>
 
-        <!-- Photo view -->
+        <!-- Content area -->
         <Grid Grid.Row="1" Margin="8,4" Padding="8"
               Background="{ThemeResource LayerFillColorDefaultBrush}"
               BorderThickness="1" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" CornerRadius="8">
-            <Border x:Name="viewport"
-                    Visibility="{x:Bind vm.Editor.Result, Converter={StaticResource HideIfNull}}"
-                    SizeChanged="Viewport_SizeChanged">
-                <win2d:CanvasControl x:Name="canvas"
-                                     Draw="CanvasControl_Draw"
-                                     Width="{x:Bind vm.Editor.Result.RenderWidth}"
-                                     Height="{x:Bind vm.Editor.Result.RenderHeight}" />
-            </Border>
+            <!-- Canvas -->
+            <ScrollViewer x:Name="viewport"
+                          HorizontalScrollBarVisibility="Auto"
+                          SizeChanged="Viewport_SizeChanged">
+                <Border Visibility="{x:Bind vm.Editor.Result, Converter={StaticResource HideIfNull}, FallbackValue=Collapsed}">
+                    <win2d:CanvasControl x:Name="canvas"
+                                         Draw="CanvasControl_Draw"
+                                         Width="{x:Bind vm.Editor.Result.RenderWidth}"
+                                         Height="{x:Bind vm.Editor.Result.RenderHeight}" />
+                </Border>
+            </ScrollViewer>
 
+            <!-- Placeholder text -->
             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="{x:Bind vm.SelectedPhoto, Converter={StaticResource ShowIfNull}}">
                 <FontIcon FontSize="72" Glyph="&#xEB9F;" Foreground="{ThemeResource ButtonDisabledForegroundThemeBrush}" />
                 <TextBlock FontSize="24" Text="No photo selected" Foreground="{ThemeResource ButtonDisabledForegroundThemeBrush}" />
             </StackPanel>
 
-
+            <!-- Error message -->
             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="{x:Bind vm.Editor.IsFaulted, FallbackValue=Collapsed}">
                 <FontIcon FontSize="48" Glyph="&#xEB90;" Foreground="DarkRed" />
                 <TextBlock HorizontalAlignment="Center" FontSize="20">
@@ -146,8 +156,10 @@
                 <TextBlock HorizontalAlignment="Center" Text="{x:Bind vm.Editor.Exception.Message}" />
             </StackPanel>
 
+            <!-- Progress bar -->
             <ProgressBar MaxWidth="400" IsIndeterminate="True" Visibility="{x:Bind vm.Editor.IsNotCompleted, FallbackValue=Collapsed}" />
 
+            <!-- Before/after indicator -->
             <Border HorizontalAlignment="Right"
                     VerticalAlignment="Top"
                     Margin="0" Padding="8"

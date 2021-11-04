@@ -42,12 +42,60 @@ namespace Fotografix
 
         public event EventHandler Invalidated;
 
+        #region Viewport controls
+
+        private Size viewportSize;
+        private bool zoomToFit = true;
+
+        public bool IsZoomedToFit
+        {
+            get => zoomToFit;
+
+            private set
+            {
+                if (SetProperty(ref zoomToFit, value))
+                {
+                    RaisePropertyChanged(nameof(CanZoomToFit));
+                    RaisePropertyChanged(nameof(CanZoomToActualPixels));
+                }
+                
+                if (zoomToFit)
+                {
+                    editor.SetRenderSize(viewportSize);
+                    RaisePropertyChanged(nameof(IsZoomedToActualPixels));
+                }
+            }
+        }
+
+        public bool IsZoomedToActualPixels => editor.RenderScale == 1 && !zoomToFit;
+
+        public bool CanZoomToFit => !zoomToFit;
+        public bool CanZoomToActualPixels => zoomToFit;
+
         public void SetViewportSize(Size size)
         {
-            size.Width = ConvertDipsToPixels(size.Width);
-            size.Height = ConvertDipsToPixels(size.Height);
-            editor.SetRenderSize(size);
+            this.viewportSize = size;
+            viewportSize.Width = ConvertDipsToPixels(size.Width);
+            viewportSize.Height = ConvertDipsToPixels(size.Height);
+
+            if (zoomToFit)
+            {
+                editor.SetRenderSize(viewportSize);
+            }
         }
+
+        public void ZoomToFit()
+        {
+            this.IsZoomedToFit = true;
+        }
+
+        public void ZoomToActualPixels()
+        {
+            editor.RenderScale = 1;
+            this.IsZoomedToFit = false;
+        }
+
+        #endregion
 
         public void Draw(CanvasDrawingSession ds)
         {

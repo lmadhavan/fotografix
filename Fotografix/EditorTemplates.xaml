@@ -32,6 +32,19 @@
         </Setter>
     </Style>
 
+    <DataTemplate x:Key="EditorZoomControlsTemplate" x:DataType="local:EditorViewModel" x:DefaultBindMode="OneWay">
+        <StackPanel Orientation="Horizontal">
+            <ToggleButton Content="Fit"
+                          IsEnabled="{x:Bind CanZoomToFit}"
+                          IsChecked="{x:Bind IsZoomedToFit}"
+                          Click="{x:Bind ZoomToFit}" />
+            <ToggleButton Content="1:1"
+                          IsEnabled="{x:Bind CanZoomToActualPixels}"
+                          IsChecked="{x:Bind IsZoomedToActualPixels}"
+                          Click="{x:Bind ZoomToActualPixels}" />
+        </StackPanel>
+    </DataTemplate>
+
     <DataTemplate x:Key="EditorControlsTemplate" x:DataType="local:EditorViewModel" x:DefaultBindMode="OneWay">
         <Grid>
             <Grid.ColumnDefinitions>
