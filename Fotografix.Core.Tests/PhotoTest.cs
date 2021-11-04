@@ -21,6 +21,8 @@ namespace Fotografix
             var sidecar = new StorageFileReference(ApplicationData.Current.TemporaryFolder, "non-existent-file");
             var photo = new Photo(content, sidecar);
 
+            Assert.IsFalse(await photo.HasAdjustmentAsync());
+
             using (var thumbnail = await photo.GetThumbnailAsync())
             {
                 await BitmapAssert.VerifyAsync(thumbnail, "Barn_thumbnail.jpg");
@@ -32,6 +34,8 @@ namespace Fotografix
         {
             var sidecar = await TestData.GetFileReferenceAsync("Barn_exposure_thumbnail.jpg");
             var photo = new Photo(content, sidecar);
+
+            Assert.IsTrue(await photo.HasAdjustmentAsync());
 
             using (var thumbnail = await photo.GetThumbnailAsync())
             {

@@ -42,7 +42,12 @@ namespace Fotografix
             return await content.GetThumbnailAsync(ThumbnailMode.SingleItem);
         }
 
-        public event EventHandler ThumbnailUpdated;
+        public event EventHandler Changed;
+
+        public async Task<bool> HasAdjustmentAsync()
+        {
+            return (await sidecar.TryGetFileAsync()) != null;
+        }
 
         internal async Task<PhotoAdjustment> LoadAdjustmentAsync()
         {
@@ -86,14 +91,14 @@ namespace Fotografix
                 await encoder.FlushAsync();
             }
 
-            ThumbnailUpdated?.Invoke(this, EventArgs.Empty);
+            Changed?.Invoke(this, EventArgs.Empty);
         }
 
         internal async Task DeleteAdjustmentAsync()
         {
             Debug.WriteLine($"{Name}: Deleting saved adjustment");
             await sidecar.DeleteAsync();
-            ThumbnailUpdated?.Invoke(this, EventArgs.Empty);
+            Changed?.Invoke(this, EventArgs.Empty);
         }
     }
 }

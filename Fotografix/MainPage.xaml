@@ -98,10 +98,22 @@
 
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="local:PhotoViewModel">
-                    <Image Source="{x:Bind Thumbnail.Result.Source}"
-                           Width="{x:Bind Thumbnail.Result.Width}"
-                           Height="{x:Bind Thumbnail.Result.Height}"
-                           MaxWidth="192" Stretch="UniformToFill" />
+                    <Grid>
+                        <!-- Photo thumbnail -->
+                        <Image Source="{x:Bind Thumbnail.Result.Source}"
+                               Width="{x:Bind Thumbnail.Result.Width}"
+                               Height="{x:Bind Thumbnail.Result.Height}"
+                               MaxWidth="192" Stretch="UniformToFill" />
+
+                        <!-- Edit status indicator -->
+                        <Border HorizontalAlignment="Right" VerticalAlignment="Top"
+                                Margin="3" Padding="5"
+                                BorderThickness="1" BorderBrush="{ThemeResource SystemChromeWhiteColor}"
+                                Background="{ThemeResource SystemControlBackgroundChromeBlackMediumBrush}" CornerRadius="4"
+                                Visibility="{x:Bind IsEdited.Result, FallbackValue=Collapsed}">
+                            <FontIcon FontSize="11" Foreground="{ThemeResource SystemChromeWhiteColor}" Glyph="&#xE706;" />
+                        </Border>
+                    </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>

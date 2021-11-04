@@ -10,11 +10,12 @@ namespace Fotografix
         public PhotoViewModel(Photo photo)
         {
             this.photo = photo;
-            photo.ThumbnailUpdated += (s, e) => RaisePropertyChanged(nameof(Thumbnail));
+            photo.Changed += (s, e) => RaisePropertyChanged("");
         }
 
         public string Name => photo.Name;
         public NotifyTaskCompletion<ThumbnailViewModel> Thumbnail => new NotifyTaskCompletion<ThumbnailViewModel>(ThumbnailViewModel.CreateAsync(photo));
+        public NotifyTaskCompletion<bool> IsEdited => new NotifyTaskCompletion<bool>(photo.HasAdjustmentAsync());
 
         internal Task<PhotoEditor> CreateEditorAsync(ICanvasResourceCreatorWithDpi canvasResourceCreator)
         {
