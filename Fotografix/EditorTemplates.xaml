@@ -42,9 +42,9 @@
                     <SolidColorBrush x:Key="ButtonBackgroundDisabled" Color="{ThemeResource SystemAccentColor}" />
                 </ResourceDictionary>
             </StackPanel.Resources>
-            
-            <Button Content="Fit" IsEnabled="{x:Bind CanZoomToFit}" Click="{x:Bind ZoomToFit}" />
-            <Button Content="1:1" IsEnabled="{x:Bind CanZoomToActualPixels}" Click="{x:Bind ZoomToActualPixels}" />
+
+            <Button CornerRadius="4,0,0,4" BorderThickness="1,1,0,1" Content="Fit" IsEnabled="{x:Bind CanZoomToFit}" Click="{x:Bind ZoomToFit}" />
+            <Button CornerRadius="0,4,4,0" BorderThickness="0,1,1,1" Content="1:1" IsEnabled="{x:Bind CanZoomToActualPixels}" Click="{x:Bind ZoomToActualPixels}" />
         </StackPanel>
     </DataTemplate>
 
