@@ -19,7 +19,7 @@ namespace Fotografix
         private readonly RgbToHueEffect rgbToHueEffect;
         private readonly PixelShaderEffect hslAdjustmentEffect;
         private readonly HueToRgbEffect hueToRgbEffect;
-        private readonly SharpenEffect sharpenEffect;
+        private readonly SharpnessAdjustment sharpnessAdjustment;
 
         public PhotoAdjustment()
         {
@@ -34,9 +34,10 @@ namespace Fotografix
             hslAdjustmentEffect.Source1 = rgbToHueEffect;
 
             this.hueToRgbEffect = new HueToRgbEffect { Source = hslAdjustmentEffect, SourceColorSpace = EffectHueColorSpace.Hsl };
-            this.sharpenEffect = new SharpenEffect { Source = hueToRgbEffect };
+            this.sharpnessAdjustment = new SharpnessAdjustment { Source = hueToRgbEffect };
 
             this.PropertyChanged += (s, e) => RaiseChanged();
+            sharpnessAdjustment.PropertyChanged += (s, e) => RaiseChanged();
             this.ColorRanges = new ColorRangeAdjustment();
         }
 
@@ -44,7 +45,7 @@ namespace Fotografix
         {
             UnsubscribeColorRanges();
 
-            sharpenEffect.Dispose();
+            sharpnessAdjustment.Dispose();
             hueToRgbEffect.Dispose();
             hslAdjustmentEffect.Dispose();
             rgbToHueEffect.Dispose();
@@ -70,7 +71,7 @@ namespace Fotografix
         }
 
         [JsonIgnore]
-        public ICanvasImage Output => enabled ? (ICanvasImage)sharpenEffect : (ICanvasImage)transformEffect;
+        public ICanvasImage Output => enabled ? sharpnessAdjustment.Output : transformEffect;
 
         [JsonIgnore]
         public bool Enabled
@@ -91,10 +92,10 @@ namespace Fotografix
                 if (SetProperty(ref renderScale, value))
                 {
                     transformEffect.TransformMatrix = Matrix3x2.CreateScale(value);
+                    sharpnessAdjustment.RenderScale = value;
 
                     // scale radius-based adjustments to match the input scale
                     highlightsAndShadowsEffect.MaskBlurAmount = 1.25f * renderScale;
-                    UpdateSharpness();
                 }
             }
         }
@@ -311,8 +312,6 @@ namespace Fotografix
 
         #region Detail
 
-        private float sharpness;
-
         public float Clarity
         {
             get => highlightsAndShadowsEffect.Clarity;
@@ -327,23 +326,7 @@ namespace Fotografix
             }
         }
 
-        public float Sharpness
-        {
-            get => sharpness;
-
-            set
-            {
-                if (SetProperty(ref sharpness, value))
-                {
-                    UpdateSharpness();
-                }
-            }
-        }
-
-        private void UpdateSharpness()
-        {
-            sharpenEffect.Amount = sharpness * renderScale * renderScale * 10;
-        }
+        public ISharpnessAdjustment Sharpness => sharpnessAdjustment;
 
         #endregion
 

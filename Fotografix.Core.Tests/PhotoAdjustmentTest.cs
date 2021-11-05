@@ -140,16 +140,20 @@ namespace Fotografix
         [TestMethod]
         public async Task Sharpness()
         {
-            adjustment.Sharpness = 0.5f;
+            adjustment.Sharpness.Amount = 0.5f;
+            adjustment.Sharpness.Radius = 2f;
+            adjustment.Sharpness.Threshold = 0.05f;
             await VerifyOutputAsync("Barn_sharpness.jpg");
         }
 
         [TestMethod]
         public async Task Sharpness_Scaled()
         {
-            adjustment.Sharpness = 0.5f;
+            adjustment.Sharpness.Amount = 0.5f;
+            adjustment.Sharpness.Radius = 2f;
+            adjustment.Sharpness.Threshold = 0.05f;
             adjustment.RenderScale = 0.5f;
-            await VerifyOutputAsync("Barn_sharpness_scaled.jpg", 1.9f);
+            await VerifyOutputAsync("Barn_sharpness_scaled.jpg");
         }
 
         private async Task VerifyOutputAsync(string filename, float tolerance = BitmapAssert.DefaultTolerance)

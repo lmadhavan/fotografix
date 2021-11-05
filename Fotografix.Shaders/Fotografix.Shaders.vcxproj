@@ -164,6 +164,23 @@
   <ItemGroup>
     <None Include="buildshader.bat" />
   </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="UnsharpMask.hlsl">
+      <FileType>Document</FileType>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">buildshader "%(Filename)" "$(UM_IncludePath)"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">buildshader "%(Filename)" "$(UM_IncludePath)"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">buildshader "%(Filename)" "$(UM_IncludePath)"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">buildshader "%(Filename)" "$(UM_IncludePath)"</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(Filename).fxlib;%(Filename).cso</Outputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">buildshader.bat</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(Filename).fxlib;%(Filename).cso</Outputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">buildshader.bat</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(Filename).fxlib;%(Filename).cso</Outputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">buildshader.bat</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(Filename).fxlib;%(Filename).cso</Outputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">buildshader.bat</AdditionalInputs>
+    </CustomBuild>
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

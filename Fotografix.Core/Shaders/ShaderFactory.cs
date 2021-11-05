@@ -1,4 +1,5 @@
 ﻿using Microsoft.Graphics.Canvas.Effects;
+using System;
 
 namespace Fotografix.Shaders
 {
@@ -8,6 +9,11 @@ namespace Fotografix.Shaders
         {
             using (var stream = typeof(ShaderFactory).Assembly.GetManifestResourceStream(typeof(ShaderFactory), shaderName + ".cso"))
             {
+                if (stream == null)
+                {
+                    throw new ArgumentException("Missing shader: " + shaderName);
+                }
+
                 int length = (int)stream.Length;
                 byte[] shaderCode = new byte[stream.Length];
                 stream.Read(shaderCode, 0, length);

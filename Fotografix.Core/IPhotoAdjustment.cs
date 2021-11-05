@@ -23,7 +23,7 @@ namespace Fotografix
 
         #region Detail
         float Clarity { get; set; }
-        float Sharpness { get; set; }
+        ISharpnessAdjustment Sharpness { get; }
         #endregion
     }
 }

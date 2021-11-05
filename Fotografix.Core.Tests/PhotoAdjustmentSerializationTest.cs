@@ -27,9 +27,12 @@ namespace Fotografix
             using (PhotoAdjustment adjustment = new PhotoAdjustment())
             {
                 adjustment.Exposure = 0.1f;
+
                 adjustment.ColorRanges[ColorRange.Red].Hue = 0.2f;
                 adjustment.ColorRanges[ColorRange.Green].Saturation = 0.3f;
                 adjustment.ColorRanges[ColorRange.Blue].Luminance = 0.4f;
+
+                adjustment.Sharpness.Amount = 0.5f;
 
                 Debug.WriteLine(adjustment.Serialize());
             }

@@ -11,13 +11,15 @@
         <Setter Property="Margin" Value="0,16" />
     </Style>
 
-    <Style TargetType="Slider" BasedOn="{StaticResource DefaultSliderStyle}">
+    <Style x:Key="AdjustmentSliderStyle" TargetType="Slider" BasedOn="{StaticResource DefaultSliderStyle}">
         <Setter Property="Minimum" Value="-1" />
         <Setter Property="Maximum" Value="1" />
         <Setter Property="StepFrequency" Value="0.01" />
         <Setter Property="SmallChange" Value="0.01" />
         <Setter Property="LargeChange" Value="0.1" />
     </Style>
+
+    <Style TargetType="Slider" BasedOn="{StaticResource AdjustmentSliderStyle}" />
 
     <Style TargetType="winui:Expander">
         <Setter Property="Margin" Value="-8,0,0,0" />
@@ -147,7 +149,34 @@
             <winui:Expander Header="Detail">
                 <StackPanel>
                     <Slider Header="Clarity" Value="{x:Bind Clarity}" />
-                    <Slider Header="Sharpness" Value="{x:Bind Sharpness}" Minimum="0" />
+
+                    <Slider Value="{x:Bind Sharpness.Amount}" Minimum="0" Maximum="2">
+                        <Slider.Header>
+                            <Grid>
+                                <TextBlock Margin="0,4,0,0" HorizontalAlignment="Left" Text="Sharpness" />
+                                <Button Margin="0,-4,-6,-12" HorizontalAlignment="Right" Style="{ThemeResource CommandBarFlyoutEllipsisButtonStyle}">
+                                    <FontIcon FontSize="14" Glyph="&#xE9E9;" />
+
+                                    <Button.Flyout>
+                                        <Flyout Placement="BottomEdgeAlignedRight">
+                                            <StackPanel Width="250">
+                                                <StackPanel.Resources>
+                                                    <ResourceDictionary>
+                                                        <Style TargetType="Slider" BasedOn="{StaticResource AdjustmentSliderStyle}" />
+                                                    </ResourceDictionary>
+                                                </StackPanel.Resources>
+
+                                                <TextBlock Margin="0,0,0,16" FontWeight="SemiBold" Text="Sharpness" />
+                                                <Slider Header="Amount" Value="{x:Bind Sharpness.Amount}" Minimum="0" Maximum="2" />
+                                                <Slider Header="Radius" Value="{x:Bind Sharpness.Radius}" Minimum="0" Maximum="10" />
+                                                <Slider Header="Threshold" Value="{x:Bind Sharpness.Threshold}" Minimum="0" />
+                                            </StackPanel>
+                                        </Flyout>
+                                    </Button.Flyout>
+                                </Button>
+                            </Grid>
+                        </Slider.Header>
+                    </Slider>
                 </StackPanel>
             </winui:Expander>
         </StackPanel>
