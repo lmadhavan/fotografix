@@ -35,15 +35,16 @@
     </Style>
 
     <DataTemplate x:Key="EditorZoomControlsTemplate" x:DataType="local:EditorViewModel" x:DefaultBindMode="OneWay">
-        <StackPanel Orientation="Horizontal">
-            <ToggleButton Content="Fit"
-                          IsEnabled="{x:Bind CanZoomToFit}"
-                          IsChecked="{x:Bind IsZoomedToFit}"
-                          Click="{x:Bind ZoomToFit}" />
-            <ToggleButton Content="1:1"
-                          IsEnabled="{x:Bind CanZoomToActualPixels}"
-                          IsChecked="{x:Bind IsZoomedToActualPixels}"
-                          Click="{x:Bind ZoomToActualPixels}" />
+        <StackPanel Orientation="Horizontal" Margin="0,2,0,0">
+            <StackPanel.Resources>
+                <ResourceDictionary>
+                    <SolidColorBrush x:Key="ButtonForegroundDisabled" Color="{ThemeResource SystemChromeWhiteColor}" />
+                    <SolidColorBrush x:Key="ButtonBackgroundDisabled" Color="{ThemeResource SystemAccentColor}" />
+                </ResourceDictionary>
+            </StackPanel.Resources>
+            
+            <Button Content="Fit" IsEnabled="{x:Bind CanZoomToFit}" Click="{x:Bind ZoomToFit}" />
+            <Button Content="1:1" IsEnabled="{x:Bind CanZoomToActualPixels}" Click="{x:Bind ZoomToActualPixels}" />
         </StackPanel>
     </DataTemplate>
 
@@ -92,9 +93,9 @@
 
             <ScrollViewer Grid.Row="1" Grid.ColumnSpan="3">
                 <ContentControl HorizontalContentAlignment="Stretch"
-                            Padding="8,4"
-                            Content="{x:Bind Adjustment}"
-                            ContentTemplate="{StaticResource PhotoAdjustmentTemplate}" />
+                                Padding="8,4"
+                                Content="{x:Bind}"
+                                ContentTemplate="{StaticResource PhotoAdjustmentTemplate}" />
             </ScrollViewer>
         </Grid>
     </DataTemplate>
@@ -110,25 +111,25 @@
         </StackPanel>
     </DataTemplate>
 
-    <DataTemplate x:Key="PhotoAdjustmentTemplate" x:DataType="local:IPhotoAdjustment" x:DefaultBindMode="TwoWay">
+    <DataTemplate x:Key="PhotoAdjustmentTemplate" x:DataType="local:EditorViewModel" x:DefaultBindMode="TwoWay">
         <StackPanel>
             <winui:Expander IsExpanded="True" Header="Light">
                 <StackPanel>
-                    <Slider Header="Exposure" Value="{x:Bind Exposure}" />
-                    <Slider Header="Contrast" Value="{x:Bind Contrast}" />
-                    <Slider Header="Highlights" Value="{x:Bind Highlights}" />
-                    <Slider Header="Shadows" Value="{x:Bind Shadows}" />
-                    <Slider Header="Whites" Value="{x:Bind Whites}" />
-                    <Slider Header="Blacks" Value="{x:Bind Blacks}" />
+                    <Slider Header="Exposure" Value="{x:Bind Adjustment.Exposure}" />
+                    <Slider Header="Contrast" Value="{x:Bind Adjustment.Contrast}" />
+                    <Slider Header="Highlights" Value="{x:Bind Adjustment.Highlights}" />
+                    <Slider Header="Shadows" Value="{x:Bind Adjustment.Shadows}" />
+                    <Slider Header="Whites" Value="{x:Bind Adjustment.Whites}" />
+                    <Slider Header="Blacks" Value="{x:Bind Adjustment.Blacks}" />
                 </StackPanel>
             </winui:Expander>
 
             <winui:Expander Header="Color">
                 <StackPanel>
-                    <Slider Header="Temperature" Value="{x:Bind Temperature}" />
-                    <Slider Header="Tint" Value="{x:Bind Tint}" />
-                    <Slider Header="Vibrance" Value="{x:Bind Vibrance}" />
-                    <Slider Header="Saturation" Value="{x:Bind Saturation}" />
+                    <Slider Header="Temperature" Value="{x:Bind Adjustment.Temperature}" />
+                    <Slider Header="Tint" Value="{x:Bind Adjustment.Tint}" />
+                    <Slider Header="Vibrance" Value="{x:Bind Adjustment.Vibrance}" />
+                    <Slider Header="Saturation" Value="{x:Bind Adjustment.Saturation}" />
                 </StackPanel>
             </winui:Expander>
 
@@ -140,20 +141,43 @@
                         </DataTemplate>
                     </Pivot.HeaderTemplate>
 
-                    <PivotItem Header="Hue" Content="{x:Bind ColorRanges.HueView}" ContentTemplate="{StaticResource ColorRangeViewTemplate}" />
-                    <PivotItem Header="Saturation" Content="{x:Bind ColorRanges.SaturationView}" ContentTemplate="{StaticResource ColorRangeViewTemplate}" />
-                    <PivotItem Header="Luminance" Content="{x:Bind ColorRanges.LuminanceView}" ContentTemplate="{StaticResource ColorRangeViewTemplate}" />
+                    <PivotItem Header="Hue" Content="{x:Bind Adjustment.ColorRanges.HueView}" ContentTemplate="{StaticResource ColorRangeViewTemplate}" />
+                    <PivotItem Header="Saturation" Content="{x:Bind Adjustment.ColorRanges.SaturationView}" ContentTemplate="{StaticResource ColorRangeViewTemplate}" />
+                    <PivotItem Header="Luminance" Content="{x:Bind Adjustment.ColorRanges.LuminanceView}" ContentTemplate="{StaticResource ColorRangeViewTemplate}" />
                 </Pivot>
             </winui:Expander>
 
             <winui:Expander Header="Detail">
                 <StackPanel>
-                    <Slider Header="Clarity" Value="{x:Bind Clarity}" />
+                    <!-- Preview accuracy warning -->
+                    <Grid Margin="0,0,0,12" Padding="8"
+                          Visibility="{x:Bind CanZoomToActualPixels, Mode=OneWay}"
+                          Background="{ThemeResource LayerFillColorDefaultBrush}"
+                          BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                          BorderThickness="1" CornerRadius="8">
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
 
-                    <Slider Value="{x:Bind Sharpness.Amount}" Minimum="0" Maximum="2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <FontIcon VerticalAlignment="Top" FontSize="14" Glyph="&#xE7BA;" />
+                        <TextBlock Grid.Column="1" Margin="8,0" FontSize="12" TextWrapping="Wrap" Text="Preview may not be accurate at current zoom level." />
+                        <HyperlinkButton Grid.Row="1" Grid.Column="1" Margin="-4,0" FontSize="12" Content="Switch to 1:1" Click="{x:Bind ZoomToActualPixels}" />
+                    </Grid>
+
+                    <Slider Header="Clarity" Value="{x:Bind Adjustment.Clarity}" />
+
+                    <Slider Value="{x:Bind Adjustment.Sharpness.Amount}" Minimum="0" Maximum="2">
                         <Slider.Header>
                             <Grid>
                                 <TextBlock Margin="0,4,0,0" HorizontalAlignment="Left" Text="Sharpness" />
+                                
+                                <!-- Additional sharpness controls -->
                                 <Button Margin="0,-4,-6,-12" HorizontalAlignment="Right" Style="{ThemeResource CommandBarFlyoutEllipsisButtonStyle}">
                                     <FontIcon FontSize="14" Glyph="&#xE9E9;" />
 
@@ -167,9 +191,9 @@
                                                 </StackPanel.Resources>
 
                                                 <TextBlock Margin="0,0,0,16" FontWeight="SemiBold" Text="Sharpness" />
-                                                <Slider Header="Amount" Value="{x:Bind Sharpness.Amount}" Minimum="0" Maximum="2" />
-                                                <Slider Header="Radius" Value="{x:Bind Sharpness.Radius}" Minimum="0" Maximum="10" />
-                                                <Slider Header="Threshold" Value="{x:Bind Sharpness.Threshold}" Minimum="0" />
+                                                <Slider Header="Amount" Value="{x:Bind Adjustment.Sharpness.Amount}" Minimum="0" Maximum="2" />
+                                                <Slider Header="Radius" Value="{x:Bind Adjustment.Sharpness.Radius}" Minimum="0" Maximum="10" />
+                                                <Slider Header="Threshold" Value="{x:Bind Adjustment.Sharpness.Threshold}" Minimum="0" />
                                             </StackPanel>
                                         </Flyout>
                                     </Button.Flyout>

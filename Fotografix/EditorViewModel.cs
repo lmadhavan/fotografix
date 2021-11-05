@@ -62,7 +62,6 @@ namespace Fotografix
                 if (zoomToFit)
                 {
                     editor.SetRenderSize(viewportSize);
-                    RaisePropertyChanged(nameof(IsZoomedToActualPixels));
                 }
             }
         }
