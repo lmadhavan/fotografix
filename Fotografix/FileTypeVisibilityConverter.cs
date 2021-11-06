@@ -25,7 +25,7 @@ namespace Fotografix
         {
             if (value is string filename)
             {
-                string extension = Path.GetExtension(filename);
+                string extension = Path.GetExtension(filename).ToLower();
 
                 if (Array.IndexOf(fileTypes, extension) > -1)
                 {

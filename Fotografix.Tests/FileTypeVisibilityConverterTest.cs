@@ -13,6 +13,7 @@ namespace Fotografix
 
             Assert.AreEqual(Visibility.Visible, converter.Convert("test.jpg", null, null, null));
             Assert.AreEqual(Visibility.Visible, converter.Convert("test.jpeg", null, null, null));
+            Assert.AreEqual(Visibility.Visible, converter.Convert("test.JPG", null, null, null));
             Assert.AreEqual(Visibility.Collapsed, converter.Convert("test.png", null, null, null));
         }
     }
