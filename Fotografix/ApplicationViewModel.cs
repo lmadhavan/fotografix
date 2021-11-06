@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Windows.Storage;
 
@@ -16,6 +17,7 @@ namespace Fotografix
         private NotifyTaskCompletion<IList<PhotoViewModel>> photos;
         private PhotoViewModel selectedPhoto;
         private NotifyTaskCompletion<EditorViewModel> editor;
+        private CancellationTokenSource editorLoadCts;
 
         public ApplicationViewModel(ISidecarStrategy sidecarStrategy)
         {
@@ -24,6 +26,7 @@ namespace Fotografix
 
         public Task DisposeAsync()
         {
+            CancelEditorLoad();
             return SaveAsync(dispose: true);
         }
 
@@ -56,7 +59,9 @@ namespace Fotografix
             {
                 if (SetProperty(ref selectedPhoto, value))
                 {
-                    this.Editor = new NotifyTaskCompletion<EditorViewModel>(LoadEditorAsync());
+                    CancelEditorLoad();
+                    this.editorLoadCts = new CancellationTokenSource();
+                    this.Editor = new NotifyTaskCompletion<EditorViewModel>(LoadEditorAsync(editorLoadCts.Token));
                 }
             }
         }
@@ -93,9 +98,11 @@ namespace Fotografix
             return photos.Select(p => new PhotoViewModel(p)).ToList();
         }
 
-        private async Task<EditorViewModel> LoadEditorAsync()
+        private async Task<EditorViewModel> LoadEditorAsync(CancellationToken token)
         {
             await SaveAsync(dispose: true);
+
+            token.ThrowIfCancellationRequested();
 
             if (selectedPhoto == null)
             {
@@ -106,6 +113,15 @@ namespace Fotografix
             var vm = new EditorViewModel(editor, CanvasResourceCreator);
             EditorLoaded?.Invoke(this, vm);
             return vm;
+        }
+
+        private void CancelEditorLoad()
+        {
+            if (editorLoadCts != null)
+            {
+                editorLoadCts.Cancel();
+                editorLoadCts.Dispose();
+            }
         }
 
         private async Task SaveAsync(bool dispose)
