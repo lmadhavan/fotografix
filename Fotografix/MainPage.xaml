@@ -76,7 +76,7 @@
 
         <!-- Zoom controls -->
         <ContentControl HorizontalAlignment="Right" Margin="0,4,8,0"
-                        Visibility="{x:Bind vm.Editor.Result, Converter={StaticResource HideIfNull}, FallbackValue=Collapsed}"
+                        Visibility="{x:Bind vm.Editor.Result.IsLoaded, FallbackValue=Collapsed}"
                         Content="{x:Bind vm.Editor.Result}"
                         ContentTemplate="{StaticResource EditorZoomControlsTemplate}" />
 
@@ -134,7 +134,7 @@
             <ScrollViewer x:Name="viewport"
                           HorizontalScrollBarVisibility="Auto"
                           SizeChanged="Viewport_SizeChanged">
-                <Border Visibility="{x:Bind vm.Editor.Result, Converter={StaticResource HideIfNull}, FallbackValue=Collapsed}">
+                <Border Visibility="{x:Bind vm.Editor.Result.IsLoaded, FallbackValue=Collapsed}">
                     <win2d:CanvasControl x:Name="canvas"
                                          Draw="CanvasControl_Draw"
                                          Width="{x:Bind vm.Editor.Result.RenderWidth}"
@@ -179,7 +179,7 @@
         <!-- Editor controls -->
         <ContentControl Grid.Row="1" Grid.Column="2" Grid.RowSpan="2"
                         HorizontalContentAlignment="Stretch"
-                        Visibility="{x:Bind vm.Editor.Result, Converter={StaticResource HideIfNull}, FallbackValue=Collapsed}"
+                        Visibility="{x:Bind vm.Editor.Result.IsLoaded, FallbackValue=Collapsed}"
                         Content="{x:Bind vm.Editor.Result}"
                         ContentTemplate="{StaticResource EditorControlsTemplate}" />
     </Grid>

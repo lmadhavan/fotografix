@@ -84,5 +84,29 @@ namespace Fotografix
             Assert.AreEqual(expectedSizeInDips.Width, vm.RenderWidth, nameof(vm.RenderWidth));
             Assert.AreEqual(expectedSizeInDips.Height, vm.RenderHeight, nameof(vm.RenderHeight));
         }
+
+        [TestMethod]
+        public void IgnoresDrawCallsAfterDispose()
+        {
+            Assert.IsTrue(vm.IsLoaded);
+
+            vm.Dispose();
+            vm.Draw(ds: null /* don't care */);
+
+            Assert.IsFalse(vm.IsLoaded);
+            Assert.AreEqual(0, editor.DrawCount);
+        }
+
+        [TestMethod]
+        public void IgnoresViewportSizeAfterDispose()
+        {
+            Assert.IsTrue(vm.IsLoaded);
+
+            vm.Dispose();
+            vm.SetViewportSize(new Size(10, 10));
+
+            Assert.IsFalse(vm.IsLoaded);
+            Assert.AreEqual(default, editor.RenderSize);
+        }
     }
 }

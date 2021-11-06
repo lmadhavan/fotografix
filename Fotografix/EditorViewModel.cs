@@ -12,6 +12,7 @@ namespace Fotografix
     {
         private readonly IPhotoEditor editor;
         private readonly ICanvasResourceCreatorWithDpi dpiResolver;
+        private bool loaded;
         private Size renderSize;
 
         public EditorViewModel(IPhotoEditor editor, ICanvasResourceCreatorWithDpi dpiResolver)
@@ -22,11 +23,20 @@ namespace Fotografix
 
             this.dpiResolver = dpiResolver;
             UpdateRenderSize();
+
+            this.loaded = true;
         }
 
         public void Dispose()
         {
+            this.IsLoaded = false;
             editor.Dispose();
+        }
+
+        public bool IsLoaded
+        {
+            get => loaded;
+            private set => SetProperty(ref loaded, value);
         }
 
         public double RenderWidth => renderSize.Width;
@@ -77,7 +87,7 @@ namespace Fotografix
             viewportSize.Width = ConvertDipsToPixels(size.Width);
             viewportSize.Height = ConvertDipsToPixels(size.Height);
 
-            if (zoomToFit)
+            if (loaded && zoomToFit)
             {
                 editor.SetRenderSize(viewportSize);
             }
@@ -118,8 +128,11 @@ namespace Fotografix
 
         public void Draw(CanvasDrawingSession ds)
         {
-            ds.Units = CanvasUnits.Pixels;
-            editor.Draw(ds);
+            if (loaded)
+            {
+                ds.Units = CanvasUnits.Pixels;
+                editor.Draw(ds);
+            }
         }
 
         public void ResetAdjustment()

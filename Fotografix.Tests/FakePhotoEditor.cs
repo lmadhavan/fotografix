@@ -11,6 +11,8 @@ namespace Fotografix
         private float renderScale = 1;
         private Size renderSize;
 
+        public int DrawCount { get; private set; }
+
         public IPhotoAdjustment Adjustment => throw new NotImplementedException();
         public bool AdjustmentEnabled { get; set; } = true;
 
@@ -38,12 +40,11 @@ namespace Fotografix
 
         public void Dispose()
         {
-            throw new NotImplementedException();
         }
 
         public void Draw(CanvasDrawingSession ds)
         {
-            throw new NotImplementedException();
+            DrawCount++;
         }
 
         public Task<StorageFile> ExportAsync(StorageFolder folder)
