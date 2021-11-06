@@ -20,6 +20,8 @@
             
             <local:ShowIfNullConverter x:Key="ShowIfNull" />
             <local:HideIfNullConverter x:Key="HideIfNull" />
+            <local:ExceptionMessageConverter x:Key="ExceptionMessageConverter" />
+            <local:FileTypeVisibilityConverter x:Key="ShowIfHeic" VisibleFileTypes=".heic;.heif" />
         </ResourceDictionary>
     </Page.Resources>
 
@@ -153,7 +155,12 @@
                     <Run Text="Couldn't open" />
                     <Run Text="{x:Bind vm.SelectedPhoto.Name}" />
                 </TextBlock>
-                <TextBlock HorizontalAlignment="Center" Text="{x:Bind vm.Editor.Exception.Message}" />
+                <TextBlock HorizontalAlignment="Center" Text="{x:Bind vm.Editor.Exception, Converter={StaticResource ExceptionMessageConverter}}" />
+                
+                <!-- Instructions for HEIC codec -->
+                <TextBlock HorizontalAlignment="Center" Visibility="{x:Bind vm.SelectedPhoto.Name, Converter={StaticResource ShowIfHeic}}">
+                    You may need to install <Hyperlink NavigateUri="ms-windows-store://pdp/?ProductId=9nmzlz57r3t7">HEVC Video Extensions</Hyperlink> to open this photo.
+                </TextBlock>
             </StackPanel>
 
             <!-- Progress bar -->
