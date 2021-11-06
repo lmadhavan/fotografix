@@ -1,5 +1,4 @@
-﻿using Microsoft.Graphics.Canvas;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
@@ -60,22 +59,6 @@ namespace Fotografix
             app.SelectedPhoto = photos[0];
 
             Assert.IsNotNull(await app.Editor.Task);
-        }
-
-        private sealed class StubCanvasResourceCreator : ICanvasResourceCreatorWithDpi
-        {
-            public float ConvertPixelsToDips(int pixels)
-            {
-                throw new NotImplementedException();
-            }
-
-            public int ConvertDipsToPixels(float dips, CanvasDpiRounding dpiRounding)
-            {
-                throw new NotImplementedException();
-            }
-
-            public float Dpi => 96;
-            public CanvasDevice Device => CanvasDevice.GetSharedDevice();
         }
     }
 }

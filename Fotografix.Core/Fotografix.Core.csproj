@@ -125,6 +125,7 @@
     <Compile Include="ColorRangeView.cs" />
     <Compile Include="HslValue.cs" />
     <Compile Include="IPhotoAdjustment.cs" />
+    <Compile Include="IPhotoEditor.cs" />
     <Compile Include="ISharpnessAdjustment.cs" />
     <Compile Include="Shaders\ShaderFactory.cs" />
     <Compile Include="SidecarStrategy.cs" />

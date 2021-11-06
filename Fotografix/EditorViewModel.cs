@@ -10,11 +10,11 @@ namespace Fotografix
 {
     public sealed class EditorViewModel : NotifyPropertyChangedBase, IDisposable
     {
-        private readonly PhotoEditor editor;
+        private readonly IPhotoEditor editor;
         private readonly ICanvasResourceCreatorWithDpi dpiResolver;
         private Size renderSize;
 
-        public EditorViewModel(PhotoEditor editor, ICanvasResourceCreatorWithDpi dpiResolver)
+        public EditorViewModel(IPhotoEditor editor, ICanvasResourceCreatorWithDpi dpiResolver)
         {
             this.editor = editor;
             editor.PropertyChanged += Editor_PropertyChanged;
@@ -31,7 +31,7 @@ namespace Fotografix
 
         public double RenderWidth => renderSize.Width;
         public double RenderHeight => renderSize.Height;
-        
+
         public IPhotoAdjustment Adjustment => editor.Adjustment;
 
         public bool ShowOriginal
@@ -94,6 +94,26 @@ namespace Fotografix
             this.IsZoomedToFit = false;
         }
 
+        private double ConvertPixelsToDips(double pixels)
+        {
+            return pixels * 96 / dpiResolver.Dpi;
+        }
+
+        private double ConvertDipsToPixels(double dips)
+        {
+            return dips * dpiResolver.Dpi / 96;
+        }
+
+        private void UpdateRenderSize()
+        {
+            var size = editor.RenderSize;
+            size.Width = ConvertPixelsToDips(size.Width);
+            size.Height = ConvertPixelsToDips(size.Height);
+            this.renderSize = size;
+            RaisePropertyChanged(nameof(RenderWidth));
+            RaisePropertyChanged(nameof(RenderHeight));
+        }
+
         #endregion
 
         public void Draw(CanvasDrawingSession ds)
@@ -125,26 +145,6 @@ namespace Fotografix
         private void Invalidate()
         {
             Invalidated?.Invoke(this, EventArgs.Empty);
-        }
-
-        private double ConvertPixelsToDips(double pixels)
-        {
-            return pixels * 96 / dpiResolver.Dpi;
-        }
-
-        private double ConvertDipsToPixels(double dips)
-        {
-            return dips * dpiResolver.Dpi / 96;
-        }
-
-        private void UpdateRenderSize()
-        {
-            var size = editor.RenderSize;
-            size.Width = ConvertPixelsToDips(size.Width);
-            size.Height = ConvertPixelsToDips(size.Height);
-            this.renderSize = size;
-            RaisePropertyChanged(nameof(RenderWidth));
-            RaisePropertyChanged(nameof(RenderHeight));
         }
 
         private void Editor_PropertyChanged(object sender, PropertyChangedEventArgs e)

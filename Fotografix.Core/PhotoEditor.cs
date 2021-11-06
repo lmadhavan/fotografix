@@ -7,7 +7,7 @@ using Windows.Storage;
 
 namespace Fotografix
 {
-    public sealed class PhotoEditor : NotifyPropertyChangedBase, IDisposable
+    public sealed class PhotoEditor : NotifyPropertyChangedBase, IPhotoEditor
     {
         private readonly Photo photo;
         private readonly CanvasBitmap bitmap;
