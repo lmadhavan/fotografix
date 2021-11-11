@@ -136,6 +136,9 @@
                           SizeChanged="Viewport_SizeChanged">
                 <Border Visibility="{x:Bind vm.Editor.Result.IsLoaded, FallbackValue=Collapsed}">
                     <win2d:CanvasVirtualControl x:Name="canvas"
+                                                PointerPressed="Canvas_PointerPressed"
+                                                PointerMoved="Canvas_PointerMoved"
+                                                PointerReleased="Canvas_PointerReleased"
                                                 RegionsInvalidated="Canvas_RegionsInvalidated"
                                                 Width="{x:Bind vm.Editor.Result.RenderWidth}"
                                                 Height="{x:Bind vm.Editor.Result.RenderHeight}" />

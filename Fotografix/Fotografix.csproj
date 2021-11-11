@@ -137,6 +137,7 @@
     <Compile Include="RecentFolderMenuFlyout.cs" />
     <Compile Include="NullToVisibilityConverter.cs" />
     <Compile Include="ThumbnailViewModel.cs" />
+    <Compile Include="PanOperation.cs" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">

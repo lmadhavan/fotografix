@@ -1,10 +1,12 @@
 ﻿using Microsoft.Graphics.Canvas.UI.Xaml;
 using System;
+using Windows.Devices.Input;
 using Windows.Foundation;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Navigation;
 
 namespace Fotografix
@@ -13,6 +15,7 @@ namespace Fotografix
     {
         private ApplicationViewModel vm;
         private EditorViewModel editor;
+        private PanOperation panOperation;
 
         public MainPage()
         {
@@ -57,6 +60,28 @@ namespace Fotografix
         private void Viewport_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             editor?.SetViewportSize(e.NewSize);
+        }
+
+        private void Canvas_PointerPressed(object sender, PointerRoutedEventArgs e)
+        {
+            if (e.Pointer.PointerDeviceType == PointerDeviceType.Mouse && canvas.CapturePointer(e.Pointer))
+            {
+                this.panOperation = new PanOperation(viewport, e);
+            }
+        }
+
+        private void Canvas_PointerMoved(object sender, PointerRoutedEventArgs e)
+        {
+            panOperation?.Track(e);
+        }
+
+        private void Canvas_PointerReleased(object sender, PointerRoutedEventArgs e)
+        {
+            if (panOperation != null)
+            {
+                canvas.ReleasePointerCapture(e.Pointer);
+                this.panOperation = null;
+            }
         }
 
         private void RecentFolderFlyout_FolderActivated(object sender, StorageFolder folder)
