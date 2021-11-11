@@ -43,10 +43,15 @@ namespace Fotografix
             await vm.DisposeAsync();
         }
 
-
-        private void CanvasControl_Draw(CanvasControl sender, CanvasDrawEventArgs args)
+        private void Canvas_RegionsInvalidated(CanvasVirtualControl sender, CanvasRegionsInvalidatedEventArgs args)
         {
-            editor?.Draw(args.DrawingSession);
+            foreach (var rect in args.InvalidatedRegions)
+            {
+                using (var ds = sender.CreateDrawingSession(rect))
+                {
+                    editor?.Draw(ds);
+                }
+            }
         }
 
         private void Viewport_SizeChanged(object sender, SizeChangedEventArgs e)

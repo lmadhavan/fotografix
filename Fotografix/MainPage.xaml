@@ -135,10 +135,10 @@
                           HorizontalScrollBarVisibility="Auto"
                           SizeChanged="Viewport_SizeChanged">
                 <Border Visibility="{x:Bind vm.Editor.Result.IsLoaded, FallbackValue=Collapsed}">
-                    <win2d:CanvasControl x:Name="canvas"
-                                         Draw="CanvasControl_Draw"
-                                         Width="{x:Bind vm.Editor.Result.RenderWidth}"
-                                         Height="{x:Bind vm.Editor.Result.RenderHeight}" />
+                    <win2d:CanvasVirtualControl x:Name="canvas"
+                                                RegionsInvalidated="Canvas_RegionsInvalidated"
+                                                Width="{x:Bind vm.Editor.Result.RenderWidth}"
+                                                Height="{x:Bind vm.Editor.Result.RenderHeight}" />
                 </Border>
             </ScrollViewer>
 
