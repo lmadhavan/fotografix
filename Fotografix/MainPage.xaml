@@ -132,7 +132,8 @@
               BorderThickness="1" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" CornerRadius="8">
             <!-- Canvas -->
             <ScrollViewer x:Name="viewport"
-                          HorizontalScrollBarVisibility="Auto"
+                          HorizontalScrollBarVisibility="Hidden"
+                          VerticalScrollBarVisibility="Hidden"
                           SizeChanged="Viewport_SizeChanged">
                 <Border Visibility="{x:Bind vm.Editor.Result.IsLoaded, FallbackValue=Collapsed}">
                     <win2d:CanvasVirtualControl x:Name="canvas"
