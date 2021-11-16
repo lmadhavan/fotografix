@@ -11,23 +11,13 @@ namespace Fotografix
 {
     public sealed class PhotoFolder
     {
-        private static QueryOptions QueryOptions;
+        /// <summary>
+        /// JPEG files are treated with lowest priority when picking the primary photo in a group of linked photos.
+        /// </summary>
+        private static readonly IEnumerable<string> DeprioritizedFileExtensions = new string[] { ".jpg", ".jpeg" };
 
         private readonly StorageFolder contentFolder;
         private readonly StorageFolder sidecarFolder;
-
-        static PhotoFolder()
-        {
-            QueryOptions = new QueryOptions();
-
-            foreach (var info in BitmapDecoder.GetDecoderInformationEnumerator())
-            {
-                foreach (var extension in info.FileExtensions)
-                {
-                    QueryOptions.FileTypeFilter.Add(extension);
-                }
-            }
-        }
 
         public PhotoFolder(StorageFolder contentFolder, StorageFolder sidecarFolder)
         {
@@ -35,18 +25,54 @@ namespace Fotografix
             this.sidecarFolder = sidecarFolder;
         }
 
-        public async Task<IReadOnlyList<Photo>> GetPhotosAsync()
+        public Task<IReadOnlyList<Photo>> GetPhotosAsync()
         {
-            var query = contentFolder.CreateFileQueryWithOptions(QueryOptions);
-            var files = await query.GetFilesAsync();
+            var fileExtensions = BitmapDecoder.GetDecoderInformationEnumerator().SelectMany(bci => bci.FileExtensions);
+            return GetPhotosAsync(fileExtensions);
+        }
 
-            return files.Select(CreatePhoto).ToList();
+        public async Task<IReadOnlyList<Photo>> GetPhotosAsync(IEnumerable<string> fileExtensions)
+        {
+            var queryOptions = new QueryOptions();
+            foreach (var extension in fileExtensions)
+            {
+                queryOptions.FileTypeFilter.Add(extension);
+            }
+
+            var query = contentFolder.CreateFileQueryWithOptions(queryOptions);
+            var files = await query.GetFilesAsync();
+            return GroupPhotos(files.Select(CreatePhoto));
+        }
+
+        private IReadOnlyList<Photo> GroupPhotos(IEnumerable<Photo> photos)
+        {
+            var groupedPhotos = new List<Photo>();
+
+            var groups = photos.GroupBy(BaseName);
+            foreach (var group in groups)
+            {
+                var primaryPhoto = group.FirstOrDefault(IsPrimaryPhotoCandidate) ?? group.First();
+                primaryPhoto.LinkedPhotos.AddRange(group.Where(p => p != primaryPhoto));
+                groupedPhotos.Add(primaryPhoto);
+            }
+
+            return groupedPhotos;
         }
 
         private Photo CreatePhoto(StorageFile content)
         {
             StorageFileReference sidecar = new StorageFileReference(sidecarFolder, Path.GetFileNameWithoutExtension(content.Name) + ".dat");
             return new Photo(content, sidecar);
+        }
+
+        private string BaseName(Photo photo)
+        {
+            return Path.GetFileNameWithoutExtension(photo.Name);
+        }
+
+        private bool IsPrimaryPhotoCandidate(Photo photo)
+        {
+            return !DeprioritizedFileExtensions.Contains(Path.GetExtension(photo.Name).ToLower());
         }
     }
 }

@@ -24,6 +24,7 @@ namespace Fotografix
         }
 
         public string Name => content.Name;
+        public List<Photo> LinkedPhotos { get; } = new List<Photo>();
 
         public async Task<IRandomAccessStream> OpenContentAsync()
         {
