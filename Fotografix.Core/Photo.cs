@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Fotografix.Xmp;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
-using Windows.Foundation;
 using Windows.Graphics.Imaging;
 using Windows.Storage;
 using Windows.Storage.FileProperties;
@@ -12,7 +12,7 @@ namespace Fotografix
 {
     public sealed class Photo
     {
-        private const string AdjustmentMetadataKey = "/xmp/{wstr=https://ns.fotografix.org/}:Adjustment";
+        private static readonly XmpProperty AdjustmentMetadataProperty = new XmpProperty("https://ns.fotografix.org/", "Adjustment");
 
         private readonly StorageFile content;
         private readonly StorageFileReference sidecar;
@@ -64,10 +64,8 @@ namespace Fotografix
             using (var stream = await file.OpenReadAsync())
             {
                 var decoder = await BitmapDecoder.CreateAsync(stream);
-                var metadata = await decoder.BitmapProperties.GetPropertiesAsync(new string[] { AdjustmentMetadataKey });
-
-                var serializedAdjustment = metadata[AdjustmentMetadataKey].Value as string;
-                return PhotoAdjustment.Deserialize(serializedAdjustment);
+                var serializedAdjustment = await decoder.BitmapProperties.GetXmpPropertyAsync(AdjustmentMetadataProperty);
+                return PhotoAdjustment.Deserialize(serializedAdjustment.Value as string);
             }
         }
 
@@ -83,12 +81,7 @@ namespace Fotografix
                 encoder.SetSoftwareBitmap(thumbnail);
 
                 var serializedAdjustment = adjustment.Serialize();
-                var metadata = new Dictionary<string, BitmapTypedValue>
-                {
-                    [AdjustmentMetadataKey] = new BitmapTypedValue(serializedAdjustment, PropertyType.String)
-                };
-
-                await encoder.BitmapProperties.SetPropertiesAsync(metadata);
+                await encoder.BitmapProperties.SetXmpPropertyAsync(AdjustmentMetadataProperty, serializedAdjustment);
                 await encoder.FlushAsync();
             }
 

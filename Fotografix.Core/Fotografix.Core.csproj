@@ -120,6 +120,7 @@
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Xmp\BitmapPropertiesXmpExtensions.cs" />
     <Compile Include="ColorRange.cs" />
     <Compile Include="ColorRangeAdjustment.cs" />
     <Compile Include="ColorRangeView.cs" />
@@ -137,6 +138,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StorageFileReference.cs" />
     <Compile Include="SharpnessAdjustment.cs" />
+    <Compile Include="Xmp\XmpProperty.cs" />
     <EmbeddedResource Include="Properties\Fotografix.Core.rd.xml" />
   </ItemGroup>
   <ItemGroup>
