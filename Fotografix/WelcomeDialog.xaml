@@ -1,0 +1,71 @@
+﻿<ContentDialog
+    x:Class="Fotografix.WelcomeDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Fotografix"
+    xmlns:winui="using:Microsoft.UI.Xaml.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Title="Welcome"
+    DefaultButton="Secondary"
+    PrimaryButtonText="Skip"
+    SecondaryButtonText="Next"
+    SecondaryButtonClick="Next_Click">
+    
+    <ContentDialog.Resources>
+        <Style TargetType="local:WelcomeDialog" BasedOn="{StaticResource DefaultContentDialogStyle}"/>
+    </ContentDialog.Resources>
+
+    <StackPanel>
+        <FlipView x:Name="flipView" Width="440" Height="150" Padding="8,0" Background="Transparent" SelectionChanged="FlipView_SelectionChanged">
+            <FlipView.Resources>
+                <ResourceDictionary>
+                    <Style TargetType="TextBlock">
+                        <Setter Property="Margin" Value="16" />
+                        <Setter Property="VerticalAlignment" Value="Center" />
+                        <Setter Property="TextWrapping" Value="WrapWholeWords" />
+                    </Style>
+                </ResourceDictionary>
+            </FlipView.Resources>
+
+            <Grid VerticalAlignment="Center">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="125" />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+
+                <FontIcon FontSize="72" Glyph="&#xE9E9;" />
+
+                <TextBlock Grid.Column="1" Text="Your adjustments are saved automatically. You can come back anytime to continue editing." />
+            </Grid>
+
+            <Grid VerticalAlignment="Center">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="125" />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+
+                <FontIcon FontSize="72" Glyph="&#xE72D;" />
+
+                <TextBlock Grid.Column="1" Text="Your original files are never modified. Export your photos to share them with the rest of the world." />
+            </Grid>
+
+            <Grid VerticalAlignment="Center">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="125" />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+
+                <FontIcon FontSize="72" Glyph="&#xE81C;" />
+
+                <TextBlock Grid.Column="1" Text="Want to start over? You can reset your adjustments to go back to your original photo." />
+            </Grid>
+        </FlipView>
+
+        <winui:PipsPager x:Name="pipsPager"
+                         HorizontalAlignment="Center"
+                         NumberOfPages="{x:Bind NumberOfPages}"
+                         SelectedPageIndex="{x:Bind flipView.SelectedIndex, Mode=TwoWay}" />
+    </StackPanel>
+</ContentDialog>

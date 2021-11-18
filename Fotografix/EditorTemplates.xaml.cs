@@ -1,4 +1,5 @@
-﻿using Windows.UI.Xaml;
+﻿using Windows.ApplicationModel;
+using Windows.UI.Xaml;
 
 namespace Fotografix
 {
@@ -7,6 +8,17 @@ namespace Fotografix
         public EditorTemplates()
         {
             InitializeComponent();
+        }
+
+        private async void EditorControls_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (DesignMode.DesignModeEnabled)
+            {
+                // don't pop up dialog in XAML designer
+                return;
+            }
+
+            await WelcomeDialog.ShowOnFirstLoadAsync();
         }
 
         private void ResetButton_Click(object sender, RoutedEventArgs e)

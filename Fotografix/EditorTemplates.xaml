@@ -49,7 +49,7 @@
     </DataTemplate>
 
     <DataTemplate x:Key="EditorControlsTemplate" x:DataType="local:EditorViewModel" x:DefaultBindMode="OneWay">
-        <Grid>
+        <Grid Loaded="EditorControls_Loaded">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
@@ -74,7 +74,7 @@
                 <Button.Flyout>
                     <Flyout>
                         <StackPanel>
-                            <TextBlock Text="All adjustments to this photo will be lost." />
+                            <TextBlock Text="All adjustments to this photo will be discarded." />
                             <Button Margin="0,8,0,0" HorizontalAlignment="Right" Content="Reset" Click="ResetButton_Click" />
                         </StackPanel>
                     </Flyout>
