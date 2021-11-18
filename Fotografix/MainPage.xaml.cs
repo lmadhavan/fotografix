@@ -1,9 +1,11 @@
 ﻿using Microsoft.Graphics.Canvas.UI.Xaml;
 using System;
+using Windows.ApplicationModel;
 using Windows.Devices.Input;
 using Windows.Foundation;
 using Windows.Storage;
 using Windows.Storage.Pickers;
+using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
@@ -21,6 +23,17 @@ namespace Fotografix
         {
             this.InitializeComponent();
             CustomTitleBar.Initialize(appTitleBar, appTitle);
+        }
+
+        private string AppTitle => Package.Current.DisplayName;
+
+        private string AppVersion
+        {
+            get
+            {
+                var ver = Package.Current.Id.Version;
+                return $"Version {ver.Major}.{ver.Minor}.{ver.Build}";
+            }
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -106,6 +119,21 @@ namespace Fotografix
         {
             string suffix = count == 1 ? "" : "s";
             return $"({count} photo{suffix})";
+        }
+
+        private async void WelcomeTour_Click(object sender, RoutedEventArgs e)
+        {
+            await new WelcomeDialog().ShowAsync();
+        }
+
+        private async void WhatsNew_Click(object sender, RoutedEventArgs e)
+        {
+            await Launcher.LaunchUriAsync(new Uri("https://github.com/lmadhavan/fotografix/releases"));
+        }
+
+        private async void SendFeedback_Click(object sender, RoutedEventArgs e)
+        {
+            await Launcher.LaunchUriAsync(new Uri("https://github.com/lmadhavan/fotografix/issues"));
         }
     }
 }

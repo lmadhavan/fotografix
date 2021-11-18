@@ -46,7 +46,7 @@
                 Height="40">
             <StackPanel Orientation="Horizontal">
                 <Image HorizontalAlignment="Left" VerticalAlignment="Center" Source="Assets/Square44x44Logo.png" Margin="12,1,0,0" Width="20" Height="20" />
-                <TextBlock x:Name="appTitle" Text="Fotografix" VerticalAlignment="Center" Margin="10,0,0,0" FontSize="16"  />
+                <TextBlock x:Name="appTitle" Text="{x:Bind AppTitle}" VerticalAlignment="Center" Margin="10,0,0,0" FontSize="16"  />
             </StackPanel>
         </Border>
 
@@ -74,11 +74,27 @@
             </winui:DropDownButton.Flyout>
         </winui:DropDownButton>
 
-        <!-- Zoom controls -->
-        <ContentControl HorizontalAlignment="Right" Margin="0,4,8,0"
-                        Visibility="{x:Bind vm.Editor.Result.IsLoaded, FallbackValue=Collapsed}"
+        <StackPanel HorizontalAlignment="Right" Margin="0,4,8,0" Orientation="Horizontal">
+            <!-- Zoom controls -->
+            <ContentControl Visibility="{x:Bind vm.Editor.Result.IsLoaded, FallbackValue=Collapsed}"
                         Content="{x:Bind vm.Editor.Result}"
                         ContentTemplate="{StaticResource EditorZoomControlsTemplate}" />
+            
+            <!-- Help menu -->
+            <Button Margin="4,-4,-4,-4" Style="{ThemeResource CommandBarFlyoutEllipsisButtonStyle}" ToolTipService.ToolTip="Help">
+                <FontIcon FontSize="16" Glyph="&#xE939;" />
+
+                <Button.Flyout>
+                    <MenuFlyout>
+                        <MenuFlyoutItem IsEnabled="False" Text="{x:Bind AppVersion}" />
+                        <MenuFlyoutSeparator />
+                        <MenuFlyoutItem Text="Welcome tour" Click="WelcomeTour_Click" />
+                        <MenuFlyoutItem Text="What's new" Click="WhatsNew_Click" />
+                        <MenuFlyoutItem Text="Send feedback" Click="SendFeedback_Click" />
+                    </MenuFlyout>
+                </Button.Flyout>
+            </Button>
+        </StackPanel>
 
         <!-- Filmstrip -->
         <ListView Grid.Row="2" Grid.ColumnSpan="1"
