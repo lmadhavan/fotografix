@@ -146,11 +146,19 @@
                 </Border>
             </ScrollViewer>
 
-            <!-- Placeholder text -->
-            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="{x:Bind vm.SelectedPhoto, Converter={StaticResource ShowIfNull}}">
-                <FontIcon FontSize="72" Glyph="&#xEB9F;" Foreground="{ThemeResource ButtonDisabledForegroundThemeBrush}" />
-                <TextBlock FontSize="24" Text="No photo selected" Foreground="{ThemeResource ButtonDisabledForegroundThemeBrush}" />
+            <!-- Empty state: no folder selected -->
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="{x:Bind vm.Photos, Converter={StaticResource ShowIfNull}}">
+                <FontIcon FontSize="96" Glyph="&#xED25;" Foreground="{ThemeResource ButtonDisabledForegroundThemeBrush}" />
+                <TextBlock FontSize="24" Text="Select a folder to view photos" Foreground="{ThemeResource ButtonDisabledForegroundThemeBrush}" />
             </StackPanel>
+
+            <!-- Empty state: no photo selected -->
+            <Border Visibility="{x:Bind vm.Photos, Converter={StaticResource HideIfNull}}">
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="{x:Bind vm.SelectedPhoto, Converter={StaticResource ShowIfNull}}">
+                    <FontIcon FontSize="96" Glyph="&#xEB9F;" Foreground="{ThemeResource ButtonDisabledForegroundThemeBrush}" />
+                    <TextBlock FontSize="24" Text="No photo selected" Foreground="{ThemeResource ButtonDisabledForegroundThemeBrush}" />
+                </StackPanel>
+            </Border>
 
             <!-- Error message -->
             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="{x:Bind vm.Editor.IsFaulted, FallbackValue=Collapsed}">
