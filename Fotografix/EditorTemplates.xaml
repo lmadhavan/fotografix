@@ -151,7 +151,7 @@
                 <StackPanel>
                     <!-- Preview accuracy warning -->
                     <Grid Margin="0,0,0,12" Padding="8"
-                          Visibility="{x:Bind CanZoomToActualPixels, Mode=OneWay}"
+                          Visibility="{x:Bind IsPreviewAccuracyWarningVisible, Mode=OneWay}"
                           Background="{ThemeResource LayerFillColorDefaultBrush}"
                           BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
                           BorderThickness="1" CornerRadius="8">

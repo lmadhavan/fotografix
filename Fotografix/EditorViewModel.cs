@@ -76,7 +76,8 @@ namespace Fotografix
             }
         }
 
-        public bool IsZoomedToActualPixels => editor.RenderScale == 1 && !zoomToFit;
+        public bool IsZoomedToActualPixels => editor.RenderScale == 1;
+        public bool IsPreviewAccuracyWarningVisible => editor.RenderScale != 1;
 
         public bool CanZoomToFit => !zoomToFit;
         public bool CanZoomToActualPixels => zoomToFit;
@@ -170,6 +171,8 @@ namespace Fotografix
 
                 case nameof(editor.RenderSize):
                     UpdateRenderSize();
+                    RaisePropertyChanged(nameof(IsZoomedToActualPixels));
+                    RaisePropertyChanged(nameof(IsPreviewAccuracyWarningVisible));
                     break;
 
                 default:
