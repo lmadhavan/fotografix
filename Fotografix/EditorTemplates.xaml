@@ -150,9 +150,9 @@
                         </DataTemplate>
                     </Pivot.HeaderTemplate>
 
-                    <PivotItem Margin="0,16,0,0" Header="Hue" Content="{x:Bind Adjustment.ColorRanges.HueView}" ContentTemplate="{StaticResource ColorRangeViewTemplate}" />
-                    <PivotItem Margin="0,16,0,0" Header="Saturation" Content="{x:Bind Adjustment.ColorRanges.SaturationView}" ContentTemplate="{StaticResource ColorRangeViewTemplate}" />
-                    <PivotItem Margin="0,16,0,0" Header="Luminance" Content="{x:Bind Adjustment.ColorRanges.LuminanceView}" ContentTemplate="{StaticResource ColorRangeViewTemplate}" />
+                    <PivotItem Margin="0,16,4,0" Header="Hue" Content="{x:Bind Adjustment.ColorRanges.HueView}" ContentTemplate="{StaticResource ColorRangeViewTemplate}" />
+                    <PivotItem Margin="0,16,4,0" Header="Saturation" Content="{x:Bind Adjustment.ColorRanges.SaturationView}" ContentTemplate="{StaticResource ColorRangeViewTemplate}" />
+                    <PivotItem Margin="0,16,4,0" Header="Luminance" Content="{x:Bind Adjustment.ColorRanges.LuminanceView}" ContentTemplate="{StaticResource ColorRangeViewTemplate}" />
                 </Pivot>
             </winui:Expander>
 
