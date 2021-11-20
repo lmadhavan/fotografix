@@ -14,6 +14,7 @@ namespace Fotografix
         #endregion
 
         #region Color
+        bool BlackAndWhite { get; set; }
         float Temperature { get; set; }
         float Tint { get; set; }
         float Vibrance { get; set; }

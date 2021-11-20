@@ -5,6 +5,8 @@
     xmlns:local="using:Fotografix"
     xmlns:winui="using:Microsoft.UI.Xaml.Controls">
 
+    <local:InvertedBoolToVisibilityConverter x:Key="InvertedBoolToVisibilityConverter" />
+
     <Style x:Key="SectionHeaderTextBlockStyle" TargetType="TextBlock">
         <Setter Property="FontSize" Value="16" />
         <Setter Property="FontWeight" Value="SemiBold" />
@@ -101,7 +103,7 @@
     </DataTemplate>
 
     <DataTemplate x:Key="ColorRangeViewTemplate" x:DataType="local:ColorRangeView" x:DefaultBindMode="TwoWay">
-        <StackPanel Margin="0,16,0,0">
+        <StackPanel>
             <Slider Foreground="#CC0000" Background="#CC0000" Header="Red    " Value="{x:Bind Red    }" />
             <Slider Foreground="#CCCC00" Background="#CCCC00" Header="Yellow " Value="{x:Bind Yellow }" />
             <Slider Foreground="#00CC00" Background="#00CC00" Header="Green  " Value="{x:Bind Green  }" />
@@ -126,26 +128,33 @@
 
             <winui:Expander Header="Color">
                 <StackPanel>
+                    <ToggleSwitch Margin="0,0,0,8" Header="Black &amp; white" IsOn="{x:Bind Adjustment.BlackAndWhite}" />
                     <Slider Header="Temperature" Value="{x:Bind Adjustment.Temperature}" />
                     <Slider Header="Tint" Value="{x:Bind Adjustment.Tint}" />
-                    <Slider Header="Vibrance" Value="{x:Bind Adjustment.Vibrance}" />
-                    <Slider Header="Saturation" Value="{x:Bind Adjustment.Saturation}" />
+                    <Slider Header="Vibrance" Value="{x:Bind Adjustment.Vibrance}" Visibility="{x:Bind Adjustment.BlackAndWhite, Converter={StaticResource InvertedBoolToVisibilityConverter}, Mode=OneWay}" />
+                    <Slider Header="Saturation" Value="{x:Bind Adjustment.Saturation}" Visibility="{x:Bind Adjustment.BlackAndWhite, Converter={StaticResource InvertedBoolToVisibilityConverter}, Mode=OneWay}" />
                 </StackPanel>
             </winui:Expander>
 
-            <winui:Expander Header="HSL">
-                <Pivot x:DefaultBindMode="OneWay" Margin="-4">
+            <winui:Expander x:DefaultBindMode="OneWay" Header="HSL" Visibility="{x:Bind Adjustment.BlackAndWhite, Converter={StaticResource InvertedBoolToVisibilityConverter}}">
+                <Pivot Margin="4,-16,4,0">
                     <Pivot.HeaderTemplate>
                         <DataTemplate>
-                            <TextBlock FontSize="14" Text="{Binding}" />
+                            <TextBlock Margin="4,0" FontSize="14" Text="{Binding}" />
                         </DataTemplate>
                     </Pivot.HeaderTemplate>
 
-                    <PivotItem Header="Hue" Content="{x:Bind Adjustment.ColorRanges.HueView}" ContentTemplate="{StaticResource ColorRangeViewTemplate}" />
-                    <PivotItem Header="Saturation" Content="{x:Bind Adjustment.ColorRanges.SaturationView}" ContentTemplate="{StaticResource ColorRangeViewTemplate}" />
-                    <PivotItem Header="Luminance" Content="{x:Bind Adjustment.ColorRanges.LuminanceView}" ContentTemplate="{StaticResource ColorRangeViewTemplate}" />
+                    <PivotItem Margin="0,16,0,0" Header="Hue" Content="{x:Bind Adjustment.ColorRanges.HueView}" ContentTemplate="{StaticResource ColorRangeViewTemplate}" />
+                    <PivotItem Margin="0,16,0,0" Header="Saturation" Content="{x:Bind Adjustment.ColorRanges.SaturationView}" ContentTemplate="{StaticResource ColorRangeViewTemplate}" />
+                    <PivotItem Margin="0,16,0,0" Header="Luminance" Content="{x:Bind Adjustment.ColorRanges.LuminanceView}" ContentTemplate="{StaticResource ColorRangeViewTemplate}" />
                 </Pivot>
             </winui:Expander>
+
+            <winui:Expander x:DefaultBindMode="OneWay" Header="B&amp;W Mix"
+                            Visibility="{x:Bind Adjustment.BlackAndWhite}"
+                            IsExpanded="{x:Bind Adjustment.BlackAndWhite}"
+                            Content="{x:Bind Adjustment.ColorRanges.LuminanceView}"
+                            ContentTemplate="{StaticResource ColorRangeViewTemplate}" />
 
             <winui:Expander Header="Detail">
                 <StackPanel>

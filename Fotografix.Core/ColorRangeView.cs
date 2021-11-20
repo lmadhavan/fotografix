@@ -50,6 +50,11 @@ namespace Fotografix
             set => SetValue(ColorRange.Magenta, value);
         }
 
+        public void Reset()
+        {
+            Red = Yellow = Green = Cyan = Blue = Magenta = 0;
+        }
+
         private float GetValue(ColorRange colorRange)
         {
             return values[colorRange][componentIndex];

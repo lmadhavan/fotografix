@@ -216,9 +216,26 @@ namespace Fotografix
 
         #region Color
 
+        private bool blackAndWhite;
         private float vibrance;
         private float saturation;
         private ColorRangeAdjustment colorRanges;
+
+        public bool BlackAndWhite
+        {
+            get => blackAndWhite;
+
+            set
+            {
+                if (SetProperty(ref blackAndWhite, value))
+                {
+                    Vibrance = 0;
+                    Saturation = blackAndWhite ? -1 : 0;
+                    ColorRanges.SaturationView.Reset();
+                    ColorRanges.LuminanceView.Reset();
+                }
+            }
+        }
 
         public float Temperature
         {

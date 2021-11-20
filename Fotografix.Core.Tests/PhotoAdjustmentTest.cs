@@ -156,6 +156,24 @@ namespace Fotografix
             await VerifyOutputAsync("Barn_sharpness_scaled.jpg");
         }
 
+        [TestMethod]
+        public async Task BlackAndWhite()
+        {
+            // set up some initial color adjustments -- these should be reset when entering B&W mode
+            adjustment.Vibrance = 0.5f;
+            adjustment.Saturation = 0.5f;
+            adjustment.ColorRanges.HueView.Yellow = -0.5f;
+            adjustment.ColorRanges.SaturationView.Yellow = 1f;
+
+            adjustment.BlackAndWhite = true;
+            adjustment.ColorRanges.LuminanceView.Yellow = 1f;
+            await VerifyOutputAsync("Barn_bw.jpg");
+
+            // luminance values should be reset when exiting B&W mode
+            adjustment.BlackAndWhite = false;
+            Assert.AreEqual(0, adjustment.ColorRanges.LuminanceView.Yellow);
+        }
+
         private async Task VerifyOutputAsync(string filename, float tolerance = BitmapAssert.DefaultTolerance)
         {
             using (var output = new CanvasRenderTarget(bitmap, adjustment.GetOutputSize(bitmap)))
