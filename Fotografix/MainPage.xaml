@@ -137,6 +137,17 @@
                                 Visibility="{x:Bind IsEdited.Result, FallbackValue=Collapsed}">
                             <FontIcon FontSize="11" Foreground="{ThemeResource SystemChromeWhiteColor}" Glyph="&#xE706;" />
                         </Border>
+                        
+                        <!-- Context menu -->
+                        <Grid.ContextFlyout>
+                            <MenuFlyout>
+                                <MenuFlyoutItem Text="Show in File Explorer" Click="{x:Bind ShowInFileExplorer}">
+                                    <MenuFlyoutItem.Icon>
+                                        <FontIcon Glyph="&#xEC50;" />
+                                    </MenuFlyoutItem.Icon>
+                                </MenuFlyoutItem>
+                            </MenuFlyout>
+                        </Grid.ContextFlyout>
                     </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>

@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
 using Windows.Graphics.Imaging;
 using Windows.Storage;
@@ -25,6 +26,7 @@ namespace Fotografix
 
         public string Name => content.Name;
         public List<Photo> LinkedPhotos { get; } = new List<Photo>();
+        public IEnumerable<IStorageItem> LinkedStorageItems => Enumerable.Concat(new IStorageItem[] { content }, LinkedPhotos.Select(p => p.content));
 
         public async Task<IRandomAccessStream> OpenContentAsync()
         {
