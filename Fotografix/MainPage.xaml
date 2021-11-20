@@ -46,7 +46,10 @@
                 Height="40">
             <StackPanel Orientation="Horizontal">
                 <Image HorizontalAlignment="Left" VerticalAlignment="Center" Source="Assets/Square44x44Logo.png" Margin="12,1,0,0" Width="20" Height="20" />
-                <TextBlock x:Name="appTitle" Text="{x:Bind AppTitle}" VerticalAlignment="Center" Margin="10,0,0,0" FontSize="16"  />
+                <TextBlock x:Name="appTitle" VerticalAlignment="Center" Margin="10,0,0,0" FontSize="16">
+                    <Run Text="{x:Bind AppTitle}" />
+                    <Run Text="Beta" Foreground="{ThemeResource ButtonDisabledForegroundThemeBrush}" />
+                </TextBlock>
             </StackPanel>
         </Border>
 

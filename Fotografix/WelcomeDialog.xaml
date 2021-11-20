@@ -29,6 +29,13 @@
                 </ResourceDictionary>
             </FlipView.Resources>
 
+            <TextBlock>
+                <Run Text="Thank you for trying the beta version of Fotografix. If you run into any problems, please use the" />
+                <Run FontFamily="Segoe MDL2 Assets" Text="&#xE939;" />
+                <Run FontWeight="Bold" Text="Help" />
+                <Run Text="button to send feedback." />
+            </TextBlock>
+
             <Grid VerticalAlignment="Center">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="125" />
