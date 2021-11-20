@@ -37,9 +37,9 @@ namespace Fotografix
             {
                 var bitmap = await CanvasBitmap.LoadAsync(canvasResourceCreator, stream);
                 var adjustment = await photo.LoadAdjustmentAsync();
-                adjustment.Source = bitmap;
 
                 var editor = new PhotoEditor(photo, bitmap);
+                editor.CanRevert = await photo.HasAdjustmentAsync();
                 editor.SetAdjustment(adjustment);
                 return editor;
             }
@@ -92,9 +92,17 @@ namespace Fotografix
             this.RenderScale = (float)Math.Min(size.Width / bitmap.Size.Width, size.Height / bitmap.Size.Height);
         }
 
-        public void ResetAdjustment()
+        public bool CanRevert { get; private set; }
+
+        public async Task RevertAsync()
         {
-            SetAdjustment(new PhotoAdjustment { Source = bitmap, RenderScale = adjustment.RenderScale });
+            SetAdjustment(await photo.LoadAdjustmentAsync());
+            this.dirty = false;
+        }
+
+        public void Reset()
+        {
+            SetAdjustment(new PhotoAdjustment());
             this.dirty = true;
         }
 
@@ -158,7 +166,14 @@ namespace Fotografix
 
         private void SetAdjustment(PhotoAdjustment value)
         {
-            adjustment?.Dispose();
+            value.Source = bitmap;
+
+            if (adjustment != null)
+            {
+                value.RenderScale = adjustment.RenderScale;
+                adjustment.Dispose();
+            }
+
             this.adjustment = value;
             adjustment.Changed += OnAdjustmentChanged;
             RaisePropertyChanged(nameof(Adjustment));

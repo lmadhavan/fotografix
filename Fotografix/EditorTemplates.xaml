@@ -70,16 +70,22 @@
                 </StackPanel>
             </Button>
 
-            <Button Grid.Column="1" Margin="0,0,4,0" ToolTipService.ToolTip="Reset">
+            <Button Grid.Column="1" Margin="0,0,4,0">
                 <FontIcon Glyph="&#xE81C;" />
 
                 <Button.Flyout>
-                    <Flyout>
-                        <StackPanel>
-                            <TextBlock Text="All adjustments to this photo will be discarded." />
-                            <Button Margin="0,8,0,0" HorizontalAlignment="Right" Content="Reset" Click="ResetButton_Click" />
-                        </StackPanel>
-                    </Flyout>
+                    <MenuFlyout>
+                        <MenuFlyoutItem Text="Revert to last saved version" IsEnabled="{x:Bind CanRevert}" Click="RevertButton_Click">
+                            <MenuFlyoutItem.Icon>
+                                <FontIcon Glyph="&#xE81C;" />
+                            </MenuFlyoutItem.Icon>
+                        </MenuFlyoutItem>
+                        <MenuFlyoutItem Text="Reset to original" Click="{x:Bind Reset}">
+                            <MenuFlyoutItem.Icon>
+                                <FontIcon Glyph="&#xE74D;" />
+                            </MenuFlyoutItem.Icon>
+                        </MenuFlyoutItem>
+                    </MenuFlyout>
                 </Button.Flyout>
             </Button>
 

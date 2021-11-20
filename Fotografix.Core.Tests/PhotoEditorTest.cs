@@ -42,7 +42,7 @@ namespace Fotografix
             using (var editor = await PhotoEditor.CreateAsync(photo))
             {
                 editor.Adjustment.Exposure = 0.5f;
-                editor.ResetAdjustment();
+                editor.Reset();
                 await VerifyOutputAsync(editor, "Photos\\Barn.jpg");
             }
         }
@@ -53,7 +53,7 @@ namespace Fotografix
             using (var editor = await PhotoEditor.CreateAsync(photo))
             {
                 editor.RenderScale = 0.5f;
-                editor.ResetAdjustment();
+                editor.Reset();
 
                 Assert.AreEqual(0.5f, editor.RenderScale);
             }
@@ -136,6 +136,25 @@ namespace Fotografix
         }
 
         [TestMethod]
+        public async Task RevertsToPreviouslySavedAdjustment()
+        {
+            using (var editor = await PhotoEditor.CreateAsync(photo))
+            {
+                editor.Adjustment.Exposure = 0.5f;
+                Assert.IsFalse(editor.CanRevert, "should not be able to revert before saving");
+                await editor.SaveAsync();
+            }
+
+            using (var editor = await PhotoEditor.CreateAsync(photo))
+            {
+                editor.Adjustment.Exposure = 0.25f;
+                Assert.IsTrue(editor.CanRevert, "should be able to revert after saving");
+                await editor.RevertAsync();
+                Assert.AreEqual(0.5f, editor.Adjustment.Exposure);
+            }
+        }
+
+        [TestMethod]
         public async Task DoesNotWriteSidecarWhenNoAdjustmentIsMade()
         {
             using (var editor = await PhotoEditor.CreateAsync(photo))
@@ -162,7 +181,7 @@ namespace Fotografix
 
             using (var editor = await PhotoEditor.CreateAsync(photo))
             {
-                editor.ResetAdjustment();
+                editor.Reset();
                 await editor.SaveAsync();
             }
 

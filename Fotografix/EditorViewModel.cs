@@ -136,9 +136,16 @@ namespace Fotografix
             }
         }
 
-        public void ResetAdjustment()
+        public bool CanRevert => editor.CanRevert;
+
+        public Task RevertAsync()
         {
-            editor.ResetAdjustment();
+            return editor.RevertAsync();
+        }
+
+        public void Reset()
+        {
+            editor.Reset();
         }
 
         public Task SaveAsync()

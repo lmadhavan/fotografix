@@ -33,6 +33,8 @@ namespace Fotografix
             set => SetProperty(ref renderSize, value);
         }
 
+        public bool CanRevert => false;
+
         public void SetRenderSize(Size size)
         {
             this.RenderSize = size;
@@ -52,7 +54,12 @@ namespace Fotografix
             throw new NotImplementedException();
         }
 
-        public void ResetAdjustment()
+        public Task RevertAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Reset()
         {
             throw new NotImplementedException();
         }

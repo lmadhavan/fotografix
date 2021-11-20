@@ -12,7 +12,10 @@ namespace Fotografix
         IPhotoAdjustment Adjustment { get; }
         bool AdjustmentEnabled { get; set; }
         void Draw(CanvasDrawingSession ds);
-        void ResetAdjustment();
+
+        bool CanRevert { get; }
+        Task RevertAsync();
+        void Reset();
 
         float RenderScale { get; set; }
         Size RenderSize { get; }
