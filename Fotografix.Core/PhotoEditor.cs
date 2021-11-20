@@ -12,13 +12,12 @@ namespace Fotografix
         private readonly Photo photo;
         private readonly CanvasBitmap bitmap;
         private PhotoAdjustment adjustment;
-        private SaveState saveState;
+        private bool dirty;
 
         private PhotoEditor(Photo photo, CanvasBitmap bitmap)
         {
             this.photo = photo;
             this.bitmap = bitmap;
-            this.saveState = SaveState.Clean;
         }
 
         public void Dispose()
@@ -58,7 +57,7 @@ namespace Fotografix
             {
                 if (adjustment.Enabled != value)
                 {
-                    PreserveSaveState(() => adjustment.Enabled = value);
+                    PreserveDirtyState(() => adjustment.Enabled = value);
                     RaisePropertyChanged();
                 }
             }
@@ -74,7 +73,7 @@ namespace Fotografix
             {
                 if (adjustment.RenderScale != value)
                 {
-                    PreserveSaveState(() => adjustment.RenderScale = value);
+                    PreserveDirtyState(() => adjustment.RenderScale = value);
                     RaisePropertyChanged();
                     RaisePropertyChanged(nameof(RenderSize));
                 }
@@ -96,33 +95,20 @@ namespace Fotografix
         public void ResetAdjustment()
         {
             SetAdjustment(new PhotoAdjustment { Source = bitmap, RenderScale = adjustment.RenderScale });
-            this.saveState = SaveState.PendingDelete;
+            this.dirty = true;
         }
 
-        public Task SaveAsync()
+        public async Task SaveAsync()
         {
-            Task result;
-
-            switch (saveState)
+            if (dirty)
             {
-                case SaveState.Clean:
-                    result = Task.CompletedTask;
-                    break;
+                using (var thumbnail = await ExportToSoftwareBitmapAsync(ThumbnailSize))
+                {
+                    await photo.SaveAdjustmentAsync(adjustment, thumbnail);
+                }
 
-                case SaveState.Dirty:
-                    result = SaveInternalAsync();
-                    break;
-
-                case SaveState.PendingDelete:
-                    result = photo.DeleteAdjustmentAsync();
-                    break;
-
-                default:
-                    throw new InvalidOperationException();
+                this.dirty = false;
             }
-
-            this.saveState = SaveState.Clean;
-            return result;
         }
 
         public async Task<StorageFile> ExportAsync(StorageFolder folder)
@@ -139,14 +125,6 @@ namespace Fotografix
                 }
 
                 return file;
-            }
-        }
-
-        private async Task SaveInternalAsync()
-        {
-            using (var thumbnail = await ExportToSoftwareBitmapAsync(ThumbnailSize))
-            {
-                await photo.SaveAdjustmentAsync(adjustment, thumbnail);
             }
         }
 
@@ -190,15 +168,15 @@ namespace Fotografix
 
         private void OnAdjustmentChanged(object sender, EventArgs e)
         {
-            this.saveState = SaveState.Dirty;
+            this.dirty = true;
             Invalidate();
         }
 
-        private void PreserveSaveState(Action action)
+        private void PreserveDirtyState(Action action)
         {
-            var oldSaveState = saveState;
+            var oldDirty = this.dirty;
             action();
-            this.saveState = oldSaveState;
+            this.dirty = oldDirty;
         }
 
         private void Invalidate()
@@ -228,13 +206,6 @@ namespace Fotografix
             {
                 return new Size(d * originalSize.Width / originalSize.Height, d);
             }
-        }
-
-        private enum SaveState
-        {
-            Clean,
-            Dirty,
-            PendingDelete
         }
     }
 }

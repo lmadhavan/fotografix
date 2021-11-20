@@ -332,9 +332,20 @@ namespace Fotografix
 
         #region Serialization
 
+        private static readonly string EmptyJson;
+
+        static PhotoAdjustment()
+        {
+            using (var adjustment = new PhotoAdjustment())
+            {
+                EmptyJson = adjustment.Serialize();
+            }
+        }
+
         public string Serialize()
         {
-            return JsonConvert.SerializeObject(this, new JsonSerializerSettings { DefaultValueHandling = DefaultValueHandling.Ignore });
+            var result = JsonConvert.SerializeObject(this, new JsonSerializerSettings { DefaultValueHandling = DefaultValueHandling.Ignore });
+            return result == EmptyJson ? "" : result;
         }
 
         public static PhotoAdjustment Deserialize(string str)

@@ -170,6 +170,24 @@ namespace Fotografix
         }
 
         [TestMethod]
+        public async Task DeletesSidecarWhenAdjustmentIsSetToDefaultValue()
+        {
+            using (var editor = await PhotoEditor.CreateAsync(photo))
+            {
+                editor.Adjustment.Exposure = 0.5f;
+                await editor.SaveAsync();
+            }
+
+            using (var editor = await PhotoEditor.CreateAsync(photo))
+            {
+                editor.Adjustment.Exposure = 0.0f;
+                await editor.SaveAsync();
+            }
+
+            Assert.IsNull(await sidecar.TryGetFileAsync());
+        }
+
+        [TestMethod]
         public void ScalesSizeToFitMaxDimension()
         {
             Assert.AreEqual(new Size(100, 25), PhotoEditor.ScaleDimensions(new Size(200, 50), 100), "width > maxDimension: should scale width to maxDimension");

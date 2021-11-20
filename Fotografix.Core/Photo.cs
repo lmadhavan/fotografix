@@ -71,6 +71,13 @@ namespace Fotografix
 
         internal async Task SaveAdjustmentAsync(PhotoAdjustment adjustment, SoftwareBitmap thumbnail)
         {
+            var serializedAdjustment = adjustment.Serialize();
+            if (serializedAdjustment == "")
+            {
+                await DeleteAdjustmentAsync();
+                return;
+            }
+
             var file = await sidecar.GetOrCreateFileAsync();
 
             Debug.WriteLine($"{Name}: Saving adjustment to {file.Path}");
@@ -80,7 +87,6 @@ namespace Fotografix
                 var encoder = await BitmapEncoder.CreateAsync(BitmapEncoder.JpegEncoderId, stream);
                 encoder.SetSoftwareBitmap(thumbnail);
 
-                var serializedAdjustment = adjustment.Serialize();
                 await encoder.BitmapProperties.SetXmpPropertyAsync(AdjustmentMetadataProperty, serializedAdjustment);
                 await encoder.FlushAsync();
             }
