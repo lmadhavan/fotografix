@@ -20,20 +20,5 @@ namespace Fotografix
 
             await WelcomeDialog.ShowOnFirstLoadAsync();
         }
-
-        private async void RevertButton_Click(object sender, RoutedEventArgs e)
-        {
-            await EditorFor(sender).RevertAsync();
-        }
-
-        private async void ExportButton_Click(object sender, RoutedEventArgs e)
-        {
-            await EditorFor(sender).ExportAsync();
-        }
-
-        private EditorViewModel EditorFor(object sender)
-        {
-            return (EditorViewModel)((FrameworkElement)sender).DataContext;
-        }
     }
 }

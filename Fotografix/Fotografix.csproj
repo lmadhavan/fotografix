@@ -127,7 +127,6 @@
     <Compile Include="EditorViewModel.cs" />
     <Compile Include="ExceptionMessageConverter.cs" />
     <Compile Include="FileTypeVisibilityConverter.cs" />
-    <Compile Include="FlyoutExtensions.cs" />
     <Compile Include="InvertedBoolToVisibilityConverter.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>

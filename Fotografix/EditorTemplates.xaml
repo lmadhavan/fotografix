@@ -63,7 +63,7 @@
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
-            <Button Grid.Column="0" Click="ExportButton_Click">
+            <Button Grid.Column="0" Click="{x:Bind Export}">
                 <StackPanel Orientation="Horizontal">
                     <FontIcon Glyph="&#xE72D;" />
                     <TextBlock Margin="8,0,0,0" Text="Export" />
@@ -75,7 +75,7 @@
 
                 <Button.Flyout>
                     <MenuFlyout>
-                        <MenuFlyoutItem Text="Revert to last saved version" IsEnabled="{x:Bind CanRevert}" Click="RevertButton_Click">
+                        <MenuFlyoutItem Text="Revert to last saved version" IsEnabled="{x:Bind CanRevert}" Click="{x:Bind Revert}">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xE81C;" />
                             </MenuFlyoutItem.Icon>

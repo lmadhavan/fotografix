@@ -138,9 +138,9 @@ namespace Fotografix
 
         public bool CanRevert => editor.CanRevert;
 
-        public Task RevertAsync()
+        public async void Revert()
         {
-            return editor.RevertAsync();
+            await editor.RevertAsync();
         }
 
         public void Reset()
@@ -153,7 +153,7 @@ namespace Fotografix
             return editor.SaveAsync();
         }
 
-        public async Task ExportAsync()
+        public async void Export()
         {
             var folder = ApplicationData.Current.TemporaryFolder;
             var file = await editor.ExportAsync(folder);
