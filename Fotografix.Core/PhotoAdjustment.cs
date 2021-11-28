@@ -12,6 +12,7 @@ namespace Fotografix
     public sealed class PhotoAdjustment : NotifyPropertyChangedBase, IDisposable, IPhotoAdjustment
     {
         private readonly Transform2DEffect transformEffect;
+        private readonly CropEffect cropEffect;
         private readonly GammaTransferEffect transferEffect;
         private readonly HighlightsAndShadowsEffect highlightsAndShadowsEffect;
         private readonly ContrastEffect contrastEffect;
@@ -24,6 +25,7 @@ namespace Fotografix
         public PhotoAdjustment()
         {
             this.transformEffect = new Transform2DEffect();
+            this.cropEffect = new CropEffect { Source = transformEffect };
             this.transferEffect = new GammaTransferEffect { Source = transformEffect };
             this.highlightsAndShadowsEffect = new HighlightsAndShadowsEffect { Source = transferEffect };
             this.contrastEffect = new ContrastEffect { Source = highlightsAndShadowsEffect };
@@ -53,6 +55,7 @@ namespace Fotografix
             contrastEffect.Dispose();
             highlightsAndShadowsEffect.Dispose();
             transferEffect.Dispose();
+            cropEffect.Dispose();
             transformEffect.Dispose();
         }
 
@@ -91,7 +94,7 @@ namespace Fotografix
 
                 if (SetProperty(ref renderScale, value))
                 {
-                    transformEffect.TransformMatrix = Matrix3x2.CreateScale(value);
+                    UpdateTransform();
                     sharpnessAdjustment.RenderScale = value;
 
                     // scale radius-based adjustments to match the input scale
@@ -100,9 +103,21 @@ namespace Fotografix
             }
         }
 
+        private void UpdateTransform()
+        {
+            var matrix = Matrix3x2.CreateScale(renderScale);
+            
+            if (crop.HasValue)
+            {
+                matrix = Matrix3x2.CreateTranslation((float)-crop.Value.X, (float)-crop.Value.Y) * matrix;
+            }
+
+            transformEffect.TransformMatrix = matrix;
+        }
+
         public Size GetOutputSize(ICanvasResourceCreator resourceCreator)
         {
-            var bounds = transformEffect.GetBounds(resourceCreator);
+            var bounds = transferEffect.GetBounds(resourceCreator);
             return new Size(bounds.Width, bounds.Height);
         }
 
@@ -344,6 +359,35 @@ namespace Fotografix
         }
 
         public ISharpnessAdjustment Sharpness => sharpnessAdjustment;
+
+        #endregion
+
+        #region Crop
+
+        private Rect? crop;
+
+        public Rect? Crop
+        {
+            get => crop;
+
+            set
+            {
+                if (SetProperty(ref crop, value))
+                {
+                    if (crop.HasValue)
+                    {
+                        cropEffect.SourceRectangle = new Rect(0, 0, crop.Value.Width, crop.Value.Height);
+                        transferEffect.Source = cropEffect;
+                    }
+                    else
+                    {
+                        transferEffect.Source = transformEffect;
+                    }
+
+                    UpdateTransform();
+                }
+            }
+        }
 
         #endregion
 

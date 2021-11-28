@@ -156,6 +156,8 @@
     <Content Include="TestData\Barn_clarity.jpg" />
     <Content Include="TestData\Barn_clarity_scaled.jpg" />
     <Content Include="TestData\Barn_contrast.jpg" />
+    <Content Include="TestData\Barn_crop.jpg" />
+    <Content Include="TestData\Barn_crop_scaled.jpg" />
     <Content Include="TestData\Barn_exposure.jpg" />
     <Content Include="TestData\Barn_exposure_thumbnail.jpg" />
     <Content Include="TestData\Barn_highlights.jpg" />

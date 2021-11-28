@@ -1,23 +1,49 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Threading.Tasks;
 using Windows.Foundation;
+
+using static Fotografix.CropTracker;
 
 namespace Fotografix
 {
     [TestClass]
     public class EditorViewModelTest
     {
-        private FakePhotoEditor editor;
-        private StubCanvasResourceCreator dpiResolver;
+        private static readonly Size PhotoSize = new Size(1000, 500);
+        private const float DpiScalingFactor = 2;
+
+        private PhotoEditor editor;
+        private CropTracker cropTracker;
         private EditorViewModel vm;
 
         [TestInitialize]
-        public void Initialize()
+        public async Task Initialize()
         {
-            this.editor = new FakePhotoEditor();
-            this.dpiResolver = new StubCanvasResourceCreator();
-            this.vm = new EditorViewModel(editor, dpiResolver);
+            var photo = new FakePhoto { Size = PhotoSize };
+            var dpiProvider = new StubCanvasResourceCreator { ScalingFactor = DpiScalingFactor };
+            this.editor = await PhotoEditor.CreateAsync(photo, dpiProvider);
+
+            this.cropTracker = new CropTracker();
+            this.vm = new EditorViewModel(editor, dpiProvider, cropTracker);
         }
 
+        [TestCleanup]
+        public void Cleanup()
+        {
+            vm.Dispose();
+        }
+
+        private void SetupRenderScale(float scale)
+        {
+            SetupRenderScale(scale, PhotoSize);
+        }
+
+        private void SetupRenderScale(float scale, Size photoSize)
+        {
+            // pick a viewport size that results in the desired render scale
+            vm.SetViewportSize(new Size(photoSize.Width * scale / DpiScalingFactor, photoSize.Height * scale / DpiScalingFactor));
+        }
+        
         [TestMethod]
         public void CanZoomToActualPixels()
         {
@@ -37,52 +63,130 @@ namespace Fotografix
         }
 
         [TestMethod]
-        public void SetsRenderSizeToViewportSize()
+        public void SetsRenderScaleFromViewportSize()
         {
-            dpiResolver.Dpi = 96 * 2; // 200% scaling
-            Size sizeInDips = new Size(200, 100);
-            Size expectedSizeInPixels = new Size(400, 200);
+            SetupRenderScale(0.5f);
 
-            vm.SetViewportSize(sizeInDips);
-            
-            Assert.AreEqual(expectedSizeInPixels, editor.RenderSize);
+            Assert.AreEqual(0.5f, editor.RenderScale);
+            Assert.AreEqual(250, vm.RenderWidth);
+            Assert.AreEqual(125, vm.RenderHeight);
         }
 
         [TestMethod]
         public void ResetsRenderScaleWhenZoomedToActualPixels()
         {
-            editor.RenderScale = 0.5f;
+            SetupRenderScale(0.5f);
 
             vm.ZoomToActualPixels();
 
             Assert.AreEqual(1, editor.RenderScale);
-            Assert.AreEqual(default, editor.RenderSize);
-        }
-
-        public void RestoresPreviousViewportSizeWhenZoomedToFit()
-        {
-            dpiResolver.Dpi = 96 * 2; // 200% scaling
-            Size sizeInDips = new Size(200, 100);
-            Size expectedSizeInPixels = new Size(400, 200);
-
-            vm.SetViewportSize(sizeInDips);
-            vm.ZoomToActualPixels();
-            vm.ZoomToFit();
-            
-            Assert.AreEqual(expectedSizeInPixels, editor.RenderSize);
         }
 
         [TestMethod]
-        public void ConvertsEditorRenderSizeToDips()
+        public void RemembersPreviousViewportSizeWhenZoomedToFit()
         {
-            dpiResolver.Dpi = 96 * 2; // 200% scaling
-            Size sizeInPixels = new Size(200, 100);
-            Size expectedSizeInDips = new Size(100, 50);
+            SetupRenderScale(0.5f);
 
-            editor.RenderSize = sizeInPixels;
+            vm.ZoomToActualPixels();
+            vm.ZoomToFit();
             
-            Assert.AreEqual(expectedSizeInDips.Width, vm.RenderWidth, nameof(vm.RenderWidth));
-            Assert.AreEqual(expectedSizeInDips.Height, vm.RenderHeight, nameof(vm.RenderHeight));
+            Assert.AreEqual(0.5f, editor.RenderScale);
+        }
+
+        [TestMethod]
+        public void EnteringCropModeLocksZoom()
+        {
+            vm.ZoomToActualPixels();
+            vm.CropMode = true;
+
+            Assert.IsTrue(vm.IsZoomedToFit, nameof(vm.IsZoomedToFit));
+            Assert.IsFalse(vm.CanZoomToActualPixels, nameof(vm.CanZoomToActualPixels));
+        }
+
+        [TestMethod]
+        public void CropRectangleDefaultsToPhotoSize()
+        {
+            vm.CropMode = true;
+
+            Assert.AreEqual(new Rect(new Point(), PhotoSize), cropTracker.Rect);
+        }
+
+        [TestMethod]
+        public void UsesExistingCropRectangle()
+        {
+            Size existingCropSize = new Size(250, 250);
+            Rect existingCropRect = new Rect(new Point(), existingCropSize);
+
+            editor.Adjustment.Crop = existingCropRect;
+            SetupRenderScale(1f, existingCropSize);
+
+            vm.CropMode = true;
+
+            Assert.AreEqual(existingCropRect, cropTracker.Rect, "crop tracker should be initialized to existing crop rectangle");
+            Assert.IsNull(editor.Adjustment.Crop, "should display original photo while in crop mode");
+            Assert.AreEqual(0.25f, editor.RenderScale, "original photo should be scaled down to fit viewport");
+        }
+
+        [TestMethod]
+        public void TranslatesPointerInputToImageCoordinates()
+        {
+            editor.Adjustment.Crop = new Rect(0, 0, 100, 100);
+            SetupRenderScale(0.5f);
+
+            vm.CropMode = true;
+            vm.PointerPressed(new Point(0, 0));
+            vm.PointerMoved(new Point(10, 10));
+
+            Assert.AreEqual(4 * EditorViewModel.CropHandleSize, cropTracker.HandleTolerance, "crop handle tolerance");
+            Assert.AreEqual(RectFromLTRB(40, 40, 100, 100), cropTracker.Rect, "crop rectangle");
+        }
+
+        [TestMethod]
+        public void ExitingCropModeUpdatesEditor()
+        {
+            SetupRenderScale(0.5f);
+
+            vm.CropMode = true;
+            cropTracker.Rect = new Rect(10, 20, 30, 40);
+            vm.CropMode = false;
+
+            Assert.AreEqual(new Rect(10, 20, 30, 40), editor.Adjustment.Crop, "adjustment should contain updated crop rectangle");
+            Assert.AreEqual(1f, editor.RenderScale, "cropped photo should fully fit within existing viewport");
+        }
+
+        [TestMethod]
+        public void DefaultCropResultsInNullCropAdjustment()
+        {
+            vm.CropMode = true;
+            vm.CropMode = false;
+
+            Assert.IsNull(editor.Adjustment.Crop);
+        }
+
+        [TestMethod]
+        public void ExitingCropModeReenablesZoom()
+        {
+            vm.CropMode = true;
+            vm.CropMode = false;
+
+            Assert.IsTrue(vm.CanZoomToActualPixels, nameof(vm.CanZoomToActualPixels));
+        }
+
+        [TestMethod]
+        public void ResettingAdjustmentExitsCropMode()
+        {
+            Size existingCropSize = new Size(250, 250);
+            Rect existingCropRect = new Rect(new Point(), existingCropSize);
+
+            editor.Adjustment.Crop = existingCropRect;
+            SetupRenderScale(1f, existingCropSize);
+
+            vm.CropMode = true;
+            vm.Reset();
+
+            Assert.IsFalse(vm.CropMode, "should exit crop mode");
+            Assert.IsNull(editor.Adjustment.Crop, "should reset adjustment");
+            Assert.AreEqual(0.25f, editor.RenderScale, "should recompute render scale");
         }
 
         [TestMethod]
@@ -94,7 +198,6 @@ namespace Fotografix
             vm.Draw(ds: null /* don't care */);
 
             Assert.IsFalse(vm.IsLoaded);
-            Assert.AreEqual(0, editor.DrawCount);
         }
 
         [TestMethod]
@@ -106,7 +209,6 @@ namespace Fotografix
             vm.SetViewportSize(new Size(10, 10));
 
             Assert.IsFalse(vm.IsLoaded);
-            Assert.AreEqual(default, editor.RenderSize);
         }
     }
 }

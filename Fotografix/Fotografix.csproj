@@ -120,6 +120,7 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="ApplicationViewModel.cs" />
+    <Compile Include="CropTracker.cs" />
     <Compile Include="CustomTitleBar.cs" />
     <Compile Include="EditorTemplates.xaml.cs">
       <DependentUpon>EditorTemplates.xaml</DependentUpon>
@@ -127,17 +128,23 @@
     <Compile Include="EditorViewModel.cs" />
     <Compile Include="ExceptionMessageConverter.cs" />
     <Compile Include="FileTypeVisibilityConverter.cs" />
+    <Compile Include="ScalingHelper.cs" />
+    <Compile Include="Input\PointerEventAdapter.cs" />
+    <Compile Include="Input\PointerEventHandlerChain.cs" />
     <Compile Include="InvertedBoolToVisibilityConverter.cs" />
+    <Compile Include="Input\IPointerEventHandler.cs" />
+    <Compile Include="Input\IPointerInputHandler.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="NotifyTaskCompletion.cs" />
+    <Compile Include="Input\NullPointerInputHandler.cs" />
     <Compile Include="PhotoViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RecentFolderMenuFlyout.cs" />
     <Compile Include="NullToVisibilityConverter.cs" />
     <Compile Include="ThumbnailViewModel.cs" />
-    <Compile Include="PanOperation.cs" />
+    <Compile Include="ViewportPanHandler.cs" />
     <Compile Include="WelcomeDialog.xaml.cs">
       <DependentUpon>WelcomeDialog.xaml</DependentUpon>
     </Compile>

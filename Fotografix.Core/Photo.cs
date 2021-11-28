@@ -1,4 +1,5 @@
 ﻿using Fotografix.Xmp;
+using Microsoft.Graphics.Canvas;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -11,7 +12,7 @@ using Windows.Storage.Streams;
 
 namespace Fotografix
 {
-    public sealed class Photo
+    public sealed class Photo : IPhoto
     {
         private static readonly XmpProperty AdjustmentMetadataProperty = new XmpProperty("https://ns.fotografix.org/", "Adjustment");
 
@@ -28,9 +29,12 @@ namespace Fotografix
         public List<Photo> LinkedPhotos { get; } = new List<Photo>();
         public IEnumerable<IStorageItem> LinkedStorageItems => Enumerable.Concat(new IStorageItem[] { content }, LinkedPhotos.Select(p => p.content));
 
-        public async Task<IRandomAccessStream> OpenContentAsync()
+        public async Task<CanvasBitmap> LoadBitmapAsync(ICanvasResourceCreator canvasResourceCreator)
         {
-            return await content.OpenReadAsync();
+            using (var stream = await content.OpenReadAsync())
+            {
+                return await CanvasBitmap.LoadAsync(canvasResourceCreator, stream);
+            }
         }
 
         public async Task<IRandomAccessStream> GetThumbnailAsync()
@@ -52,13 +56,13 @@ namespace Fotografix
             return (await sidecar.TryGetFileAsync()) != null;
         }
 
-        internal async Task<PhotoAdjustment> LoadAdjustmentAsync()
+        public async Task<PhotoAdjustment> LoadAdjustmentAsync()
         {
             var file = await sidecar.TryGetFileAsync();
 
             if (file == null)
             {
-                return new PhotoAdjustment();
+                return null;
             }
 
             Debug.WriteLine($"{Name}: Loading saved adjustment from {file.Path}");
@@ -71,7 +75,7 @@ namespace Fotografix
             }
         }
 
-        internal async Task SaveAdjustmentAsync(PhotoAdjustment adjustment, SoftwareBitmap thumbnail)
+        public async Task SaveAdjustmentAsync(PhotoAdjustment adjustment, SoftwareBitmap thumbnail)
         {
             var serializedAdjustment = adjustment.Serialize();
             if (serializedAdjustment == "")
@@ -96,7 +100,7 @@ namespace Fotografix
             Changed?.Invoke(this, EventArgs.Empty);
         }
 
-        internal async Task DeleteAdjustmentAsync()
+        private async Task DeleteAdjustmentAsync()
         {
             Debug.WriteLine($"{Name}: Deleting saved adjustment");
             await sidecar.DeleteAsync();

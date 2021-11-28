@@ -60,11 +60,11 @@ namespace Fotografix
         }
 
         [TestMethod]
-        public async Task ComputesRenderScaleBasedOnSize()
+        public async Task ScalesToFitSpecifiedSize()
         {
             using (var editor = await PhotoEditor.CreateAsync(photo))
             {
-                editor.SetRenderSize(new Size(300, 150));
+                editor.ScaleToFit(new Size(300, 150));
 
                 // original photo is 900x600, so 300x150 should result in 25% scale
                 Assert.AreEqual(0.25f, editor.RenderScale);

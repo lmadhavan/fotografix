@@ -119,10 +119,11 @@
     <SDKReference Include="TestPlatform.Universal, Version=$(UnitTestPlatformVersion)" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CropTrackerTest.cs" />
     <Compile Include="EditorViewModelTest.cs" />
     <Compile Include="ExceptionMessageConverterTest.cs" />
+    <Compile Include="FakePhoto.cs" />
     <Compile Include="FileTypeVisibilityConverterTest.cs" />
-    <Compile Include="FakePhotoEditor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RegressionTest.cs" />
     <Compile Include="StubCanvasResourceCreator.cs" />

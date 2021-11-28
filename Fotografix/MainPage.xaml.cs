@@ -1,11 +1,12 @@
-﻿using Microsoft.Graphics.Canvas.UI.Xaml;
+﻿using Fotografix.Input;
+using Microsoft.Graphics.Canvas.UI.Xaml;
 using System;
 using Windows.ApplicationModel;
-using Windows.Devices.Input;
 using Windows.Foundation;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.System;
+using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
@@ -17,12 +18,19 @@ namespace Fotografix
     {
         private ApplicationViewModel vm;
         private EditorViewModel editor;
-        private PanOperation panOperation;
+
+        private readonly CoreWindow window;
+        private readonly ViewportPanHandler panHandler;
+        private IPointerEventHandler pointerEventHandler;
 
         public MainPage()
         {
             this.InitializeComponent();
             CustomTitleBar.Initialize(appTitleBar, appTitle);
+
+            this.window = CoreWindow.GetForCurrentThread();
+            this.panHandler = new ViewportPanHandler(viewport);
+            this.pointerEventHandler = panHandler;
         }
 
         private string AppTitle => Package.Current.DisplayName;
@@ -48,6 +56,12 @@ namespace Fotografix
         private void OnEditorLoaded(object sender, EditorViewModel e)
         {
             this.editor = e;
+            this.pointerEventHandler = new PointerEventHandlerChain(new IPointerEventHandler[]
+            {
+                new PointerEventAdapter(canvas, editor),
+                panHandler
+            });
+
             editor.Invalidated += (s, _) => canvas.Invalidate();
             editor.SetViewportSize(new Size(viewport.ActualWidth, viewport.ActualHeight));
             canvas.Invalidate();
@@ -75,27 +89,61 @@ namespace Fotografix
             editor?.SetViewportSize(e.NewSize);
         }
 
+        #region Pointer events
+
+        private static readonly CoreCursor DefaultCursor = new CoreCursor(CoreCursorType.Arrow, 0);
+        private bool pointerCaptured;
+        private bool pointerInside;
+
+        private void Canvas_PointerEntered(object sender, PointerRoutedEventArgs e)
+        {
+            this.pointerInside = true;
+        }
+
+        private void Canvas_PointerExited(object sender, PointerRoutedEventArgs e)
+        {
+            this.pointerInside = false;
+
+            if (!pointerCaptured)
+            {
+                window.PointerCursor = DefaultCursor;
+            }
+        }
+
         private void Canvas_PointerPressed(object sender, PointerRoutedEventArgs e)
         {
-            if (e.Pointer.PointerDeviceType == PointerDeviceType.Mouse && canvas.CapturePointer(e.Pointer))
+            if (pointerEventHandler.PointerPressed(e))
             {
-                this.panOperation = new PanOperation(viewport, e);
+                viewport.ManipulationMode &= ~ManipulationModes.System;
+                this.pointerCaptured = canvas.CapturePointer(e.Pointer);
+                window.PointerCursor = pointerEventHandler.Cursor;
+                e.Handled = true;
             }
         }
 
         private void Canvas_PointerMoved(object sender, PointerRoutedEventArgs e)
         {
-            panOperation?.Track(e);
+            if (pointerEventHandler.PointerMoved(e))
+            {
+                window.PointerCursor = pointerEventHandler.Cursor;
+                e.Handled = true;
+            }
         }
 
         private void Canvas_PointerReleased(object sender, PointerRoutedEventArgs e)
         {
-            if (panOperation != null)
+            if (pointerEventHandler.PointerReleased(e))
             {
-                canvas.ReleasePointerCapture(e.Pointer);
-                this.panOperation = null;
+                window.PointerCursor = pointerInside ? pointerEventHandler.Cursor : DefaultCursor;
+                e.Handled = true;
             }
+
+            canvas.ReleasePointerCapture(e.Pointer);
+            viewport.ManipulationMode |= ManipulationModes.System;
+            this.pointerCaptured = false;
         }
+
+        #endregion
 
         private void RecentFolderFlyout_FolderActivated(object sender, StorageFolder folder)
         {

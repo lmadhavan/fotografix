@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using Windows.Foundation;
 
 namespace Fotografix
 {
@@ -19,12 +20,14 @@ namespace Fotografix
         float Tint { get; set; }
         float Vibrance { get; set; }
         float Saturation { get; set; }
-        ColorRangeAdjustment ColorRanges { get; set; }
+        ColorRangeAdjustment ColorRanges { get; }
         #endregion
 
         #region Detail
         float Clarity { get; set; }
         ISharpnessAdjustment Sharpness { get; }
         #endregion
+
+        Rect? Crop { get; set; }
     }
 }

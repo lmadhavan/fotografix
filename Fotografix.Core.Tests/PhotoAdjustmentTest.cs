@@ -2,6 +2,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Threading.Tasks;
+using Windows.Foundation;
 
 namespace Fotografix
 {
@@ -172,6 +173,21 @@ namespace Fotografix
             // luminance values should be reset when exiting B&W mode
             adjustment.BlackAndWhite = false;
             Assert.AreEqual(0, adjustment.ColorRanges.LuminanceView.Yellow);
+        }
+
+        [TestMethod]
+        public async Task Crop()
+        {
+            adjustment.Crop = new Rect(450, 0, 450, 600);
+            await VerifyOutputAsync("Barn_crop.jpg");
+        }
+
+        [TestMethod]
+        public async Task Crop_Scaled()
+        {
+            adjustment.Crop = new Rect(450, 0, 450, 600);
+            adjustment.RenderScale = 0.5f;
+            await VerifyOutputAsync("Barn_crop_scaled.jpg");
         }
 
         private async Task VerifyOutputAsync(string filename, float tolerance = BitmapAssert.DefaultTolerance)

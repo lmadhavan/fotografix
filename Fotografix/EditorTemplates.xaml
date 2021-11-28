@@ -218,6 +218,9 @@
                     </Slider>
                 </StackPanel>
             </winui:Expander>
+
+            <winui:Expander Header="Crop" IsExpanded="{x:Bind CropMode}">
+            </winui:Expander>
         </StackPanel>
     </DataTemplate>
 </ResourceDictionary>

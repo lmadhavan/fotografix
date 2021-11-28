@@ -1,29 +1,41 @@
-﻿using Microsoft.Graphics.Canvas;
+﻿using Fotografix.Input;
+using Microsoft.Graphics.Canvas;
 using System;
-using System.ComponentModel;
 using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Storage;
 using Windows.System;
+using Windows.UI;
+using Windows.UI.Core;
 
 namespace Fotografix
 {
-    public sealed class EditorViewModel : NotifyPropertyChangedBase, IDisposable
+    public sealed class EditorViewModel : NotifyPropertyChangedBase, IPointerInputHandler, IDisposable
     {
-        private readonly IPhotoEditor editor;
-        private readonly ICanvasResourceCreatorWithDpi dpiResolver;
-        private bool loaded;
-        private Size renderSize;
+        public const int CropHandleSize = 6;
 
-        public EditorViewModel(IPhotoEditor editor, ICanvasResourceCreatorWithDpi dpiResolver)
+        private readonly PhotoEditor editor;
+        private readonly ScalingHelper scalingHelper;
+        private readonly CropTracker cropTracker;
+        private IPointerInputHandler activeInputHandler;
+        private bool loaded;
+
+        public EditorViewModel(PhotoEditor editor, ICanvasResourceCreatorWithDpi dpiProvider) : this(editor, dpiProvider, new CropTracker())
+        {
+        }
+
+        public EditorViewModel(PhotoEditor editor, ICanvasResourceCreatorWithDpi dpiProvider, CropTracker cropTracker)
         {
             this.editor = editor;
-            editor.PropertyChanged += Editor_PropertyChanged;
             editor.Invalidated += (s, e) => Invalidate();
 
-            this.dpiResolver = dpiResolver;
+            this.scalingHelper = new ScalingHelper(dpiProvider, editor);
             UpdateRenderSize();
 
+            this.cropTracker = cropTracker;
+            cropTracker.RectChanged += (s, e) => Invalidate();
+
+            this.activeInputHandler = new NullPointerInputHandler();
             this.loaded = true;
         }
 
@@ -39,23 +51,44 @@ namespace Fotografix
             private set => SetProperty(ref loaded, value);
         }
 
-        public double RenderWidth => renderSize.Width;
-        public double RenderHeight => renderSize.Height;
-
         public IPhotoAdjustment Adjustment => editor.Adjustment;
 
         public bool ShowOriginal
         {
             get => !editor.AdjustmentEnabled;
-            set => editor.AdjustmentEnabled = !value;
+
+            set
+            {
+                editor.AdjustmentEnabled = !value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public void Draw(CanvasDrawingSession ds)
+        {
+            if (loaded)
+            {
+                ds.Units = CanvasUnits.Pixels;
+                editor.Draw(ds);
+
+                if (cropMode)
+                {
+                    ds.Units = CanvasUnits.Dips;
+                    ds.DrawRectangle(scalingHelper.ImageToScreen(cropTracker.Rect), Colors.Red);
+                }
+            }
         }
 
         public event EventHandler Invalidated;
 
-        #region Viewport controls
+        #region Viewport
 
         private Size viewportSize;
+        private Size renderSize;
         private bool zoomToFit = true;
+
+        public double RenderWidth => renderSize.Width;
+        public double RenderHeight => renderSize.Height;
 
         public bool IsZoomedToFit
         {
@@ -71,7 +104,7 @@ namespace Fotografix
                 
                 if (zoomToFit)
                 {
-                    editor.SetRenderSize(viewportSize);
+                    ScaleToFit();
                 }
             }
         }
@@ -80,17 +113,15 @@ namespace Fotografix
         public bool IsPreviewAccuracyWarningVisible => editor.RenderScale != 1;
 
         public bool CanZoomToFit => !zoomToFit;
-        public bool CanZoomToActualPixels => zoomToFit;
+        public bool CanZoomToActualPixels => zoomToFit && !cropMode;
 
         public void SetViewportSize(Size size)
         {
-            this.viewportSize = size;
-            viewportSize.Width = ConvertDipsToPixels(size.Width);
-            viewportSize.Height = ConvertDipsToPixels(size.Height);
+            this.viewportSize = scalingHelper.ScreenToViewport(size);
 
             if (loaded && zoomToFit)
             {
-                editor.SetRenderSize(viewportSize);
+                ScaleToFit();
             }
         }
 
@@ -103,49 +134,129 @@ namespace Fotografix
         {
             editor.RenderScale = 1;
             this.IsZoomedToFit = false;
-        }
-
-        private double ConvertPixelsToDips(double pixels)
-        {
-            return pixels * 96 / dpiResolver.Dpi;
-        }
-
-        private double ConvertDipsToPixels(double dips)
-        {
-            return dips * dpiResolver.Dpi / 96;
+            UpdateRenderSize();
         }
 
         private void UpdateRenderSize()
         {
-            var size = editor.RenderSize;
-            size.Width = ConvertPixelsToDips(size.Width);
-            size.Height = ConvertPixelsToDips(size.Height);
-            this.renderSize = size;
+            this.renderSize = scalingHelper.ViewportToScreen(editor.RenderSize);
             RaisePropertyChanged(nameof(RenderWidth));
             RaisePropertyChanged(nameof(RenderHeight));
+            RaisePropertyChanged(nameof(IsZoomedToActualPixels));
+            RaisePropertyChanged(nameof(IsPreviewAccuracyWarningVisible));
+        }
+
+        private void ScaleToFit()
+        {
+            editor.ScaleToFit(viewportSize);
+            UpdateRenderSize();
         }
 
         #endregion
 
-        public void Draw(CanvasDrawingSession ds)
+        #region Crop
+
+        private bool cropMode;
+        
+        public bool CropMode
         {
-            if (loaded)
+            get => cropMode;
+
+            set
             {
-                ds.Units = CanvasUnits.Pixels;
-                editor.Draw(ds);
+                if (SetProperty(ref cropMode, value))
+                {
+                    ZoomToFit();
+
+                    if (cropMode)
+                    {
+                        BeginCrop();
+                    }
+                    else
+                    {
+                        EndCrop();
+                    }
+
+                    Invalidate();
+                }
             }
         }
+
+        private void BeginCrop()
+        {
+            cropTracker.Rect = Adjustment.Crop ?? DefaultCropRectangle;
+            SetCropAdjustment(null);
+            cropTracker.HandleTolerance = scalingHelper.ScreenToImage(CropHandleSize);
+            this.activeInputHandler = cropTracker;
+        }
+
+        private void EndCrop()
+        {
+            if (cropTracker.Rect == DefaultCropRectangle)
+            {
+                SetCropAdjustment(null);
+            }
+            else
+            {
+                SetCropAdjustment(cropTracker.Rect);
+            }
+
+            this.activeInputHandler = new NullPointerInputHandler();
+        }
+
+        private void SetCropAdjustment(Rect? rect)
+        {
+            Adjustment.Crop = rect;
+            ScaleToFit();
+        }
+
+        private Rect DefaultCropRectangle => new Rect(new Point(), editor.OriginalSize);
+
+        #endregion
+
+        #region Pointer input
+
+        public CoreCursor Cursor => activeInputHandler.Cursor;
+
+        public bool PointerPressed(Point pt)
+        {
+            return activeInputHandler.PointerPressed(scalingHelper.ScreenToImage(pt));
+        }
+
+        public bool PointerMoved(Point pt)
+        {
+            return activeInputHandler.PointerMoved(scalingHelper.ScreenToImage(pt));
+        }
+
+        public bool PointerReleased(Point pt)
+        {
+            return activeInputHandler.PointerReleased(scalingHelper.ScreenToImage(pt));
+        }
+
+        #endregion
+
+        #region File management
 
         public bool CanRevert => editor.CanRevert;
 
         public async void Revert()
         {
+            this.CropMode = false;
+
             await editor.RevertAsync();
+
+            ScaleToFit();
+            RaisePropertyChanged();
         }
 
         public void Reset()
         {
+            this.CropMode = false;
+
             editor.Reset();
+
+            ScaleToFit();
+            RaisePropertyChanged();
         }
 
         public Task SaveAsync()
@@ -163,29 +274,11 @@ namespace Fotografix
             await Launcher.LaunchFolderAsync(folder, launcherOptions);
         }
 
+        #endregion
+
         private void Invalidate()
         {
             Invalidated?.Invoke(this, EventArgs.Empty);
-        }
-
-        private void Editor_PropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            switch (e.PropertyName)
-            {
-                case nameof(editor.AdjustmentEnabled):
-                    RaisePropertyChanged(nameof(ShowOriginal));
-                    break;
-
-                case nameof(editor.RenderSize):
-                    UpdateRenderSize();
-                    RaisePropertyChanged(nameof(IsZoomedToActualPixels));
-                    RaisePropertyChanged(nameof(IsPreviewAccuracyWarningVisible));
-                    break;
-
-                default:
-                    RaisePropertyChanged(e.PropertyName);
-                    break;
-            }
         }
     }
 }

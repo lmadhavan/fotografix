@@ -7,14 +7,14 @@ using Windows.Storage;
 
 namespace Fotografix
 {
-    public sealed class PhotoEditor : NotifyPropertyChangedBase, IPhotoEditor
+    public sealed class PhotoEditor : IRenderScaleProvider, IDisposable
     {
-        private readonly Photo photo;
+        private readonly IPhoto photo;
         private readonly CanvasBitmap bitmap;
         private PhotoAdjustment adjustment;
         private bool dirty;
 
-        private PhotoEditor(Photo photo, CanvasBitmap bitmap)
+        private PhotoEditor(IPhoto photo, CanvasBitmap bitmap)
         {
             this.photo = photo;
             this.bitmap = bitmap;
@@ -26,23 +26,20 @@ namespace Fotografix
             bitmap.Dispose();
         }
 
-        public static Task<PhotoEditor> CreateAsync(Photo photo)
+        public static Task<PhotoEditor> CreateAsync(IPhoto photo)
         {
             return CreateAsync(photo, CanvasDevice.GetSharedDevice());
         }
 
-        public static async Task<PhotoEditor> CreateAsync(Photo photo, ICanvasResourceCreator canvasResourceCreator)
+        public static async Task<PhotoEditor> CreateAsync(IPhoto photo, ICanvasResourceCreator canvasResourceCreator)
         {
-            using (var stream = await photo.OpenContentAsync())
-            {
-                var bitmap = await CanvasBitmap.LoadAsync(canvasResourceCreator, stream);
-                var adjustment = await photo.LoadAdjustmentAsync();
+            var bitmap = await photo.LoadBitmapAsync(canvasResourceCreator);
+            var adjustment = await photo.LoadAdjustmentAsync();
 
-                var editor = new PhotoEditor(photo, bitmap);
-                editor.CanRevert = await photo.HasAdjustmentAsync();
-                editor.SetAdjustment(adjustment);
-                return editor;
-            }
+            var editor = new PhotoEditor(photo, bitmap);
+            editor.CanRevert = adjustment != null;
+            editor.SetAdjustment(adjustment);
+            return editor;
         }
 
         public int ThumbnailSize { get; set; } = 512;
@@ -58,11 +55,18 @@ namespace Fotografix
                 if (adjustment.Enabled != value)
                 {
                     PreserveDirtyState(() => adjustment.Enabled = value);
-                    RaisePropertyChanged();
                 }
             }
         }
 
+        public void Draw(CanvasDrawingSession ds)
+        {
+            ds.DrawImage(adjustment.Output);
+        }
+
+        public event EventHandler Invalidated;
+
+        public Size OriginalSize => bitmap.Size;
         public Size RenderSize => adjustment.GetOutputSize(resourceCreator: bitmap);
 
         public float RenderScale
@@ -74,22 +78,20 @@ namespace Fotografix
                 if (adjustment.RenderScale != value)
                 {
                     PreserveDirtyState(() => adjustment.RenderScale = value);
-                    RaisePropertyChanged();
-                    RaisePropertyChanged(nameof(RenderSize));
                 }
             }
         }
 
-        public event EventHandler Invalidated;
-
-        public void Draw(CanvasDrawingSession ds)
+        public void ScaleToFit(Size size)
         {
-            ds.DrawImage(adjustment.Output);
-        }
+            Size photoSize = bitmap.Size;
 
-        public void SetRenderSize(Size size)
-        {
-            this.RenderScale = (float)Math.Min(size.Width / bitmap.Size.Width, size.Height / bitmap.Size.Height);
+            if (adjustment.Crop.HasValue)
+            {
+                photoSize = new Size(adjustment.Crop.Value.Width, adjustment.Crop.Value.Height);
+            }
+
+            this.RenderScale = (float)Math.Min(size.Width / photoSize.Width, size.Height / photoSize.Height);
         }
 
         public bool CanRevert { get; private set; }
@@ -143,13 +145,13 @@ namespace Fotografix
             var originalRenderScale = adjustment.RenderScale;
             adjustment.RenderScale = 1;
 
-            var originalBounds = adjustment.Output.GetBounds(resourceCreator: bitmap);
-            var scaledSize = ScaleDimensions(new Size(originalBounds.Width, originalBounds.Height), maxDimension);
+            var bounds = adjustment.Output.GetBounds(resourceCreator: bitmap);
+            var scaledSize = ScaleDimensions(new Size(bounds.Width, bounds.Height), maxDimension);
             var rt = new CanvasRenderTarget(resourceCreator: bitmap, size: scaledSize);
 
             using (var ds = rt.CreateDrawingSession())
             {
-                ds.DrawImage(adjustment.Output, rt.Bounds, originalBounds);
+                ds.DrawImage(adjustment.Output, rt.Bounds, bounds);
             }
 
             adjustment.RenderScale = originalRenderScale;
@@ -166,6 +168,11 @@ namespace Fotografix
 
         private void SetAdjustment(PhotoAdjustment value)
         {
+            if (value == null)
+            {
+                value = new PhotoAdjustment();
+            }
+
             value.Source = bitmap;
 
             if (adjustment != null)
@@ -176,8 +183,6 @@ namespace Fotografix
 
             this.adjustment = value;
             adjustment.Changed += OnAdjustmentChanged;
-            RaisePropertyChanged(nameof(Adjustment));
-            RaisePropertyChanged(nameof(AdjustmentEnabled));
             Invalidate();
         }
 

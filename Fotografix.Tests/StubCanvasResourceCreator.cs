@@ -6,6 +6,13 @@ namespace Fotografix
     public sealed class StubCanvasResourceCreator : ICanvasResourceCreatorWithDpi
     {
         public float Dpi { get; set; } = 96;
+        
+        public float ScalingFactor
+        {
+            get => Dpi / 96;
+            set => Dpi = value * 96;
+        }
+
         public CanvasDevice Device { get; set; } = CanvasDevice.GetSharedDevice();
 
         public float ConvertPixelsToDips(int pixels)
