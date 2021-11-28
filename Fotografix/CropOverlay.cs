@@ -55,6 +55,11 @@ namespace Fotografix
             float ht = HandleThickness;
             float hs = HandleSize;
 
+            if (w < 2 * hs || h < 2 * hs)
+            {
+                return;
+            }
+
             void DrawHandle(float x0, float y0, float x1, float y1)
             {
                 ds.DrawLine(x0, y0, x1, y1, Colors.White, ht);

@@ -30,12 +30,11 @@ namespace Fotografix
             editor.Invalidated += (s, e) => Invalidate();
 
             this.scalingHelper = new ScalingHelper(resourceCreator, editor);
-            UpdateRenderSize();
-
             this.cropTracker = cropTracker;
             cropTracker.RectChanged += (s, e) => Invalidate();
             this.cropOverlay = new CropOverlay(resourceCreator, scalingHelper) { HandleSize = CropHandleSize * 3 };
 
+            UpdateRenderSize();
             this.activeInputHandler = new NullPointerInputHandler();
             this.loaded = true;
         }
@@ -141,6 +140,8 @@ namespace Fotografix
         private void UpdateRenderSize()
         {
             this.renderSize = scalingHelper.ViewportToScreen(editor.RenderSize);
+            cropTracker.HandleTolerance = scalingHelper.ScreenToImage(CropHandleSize);
+
             RaisePropertyChanged(nameof(RenderWidth));
             RaisePropertyChanged(nameof(RenderHeight));
             RaisePropertyChanged(nameof(IsZoomedToActualPixels));
@@ -190,7 +191,6 @@ namespace Fotografix
             cropTracker.MaxBounds = maxBounds;
             cropTracker.Rect = Adjustment.Crop ?? maxBounds;
             SetCropAdjustment(null);
-            cropTracker.HandleTolerance = scalingHelper.ScreenToImage(CropHandleSize);
             this.activeInputHandler = cropTracker;
         }
 

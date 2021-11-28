@@ -36,6 +36,7 @@ namespace Fotografix
             set => rect = value;
         }
 
+        public Size MinSize { get; set; } = new Size(1, 1);
         public Rect MaxBounds { get; set; } = new Rect(0, 0, double.MaxValue, double.MaxValue);
 
         public event EventHandler RectChanged;
@@ -76,9 +77,9 @@ namespace Fotografix
             return true;
         }
 
-        public static Rect RectFromLTRB(double l, double t, double r, double b)
+        public static Rect RectFromLTRB(double l, double t, double r, double b, Size minSize = default)
         {
-            return new Rect(l, t, r - l, b - t);
+            return new Rect(l, t, Math.Max(r - l, minSize.Width), Math.Max(b - t, minSize.Height));
         }
 
         private void Track(Point pt)
@@ -128,7 +129,7 @@ namespace Fotografix
 
         private void ResizeRect(double dl, double dt, double dr, double db)
         {
-            this.rect = RectFromLTRB(startRect.Left + dl, startRect.Top + dt, startRect.Right + dr, startRect.Bottom + db);
+            this.rect = RectFromLTRB(startRect.Left + dl, startRect.Top + dt, startRect.Right + dr, startRect.Bottom + db, MinSize);
             rect.Intersect(MaxBounds);
             RectChanged?.Invoke(this, EventArgs.Empty);
         }

@@ -142,6 +142,16 @@ namespace Fotografix
         }
 
         [TestMethod]
+        public void EnsuresMinSize()
+        {
+            tracker.MinSize = new Size(10, 5);
+
+            Drag(from: new Point(100, 100), to: new Point(-10, -10));
+
+            Assert.AreEqual(new Rect(0, 0, 10, 5), tracker.Rect);
+        }
+
+        [TestMethod]
         public void PreventsMoveOutsideMaxBounds()
         {
             tracker.MaxBounds = new Rect(0, 0, 200, 150);
