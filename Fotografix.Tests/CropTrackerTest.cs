@@ -131,6 +131,26 @@ namespace Fotografix
             Assert.AreEqual(CoreCursorType.SizeNorthSouth, tracker.Cursor.Type);
         }
 
+        [TestMethod]
+        public void LimitsSizeToMaxBounds()
+        {
+            tracker.MaxBounds = new Rect(0, 0, 200, 150);
+
+            Drag(from: new Point(100, 100), to: new Point(300, 300));
+
+            Assert.AreEqual(tracker.MaxBounds, tracker.Rect);
+        }
+
+        [TestMethod]
+        public void PreventsMoveOutsideMaxBounds()
+        {
+            tracker.MaxBounds = new Rect(0, 0, 200, 150);
+
+            Drag(from: new Point(50, 50), to: new Point(300, 50));
+
+            Assert.AreEqual(new Rect(100, 0, 100, 100), tracker.Rect);
+        }
+
         private void Drag(Point from, Point to)
         {
             Drag(start: from, points: to);

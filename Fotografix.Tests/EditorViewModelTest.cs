@@ -122,7 +122,8 @@ namespace Fotografix
 
             vm.CropMode = true;
 
-            Assert.AreEqual(existingCropRect, cropTracker.Rect, "crop tracker should be initialized to existing crop rectangle");
+            Assert.AreEqual(existingCropRect, cropTracker.Rect, "tracker rectangle should be initialized to existing crop rectangle");
+            Assert.AreEqual(new Rect(new Point(), PhotoSize), cropTracker.MaxBounds, "tracker max bounds should be initialized to photo size");
             Assert.IsNull(editor.Adjustment.Crop, "should display original photo while in crop mode");
             Assert.AreEqual(0.25f, editor.RenderScale, "original photo should be scaled down to fit viewport");
         }

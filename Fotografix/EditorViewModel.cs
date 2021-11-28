@@ -184,6 +184,7 @@ namespace Fotografix
 
         private void BeginCrop()
         {
+            cropTracker.MaxBounds = DefaultCropRectangle;
             cropTracker.Rect = Adjustment.Crop ?? DefaultCropRectangle;
             SetCropAdjustment(null);
             cropTracker.HandleTolerance = scalingHelper.ScreenToImage(CropHandleSize);

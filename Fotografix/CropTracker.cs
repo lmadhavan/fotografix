@@ -36,6 +36,8 @@ namespace Fotografix
             set => rect = value;
         }
 
+        public Rect MaxBounds { get; set; } = new Rect(0, 0, double.MaxValue, double.MaxValue);
+
         public event EventHandler RectChanged;
 
         public double HandleTolerance { get; set; }
@@ -87,47 +89,63 @@ namespace Fotografix
             switch (handle)
             {
                 case Handle.TopLeft:
-                    AdjustRect(dx, dy, 0, 0);
+                    ResizeRect(dx, dy, 0, 0);
                     break;
 
                 case Handle.Top:
-                    AdjustRect(0, dy, 0, 0);
+                    ResizeRect(0, dy, 0, 0);
                     break;
 
                 case Handle.TopRight:
-                    AdjustRect(0, dy, dx, 0);
+                    ResizeRect(0, dy, dx, 0);
                     break;
 
                 case Handle.Left:
-                    AdjustRect(dx, 0, 0, 0);
+                    ResizeRect(dx, 0, 0, 0);
                     break;
 
                 case Handle.Right:
-                    AdjustRect(0, 0, dx, 0);
+                    ResizeRect(0, 0, dx, 0);
                     break;
 
                 case Handle.BottomLeft:
-                    AdjustRect(dx, 0, 0, dy);
+                    ResizeRect(dx, 0, 0, dy);
                     break;
 
                 case Handle.Bottom:
-                    AdjustRect(0, 0, 0, dy);
+                    ResizeRect(0, 0, 0, dy);
                     break;
 
                 case Handle.BottomRight:
-                    AdjustRect(0, 0, dx, dy);
+                    ResizeRect(0, 0, dx, dy);
                     break;
 
                 case Handle.Move:
-                    AdjustRect(dx, dy, dx, dy);
+                    MoveRect(dx, dy);
                     break;
             }
         }
 
-        private void AdjustRect(double dl, double dt, double dr, double db)
+        private void ResizeRect(double dl, double dt, double dr, double db)
         {
             this.rect = RectFromLTRB(startRect.Left + dl, startRect.Top + dt, startRect.Right + dr, startRect.Bottom + db);
+            rect.Intersect(MaxBounds);
             RectChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        private void MoveRect(double dx, double dy)
+        {
+            double x = Clamp(startRect.X + dx, MaxBounds.Left, MaxBounds.Right - startRect.Width);
+            double y = Clamp(startRect.Y + dy, MaxBounds.Top, MaxBounds.Bottom - startRect.Height);
+            this.rect = new Rect(x, y, startRect.Width, startRect.Height);
+            RectChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        private double Clamp(double v, double min, double max)
+        {
+            if (v < min) return min;
+            if (v > max) return max;
+            return v;
         }
 
         private Handle HandleAt(Point pt)
