@@ -14,7 +14,7 @@ namespace Fotografix
         public PhotoViewModel(Photo photo)
         {
             this.photo = photo;
-            photo.Changed += (s, e) => RaisePropertyChanged("");
+            photo.Changed += (s, e) => RaiseAllPropertiesChanged();
         }
 
         public string Name => photo.Name;

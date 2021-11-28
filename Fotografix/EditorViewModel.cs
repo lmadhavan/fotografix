@@ -178,6 +178,7 @@ namespace Fotografix
                         EndCrop();
                     }
 
+                    RaisePropertyChanged(nameof(CanZoomToActualPixels));
                     Invalidate();
                 }
             }
@@ -249,7 +250,7 @@ namespace Fotografix
             await editor.RevertAsync();
 
             ScaleToFit();
-            RaisePropertyChanged();
+            RaiseAllPropertiesChanged();
         }
 
         public void Reset()
@@ -259,7 +260,7 @@ namespace Fotografix
             editor.Reset();
 
             ScaleToFit();
-            RaisePropertyChanged();
+            RaiseAllPropertiesChanged();
         }
 
         public Task SaveAsync()
