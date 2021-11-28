@@ -178,16 +178,16 @@ namespace Fotografix
         [TestMethod]
         public async Task Crop()
         {
-            adjustment.Crop = new Rect(450, 0, 450, 600);
-            await VerifyOutputAsync("Barn_crop.jpg");
+            adjustment.Crop = new Rect(60, 260, 800, 300);
+            await VerifyOutputAsync("Barn_crop.jpg", 2.5f);
         }
 
         [TestMethod]
         public async Task Crop_Scaled()
         {
-            adjustment.Crop = new Rect(450, 0, 450, 600);
+            adjustment.Crop = new Rect(60, 260, 800, 300);
             adjustment.RenderScale = 0.5f;
-            await VerifyOutputAsync("Barn_crop_scaled.jpg");
+            await VerifyOutputAsync("Barn_crop_scaled.jpg", 2.5f);
         }
 
         private async Task VerifyOutputAsync(string filename, float tolerance = BitmapAssert.DefaultTolerance)

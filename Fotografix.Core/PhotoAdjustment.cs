@@ -11,8 +11,8 @@ namespace Fotografix
 {
     public sealed class PhotoAdjustment : NotifyPropertyChangedBase, IDisposable, IPhotoAdjustment
     {
-        private readonly Transform2DEffect transformEffect;
         private readonly CropEffect cropEffect;
+        private readonly Transform2DEffect transformEffect;
         private readonly GammaTransferEffect transferEffect;
         private readonly HighlightsAndShadowsEffect highlightsAndShadowsEffect;
         private readonly ContrastEffect contrastEffect;
@@ -24,8 +24,8 @@ namespace Fotografix
 
         public PhotoAdjustment()
         {
+            this.cropEffect = new CropEffect { BorderMode = EffectBorderMode.Hard };
             this.transformEffect = new Transform2DEffect();
-            this.cropEffect = new CropEffect { Source = transformEffect };
             this.transferEffect = new GammaTransferEffect { Source = transformEffect };
             this.highlightsAndShadowsEffect = new HighlightsAndShadowsEffect { Source = transferEffect };
             this.contrastEffect = new ContrastEffect { Source = highlightsAndShadowsEffect };
@@ -55,8 +55,8 @@ namespace Fotografix
             contrastEffect.Dispose();
             highlightsAndShadowsEffect.Dispose();
             transferEffect.Dispose();
-            cropEffect.Dispose();
             transformEffect.Dispose();
+            cropEffect.Dispose();
         }
 
         public event EventHandler Changed;
@@ -69,8 +69,13 @@ namespace Fotografix
         [JsonIgnore]
         public IGraphicsEffectSource Source
         {
-            get => transformEffect.Source;
-            set => transformEffect.Source = value;
+            get => cropEffect.Source;
+
+            set
+            {
+                cropEffect.Source = value;
+                UpdateTransform();
+            }
         }
 
         [JsonIgnore]
@@ -106,10 +111,15 @@ namespace Fotografix
         private void UpdateTransform()
         {
             var matrix = Matrix3x2.CreateScale(renderScale);
-            
+
             if (crop.HasValue)
             {
                 matrix = Matrix3x2.CreateTranslation((float)-crop.Value.X, (float)-crop.Value.Y) * matrix;
+                transformEffect.Source = cropEffect;
+            }
+            else
+            {
+                transformEffect.Source = cropEffect.Source;
             }
 
             transformEffect.TransformMatrix = matrix;
@@ -376,12 +386,7 @@ namespace Fotografix
                 {
                     if (crop.HasValue)
                     {
-                        cropEffect.SourceRectangle = new Rect(0, 0, crop.Value.Width, crop.Value.Height);
-                        transferEffect.Source = cropEffect;
-                    }
-                    else
-                    {
-                        transferEffect.Source = transformEffect;
+                        cropEffect.SourceRectangle = crop.Value;
                     }
 
                     UpdateTransform();
