@@ -120,6 +120,7 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="ApplicationViewModel.cs" />
+    <Compile Include="CropOverlay.cs" />
     <Compile Include="CropTracker.cs" />
     <Compile Include="CustomTitleBar.cs" />
     <Compile Include="EditorTemplates.xaml.cs">

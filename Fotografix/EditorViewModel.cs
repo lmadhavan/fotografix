@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Storage;
 using Windows.System;
-using Windows.UI;
 using Windows.UI.Core;
 
 namespace Fotografix
@@ -17,23 +16,25 @@ namespace Fotografix
         private readonly PhotoEditor editor;
         private readonly ScalingHelper scalingHelper;
         private readonly CropTracker cropTracker;
+        private readonly CropOverlay cropOverlay;
         private IPointerInputHandler activeInputHandler;
         private bool loaded;
 
-        public EditorViewModel(PhotoEditor editor, ICanvasResourceCreatorWithDpi dpiProvider) : this(editor, dpiProvider, new CropTracker())
+        public EditorViewModel(PhotoEditor editor, ICanvasResourceCreatorWithDpi resourceCreator) : this(editor, resourceCreator, new CropTracker())
         {
         }
 
-        public EditorViewModel(PhotoEditor editor, ICanvasResourceCreatorWithDpi dpiProvider, CropTracker cropTracker)
+        public EditorViewModel(PhotoEditor editor, ICanvasResourceCreatorWithDpi resourceCreator, CropTracker cropTracker)
         {
             this.editor = editor;
             editor.Invalidated += (s, e) => Invalidate();
 
-            this.scalingHelper = new ScalingHelper(dpiProvider, editor);
+            this.scalingHelper = new ScalingHelper(resourceCreator, editor);
             UpdateRenderSize();
 
             this.cropTracker = cropTracker;
             cropTracker.RectChanged += (s, e) => Invalidate();
+            this.cropOverlay = new CropOverlay(resourceCreator, scalingHelper) { HandleSize = CropHandleSize * 3 };
 
             this.activeInputHandler = new NullPointerInputHandler();
             this.loaded = true;
@@ -74,7 +75,7 @@ namespace Fotografix
                 if (cropMode)
                 {
                     ds.Units = CanvasUnits.Dips;
-                    ds.DrawRectangle(scalingHelper.ImageToScreen(cropTracker.Rect), Colors.Red);
+                    cropOverlay.Draw(ds, cropTracker);
                 }
             }
         }
@@ -184,8 +185,9 @@ namespace Fotografix
 
         private void BeginCrop()
         {
-            cropTracker.MaxBounds = DefaultCropRectangle;
-            cropTracker.Rect = Adjustment.Crop ?? DefaultCropRectangle;
+            var maxBounds = DefaultCropRectangle;
+            cropTracker.MaxBounds = maxBounds;
+            cropTracker.Rect = Adjustment.Crop ?? maxBounds;
             SetCropAdjustment(null);
             cropTracker.HandleTolerance = scalingHelper.ScreenToImage(CropHandleSize);
             this.activeInputHandler = cropTracker;
