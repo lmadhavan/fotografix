@@ -1,6 +1,8 @@
 ﻿using Fotografix.Input;
 using Microsoft.Graphics.Canvas;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Storage;
@@ -34,6 +36,7 @@ namespace Fotografix
             cropTracker.RectChanged += (s, e) => Invalidate();
             this.cropOverlay = new CropOverlay(resourceCreator, scalingHelper) { HandleSize = CropHandleSize * 3 };
 
+            InitializeAspectRatios();
             UpdateRenderSize();
             this.activeInputHandler = new NullPointerInputHandler();
             this.loaded = true;
@@ -159,6 +162,8 @@ namespace Fotografix
         #region Crop
 
         private bool cropMode;
+        private AspectRatio aspectRatio;
+        private bool flipAspectRatio;
         
         public bool CropMode
         {
@@ -183,6 +188,54 @@ namespace Fotografix
                     Invalidate();
                 }
             }
+        }
+
+        public List<AspectRatio> AvailableAspectRatios { get; } = new List<AspectRatio>();
+
+        public AspectRatio AspectRatio
+        {
+            get => aspectRatio;
+
+            set
+            {
+                if (SetProperty(ref aspectRatio, value))
+                {
+                    this.FlipAspectRatio = false;
+                    UpdateAspectRatio();
+                }
+            }
+        }
+
+        public bool FlipAspectRatio
+        {
+            get => flipAspectRatio;
+
+            set
+            {
+                if (SetProperty(ref flipAspectRatio, value))
+                {
+                    UpdateAspectRatio();
+                }
+            }
+        }
+
+        public void ResetCrop()
+        {
+            AspectRatio = AvailableAspectRatios.First();
+            cropTracker.Rect = DefaultCropRectangle;
+        }
+
+        private void InitializeAspectRatios()
+        {
+            AvailableAspectRatios.Add(new AspectRatio(editor.OriginalSize.Width, editor.OriginalSize.Height, "Original"));
+            AvailableAspectRatios.Add(AspectRatio.Unconstrained);
+            AvailableAspectRatios.AddRange(AspectRatio.StandardRatios);
+            AspectRatio = AspectRatio.Unconstrained;
+        }
+
+        private void UpdateAspectRatio()
+        {
+            cropTracker.AspectRatio = flipAspectRatio ? aspectRatio.InverseValue : aspectRatio.Value;
         }
 
         private void BeginCrop()

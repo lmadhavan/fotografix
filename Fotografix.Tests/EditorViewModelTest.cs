@@ -1,4 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Linq;
 using System.Threading.Tasks;
 using Windows.Foundation;
 
@@ -188,6 +189,33 @@ namespace Fotografix
             Assert.IsFalse(vm.CropMode, "should exit crop mode");
             Assert.IsNull(editor.Adjustment.Crop, "should reset adjustment");
             Assert.AreEqual(0.25f, editor.RenderScale, "should recompute render scale");
+        }
+
+        [TestMethod]
+        public void DefaultsToUnconstrainedAspectRatio()
+        {
+            vm.CropMode = true;
+
+            Assert.IsNull(cropTracker.AspectRatio);
+        }
+
+        [TestMethod]
+        public void FirstAvailableAspectRatioIsOriginalPhotoSize()
+        {
+            Assert.AreEqual(PhotoSize.Width / PhotoSize.Height, vm.AvailableAspectRatios.First().Value);
+        }
+
+        [TestMethod]
+        public void ConstrainsCropToSelectedAspectRatio()
+        {
+            vm.CropMode = true;
+            vm.AspectRatio = new AspectRatio(5, 2);
+
+            Assert.AreEqual(2.5, cropTracker.AspectRatio, "normal aspect ratio");
+
+            vm.FlipAspectRatio = true;
+
+            Assert.AreEqual(0.4, cropTracker.AspectRatio, "flipped aspect ratio");
         }
 
         [TestMethod]

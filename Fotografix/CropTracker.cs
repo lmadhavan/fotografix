@@ -23,6 +23,10 @@ namespace Fotografix
         };
 
         private Rect rect;
+        private Size minSize = new Size(1, 1);
+        private Rect maxBounds = new Rect(0, 0, double.MaxValue, double.MaxValue);
+        private double? aspectRatio;
+
         private bool tracking;
         private Handle handle;
         private Point startPoint;
@@ -33,15 +37,56 @@ namespace Fotografix
         public Rect Rect
         {
             get => rect;
-            set => rect = value;
+
+            set
+            {
+                rect = value;
+                ValidateRect();
+            }
         }
 
-        public Size MinSize { get; set; } = new Size(1, 1);
-        public Rect MaxBounds { get; set; } = new Rect(0, 0, double.MaxValue, double.MaxValue);
+        public Size MinSize
+        {
+            get => minSize;
+
+            set
+            {
+                minSize = value;
+                ValidateRect();
+            }
+        }
+
+        public Rect MaxBounds
+        {
+            get => maxBounds;
+
+            set
+            {
+                maxBounds = value;
+                ValidateRect();
+            }
+        }
+
+        public double? AspectRatio
+        {
+            get => aspectRatio;
+
+            set
+            {
+                aspectRatio = value;
+                ValidateRect();
+            }
+        }
 
         public event EventHandler RectChanged;
 
         public double HandleTolerance { get; set; }
+
+        private void ValidateRect()
+        {
+            this.startRect = rect;
+            ResizeRect(0, 0, 0, 0);
+        }
 
         public bool PointerPressed(Point pt)
         {
@@ -122,23 +167,54 @@ namespace Fotografix
                     break;
 
                 case Handle.Move:
-                    MoveRect(dx, dy);
+                    MoveRect(startRect, dx, dy);
                     break;
             }
         }
 
         private void ResizeRect(double dl, double dt, double dr, double db)
         {
-            this.rect = RectFromLTRB(startRect.Left + dl, startRect.Top + dt, startRect.Right + dr, startRect.Bottom + db, MinSize);
-            rect.Intersect(MaxBounds);
-            RectChanged?.Invoke(this, EventArgs.Empty);
+            Rect rect = RectFromLTRB(startRect.Left + dl, startRect.Top + dt, startRect.Right + dr, startRect.Bottom + db, minSize);
+            rect.Intersect(maxBounds);
+
+            if (aspectRatio != null)
+            {
+                double r = aspectRatio.Value;
+                double aw, ah;
+
+                if (dt != 0 || db != 0)
+                {
+                    aw = Math.Min(maxBounds.Width, rect.Height * r);
+                    ah = aw / r;
+                }
+                else
+                {
+                    ah = Math.Min(maxBounds.Height, rect.Width / r);
+                    aw = ah * r;
+                }
+
+                if (dl != 0)
+                {
+                    rect.X += rect.Width - aw;
+                }
+
+                if (dt != 0)
+                {
+                    rect.Y += rect.Height - ah;
+                }
+
+                rect.Width = aw;
+                rect.Height = ah;
+            }
+
+            MoveRect(rect, 0, 0);
         }
 
-        private void MoveRect(double dx, double dy)
+        private void MoveRect(Rect rect, double dx, double dy)
         {
-            double x = Clamp(startRect.X + dx, MaxBounds.Left, MaxBounds.Right - startRect.Width);
-            double y = Clamp(startRect.Y + dy, MaxBounds.Top, MaxBounds.Bottom - startRect.Height);
-            this.rect = new Rect(x, y, startRect.Width, startRect.Height);
+            double x = Clamp(rect.X + dx, maxBounds.Left, maxBounds.Right - rect.Width);
+            double y = Clamp(rect.Y + dy, maxBounds.Top, maxBounds.Bottom - rect.Height);
+            this.rect = new Rect(x, y, rect.Width, rect.Height);
             RectChanged?.Invoke(this, EventArgs.Empty);
         }
 

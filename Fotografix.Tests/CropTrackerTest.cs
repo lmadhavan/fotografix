@@ -1,4 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Collections.Generic;
 using System.Linq;
 using Windows.Foundation;
 using Windows.UI.Core;
@@ -17,85 +18,54 @@ namespace Fotografix
             this.tracker = new CropTracker { Rect = new Rect(0, 0, 100, 100) };
         }
 
-        [TestMethod]
-        public void TracksTopLeft()
+        public sealed class TestCase
         {
-            Drag(from: new Point(0, 0), to: new Point(10, 10));
+            public string Name { get; set; }
 
-            Assert.AreEqual(CoreCursorType.SizeNorthwestSoutheast, tracker.Cursor.Type);
-            Assert.AreEqual(RectFromLTRB(10, 10, 100, 100), tracker.Rect);
+            public Point Start { get; set; }
+            public Point End { get; set; }
+
+            public CoreCursorType ExpectedCursor { get; set; }
+            public Rect ExpectedRect { get; set; }
+
+            public override string ToString()
+            {
+                return Name;
+            }
         }
 
-        [TestMethod]
-        public void TracksTop()
+        [DataTestMethod]
+        [DynamicData(nameof(CropHandleTestData), DynamicDataSourceType.Method)]
+        public void TracksHandle(TestCase tc)
         {
-            Drag(from: new Point(50, 0), to: new Point(60, 10));
+            Drag(tc.Start, tc.End);
 
-            Assert.AreEqual(CoreCursorType.SizeNorthSouth, tracker.Cursor.Type);
-            Assert.AreEqual(RectFromLTRB(0, 10, 100, 100), tracker.Rect);
+            Assert.AreEqual(tc.ExpectedCursor, tracker.Cursor.Type);
+            Assert.AreEqual(tc.ExpectedRect, tracker.Rect);
         }
 
-        [TestMethod]
-        public void TracksTopRight()
+        private static IEnumerable<object[]> CropHandleTestData()
         {
-            Drag(from: new Point(100, 0), to: new Point(90, 10));
+            object[] TestCase(string name, Point start, Point end, CoreCursorType expectedCursor, Rect expectedRect)
+            {
+                return new object[] { new TestCase {
+                    Name = name,
+                    Start = start,
+                    End = end,
+                    ExpectedCursor = expectedCursor,
+                    ExpectedRect = expectedRect
+                } };
+            }
 
-            Assert.AreEqual(CoreCursorType.SizeNortheastSouthwest, tracker.Cursor.Type);
-            Assert.AreEqual(RectFromLTRB(0, 10, 90, 100), tracker.Rect);
-        }
-
-        [TestMethod]
-        public void TracksLeft()
-        {
-            Drag(from: new Point(0, 50), to: new Point(10, 60));
-
-            Assert.AreEqual(CoreCursorType.SizeWestEast, tracker.Cursor.Type);
-            Assert.AreEqual(RectFromLTRB(10, 0, 100, 100), tracker.Rect);
-        }
-
-        [TestMethod]
-        public void TracksRight()
-        {
-            Drag(from: new Point(100, 50), to: new Point(90, 60));
-
-            Assert.AreEqual(CoreCursorType.SizeWestEast, tracker.Cursor.Type);
-            Assert.AreEqual(RectFromLTRB(0, 0, 90, 100), tracker.Rect);
-        }
-
-        [TestMethod]
-        public void TracksBottomLeft()
-        {
-            Drag(from: new Point(0, 100), to: new Point(10, 90));
-
-            Assert.AreEqual(CoreCursorType.SizeNortheastSouthwest, tracker.Cursor.Type);
-            Assert.AreEqual(RectFromLTRB(10, 0, 100, 90), tracker.Rect);
-        }
-
-        [TestMethod]
-        public void TracksBottom()
-        {
-            Drag(from: new Point(50, 100), to: new Point(60, 90));
-
-            Assert.AreEqual(CoreCursorType.SizeNorthSouth, tracker.Cursor.Type);
-            Assert.AreEqual(RectFromLTRB(0, 0, 100, 90), tracker.Rect);
-        }
-
-        [TestMethod]
-        public void TracksBottomRight()
-        {
-            Drag(from: new Point(100, 100), to: new Point(90, 90));
-
-            Assert.AreEqual(CoreCursorType.SizeNorthwestSoutheast, tracker.Cursor.Type);
-            Assert.AreEqual(RectFromLTRB(0, 0, 90, 90), tracker.Rect);
-        }
-
-        [TestMethod]
-        public void TracksCenter()
-        {
-            Drag(from: new Point(50, 50), to: new Point(60, 60));
-
-            Assert.AreEqual(CoreCursorType.SizeAll, tracker.Cursor.Type);
-            Assert.AreEqual(RectFromLTRB(10, 10, 110, 110), tracker.Rect);
+            yield return TestCase("TopLeft",     new Point(0, 0),     new Point(10, 10), CoreCursorType.SizeNorthwestSoutheast, RectFromLTRB(10, 10, 100, 100));
+            yield return TestCase("Top",         new Point(50, 0),    new Point(60, 10), CoreCursorType.SizeNorthSouth,         RectFromLTRB(0, 10, 100, 100));
+            yield return TestCase("TopRight",    new Point(100, 0),   new Point(90, 10), CoreCursorType.SizeNortheastSouthwest, RectFromLTRB(0, 10, 90, 100));
+            yield return TestCase("Left",        new Point(0, 50),    new Point(10, 60), CoreCursorType.SizeWestEast,           RectFromLTRB(10, 0, 100, 100));
+            yield return TestCase("Right",       new Point(100, 50),  new Point(90, 60), CoreCursorType.SizeWestEast,           RectFromLTRB(0, 0, 90, 100));
+            yield return TestCase("BottomLeft",  new Point(0, 100),   new Point(10, 90), CoreCursorType.SizeNortheastSouthwest, RectFromLTRB(10, 0, 100, 90));
+            yield return TestCase("Bottom",      new Point(50, 100),  new Point(60, 90), CoreCursorType.SizeNorthSouth,         RectFromLTRB(0, 0, 100, 90));
+            yield return TestCase("BottomRight", new Point(100, 100), new Point(90, 90), CoreCursorType.SizeNorthwestSoutheast, RectFromLTRB(0, 0, 90, 90));
+            yield return TestCase("Center",      new Point(50, 50),   new Point(60, 60), CoreCursorType.SizeAll,                RectFromLTRB(10, 10, 110, 110));
         }
 
         [TestMethod]
@@ -159,6 +129,40 @@ namespace Fotografix
             Drag(from: new Point(50, 50), to: new Point(300, 50));
 
             Assert.AreEqual(new Rect(100, 0, 100, 100), tracker.Rect);
+        }
+
+        [DataTestMethod]
+        [DynamicData(nameof(AspectRatioTestData), DynamicDataSourceType.Method)]
+        public void MaintainsAspectRatio(TestCase tc)
+        {
+            tracker.Rect = new Rect(0, 0, 100, 50);
+            tracker.AspectRatio = 2f;
+
+            Drag(tc.Start, tc.End);
+
+            Assert.AreEqual(tc.ExpectedRect, tracker.Rect);
+        }
+
+        private static IEnumerable<object[]> AspectRatioTestData()
+        {
+            object[] TestCase(string name, Point start, Point end, Rect expectedRect)
+            {
+                return new object[] { new TestCase {
+                    Name = name,
+                    Start = start,
+                    End = end,
+                    ExpectedRect = expectedRect
+                } };
+            }
+
+            yield return TestCase("TopLeft",     new Point(0, 0),     new Point(10, 10), new Rect(20, 10, 80, 40));
+            yield return TestCase("Top",         new Point(50, 0),    new Point(50, 10), new Rect(0, 10, 80, 40));
+            yield return TestCase("TopRight",    new Point(100, 0),   new Point(90, 10), new Rect(0, 10, 80, 40));
+            yield return TestCase("Left",        new Point(0, 25),    new Point(10, 25), new Rect(10, 0, 90, 45));
+            yield return TestCase("Right",       new Point(100, 25),  new Point(90, 25), new Rect(0, 0, 90, 45));
+            yield return TestCase("BottomLeft",  new Point(0, 50),    new Point(10, 40), new Rect(20, 0, 80, 40));
+            yield return TestCase("Bottom",      new Point(50, 50),   new Point(50, 40), new Rect(0, 0, 80, 40));
+            yield return TestCase("BottomRight", new Point(100, 50),  new Point(90, 40), new Rect(0, 0, 80, 40));
         }
 
         private void Drag(Point from, Point to)

@@ -220,6 +220,25 @@
             </winui:Expander>
 
             <winui:Expander Header="Crop" IsExpanded="{x:Bind CropMode}">
+                <StackPanel>
+                    <TextBlock Margin="2,0,0,8" FontWeight="SemiBold" Text="Aspect ratio" />
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <ComboBox HorizontalAlignment="Stretch" ItemsSource="{x:Bind AvailableAspectRatios, Mode=OneWay}" DisplayMemberPath="DisplayName" SelectedItem="{x:Bind AspectRatio}" />
+                        <ToggleButton Grid.Column="1" Margin="8,0,0,0" IsChecked="{x:Bind FlipAspectRatio}" ToolTipService.ToolTip="Flip aspect ratio">
+                            <FontIcon Glyph="&#xE8AB;" />
+                        </ToggleButton>
+                        <Button Grid.Column="2" Margin="8,0,0,0" Click="{x:Bind ResetCrop}" ToolTipService.ToolTip="Reset crop">
+                            <FontIcon Glyph="&#xE81C;" />
+                        </Button>
+                    </Grid>
+                </StackPanel>
             </winui:Expander>
         </StackPanel>
     </DataTemplate>
