@@ -219,6 +219,17 @@ namespace Fotografix
         }
 
         [TestMethod]
+        public void ResetsCropRectangleToOriginalSize()
+        {
+            vm.CropMode = true;
+            cropTracker.Rect = new Rect(10, 20, 30, 40);
+
+            vm.ResetCrop();
+
+            Assert.AreEqual(new Rect(new Point(), PhotoSize), cropTracker.Rect);
+        }
+
+        [TestMethod]
         public void IgnoresDrawCallsAfterDispose()
         {
             Assert.IsTrue(vm.IsLoaded);

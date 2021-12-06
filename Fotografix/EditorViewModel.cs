@@ -191,6 +191,7 @@ namespace Fotografix
         }
 
         public List<AspectRatio> AvailableAspectRatios { get; } = new List<AspectRatio>();
+        private AspectRatio DefaultAspectRatio => AspectRatio.Unconstrained;
 
         public AspectRatio AspectRatio
         {
@@ -221,7 +222,7 @@ namespace Fotografix
 
         public void ResetCrop()
         {
-            AspectRatio = AvailableAspectRatios.First();
+            AspectRatio = DefaultAspectRatio;
             cropTracker.Rect = DefaultCropRectangle;
         }
 
@@ -230,7 +231,7 @@ namespace Fotografix
             AvailableAspectRatios.Add(new AspectRatio(editor.OriginalSize.Width, editor.OriginalSize.Height, "Original"));
             AvailableAspectRatios.Add(AspectRatio.Unconstrained);
             AvailableAspectRatios.AddRange(AspectRatio.StandardRatios);
-            AspectRatio = AspectRatio.Unconstrained;
+            AspectRatio = DefaultAspectRatio;
         }
 
         private void UpdateAspectRatio()
