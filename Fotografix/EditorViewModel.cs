@@ -199,7 +199,7 @@ namespace Fotografix
 
             set
             {
-                if (SetProperty(ref aspectRatio, value))
+                if (SetProperty(ref aspectRatio, value ?? DefaultAspectRatio))
                 {
                     this.FlipAspectRatio = false;
                     UpdateAspectRatio();
