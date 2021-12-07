@@ -2,7 +2,9 @@
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Effects;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
+using System.Collections.Generic;
 using System.Numerics;
 using Windows.Foundation;
 using Windows.Graphics.Effects;
@@ -407,6 +409,9 @@ namespace Fotografix
                 EmptyJson = adjustment.Serialize();
             }
         }
+
+        [JsonExtensionData]
+        private IDictionary<string, JToken> additionalData;
 
         public string Serialize()
         {
