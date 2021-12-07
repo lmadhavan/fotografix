@@ -1,4 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.Foundation;
@@ -13,6 +15,7 @@ namespace Fotografix
         private static readonly Size PhotoSize = new Size(1000, 500);
         private const float DpiScalingFactor = 2;
 
+        private FakePhoto photo;
         private PhotoEditor editor;
         private CropTracker cropTracker;
         private EditorViewModel vm;
@@ -20,7 +23,7 @@ namespace Fotografix
         [TestInitialize]
         public async Task Initialize()
         {
-            var photo = new FakePhoto { Size = PhotoSize };
+            this.photo = new FakePhoto { Size = PhotoSize };
             var dpiProvider = new StubCanvasResourceCreator { ScalingFactor = DpiScalingFactor };
             this.editor = await PhotoEditor.CreateAsync(photo, dpiProvider);
 
@@ -174,8 +177,9 @@ namespace Fotografix
             Assert.IsTrue(vm.CanZoomToActualPixels, nameof(vm.CanZoomToActualPixels));
         }
 
-        [TestMethod]
-        public void ResettingAdjustmentExitsCropMode()
+        [DataTestMethod]
+        [DynamicData(nameof(FileManagementActions), DynamicDataSourceType.Method)]
+        public void FileManagementActionExitsCropMode(string name, Action<EditorViewModel> action, bool shouldResetAdjustment)
         {
             Size existingCropSize = new Size(250, 250);
             Rect existingCropRect = new Rect(new Point(), existingCropSize);
@@ -184,11 +188,28 @@ namespace Fotografix
             SetupRenderScale(1f, existingCropSize);
 
             vm.CropMode = true;
-            vm.Reset();
+            action(vm);
 
-            Assert.IsFalse(vm.CropMode, "should exit crop mode");
-            Assert.IsNull(editor.Adjustment.Crop, "should reset adjustment");
-            Assert.AreEqual(0.25f, editor.RenderScale, "should recompute render scale");
+            Assert.IsFalse(vm.CropMode, $"{name} should exit crop mode");
+
+            if (shouldResetAdjustment)
+            {
+                Assert.IsNull(editor.Adjustment.Crop, $"{name} should reset adjustment");
+                Assert.AreEqual(0.25f, editor.RenderScale, $"{name} should recompute render scale");
+            }
+        }
+
+        private static IEnumerable<object[]> FileManagementActions()
+        {
+            object[] TestCase(string name, Action<EditorViewModel> action, bool shouldResetAdjustment)
+            {
+                return new object[] { name, action, shouldResetAdjustment };
+            }
+
+            yield return TestCase("reset", vm => vm.Reset(), true);
+            yield return TestCase("revert", vm => vm.Revert(), true);
+            yield return TestCase("save", async vm => await vm.SaveAsync(), false);
+            yield return TestCase("export", async vm => await vm.ExportAsync(launchFolderAfterExport: false), false);
         }
 
         [TestMethod]

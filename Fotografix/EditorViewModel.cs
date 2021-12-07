@@ -319,17 +319,28 @@ namespace Fotografix
 
         public Task SaveAsync()
         {
+            this.CropMode = false;
             return editor.SaveAsync();
         }
 
         public async void Export()
         {
+            await ExportAsync(launchFolderAfterExport: true);
+        }
+
+        public async Task ExportAsync(bool launchFolderAfterExport = true)
+        {
+            this.CropMode = false;
+
             var folder = ApplicationData.Current.TemporaryFolder;
             var file = await editor.ExportAsync(folder);
 
-            var launcherOptions = new FolderLauncherOptions();
-            launcherOptions.ItemsToSelect.Add(file);
-            await Launcher.LaunchFolderAsync(folder, launcherOptions);
+            if (launchFolderAfterExport)
+            {
+                var launcherOptions = new FolderLauncherOptions();
+                launcherOptions.ItemsToSelect.Add(file);
+                await Launcher.LaunchFolderAsync(folder, launcherOptions);
+            }
         }
 
         #endregion
