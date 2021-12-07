@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel;
-using Windows.Foundation;
 
 namespace Fotografix
 {
@@ -28,6 +27,6 @@ namespace Fotografix
         ISharpnessAdjustment Sharpness { get; }
         #endregion
 
-        Rect? Crop { get; set; }
+        CropRect? Crop { get; set; }
     }
 }

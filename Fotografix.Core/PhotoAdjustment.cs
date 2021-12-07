@@ -374,9 +374,9 @@ namespace Fotografix
 
         #region Crop
 
-        private Rect? crop;
+        private CropRect? crop;
 
-        public Rect? Crop
+        public CropRect? Crop
         {
             get => crop;
 

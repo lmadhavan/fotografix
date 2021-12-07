@@ -33,6 +33,7 @@ namespace Fotografix
                 adjustment.ColorRanges[ColorRange.Blue].Luminance = 0.4f;
 
                 adjustment.Sharpness.Amount = 0.5f;
+                adjustment.Crop = new CropRect(10, 20, 30, 40);
 
                 Debug.WriteLine(adjustment.Serialize());
             }
