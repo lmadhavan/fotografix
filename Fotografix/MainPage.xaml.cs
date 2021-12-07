@@ -1,11 +1,9 @@
 ﻿using Fotografix.Input;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using System;
-using Windows.ApplicationModel;
 using Windows.Foundation;
 using Windows.Storage;
 using Windows.Storage.Pickers;
-using Windows.System;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -33,16 +31,7 @@ namespace Fotografix
             this.pointerEventHandler = panHandler;
         }
 
-        private string AppTitle => Package.Current.DisplayName;
-
-        private string AppVersion
-        {
-            get
-            {
-                var ver = Package.Current.Id.Version;
-                return $"Version {ver.Major}.{ver.Minor}.{ver.Build}";
-            }
-        }
+        private AboutViewModel About { get; } = new AboutViewModel();
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
@@ -171,17 +160,8 @@ namespace Fotografix
 
         private async void WelcomeTour_Click(object sender, RoutedEventArgs e)
         {
+            helpFlyout.Hide();
             await new WelcomeDialog().ShowAsync();
-        }
-
-        private async void WhatsNew_Click(object sender, RoutedEventArgs e)
-        {
-            await Launcher.LaunchUriAsync(new Uri("https://github.com/lmadhavan/fotografix/releases"));
-        }
-
-        private async void SendFeedback_Click(object sender, RoutedEventArgs e)
-        {
-            await Launcher.LaunchUriAsync(new Uri("https://github.com/lmadhavan/fotografix/issues"));
         }
     }
 }

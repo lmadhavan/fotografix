@@ -47,7 +47,7 @@
             <StackPanel Orientation="Horizontal">
                 <Image HorizontalAlignment="Left" VerticalAlignment="Center" Source="Assets/Square44x44Logo.png" Margin="12,1,0,0" Width="20" Height="20" />
                 <TextBlock x:Name="appTitle" VerticalAlignment="Center" Margin="10,0,0,0" FontSize="16">
-                    <Run Text="{x:Bind AppTitle}" />
+                    <Run Text="{x:Bind About.AppTitle, Mode=OneTime}" />
                     <Run Text="Beta" Foreground="{ThemeResource ButtonDisabledForegroundThemeBrush}" />
                 </TextBlock>
             </StackPanel>
@@ -88,13 +88,16 @@
                 <FontIcon FontSize="16" Glyph="&#xE939;" />
 
                 <Button.Flyout>
-                    <MenuFlyout>
-                        <MenuFlyoutItem IsEnabled="False" Text="{x:Bind AppVersion}" />
-                        <MenuFlyoutSeparator />
-                        <MenuFlyoutItem Text="Welcome tour" Click="WelcomeTour_Click" />
-                        <MenuFlyoutItem Text="What's new" Click="WhatsNew_Click" />
-                        <MenuFlyoutItem Text="Send feedback" Click="SendFeedback_Click" />
-                    </MenuFlyout>
+                    <Flyout x:Name="helpFlyout">
+                        <StackPanel x:DefaultBindMode="OneTime">
+                            <TextBlock Margin="12" FontWeight="SemiBold" Text="{x:Bind About.AppTitleWithVersion}" />
+                            <HyperlinkButton Content="Welcome tour" Click="WelcomeTour_Click" />
+                            <HyperlinkButton Content="What's new" NavigateUri="{x:Bind About.WhatsNewUri}" />
+                            <HyperlinkButton Content="Send feedback" NavigateUri="{x:Bind About.SendFeedbackUri}" />
+                            <HyperlinkButton Content="Rate and review" NavigateUri="{x:Bind About.RateAndReviewUri}" />
+                            <HyperlinkButton Content="License information" NavigateUri="{x:Bind About.LicenseUri}" />
+                        </StackPanel>
+                    </Flyout>
                 </Button.Flyout>
             </Button>
         </StackPanel>
