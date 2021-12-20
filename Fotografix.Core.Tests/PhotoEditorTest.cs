@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.Graphics.Canvas;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Storage;
@@ -212,6 +213,20 @@ namespace Fotografix
             Assert.AreEqual(new Size(100, 25), PhotoEditor.ScaleDimensions(new Size(200, 50), 100), "width > maxDimension: should scale width to maxDimension");
             Assert.AreEqual(new Size(25, 100), PhotoEditor.ScaleDimensions(new Size(50, 200), 100), "height > maxDimension: should scale height to maxDimension");
             Assert.AreEqual(new Size(100, 50), PhotoEditor.ScaleDimensions(new Size(100, 50), 200), "originalSize < maxDimension: should not scale");
+        }
+
+        [TestMethod]
+        public async Task ComputesHistogram()
+        {
+            using (var editor = await PhotoEditor.CreateAsync(photo))
+            {
+                var histogram = editor.ComputeHistogram();
+
+                using (var output = histogram.ExportToCanvasBitmap(CanvasDevice.GetSharedDevice()))
+                {
+                    await BitmapAssert.VerifyAsync(output, "Barn_histogram.png");
+                }
+            }
         }
 
         private async Task VerifyOutputAsync(PhotoEditor editor, string filename)

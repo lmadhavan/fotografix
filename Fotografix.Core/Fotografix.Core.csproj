@@ -121,6 +121,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="CropRect.cs" />
+    <Compile Include="Histogram.cs" />
     <Compile Include="IPhoto.cs" />
     <Compile Include="IRenderScaleProvider.cs" />
     <Compile Include="Xmp\BitmapPropertiesXmpExtensions.cs" />

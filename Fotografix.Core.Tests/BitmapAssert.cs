@@ -57,7 +57,7 @@ namespace Fotografix
 
             using (var stream = await file.OpenAsync(FileAccessMode.ReadWrite))
             {
-                await bitmap.SaveAsync(stream, CanvasBitmapFileFormat.Jpeg);
+                await bitmap.SaveAsync(stream, filename.EndsWith(".png") ? CanvasBitmapFileFormat.Png : CanvasBitmapFileFormat.Jpeg);
             }
 
             await CoreApplication.MainView.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () => await Launcher.LaunchFolderAsync(tempFolder));

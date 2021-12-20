@@ -161,6 +161,7 @@
     <Content Include="TestData\Barn_exposure.jpg" />
     <Content Include="TestData\Barn_exposure_thumbnail.jpg" />
     <Content Include="TestData\Barn_highlights.jpg" />
+    <Content Include="TestData\Barn_histogram.png" />
     <Content Include="TestData\Barn_hue_yellow.jpg" />
     <Content Include="TestData\Barn_luminance_yellow.jpg" />
     <Content Include="TestData\Barn_saturation.jpg" />

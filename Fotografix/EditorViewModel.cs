@@ -1,13 +1,15 @@
 ﻿using Fotografix.Input;
 using Microsoft.Graphics.Canvas;
+using Microsoft.Graphics.Canvas.UI.Xaml;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Storage;
 using Windows.System;
+using Windows.UI;
 using Windows.UI.Core;
+using Windows.UI.Xaml.Media;
 
 namespace Fotografix
 {
@@ -16,6 +18,7 @@ namespace Fotografix
         public const int CropHandleSize = 6;
 
         private readonly PhotoEditor editor;
+        private readonly ICanvasResourceCreatorWithDpi resourceCreator;
         private readonly ScalingHelper scalingHelper;
         private readonly CropTracker cropTracker;
         private readonly CropOverlay cropOverlay;
@@ -31,6 +34,7 @@ namespace Fotografix
             this.editor = editor;
             editor.Invalidated += (s, e) => Invalidate();
 
+            this.resourceCreator = resourceCreator;
             this.scalingHelper = new ScalingHelper(resourceCreator, editor);
             this.cropTracker = cropTracker;
             cropTracker.RectChanged += (s, e) => Invalidate();
@@ -340,6 +344,36 @@ namespace Fotografix
                 var launcherOptions = new FolderLauncherOptions();
                 launcherOptions.ItemsToSelect.Add(file);
                 await Launcher.LaunchFolderAsync(folder, launcherOptions);
+            }
+        }
+
+        #endregion
+
+        #region Histogram
+
+        private CanvasImageSource histogramSource;
+
+        public ImageSource HistogramSource
+        {
+            get
+            {
+                if (histogramSource == null)
+                {
+                    this.histogramSource = new CanvasImageSource(resourceCreator, Histogram.RenderSize);
+                    editor.Invalidated += (s, e) => UpdateHistogram();
+                    UpdateHistogram();
+                }
+
+                return histogramSource;
+            }
+        }
+
+        private void UpdateHistogram()
+        {
+            var histogram = editor.ComputeHistogram();
+            using (var ds = histogramSource.CreateDrawingSession(Color.FromArgb(192, 48, 48, 48)))
+            {
+                histogram.Draw(ds);
             }
         }
 

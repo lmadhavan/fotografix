@@ -1,5 +1,7 @@
 ﻿using Microsoft.Graphics.Canvas;
+using Microsoft.Graphics.Canvas.Effects;
 using System;
+using System.Numerics;
 using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Graphics.Imaging;
@@ -11,6 +13,7 @@ namespace Fotografix
     {
         private readonly IPhoto photo;
         private readonly CanvasBitmap bitmap;
+        private readonly Transform2DEffect histogramTransform;
         private PhotoAdjustment adjustment;
         private bool dirty;
 
@@ -18,10 +21,12 @@ namespace Fotografix
         {
             this.photo = photo;
             this.bitmap = bitmap;
+            this.histogramTransform = new Transform2DEffect { CacheOutput = true };
         }
 
         public void Dispose()
         {
+            histogramTransform.Dispose();
             adjustment.Dispose();
             bitmap.Dispose();
         }
@@ -67,7 +72,7 @@ namespace Fotografix
         public event EventHandler Invalidated;
 
         public Size OriginalSize => bitmap.Size;
-        public Size RenderSize => adjustment.GetOutputSize(resourceCreator: bitmap);
+        public Size RenderSize => adjustment.GetOutputSize(ResourceCreator);
 
         public float RenderScale
         {
@@ -145,9 +150,9 @@ namespace Fotografix
             var originalRenderScale = adjustment.RenderScale;
             adjustment.RenderScale = 1;
 
-            var bounds = adjustment.Output.GetBounds(resourceCreator: bitmap);
+            var bounds = adjustment.Output.GetBounds(ResourceCreator);
             var scaledSize = ScaleDimensions(new Size(bounds.Width, bounds.Height), maxDimension);
-            var rt = new CanvasRenderTarget(resourceCreator: bitmap, size: scaledSize);
+            var rt = new CanvasRenderTarget(ResourceCreator, size: scaledSize);
 
             using (var ds = rt.CreateDrawingSession())
             {
@@ -165,6 +170,18 @@ namespace Fotografix
                 return await SoftwareBitmap.CreateCopyFromSurfaceAsync(bitmap);
             }
         }
+
+        public Histogram ComputeHistogram()
+        {
+            var bounds = adjustment.Output.GetBounds(ResourceCreator);
+            var scaledSize = ScaleDimensions(new Size(bounds.Width, bounds.Height), ThumbnailSize);
+
+            histogramTransform.TransformMatrix = Matrix3x2.CreateScale((float)(scaledSize.Width / bounds.Width));
+            histogramTransform.Source = adjustment.Output;
+            return Histogram.Compute(histogramTransform, new Rect(0, 0, scaledSize.Width, scaledSize.Height), ResourceCreator);
+        }
+
+        private ICanvasResourceCreatorWithDpi ResourceCreator => bitmap;
 
         private void SetAdjustment(PhotoAdjustment value)
         {
