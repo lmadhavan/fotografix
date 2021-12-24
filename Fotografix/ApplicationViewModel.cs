@@ -13,7 +13,7 @@ namespace Fotografix
     {
         private readonly ISidecarStrategy sidecarStrategy;
 
-        private string folderName;
+        private StorageFolder folder;
         private NotifyTaskCompletion<IList<PhotoViewModel>> photos;
         private PhotoViewModel selectedPhoto;
         private NotifyTaskCompletion<EditorViewModel> editor;
@@ -32,11 +32,7 @@ namespace Fotografix
 
         public ICanvasResourceCreatorWithDpi CanvasResourceCreator { get; set; }
 
-        public string FolderName
-        {
-            get => folderName;
-            private set => SetProperty(ref folderName, value);
-        }
+        public string FolderName => folder?.DisplayName;
 
         public NotifyTaskCompletion<IList<PhotoViewModel>> Photos
         {
@@ -76,7 +72,8 @@ namespace Fotografix
 
         public void OpenFolder(StorageFolder folder)
         {
-            this.FolderName = folder.DisplayName;
+            this.folder = folder;
+            RaisePropertyChanged(nameof(FolderName));
             this.Photos = new NotifyTaskCompletion<IList<PhotoViewModel>>(LoadPhotosAsync(folder));
         }
 
@@ -110,7 +107,7 @@ namespace Fotografix
             }
 
             var editor = await selectedPhoto.CreateEditorAsync(CanvasResourceCreator);
-            var vm = new EditorViewModel(editor, CanvasResourceCreator);
+            var vm = new EditorViewModel(editor, CanvasResourceCreator) { DefaultExportFolder = folder };
             EditorLoaded?.Invoke(this, vm);
             return vm;
         }

@@ -4,11 +4,13 @@ using Microsoft.Graphics.Canvas.UI.Xaml;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using Windows.Foundation;
 using Windows.Storage;
 using Windows.System;
 using Windows.UI;
 using Windows.UI.Core;
+using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 
 namespace Fotografix
@@ -43,6 +45,12 @@ namespace Fotografix
             InitializeAspectRatios();
             UpdateRenderSize();
             this.activeInputHandler = new NullPointerInputHandler();
+
+            this.RevertCommand = new DelegateCommand(() => CanRevert, RevertAsync);
+            this.ResetCommand = new DelegateCommand(Reset);
+            this.ExportCommand = new DelegateCommand(ExportAsync);
+            this.QuickExportCommand = new DelegateCommand(QuickExportAsync);
+
             this.loaded = true;
         }
 
@@ -108,7 +116,7 @@ namespace Fotografix
                     RaisePropertyChanged(nameof(CanZoomToFit));
                     RaisePropertyChanged(nameof(CanZoomToActualPixels));
                 }
-                
+
                 if (zoomToFit)
                 {
                     ScaleToFit();
@@ -168,7 +176,7 @@ namespace Fotografix
         private bool cropMode;
         private AspectRatio aspectRatio;
         private bool flipAspectRatio;
-        
+
         public bool CropMode
         {
             get => cropMode;
@@ -299,9 +307,16 @@ namespace Fotografix
 
         #region File management
 
+        public StorageFolder DefaultExportFolder { get; set; } = ApplicationData.Current.TemporaryFolder;
+
+        public ICommand RevertCommand { get; }
+        public ICommand ResetCommand { get; }
+        public ICommand ExportCommand { get; }
+        public ICommand QuickExportCommand { get; }
+        
         public bool CanRevert => editor.CanRevert;
 
-        public async void Revert()
+        public async Task RevertAsync()
         {
             this.CropMode = false;
 
@@ -327,23 +342,36 @@ namespace Fotografix
             return editor.SaveAsync();
         }
 
-        public async void Export()
+        private async Task ExportAsync()
         {
-            await ExportAsync(launchFolderAfterExport: true);
+            var vm = new ExportViewModel(DefaultExportFolder);
+
+            var dialog = new ExportDialog(vm);
+            if (await dialog.ShowAsync() == ContentDialogResult.Primary)
+            {
+                var eo = await vm.CreateExportOptionsAsync();
+                await ExportAsync(eo);
+            }
         }
 
-        public async Task ExportAsync(bool launchFolderAfterExport = true)
+        private async Task QuickExportAsync()
+        {
+            var vm = new ExportViewModel(DefaultExportFolder);
+            var eo = await vm.CreateExportOptionsAsync();
+            await ExportAsync(eo);
+        }
+
+        public async Task ExportAsync(ExportOptions options, bool launchFolderAfterExport = true)
         {
             this.CropMode = false;
 
-            var folder = ApplicationData.Current.TemporaryFolder;
-            var file = await editor.ExportAsync(folder);
+            var file = await editor.ExportAsync(options.DestinationFolder);
 
             if (launchFolderAfterExport)
             {
                 var launcherOptions = new FolderLauncherOptions();
                 launcherOptions.ItemsToSelect.Add(file);
-                await Launcher.LaunchFolderAsync(folder, launcherOptions);
+                await Launcher.LaunchFolderAsync(options.DestinationFolder, launcherOptions);
             }
         }
 

@@ -7,7 +7,7 @@ using Windows.Storage;
 namespace Fotografix
 {
     [TestClass]
-    public class RegressionTest
+    public class ApplicationViewModelTest
     {
         private ApplicationViewModel app;
 
@@ -17,9 +17,8 @@ namespace Fotografix
             var testData = await Package.Current.InstalledLocation.GetFolderAsync("TestData");
             var photosFolder = await testData.GetFolderAsync("Photos");
             var sidecarStrategy = new FixedSidecarStrategy(ApplicationData.Current.TemporaryFolder);
-            
-            this.app = new ApplicationViewModel(sidecarStrategy);
-            app.CanvasResourceCreator = new StubCanvasResourceCreator();
+
+            this.app = new ApplicationViewModel(sidecarStrategy) { CanvasResourceCreator = new StubCanvasResourceCreator() };
             app.OpenFolder(photosFolder);
         }
 
@@ -59,6 +58,17 @@ namespace Fotografix
             app.SelectedPhoto = photos[0];
 
             Assert.IsNotNull(await app.Editor.Task);
+        }
+
+        [TestMethod]
+        public async Task InitializesDefaultExportFolderInEditor()
+        {
+            var photos = await app.Photos.Task;
+
+            app.SelectedPhoto = photos[0];
+
+            var editor = await app.Editor.Task;
+            Assert.AreEqual(app.FolderName, editor.DefaultExportFolder.Name);
         }
     }
 }

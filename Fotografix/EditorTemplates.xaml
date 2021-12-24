@@ -63,24 +63,39 @@
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
-            <Button Grid.Column="0" Click="{x:Bind Export}">
+            <winui:DropDownButton Grid.Column="0">
                 <StackPanel Orientation="Horizontal">
                     <FontIcon Glyph="&#xE72D;" />
                     <TextBlock Margin="8,0,0,0" Text="Export" />
                 </StackPanel>
-            </Button>
+
+                <winui:DropDownButton.Flyout>
+                    <MenuFlyout>
+                        <MenuFlyoutItem Text="Export..." Command="{x:Bind ExportCommand}">
+                            <MenuFlyoutItem.KeyboardAccelerators>
+                                <KeyboardAccelerator Modifiers="Control" Key="E" />
+                            </MenuFlyoutItem.KeyboardAccelerators>
+                        </MenuFlyoutItem>
+                        <MenuFlyoutItem Text="Quick export" Command="{x:Bind QuickExportCommand}">
+                            <MenuFlyoutItem.KeyboardAccelerators>
+                                <KeyboardAccelerator Modifiers="Control,Shift" Key="E" />
+                            </MenuFlyoutItem.KeyboardAccelerators>
+                        </MenuFlyoutItem>
+                    </MenuFlyout>
+                </winui:DropDownButton.Flyout>
+            </winui:DropDownButton>
 
             <Button Grid.Column="1" Margin="0,0,4,0">
                 <FontIcon Glyph="&#xE81C;" />
 
                 <Button.Flyout>
                     <MenuFlyout>
-                        <MenuFlyoutItem Text="Revert to last saved version" IsEnabled="{x:Bind CanRevert}" Click="{x:Bind Revert}">
+                        <MenuFlyoutItem Text="Revert to last saved version" Command="{x:Bind RevertCommand}">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xE81C;" />
                             </MenuFlyoutItem.Icon>
                         </MenuFlyoutItem>
-                        <MenuFlyoutItem Text="Reset to original" Click="{x:Bind Reset}">
+                        <MenuFlyoutItem Text="Reset to original" Command="{x:Bind ResetCommand}">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xE74D;" />
                             </MenuFlyoutItem.Icon>

@@ -1,0 +1,41 @@
+﻿<ContentDialog
+    x:Class="Fotografix.ExportDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Fotografix"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Title="Export"
+    DefaultButton="Primary"
+    PrimaryButtonText="Export"
+    CloseButtonText="Cancel"
+    IsPrimaryButtonEnabled="{x:Bind vm.IsValid}"
+    x:DefaultBindMode="OneWay">
+
+    <ContentDialog.Resources>
+        <Style TargetType="local:ExportDialog" BasedOn="{StaticResource DefaultContentDialogStyle}"/>
+
+        <Style TargetType="Border">
+            <Setter Property="Margin" Value="0,8,0,0" />
+            <Setter Property="Padding" Value="16" />
+            <Setter Property="CornerRadius" Value="4" />
+            <Setter Property="Background" Value="#18808080" />
+        </Style>
+    </ContentDialog.Resources>
+
+    <StackPanel Width="300">
+        <Border>
+            <StackPanel>
+                <TextBlock Text="Destination folder" />
+                <Button HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" Margin="0,4,0,0" Click="DestinationFolder_Click">
+                    <TextBlock TextWrapping="Wrap" Text="{x:Bind vm.DestinationFolder.Path}" />
+                </Button>
+
+                <CheckBox Margin="0,16,0,0" Content="Put in subfolder" IsChecked="{x:Bind vm.PutInSubfolder, Mode=TwoWay}" />
+                <TextBox PlaceholderText="Subfolder name" Text="{x:Bind vm.SubfolderName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{x:Bind vm.PutInSubfolder}" />
+                <TextBlock Margin="0,4,0,0" TextWrapping="WrapWholeWords" Text="{x:Bind vm.InvalidFileNameMessage}" Visibility="{x:Bind vm.IsSubfolderNameInvalid}" />
+            </StackPanel>
+        </Border>
+    </StackPanel>
+</ContentDialog>

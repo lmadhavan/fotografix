@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.Foundation;
-
+using Windows.Storage;
 using static Fotografix.CropTracker;
 
 namespace Fotografix
@@ -206,10 +206,12 @@ namespace Fotografix
                 return new object[] { name, action, shouldResetAdjustment };
             }
 
+            var exportOptions = new ExportOptions(ApplicationData.Current.TemporaryFolder);
+
             yield return TestCase("reset", vm => vm.Reset(), true);
-            yield return TestCase("revert", vm => vm.Revert(), true);
+            yield return TestCase("revert", async vm => await vm.RevertAsync(), true);
             yield return TestCase("save", async vm => await vm.SaveAsync(), false);
-            yield return TestCase("export", async vm => await vm.ExportAsync(launchFolderAfterExport: false), false);
+            yield return TestCase("export", async vm => await vm.ExportAsync(exportOptions, launchFolderAfterExport: false), false);
         }
 
         [TestMethod]

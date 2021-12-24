@@ -125,11 +125,16 @@
     <Compile Include="CropOverlay.cs" />
     <Compile Include="CropTracker.cs" />
     <Compile Include="CustomTitleBar.cs" />
+    <Compile Include="DelegateCommand.cs" />
     <Compile Include="EditorTemplates.xaml.cs">
       <DependentUpon>EditorTemplates.xaml</DependentUpon>
     </Compile>
     <Compile Include="EditorViewModel.cs" />
     <Compile Include="ExceptionMessageConverter.cs" />
+    <Compile Include="ExportDialog.xaml.cs">
+      <DependentUpon>ExportDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ExportViewModel.cs" />
     <Compile Include="FileTypeVisibilityConverter.cs" />
     <Compile Include="ScalingHelper.cs" />
     <Compile Include="Input\PointerEventAdapter.cs" />
@@ -176,6 +181,10 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Page Include="EditorTemplates.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ExportDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
