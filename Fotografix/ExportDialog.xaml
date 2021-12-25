@@ -3,6 +3,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Fotografix"
+    xmlns:winui="using:Microsoft.UI.Xaml.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
@@ -35,6 +36,32 @@
                 <CheckBox Margin="0,16,0,0" Content="Put in subfolder" IsChecked="{x:Bind vm.PutInSubfolder, Mode=TwoWay}" />
                 <TextBox PlaceholderText="Subfolder name" Text="{x:Bind vm.SubfolderName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{x:Bind vm.PutInSubfolder}" />
                 <TextBlock Margin="0,4,0,0" TextWrapping="WrapWholeWords" Text="{x:Bind vm.InvalidFileNameMessage}" Visibility="{x:Bind vm.IsSubfolderNameInvalid}" />
+            </StackPanel>
+        </Border>
+
+        <Border Margin="0,8,0,0">
+            <StackPanel>
+                <CheckBox Content="Resize output" IsChecked="{x:Bind vm.ResizeOutput, Mode=TwoWay}" />
+                <StackPanel Orientation="Horizontal">
+                    <winui:NumberBox Width="125" Minimum="1" Maximum="16000" Value="{x:Bind vm.ResizeDimension, Mode=TwoWay}" IsEnabled="{x:Bind vm.ResizeOutput}" />
+                    <TextBlock Margin="4,0,0,0" VerticalAlignment="Center" Text="pixels (max)" />
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Margin="0,16,0,0" Text="Quality" />
+                    <Button CornerRadius="10" Margin="6,16,0,0" Padding="4" BorderBrush="{ThemeResource SystemAccentColor}">
+                        <FontIcon FontSize="10" FontWeight="Bold" Glyph="&#xE897;" />
+
+                        <Button.Flyout>
+                            <Flyout>
+                                <TextBlock Width="300" TextWrapping="WrapWholeWords">
+                                    Higher quality results in larger files. A quality setting of 90 generally produces good results, but this can vary based on the photo.
+                                </TextBlock>
+                            </Flyout>
+                        </Button.Flyout>
+                    </Button>
+                </StackPanel>
+                <Slider Minimum="10" Maximum="100" SmallChange="10" StepFrequency="10" TickFrequency="10" TickPlacement="BottomRight" Value="{x:Bind vm.Quality, Mode=TwoWay}" />
             </StackPanel>
         </Border>
     </StackPanel>

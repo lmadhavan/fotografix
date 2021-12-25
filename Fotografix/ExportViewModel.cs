@@ -13,7 +13,10 @@ namespace Fotografix
         private StorageFolder destinationFolder;
         private bool putInSubfolder;
         private string subfolderName;
-
+        private bool resizeOutput;
+        private int resizeDimension;
+        private int quality;
+        
         private bool valid;
         private bool subfolderNameInvalid;
 
@@ -22,6 +25,9 @@ namespace Fotografix
             this.DestinationFolder = destinationFolder;
             this.SubfolderName = "Export";
             this.PutInSubfolder = true;
+            this.ResizeDimension = 2048;
+            this.ResizeOutput = false;
+            this.Quality = 90;
             this.InvalidFileNameMessage = "File names cannot contain the following characters: " + string.Join(' ', InvalidFileNameChars.Where(c => !char.IsControl(c)));
             
             Validate();
@@ -59,6 +65,24 @@ namespace Fotografix
             }
         }
 
+        public bool ResizeOutput
+        {
+            get => resizeOutput;
+            set => SetProperty(ref resizeOutput, value);
+        }
+
+        public int ResizeDimension
+        {
+            get => resizeDimension;
+            set => SetProperty(ref resizeDimension, value);
+        }
+
+        public int Quality
+        {
+            get => quality;
+            set => SetProperty(ref quality, value);
+        }
+
         public async Task<ExportOptions> CreateExportOptionsAsync()
         {
             var folder = destinationFolder;
@@ -68,7 +92,15 @@ namespace Fotografix
                 folder = await folder.CreateFolderAsync(subfolderName, CreationCollisionOption.OpenIfExists);
             }
 
-            return new ExportOptions(folder);
+            var eo = new ExportOptions(folder);
+
+            if (resizeOutput)
+            {
+                eo.MaxDimension = resizeDimension;
+            }
+
+            eo.Quality = quality / 100f;
+            return eo;
         }
 
         #region Validation

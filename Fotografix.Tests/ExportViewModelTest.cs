@@ -72,5 +72,36 @@ namespace Fotografix
 
             Assert.AreEqual(Path.Combine(tempFolder.Path, "a"), eo.DestinationFolder.Path);
         }
+
+        [TestMethod]
+        public async Task MaxDimensionIsUnsetWhenResizeOutputIsUnchecked()
+        {
+            vm.ResizeOutput = false;
+
+            var eo = await vm.CreateExportOptionsAsync();
+
+            Assert.IsNull(eo.MaxDimension);
+        }
+
+        [TestMethod]
+        public async Task MaxDimensionIsSetWhenResizeOutputIsUnchecked()
+        {
+            vm.ResizeOutput = true;
+            vm.ResizeDimension = 100;
+
+            var eo = await vm.CreateExportOptionsAsync();
+
+            Assert.AreEqual(100, eo.MaxDimension.Value);
+        }
+
+        [TestMethod]
+        public async Task ConvertsQualityValueToFraction()
+        {
+            vm.Quality = 50;
+
+            var eo = await vm.CreateExportOptionsAsync();
+
+            Assert.AreEqual(0.5f, eo.Quality);
+        }
     }
 }

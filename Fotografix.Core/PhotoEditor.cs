@@ -1,6 +1,7 @@
 ﻿using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Effects;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Numerics;
 using System.Threading.Tasks;
@@ -127,15 +128,20 @@ namespace Fotografix
             }
         }
 
-        public async Task<StorageFile> ExportAsync(StorageFolder folder)
+        public async Task<StorageFile> ExportAsync(ExportOptions options)
         {
-            using (var bitmap = await ExportToSoftwareBitmapAsync())
+            using (var bitmap = await ExportToSoftwareBitmapAsync(options.MaxDimension))
             {
-                var file = await folder.CreateFileAsync(Path.GetFileNameWithoutExtension(photo.Name) + ".jpg", CreationCollisionOption.GenerateUniqueName);
+                var file = await options.DestinationFolder.CreateFileAsync(Path.GetFileNameWithoutExtension(photo.Name) + ".jpg", CreationCollisionOption.GenerateUniqueName);
 
                 using (var stream = await file.OpenAsync(FileAccessMode.ReadWrite))
                 {
-                    var encoder = await BitmapEncoder.CreateAsync(BitmapEncoder.JpegEncoderId, stream);
+                    var encodingOptions = new Dictionary<string, BitmapTypedValue>
+                    {
+                        ["ImageQuality"] = new BitmapTypedValue(options.Quality, PropertyType.Single)
+                    };
+
+                    var encoder = await BitmapEncoder.CreateAsync(BitmapEncoder.JpegEncoderId, stream, encodingOptions);
                     encoder.SetSoftwareBitmap(bitmap);
                     await encoder.FlushAsync();
                 }

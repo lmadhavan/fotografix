@@ -365,7 +365,7 @@ namespace Fotografix
         {
             this.CropMode = false;
 
-            var file = await editor.ExportAsync(options.DestinationFolder);
+            var file = await editor.ExportAsync(options);
 
             if (launchFolderAfterExport)
             {
