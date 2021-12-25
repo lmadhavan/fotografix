@@ -1,6 +1,7 @@
 ﻿using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Effects;
 using System;
+using System.IO;
 using System.Numerics;
 using System.Threading.Tasks;
 using Windows.Foundation;
@@ -130,7 +131,7 @@ namespace Fotografix
         {
             using (var bitmap = await ExportToSoftwareBitmapAsync())
             {
-                var file = await folder.CreateFileAsync(photo.Name + ".jpg", CreationCollisionOption.GenerateUniqueName);
+                var file = await folder.CreateFileAsync(Path.GetFileNameWithoutExtension(photo.Name) + ".jpg", CreationCollisionOption.GenerateUniqueName);
 
                 using (var stream = await file.OpenAsync(FileAccessMode.ReadWrite))
                 {
