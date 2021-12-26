@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.UI.Xaml;
@@ -25,6 +26,8 @@ namespace Fotografix
 
             var sidecarStrategy = new SubfolderSidecarStrategy(".fotografix");
             this.vm = new ApplicationViewModel(sidecarStrategy);
+
+            Task.Run(() => PreloadTypeCache());
         }
 
         /// <summary>
@@ -90,6 +93,16 @@ namespace Fotografix
             var deferral = e.SuspendingOperation.GetDeferral();
             await vm.SaveAsync();
             deferral.Complete();
+        }
+
+        /// <summary>
+        /// Creating a dummy adjustment primes the Json.NET type cache and avoids
+        /// a delay when the first photo is loaded. This can be done in the background
+        /// so it does not increase startup time.
+        /// </summary>
+        private void PreloadTypeCache()
+        {
+            using (new PhotoAdjustment()) { }
         }
     }
 }
