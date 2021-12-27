@@ -60,6 +60,7 @@ namespace Fotografix
 
             if (folder != null)
             {
+                Logger.LogEvent("OpenRecentFolder");
                 FolderActivated?.Invoke(this, folder);
             }
         }

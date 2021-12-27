@@ -75,6 +75,7 @@ namespace Fotografix
             this.folder = folder;
             RaisePropertyChanged(nameof(FolderName));
             this.Photos = new NotifyTaskCompletion<IList<PhotoViewModel>>(LoadPhotosAsync(folder));
+            Logger.LogEvent("OpenFolder");
         }
 
         public Task SaveAsync()

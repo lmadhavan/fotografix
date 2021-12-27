@@ -351,6 +351,7 @@ namespace Fotografix
             {
                 var eo = await vm.CreateExportOptionsAsync();
                 await ExportAsync(eo);
+                Logger.LogEvent("Export");
             }
         }
 
@@ -359,6 +360,7 @@ namespace Fotografix
             var vm = new ExportViewModel(DefaultExportFolder);
             var eo = await vm.CreateExportOptionsAsync();
             await ExportAsync(eo);
+            Logger.LogEvent("QuickExport");
         }
 
         public async Task ExportAsync(ExportOptions options, bool launchFolderAfterExport = true)
