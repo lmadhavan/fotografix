@@ -136,12 +136,6 @@
 
     <DataTemplate x:Key="PhotoAdjustmentTemplate" x:DataType="local:EditorViewModel" x:DefaultBindMode="TwoWay">
         <StackPanel>
-            <!-- Histogram -->
-            <Border BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                    BorderThickness="1" CornerRadius="8" Margin="-8,0,0,8">
-                <Image Source="{x:Bind HistogramSource, Mode=OneWay}" />
-            </Border>
-
             <!-- Light -->
             <winui:Expander IsExpanded="True" Header="Light">
                 <StackPanel>
