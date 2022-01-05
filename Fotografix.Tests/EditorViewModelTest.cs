@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Fotografix.Export;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,7 +29,7 @@ namespace Fotografix
             this.editor = await PhotoEditor.CreateAsync(photo, dpiProvider);
 
             this.cropTracker = new CropTracker();
-            this.vm = new EditorViewModel(editor, dpiProvider, cropTracker);
+            this.vm = new EditorViewModel(editor, dpiProvider, new NullExportHandler(), cropTracker);
         }
 
         [TestCleanup]
@@ -211,7 +212,8 @@ namespace Fotografix
             yield return TestCase("reset", vm => vm.Reset(), true);
             yield return TestCase("revert", async vm => await vm.RevertAsync(), true);
             yield return TestCase("save", async vm => await vm.SaveAsync(), false);
-            yield return TestCase("export", async vm => await vm.ExportAsync(exportOptions, launchFolderAfterExport: false), false);
+            yield return TestCase("export", async vm => await vm.ExportAsync(), false);
+            yield return TestCase("quick export", async vm => await vm.QuickExportAsync(), false);
         }
 
         [TestMethod]

@@ -1,7 +1,7 @@
 ﻿using System;
 using Windows.Storage;
 
-namespace Fotografix
+namespace Fotografix.Export
 {
     public sealed class ExportOptions
     {

@@ -56,12 +56,12 @@
         <!-- Folder dropdown -->
         <winui:DropDownButton Margin="0,4,0,0" HorizontalAlignment="Center" VerticalAlignment="Center">
             <Grid>
-                <TextBlock Text="Select a folder" Visibility="{x:Bind vm.Photos, Converter={StaticResource ShowIfNull}}" />
+                <TextBlock Text="Select a folder" Visibility="{x:Bind vm.Folder, Converter={StaticResource ShowIfNull}}" />
 
-                <StackPanel Orientation="Horizontal" Visibility="{x:Bind vm.Photos, Converter={StaticResource HideIfNull}}">
-                    <TextBlock Margin="4,0" FontWeight="Bold" Text="{x:Bind vm.FolderName}" />
+                <StackPanel Orientation="Horizontal" Visibility="{x:Bind vm.Folder, Converter={StaticResource HideIfNull}}">
+                    <TextBlock Margin="4,0" FontWeight="Bold" Text="{x:Bind vm.Folder.DisplayName}" />
                     <winui:ProgressRing Width="16" Height="16" Visibility="{x:Bind vm.Photos.IsNotCompleted}" />
-                    <TextBlock Text="{x:Bind FormatPhotoCount(vm.Photos.Result.Count)}" Visibility="{x:Bind vm.Photos.IsCompleted}" />
+                    <TextBlock Text="{x:Bind FormatTotalPhotoCount(vm.Photos.Result.Count)}" Visibility="{x:Bind vm.Photos.IsCompleted}" />
                 </StackPanel>
             </Grid>
 
@@ -103,10 +103,12 @@
         </StackPanel>
 
         <!-- Filmstrip -->
-        <ListView Grid.Row="2" Grid.ColumnSpan="1"
+        <ListView x:Name="filmstrip"
+                  Grid.Row="2" Grid.ColumnSpan="1"
                   Height="104" Margin="8,2"
                   ItemsSource="{x:Bind vm.Photos.Result}"
-                  SelectedItem="{x:Bind vm.SelectedPhoto, Mode=TwoWay}"
+                  SelectionMode="Extended"
+                  SelectionChanged="Filmstrip_SelectionChanged"
                   ScrollViewer.HorizontalScrollBarVisibility="Auto"
                   ScrollViewer.HorizontalScrollMode="Auto"
                   ScrollViewer.VerticalScrollBarVisibility="Hidden"
@@ -182,16 +184,24 @@
             </ScrollViewer>
 
             <!-- Empty state: no folder selected -->
-            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="{x:Bind vm.Photos, Converter={StaticResource ShowIfNull}}">
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="{x:Bind vm.Folder, Converter={StaticResource ShowIfNull}}">
                 <FontIcon FontSize="96" Glyph="&#xED25;" Foreground="{ThemeResource ButtonDisabledForegroundThemeBrush}" />
                 <TextBlock FontSize="24" Text="Select a folder to view photos" Foreground="{ThemeResource ButtonDisabledForegroundThemeBrush}" />
             </StackPanel>
 
-            <!-- Empty state: no photo selected -->
+            <!-- Empty state: no active editor -->
             <Border Visibility="{x:Bind vm.Photos, Converter={StaticResource HideIfNull}}">
-                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="{x:Bind vm.SelectedPhoto, Converter={StaticResource ShowIfNull}}">
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="{x:Bind vm.ActivePhoto, Converter={StaticResource ShowIfNull}}">
                     <FontIcon FontSize="96" Glyph="&#xEB9F;" Foreground="{ThemeResource ButtonDisabledForegroundThemeBrush}" />
-                    <TextBlock FontSize="24" Text="No photo selected" Foreground="{ThemeResource ButtonDisabledForegroundThemeBrush}" />
+                    <TextBlock FontSize="24" Text="{x:Bind FormatSelectedPhotoCount(vm.SelectedPhotos.Count)}" Foreground="{ThemeResource ButtonDisabledForegroundThemeBrush}" />
+
+                    <!-- Batch export -->
+                    <Button Margin="0,16" HorizontalAlignment="Center" Visibility="{x:Bind vm.CanBatchExport}" Command="{x:Bind vm.BatchExportCommand}">
+                        <StackPanel Orientation="Horizontal">
+                            <FontIcon Glyph="&#xE72D;" />
+                            <TextBlock Margin="8,0,0,0" Text="Export" />
+                        </StackPanel>
+                    </Button>
                 </StackPanel>
             </Border>
 
@@ -200,12 +210,12 @@
                 <FontIcon FontSize="48" Glyph="&#xEB90;" Foreground="DarkRed" />
                 <TextBlock HorizontalAlignment="Center" FontSize="20">
                     <Run Text="Couldn't open" />
-                    <Run Text="{x:Bind vm.SelectedPhoto.Name}" />
+                    <Run Text="{x:Bind vm.ActivePhoto.Name}" />
                 </TextBlock>
                 <TextBlock HorizontalAlignment="Center" Text="{x:Bind vm.Editor.Exception, Converter={StaticResource ExceptionMessageConverter}}" />
                 
                 <!-- Instructions for HEIC codec -->
-                <TextBlock HorizontalAlignment="Center" Visibility="{x:Bind vm.SelectedPhoto.Name, Converter={StaticResource ShowIfHeic}}">
+                <TextBlock HorizontalAlignment="Center" Visibility="{x:Bind vm.ActivePhoto.Name, Converter={StaticResource ShowIfHeic}}">
                     You may need to install <Hyperlink NavigateUri="ms-windows-store://pdp/?ProductId=9nmzlz57r3t7">HEVC Video Extensions</Hyperlink> to open this photo.
                 </TextBlock>
             </StackPanel>

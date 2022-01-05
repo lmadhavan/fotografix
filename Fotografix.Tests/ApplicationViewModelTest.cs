@@ -19,7 +19,7 @@ namespace Fotografix
             var sidecarStrategy = new FixedSidecarStrategy(ApplicationData.Current.TemporaryFolder);
 
             this.app = new ApplicationViewModel(sidecarStrategy) { CanvasResourceCreator = new StubCanvasResourceCreator() };
-            app.OpenFolder(photosFolder);
+            app.Folder = photosFolder;
         }
 
         [TestCleanup]
@@ -28,47 +28,56 @@ namespace Fotografix
             await app.DisposeAsync();
         }
 
-        /// <summary>
-        /// A missing null check in the view model breaks the editor load task for the rest of the session.
-        /// </summary>
         [TestMethod]
-        public async Task HandlesNullSelectedPhoto()
+        public async Task NoPhotoSelected()
         {
             var photos = await app.Photos.Task;
-            
-            app.SelectedPhoto = photos[0];
+
+            SelectPhoto(photos[0]);
             Assert.IsNotNull(await app.Editor.Task);
 
-            app.SelectedPhoto = null;
+            ClearSelection();
             Assert.IsNull(await app.Editor.Task);
 
-            app.SelectedPhoto = photos[1];
+            SelectPhoto(photos[1]);
             Assert.IsNotNull(await app.Editor.Task);
         }
 
-        /// <summary>
-        /// Missing error handling in the view model breaks the editor load task for the rest of the session.
-        /// </summary>
         [TestMethod]
-        public async Task HandlesFailedEditorLoadTask()
+        public async Task RecoversFromEditorFailure()
         {
             var photos = await app.Photos.Task;
 
-            app.SelectedPhoto = photos[2]; // ZZZ_BadImage.jpg
-            app.SelectedPhoto = photos[0];
+            SelectPhoto(photos[2]); // ZZZ_BadImage.jpg
+            SelectPhoto(photos[0]);
 
             Assert.IsNotNull(await app.Editor.Task);
         }
 
         [TestMethod]
-        public async Task InitializesDefaultExportFolderInEditor()
+        public async Task ClosesActiveEditorWhenMultiplePhotosSelected()
         {
             var photos = await app.Photos.Task;
 
-            app.SelectedPhoto = photos[0];
+            SelectPhoto(photos[0]);
+            SelectPhotos(photos[0], photos[1]);
 
-            var editor = await app.Editor.Task;
-            Assert.AreEqual(app.FolderName, editor.DefaultExportFolder.Name);
+            Assert.IsNull(await app.Editor.Task);
+        }
+
+        private void SelectPhoto(PhotoViewModel photo)
+        {
+            SelectPhotos(photo);
+        }
+
+        private void ClearSelection()
+        {
+            SelectPhotos();
+        }
+
+        private void SelectPhotos(params PhotoViewModel[] photos)
+        {
+            app.SelectedPhotos = photos;
         }
     }
 }

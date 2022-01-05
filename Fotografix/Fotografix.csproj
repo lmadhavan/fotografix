@@ -130,12 +130,15 @@
       <DependentUpon>EditorTemplates.xaml</DependentUpon>
     </Compile>
     <Compile Include="EditorViewModel.cs" />
+    <Compile Include="Export\ExportHandler.cs" />
+    <Compile Include="Export\IExportHandler.cs" />
+    <Compile Include="Export\NullExportHandler.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="ExceptionMessageConverter.cs" />
-    <Compile Include="ExportDialog.xaml.cs">
+    <Compile Include="Export\ExportDialog.xaml.cs">
       <DependentUpon>ExportDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ExportViewModel.cs" />
+    <Compile Include="Export\ExportViewModel.cs" />
     <Compile Include="FileTypeVisibilityConverter.cs" />
     <Compile Include="ScalingHelper.cs" />
     <Compile Include="Input\PointerEventAdapter.cs" />
@@ -186,7 +189,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="ExportDialog.xaml">
+    <Page Include="Export\ExportDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

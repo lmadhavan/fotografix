@@ -1,4 +1,5 @@
-﻿using Fotografix.Input;
+﻿using Fotografix.Export;
+using Fotografix.Input;
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using System;
@@ -6,11 +7,8 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Windows.Foundation;
-using Windows.Storage;
-using Windows.System;
 using Windows.UI;
 using Windows.UI.Core;
-using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 
 namespace Fotografix
@@ -21,22 +19,24 @@ namespace Fotografix
 
         private readonly PhotoEditor editor;
         private readonly ICanvasResourceCreatorWithDpi resourceCreator;
+        private readonly IExportHandler exportHandler;
         private readonly ScalingHelper scalingHelper;
         private readonly CropTracker cropTracker;
         private readonly CropOverlay cropOverlay;
         private IPointerInputHandler activeInputHandler;
         private bool loaded;
 
-        public EditorViewModel(PhotoEditor editor, ICanvasResourceCreatorWithDpi resourceCreator) : this(editor, resourceCreator, new CropTracker())
+        public EditorViewModel(PhotoEditor editor, ICanvasResourceCreatorWithDpi resourceCreator, IExportHandler exportHandler) : this(editor, resourceCreator, exportHandler, new CropTracker())
         {
         }
 
-        public EditorViewModel(PhotoEditor editor, ICanvasResourceCreatorWithDpi resourceCreator, CropTracker cropTracker)
+        public EditorViewModel(PhotoEditor editor, ICanvasResourceCreatorWithDpi resourceCreator, IExportHandler exportHandler, CropTracker cropTracker)
         {
             this.editor = editor;
             editor.Invalidated += (s, e) => Invalidate();
 
             this.resourceCreator = resourceCreator;
+            this.exportHandler = exportHandler;
             this.scalingHelper = new ScalingHelper(resourceCreator, editor);
             this.cropTracker = cropTracker;
             cropTracker.RectChanged += (s, e) => Invalidate();
@@ -307,8 +307,6 @@ namespace Fotografix
 
         #region File management
 
-        public StorageFolder DefaultExportFolder { get; set; } = ApplicationData.Current.TemporaryFolder;
-
         public ICommand RevertCommand { get; }
         public ICommand ResetCommand { get; }
         public ICommand ExportCommand { get; }
@@ -342,39 +340,21 @@ namespace Fotografix
             return editor.SaveAsync();
         }
 
-        private async Task ExportAsync()
+        public Task ExportAsync()
         {
-            var vm = new ExportViewModel(DefaultExportFolder);
-
-            var dialog = new ExportDialog(vm);
-            if (await dialog.ShowAsync() == ContentDialogResult.Primary)
-            {
-                var eo = await vm.CreateExportOptionsAsync();
-                await ExportAsync(eo);
-                Logger.LogEvent("Export");
-            }
+            return ExportAsync(showDialog: true, "Export");
         }
 
-        private async Task QuickExportAsync()
+        public Task QuickExportAsync()
         {
-            var vm = new ExportViewModel(DefaultExportFolder);
-            var eo = await vm.CreateExportOptionsAsync();
-            await ExportAsync(eo);
-            Logger.LogEvent("QuickExport");
+            return ExportAsync(showDialog: false, "QuickExport");
         }
 
-        public async Task ExportAsync(ExportOptions options, bool launchFolderAfterExport = true)
+        private async Task ExportAsync(bool showDialog, string eventName)
         {
             this.CropMode = false;
-
-            var file = await editor.ExportAsync(options);
-
-            if (launchFolderAfterExport)
-            {
-                var launcherOptions = new FolderLauncherOptions();
-                launcherOptions.ItemsToSelect.Add(file);
-                await Launcher.LaunchFolderAsync(options.DestinationFolder, launcherOptions);
-            }
+            await exportHandler.ExportAsync(new[] { editor }, showDialog);
+            Logger.LogEvent(eventName);
         }
 
         #endregion

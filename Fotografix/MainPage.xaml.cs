@@ -1,6 +1,7 @@
 ﻿using Fotografix.Input;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using System;
+using System.Linq;
 using Windows.Foundation;
 using Windows.Storage;
 using Windows.Storage.Pickers;
@@ -78,6 +79,11 @@ namespace Fotografix
             editor?.SetViewportSize(e.NewSize);
         }
 
+        private void Filmstrip_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            vm.SelectedPhotos = filmstrip.SelectedItems.OfType<PhotoViewModel>().ToList();
+        }
+
         #region Pointer events
 
         private static readonly CoreCursor DefaultCursor = new CoreCursor(CoreCursorType.Arrow, 0);
@@ -136,7 +142,7 @@ namespace Fotografix
 
         private void RecentFolderFlyout_FolderActivated(object sender, StorageFolder folder)
         {
-            vm.OpenFolder(folder);
+            vm.Folder = folder;
         }
 
         private async void PickFolder()
@@ -148,14 +154,25 @@ namespace Fotografix
             if (folder != null)
             {
                 recentFolderFlyout.Add(folder);
-                vm.OpenFolder(folder);
+                vm.Folder = folder;
             }
+        }
+
+        private string FormatTotalPhotoCount(int count)
+        {
+            return $"({FormatPhotoCount(count)})";
+        }
+
+        private string FormatSelectedPhotoCount(int count)
+        {
+            return $"{FormatPhotoCount(count)} selected";
         }
 
         private string FormatPhotoCount(int count)
         {
+            string prefix = count == 0 ? "No" : count.ToString();
             string suffix = count == 1 ? "" : "s";
-            return $"({count} photo{suffix})";
+            return $"{prefix} photo{suffix}";
         }
 
         private async void WelcomeTour_Click(object sender, RoutedEventArgs e)

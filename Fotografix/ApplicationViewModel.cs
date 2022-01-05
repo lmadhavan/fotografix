@@ -1,10 +1,12 @@
-﻿using Microsoft.Graphics.Canvas;
+﻿using Fotografix.Export;
+using Microsoft.Graphics.Canvas;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using Windows.Storage;
 
 namespace Fotografix
@@ -12,16 +14,20 @@ namespace Fotografix
     public sealed class ApplicationViewModel : NotifyPropertyChangedBase
     {
         private readonly ISidecarStrategy sidecarStrategy;
+        private readonly ExportHandler exportHandler;
 
         private StorageFolder folder;
         private NotifyTaskCompletion<IList<PhotoViewModel>> photos;
-        private PhotoViewModel selectedPhoto;
-        private NotifyTaskCompletion<EditorViewModel> editor;
-        private CancellationTokenSource editorLoadCts;
+        private PhotoViewModel activePhoto;
+        private IList<PhotoViewModel> selectedPhotos;
 
         public ApplicationViewModel(ISidecarStrategy sidecarStrategy)
         {
             this.sidecarStrategy = sidecarStrategy;
+            this.exportHandler = new ExportHandler();
+
+            this.selectedPhotos = new List<PhotoViewModel>();
+            this.BatchExportCommand = new DelegateCommand(BatchExportAsync);
         }
 
         public Task DisposeAsync()
@@ -32,7 +38,20 @@ namespace Fotografix
 
         public ICanvasResourceCreatorWithDpi CanvasResourceCreator { get; set; }
 
-        public string FolderName => folder?.DisplayName;
+        public StorageFolder Folder
+        {
+            get => folder;
+
+            set
+            {
+                if (SetProperty(ref folder, value))
+                {
+                    exportHandler.DefaultDestinationFolder = folder;
+                    this.Photos = new NotifyTaskCompletion<IList<PhotoViewModel>>(LoadPhotosAsync(folder));
+                    Logger.LogEvent("OpenFolder");
+                }
+            }
+        }
 
         public NotifyTaskCompletion<IList<PhotoViewModel>> Photos
         {
@@ -42,18 +61,18 @@ namespace Fotografix
             {
                 if (SetProperty(ref photos, value))
                 {
-                    this.SelectedPhoto = null;
+                    this.SelectedPhotos = new List<PhotoViewModel>();
                 }
             }
         }
 
-        public PhotoViewModel SelectedPhoto
+        public PhotoViewModel ActivePhoto
         {
-            get => selectedPhoto;
+            get => activePhoto;
 
-            set
+            private set
             {
-                if (SetProperty(ref selectedPhoto, value))
+                if (SetProperty(ref activePhoto, value))
                 {
                     CancelEditorLoad();
                     this.editorLoadCts = new CancellationTokenSource();
@@ -62,6 +81,25 @@ namespace Fotografix
             }
         }
 
+        public IList<PhotoViewModel> SelectedPhotos
+        {
+            get => selectedPhotos;
+
+            set
+            {
+                if (SetProperty(ref selectedPhotos, value))
+                {
+                    this.ActivePhoto = selectedPhotos.Count == 1 ? selectedPhotos[0] : null;
+                    RaisePropertyChanged(nameof(CanBatchExport));
+                }
+            }
+        }
+
+        #region Editor
+
+        private NotifyTaskCompletion<EditorViewModel> editor;
+        private CancellationTokenSource editorLoadCts;
+
         public NotifyTaskCompletion<EditorViewModel> Editor
         {
             get => editor;
@@ -69,14 +107,6 @@ namespace Fotografix
         }
 
         public event EventHandler<EditorViewModel> EditorLoaded;
-
-        public void OpenFolder(StorageFolder folder)
-        {
-            this.folder = folder;
-            RaisePropertyChanged(nameof(FolderName));
-            this.Photos = new NotifyTaskCompletion<IList<PhotoViewModel>>(LoadPhotosAsync(folder));
-            Logger.LogEvent("OpenFolder");
-        }
 
         public Task SaveAsync()
         {
@@ -102,13 +132,13 @@ namespace Fotografix
 
             token.ThrowIfCancellationRequested();
 
-            if (selectedPhoto == null)
+            if (activePhoto == null)
             {
                 return null;
             }
 
-            var editor = await selectedPhoto.CreateEditorAsync(CanvasResourceCreator);
-            var vm = new EditorViewModel(editor, CanvasResourceCreator) { DefaultExportFolder = folder };
+            var editor = await activePhoto.CreateEditorAsync(CanvasResourceCreator);
+            var vm = new EditorViewModel(editor, CanvasResourceCreator, exportHandler);
             EditorLoaded?.Invoke(this, vm);
             return vm;
         }
@@ -147,5 +177,40 @@ namespace Fotografix
                 }
             }
         }
+
+        #endregion
+
+        #region Batch export
+
+        public bool CanBatchExport => selectedPhotos.Count > 1;
+        public ICommand BatchExportCommand { get; }
+
+        private async Task BatchExportAsync()
+        {
+            await exportHandler.ExportAsync(selectedPhotos.Select(p => new ExportWrapper(p, CanvasResourceCreator)), showDialog: true);
+            Logger.LogEvent("BatchExport");
+        }
+
+        private sealed class ExportWrapper : IExportable
+        {
+            private readonly PhotoViewModel photo;
+            private readonly ICanvasResourceCreatorWithDpi canvasResourceCreator;
+
+            public ExportWrapper(PhotoViewModel photo, ICanvasResourceCreatorWithDpi canvasResourceCreator)
+            {
+                this.photo = photo;
+                this.canvasResourceCreator = canvasResourceCreator;
+            }
+
+            public async Task<StorageFile> ExportAsync(ExportOptions options)
+            {
+                using (var editor = await photo.CreateEditorAsync(canvasResourceCreator))
+                {
+                    return await editor.ExportAsync(options);
+                }
+            }
+        }
+
+        #endregion
     }
 }

@@ -1,4 +1,5 @@
-﻿using Microsoft.Graphics.Canvas;
+﻿using Fotografix.Export;
+using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Effects;
 using System;
 using System.Collections.Generic;
@@ -11,7 +12,7 @@ using Windows.Storage;
 
 namespace Fotografix
 {
-    public sealed class PhotoEditor : IRenderScaleProvider, IDisposable
+    public sealed class PhotoEditor : IRenderScaleProvider, IExportable, IDisposable
     {
         private readonly IPhoto photo;
         private readonly CanvasBitmap bitmap;

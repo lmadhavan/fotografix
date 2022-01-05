@@ -3,7 +3,7 @@ using Windows.Storage.Pickers;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
-namespace Fotografix
+namespace Fotografix.Export
 {
     public sealed partial class ExportDialog : ContentDialog
     {
