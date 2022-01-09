@@ -25,20 +25,32 @@ namespace Fotografix
             this.execute = execute;
         }
 
-        public event EventHandler CanExecuteChanged
+        public bool IsExecuting
         {
-            add { }
-            remove { }
+            get => executing;
+
+            private set
+            {
+                this.executing = value;
+                RaiseCanExecuteChanged();
+            }
+        }
+
+        public event EventHandler CanExecuteChanged;
+
+        public void RaiseCanExecuteChanged()
+        {
+            CanExecuteChanged?.Invoke(this, EventArgs.Empty);
         }
 
         public bool CanExecute(object parameter)
         {
-            return canExecute();
+            return !executing && canExecute();
         }
 
         public async void Execute(object parameter)
         {
-            if (executing)
+            if (IsExecuting)
             {
                 /*
                  * This scenario can occur in two situations:
@@ -51,12 +63,12 @@ namespace Fotografix
 
             try
             {
-                this.executing = true;
+                this.IsExecuting = true;
                 await execute();
             }
             finally
             {
-                this.executing = false;
+                this.IsExecuting = false;
             }
         }
     }
