@@ -131,6 +131,8 @@
     </Compile>
     <Compile Include="EditorViewModel.cs" />
     <Compile Include="Export\ExportHandler.cs" />
+    <Compile Include="Export\ExportProgress.cs" />
+    <Compile Include="Export\ExportProgressViewModel.cs" />
     <Compile Include="Export\IExportHandler.cs" />
     <Compile Include="Export\NullExportHandler.cs" />
     <Compile Include="Logger.cs" />

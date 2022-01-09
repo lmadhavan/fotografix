@@ -182,13 +182,34 @@ namespace Fotografix
 
         #region Batch export
 
+        private ExportProgressViewModel batchExportProgress;
+
         public bool CanBatchExport => selectedPhotos.Count > 1;
         public ICommand BatchExportCommand { get; }
 
+        public ExportProgressViewModel BatchExportProgress
+        {
+            get => batchExportProgress;
+            private set => SetProperty(ref batchExportProgress, value);
+        }
+
         private async Task BatchExportAsync()
         {
-            await exportHandler.ExportAsync(selectedPhotos.Select(p => new ExportWrapper(p, CanvasResourceCreator)), showDialog: true);
-            Logger.LogEvent("BatchExport");
+            var cts = new CancellationTokenSource();
+
+            try
+            {
+                this.BatchExportProgress = new ExportProgressViewModel(cts);
+
+                var items = selectedPhotos.Select(p => new ExportWrapper(p, CanvasResourceCreator)).ToList();
+                await exportHandler.ExportAsync(items, showDialog: true, cts.Token, batchExportProgress);
+                Logger.LogEvent("BatchExport");
+            }
+            finally
+            {
+                this.BatchExportProgress = null;
+                cts.Dispose();
+            }
         }
 
         private sealed class ExportWrapper : IExportable

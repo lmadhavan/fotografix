@@ -165,7 +165,12 @@
         <Grid Grid.Row="1" Margin="8,4" Padding="8"
               Background="{ThemeResource LayerFillColorDefaultBrush}"
               BorderThickness="1" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" CornerRadius="8">
-            <!-- Canvas -->
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            
+            <!-- Editor canvas -->
             <ScrollViewer x:Name="viewport"
                           HorizontalScrollBarVisibility="Hidden"
                           VerticalScrollBarVisibility="Hidden"
@@ -220,7 +225,7 @@
                 </TextBlock>
             </StackPanel>
 
-            <!-- Progress bar -->
+            <!-- Editor load progress -->
             <ProgressBar MaxWidth="400" IsIndeterminate="True" Visibility="{x:Bind vm.Editor.IsNotCompleted, FallbackValue=Collapsed}" />
 
             <!-- Before/after indicator -->
@@ -231,6 +236,23 @@
                     Visibility="{x:Bind vm.Editor.Result.ShowOriginal, FallbackValue=Collapsed}">
                 <TextBlock Foreground="{ThemeResource SystemChromeWhiteColor}" FontSize="16" Text="Before" />
             </Border>
+            
+            <!-- Batch export progress -->
+            <winui:InfoBar Grid.Row="1"
+                           IsClosable="False"
+                           IsOpen="{x:Bind vm.BatchExportProgress.IsActive, FallbackValue=False}"
+                           Title="Exporting photos"
+                           Message="{x:Bind vm.BatchExportProgress.Status}">
+                <winui:InfoBar.IconSource>
+                    <winui:FontIconSource Glyph="&#xE72D;" />
+                </winui:InfoBar.IconSource>
+
+                <winui:ProgressBar Margin="0,0,8,8" Maximum="{x:Bind vm.BatchExportProgress.TotalItems}" Value="{x:Bind vm.BatchExportProgress.CompletedItems}" />
+
+                <winui:InfoBar.ActionButton>
+                    <Button Content="Cancel" Click="{x:Bind vm.BatchExportProgress.Cancel}" />
+                </winui:InfoBar.ActionButton>
+            </winui:InfoBar>
         </Grid>
 
         <!-- Editor controls -->

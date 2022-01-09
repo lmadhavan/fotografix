@@ -52,9 +52,14 @@ namespace Fotografix
                 panHandler
             });
 
-            editor.Invalidated += (s, _) => canvas.Invalidate();
+            editor.Invalidated += Editor_Invalidated;
             editor.SetViewportSize(new Size(viewport.ActualWidth, viewport.ActualHeight));
             canvas.Invalidate();
+        }
+
+        private void Editor_Invalidated(object sender, EventArgs e)
+        {
+            _ = Dispatcher.RunIdleAsync(_ => canvas.Invalidate());
         }
 
         private async void Page_Unloaded(object sender, RoutedEventArgs e)

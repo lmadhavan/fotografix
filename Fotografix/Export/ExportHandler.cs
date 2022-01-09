@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.System;
@@ -11,7 +12,7 @@ namespace Fotografix.Export
     {
         public StorageFolder DefaultDestinationFolder { get; set; }
 
-        public async Task ExportAsync(IEnumerable<IExportable> items, bool showDialog)
+        public async Task ExportAsync(IReadOnlyCollection<IExportable> items, bool showDialog, CancellationToken token = default, IProgress<ExportProgress> progress = null)
         {
             var vm = new ExportViewModel(DefaultDestinationFolder);
 
@@ -27,11 +28,20 @@ namespace Fotografix.Export
 
             var exportOptions = await vm.CreateExportOptionsAsync();
             var launcherOptions = new FolderLauncherOptions();
+            int completed = 0;
 
             foreach (var item in items)
             {
-                var file = await item.ExportAsync(exportOptions);
+                progress?.Report(new ExportProgress { TotalItems = items.Count, CompletedItems = completed });
+
+                var file = await Task.Run(async () => await item.ExportAsync(exportOptions));
                 launcherOptions.ItemsToSelect.Add(file);
+                completed++;
+
+                if (token.IsCancellationRequested)
+                {
+                    break;
+                }
             }
 
             await Launcher.LaunchFolderAsync(exportOptions.DestinationFolder, launcherOptions);
