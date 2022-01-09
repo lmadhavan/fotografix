@@ -15,7 +15,7 @@ namespace Fotografix.Export
         public void Initialize()
         {
             this.tempFolder = ApplicationData.Current.TemporaryFolder;
-            this.vm = new ExportViewModel(tempFolder);
+            this.vm = new ExportViewModel(tempFolder, count: 1);
         }
 
         [TestMethod]

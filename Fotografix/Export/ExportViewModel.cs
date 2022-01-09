@@ -20,8 +20,9 @@ namespace Fotografix.Export
         private bool valid;
         private bool subfolderNameInvalid;
 
-        public ExportViewModel(StorageFolder destinationFolder)
+        public ExportViewModel(StorageFolder destinationFolder, int count)
         {
+            this.Title = $"Export {PhotoViewModel.FormatPhotoCount(count)}";
             this.DestinationFolder = destinationFolder;
             this.SubfolderName = "Export";
             this.PutInSubfolder = true;
@@ -32,6 +33,8 @@ namespace Fotografix.Export
             
             Validate();
         }
+
+        public string Title { get; }
 
         public StorageFolder DestinationFolder
         {

@@ -14,7 +14,7 @@ namespace Fotografix.Export
 
         public async Task ExportAsync(IReadOnlyCollection<IExportable> items, bool showDialog, CancellationToken token = default, IProgress<ExportProgress> progress = null)
         {
-            var vm = new ExportViewModel(DefaultDestinationFolder);
+            var vm = new ExportViewModel(DefaultDestinationFolder, items.Count);
 
             if (showDialog)
             {

@@ -39,5 +39,12 @@ namespace Fotografix
         {
             return PhotoEditor.CreateAsync(photo, canvasResourceCreator);
         }
+
+        public static string FormatPhotoCount(int count)
+        {
+            string prefix = count == 0 ? "No" : count.ToString();
+            string suffix = count == 1 ? "" : "s";
+            return $"{prefix} photo{suffix}";
+        }
     }
 }

@@ -165,19 +165,12 @@ namespace Fotografix
 
         private string FormatTotalPhotoCount(int count)
         {
-            return $"({FormatPhotoCount(count)})";
+            return $"({PhotoViewModel.FormatPhotoCount(count)})";
         }
 
         private string FormatSelectedPhotoCount(int count)
         {
-            return $"{FormatPhotoCount(count)} selected";
-        }
-
-        private string FormatPhotoCount(int count)
-        {
-            string prefix = count == 0 ? "No" : count.ToString();
-            string suffix = count == 1 ? "" : "s";
-            return $"{prefix} photo{suffix}";
+            return $"{PhotoViewModel.FormatPhotoCount(count)} selected";
         }
 
         private async void WelcomeTour_Click(object sender, RoutedEventArgs e)
