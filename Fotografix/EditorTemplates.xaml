@@ -71,16 +71,8 @@
 
                 <winui:DropDownButton.Flyout>
                     <MenuFlyout>
-                        <MenuFlyoutItem Text="Export..." Command="{x:Bind ExportCommand}">
-                            <MenuFlyoutItem.KeyboardAccelerators>
-                                <KeyboardAccelerator Modifiers="Control" Key="E" />
-                            </MenuFlyoutItem.KeyboardAccelerators>
-                        </MenuFlyoutItem>
-                        <MenuFlyoutItem Text="Quick export" Command="{x:Bind QuickExportCommand}">
-                            <MenuFlyoutItem.KeyboardAccelerators>
-                                <KeyboardAccelerator Modifiers="Control,Shift" Key="E" />
-                            </MenuFlyoutItem.KeyboardAccelerators>
-                        </MenuFlyoutItem>
+                        <MenuFlyoutItem Text="Export..." Command="{x:Bind ExportCommand}" />
+                        <MenuFlyoutItem Text="Quick export" Command="{x:Bind QuickExportCommand}" />
                     </MenuFlyout>
                 </winui:DropDownButton.Flyout>
             </winui:DropDownButton>
