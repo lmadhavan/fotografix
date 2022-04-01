@@ -190,9 +190,30 @@ namespace Fotografix
             await VerifyOutputAsync("Barn_crop_scaled.jpg", 2.5f);
         }
 
+        [TestMethod]
+        public async Task Rotate_90()
+        {
+            adjustment.Rotation = 90;
+            await VerifyOutputAsync("Barn_rotate_90.jpg");
+        }
+
+        [TestMethod]
+        public async Task Rotate_180()
+        {
+            adjustment.Rotation = 180;
+            await VerifyOutputAsync("Barn_rotate_180.jpg");
+        }
+
+        [TestMethod]
+        public async Task Rotate_270()
+        {
+            adjustment.Rotation = 270;
+            await VerifyOutputAsync("Barn_rotate_270.jpg");
+        }
+
         private async Task VerifyOutputAsync(string filename, float tolerance = BitmapAssert.DefaultTolerance)
         {
-            using (var output = new CanvasRenderTarget(bitmap, adjustment.GetOutputSize(bitmap)))
+            using (var output = new CanvasRenderTarget(bitmap, adjustment.GetOutputSize()))
             {
                 using (var ds = output.CreateDrawingSession())
                 {

@@ -7,12 +7,12 @@ using System;
 using System.Collections.Generic;
 using System.Numerics;
 using Windows.Foundation;
-using Windows.Graphics.Effects;
 
 namespace Fotografix
 {
     public sealed class PhotoAdjustment : NotifyPropertyChangedBase, IDisposable, IPhotoAdjustment
     {
+        private readonly Transform2DEffect rotationEffect;
         private readonly CropEffect cropEffect;
         private readonly Transform2DEffect transformEffect;
         private readonly GammaTransferEffect transferEffect;
@@ -24,9 +24,12 @@ namespace Fotografix
         private readonly HueToRgbEffect hueToRgbEffect;
         private readonly SharpnessAdjustment sharpnessAdjustment;
 
+        private CanvasBitmap source;
+
         public PhotoAdjustment()
         {
-            this.cropEffect = new CropEffect { BorderMode = EffectBorderMode.Hard };
+            this.rotationEffect = new Transform2DEffect();
+            this.cropEffect = new CropEffect { Source = rotationEffect, BorderMode = EffectBorderMode.Hard };
             this.transformEffect = new Transform2DEffect();
             this.transferEffect = new GammaTransferEffect { Source = transformEffect };
             this.highlightsAndShadowsEffect = new HighlightsAndShadowsEffect { Source = transferEffect };
@@ -69,13 +72,14 @@ namespace Fotografix
         private float renderScale = 1;
 
         [JsonIgnore]
-        public IGraphicsEffectSource Source
+        public CanvasBitmap Source
         {
-            get => cropEffect.Source;
+            get => source;
 
             set
             {
-                cropEffect.Source = value;
+                this.source = value;
+                rotationEffect.Source = value;
                 UpdateTransform();
             }
         }
@@ -116,7 +120,7 @@ namespace Fotografix
 
             if (crop.HasValue)
             {
-                matrix = Matrix3x2.CreateTranslation((float)-crop.Value.X, (float)-crop.Value.Y) * matrix;
+                matrix = Matrix3x2.CreateTranslation(-crop.Value.X, -crop.Value.Y) * matrix;
                 transformEffect.Source = cropEffect;
             }
             else
@@ -127,9 +131,32 @@ namespace Fotografix
             transformEffect.TransformMatrix = matrix;
         }
 
-        public Size GetOutputSize(ICanvasResourceCreator resourceCreator)
+        private void UpdateRotation()
         {
-            var bounds = transferEffect.GetBounds(resourceCreator);
+            double tx = 0, ty = 0;
+
+            switch (rotation)
+            {
+                case 90:
+                    tx = source.Size.Height;
+                    break;
+
+                case 180:
+                    tx = source.Size.Width;
+                    ty = source.Size.Height;
+                    break;
+
+                case 270:
+                    ty = source.Size.Width;
+                    break;
+            }
+
+            rotationEffect.TransformMatrix = Matrix3x2.CreateRotation((float)(rotation * Math.PI / 180)) * Matrix3x2.CreateTranslation((float)tx, (float)ty);
+        }
+
+        public Size GetOutputSize()
+        {
+            var bounds = transformEffect.GetBounds(source);
             return new Size(bounds.Width, bounds.Height);
         }
 
@@ -374,9 +401,10 @@ namespace Fotografix
 
         #endregion
 
-        #region Crop
+        #region Crop / Rotate
 
         private CropRect? crop;
+        private int rotation;
 
         public CropRect? Crop
         {
@@ -392,6 +420,19 @@ namespace Fotografix
                     }
 
                     UpdateTransform();
+                }
+            }
+        }
+
+        public int Rotation
+        {
+            get => rotation;
+
+            set
+            {
+                if (SetProperty(ref rotation, value))
+                {
+                    UpdateRotation();
                 }
             }
         }

@@ -75,7 +75,7 @@ namespace Fotografix
         public event EventHandler Invalidated;
 
         public Size OriginalSize => bitmap.Size;
-        public Size RenderSize => adjustment.GetOutputSize(ResourceCreator);
+        public Size RenderSize => adjustment.GetOutputSize();
 
         public float RenderScale
         {
@@ -158,13 +158,13 @@ namespace Fotografix
             var originalRenderScale = adjustment.RenderScale;
             adjustment.RenderScale = 1;
 
-            var bounds = adjustment.Output.GetBounds(ResourceCreator);
-            var scaledSize = ScaleDimensions(new Size(bounds.Width, bounds.Height), maxDimension);
+            var size = adjustment.GetOutputSize();
+            var scaledSize = ScaleDimensions(size, maxDimension);
             var rt = new CanvasRenderTarget(ResourceCreator, size: scaledSize);
 
             using (var ds = rt.CreateDrawingSession())
             {
-                ds.DrawImage(adjustment.Output, rt.Bounds, bounds);
+                ds.DrawImage(adjustment.Output, rt.Bounds, new Rect(new Point(), size));
             }
 
             adjustment.RenderScale = originalRenderScale;
