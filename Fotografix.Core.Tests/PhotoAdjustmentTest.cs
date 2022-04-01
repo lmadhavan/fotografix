@@ -1,7 +1,5 @@
 ﻿using Microsoft.Graphics.Canvas;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Threading.Tasks;
 using Windows.Foundation;
 
 namespace Fotografix
@@ -9,219 +7,57 @@ namespace Fotografix
     [TestClass]
     public class PhotoAdjustmentTest
     {
-        private CanvasBitmap bitmap;
         private PhotoAdjustment adjustment;
 
         [TestInitialize]
-        public async Task Initialize()
+        public void Initialize()
         {
-            var file = await TestData.GetFileAsync("Photos\\Barn.jpg");
-
-            using (var stream = await file.OpenReadAsync())
-            {
-                this.bitmap = await CanvasBitmap.LoadAsync(CanvasDevice.GetSharedDevice(), stream);
-            }
-
-            this.adjustment = new PhotoAdjustment { Source = bitmap };
+            this.adjustment = new PhotoAdjustment();
         }
 
         [TestCleanup]
         public void Cleanup()
         {
             adjustment.Dispose();
-            bitmap.Dispose();
         }
 
+        /// <summary>
+        /// The translation matrix for rotation depends on the size of the source photo.
+        /// During deserialization, the rotation value is populated before the source is
+        /// set. Ensure that we handle this scenario properly.
+        /// </summary>
         [TestMethod]
-        public async Task Exposure()
+        public void UpdatesRotationAfterSourceIsSet()
         {
-            adjustment.Exposure = 0.5f;
-            await VerifyOutputAsync("Barn_exposure.jpg");
-        }
-
-        [TestMethod]
-        public async Task Contrast()
-        {
-            adjustment.Contrast = 0.5f;
-            await VerifyOutputAsync("Barn_contrast.jpg");
-        }
-
-        [TestMethod]
-        public async Task Highlights()
-        {
-            adjustment.Highlights = 0.5f;
-            await VerifyOutputAsync("Barn_highlights.jpg");
-        }
-
-        [TestMethod]
-        public async Task Shadows()
-        {
-            adjustment.Shadows = 0.5f;
-            await VerifyOutputAsync("Barn_shadows.jpg");
-        }
-
-        [TestMethod]
-        public async Task Whites()
-        {
-            adjustment.Whites = 0.5f;
-            await VerifyOutputAsync("Barn_whites.jpg");
-        }
-
-        [TestMethod]
-        public async Task Blacks()
-        {
-            adjustment.Blacks = -0.5f;
-            await VerifyOutputAsync("Barn_blacks.jpg");
-        }
-
-        [TestMethod]
-        public async Task Temperature()
-        {
-            adjustment.Temperature = 0.5f;
-            await VerifyOutputAsync("Barn_temperature.jpg");
-        }
-
-        [TestMethod]
-        public async Task Tint()
-        {
-            adjustment.Tint = 0.5f;
-            await VerifyOutputAsync("Barn_tint.jpg");
-        }
-
-        [TestMethod]
-        public async Task Clarity()
-        {
-            adjustment.Clarity = 0.5f;
-            await VerifyOutputAsync("Barn_clarity.jpg");
-        }
-
-        [TestMethod]
-        public async Task Clarity_Scaled()
-        {
-            adjustment.Clarity = 0.5f;
-            adjustment.RenderScale = 0.5f;
-            await VerifyOutputAsync("Barn_clarity_scaled.jpg");
-        }
-
-        [TestMethod]
-        public async Task Vibrance()
-        {
-            adjustment.Vibrance = 1f;
-            await VerifyOutputAsync("Barn_vibrance.jpg");
-        }
-
-        [TestMethod]
-        public async Task Saturation()
-        {
-            adjustment.Saturation = 1f;
-            await VerifyOutputAsync("Barn_saturation.jpg");
-        }
-
-        [TestMethod]
-        public async Task ColorRange_Hue()
-        {
-            adjustment.ColorRanges.HueView.Yellow = -0.5f;
-            await VerifyOutputAsync("Barn_hue_yellow.jpg");
-        }
-
-        [TestMethod]
-        public async Task ColorRange_Saturation()
-        {
-            adjustment.ColorRanges.SaturationView.Yellow = 1f;
-            await VerifyOutputAsync("Barn_saturation_yellow.jpg");
-        }
-
-        [TestMethod]
-        public async Task ColorRange_Luminance()
-        {
-            adjustment.ColorRanges.LuminanceView.Yellow = 1f;
-            await VerifyOutputAsync("Barn_luminance_yellow.jpg");
-        }
-
-        [TestMethod]
-        public async Task Sharpness()
-        {
-            adjustment.Sharpness.Amount = 0.5f;
-            adjustment.Sharpness.Radius = 2f;
-            adjustment.Sharpness.Threshold = 0.05f;
-            await VerifyOutputAsync("Barn_sharpness.jpg");
-        }
-
-        [TestMethod]
-        public async Task Sharpness_Scaled()
-        {
-            adjustment.Sharpness.Amount = 0.5f;
-            adjustment.Sharpness.Radius = 2f;
-            adjustment.Sharpness.Threshold = 0.05f;
-            adjustment.RenderScale = 0.5f;
-            await VerifyOutputAsync("Barn_sharpness_scaled.jpg");
-        }
-
-        [TestMethod]
-        public async Task BlackAndWhite()
-        {
-            // set up some initial color adjustments -- these should be reset when entering B&W mode
-            adjustment.Vibrance = 0.5f;
-            adjustment.Saturation = 0.5f;
-            adjustment.ColorRanges.HueView.Yellow = -0.5f;
-            adjustment.ColorRanges.SaturationView.Yellow = 1f;
-
-            adjustment.BlackAndWhite = true;
-            adjustment.ColorRanges.LuminanceView.Yellow = 1f;
-            await VerifyOutputAsync("Barn_bw.jpg");
-
-            // luminance values should be reset when exiting B&W mode
-            adjustment.BlackAndWhite = false;
-            Assert.AreEqual(0, adjustment.ColorRanges.LuminanceView.Yellow);
-        }
-
-        [TestMethod]
-        public async Task Crop()
-        {
-            adjustment.Crop = new Rect(60, 260, 800, 300);
-            await VerifyOutputAsync("Barn_crop.jpg", 2.5f);
-        }
-
-        [TestMethod]
-        public async Task Crop_Scaled()
-        {
-            adjustment.Crop = new Rect(60, 260, 800, 300);
-            adjustment.RenderScale = 0.5f;
-            await VerifyOutputAsync("Barn_crop_scaled.jpg", 2.5f);
-        }
-
-        [TestMethod]
-        public async Task Rotate_90()
-        {
-            adjustment.Rotation = 90;
-            await VerifyOutputAsync("Barn_rotate_90.jpg");
-        }
-
-        [TestMethod]
-        public async Task Rotate_180()
-        {
-            adjustment.Rotation = 180;
-            await VerifyOutputAsync("Barn_rotate_180.jpg");
-        }
-
-        [TestMethod]
-        public async Task Rotate_270()
-        {
-            adjustment.Rotation = 270;
-            await VerifyOutputAsync("Barn_rotate_270.jpg");
-        }
-
-        private async Task VerifyOutputAsync(string filename, float tolerance = BitmapAssert.DefaultTolerance)
-        {
-            using (var output = new CanvasRenderTarget(bitmap, adjustment.GetOutputSize()))
+            using (var bitmap = new CanvasRenderTarget(CanvasDevice.GetSharedDevice(), 200, 100, 96))
             {
-                using (var ds = output.CreateDrawingSession())
-                {
-                    ds.DrawImage(adjustment.Output);
-                }
+                adjustment.Rotation = 90;
+                adjustment.Source = bitmap;
 
-                await BitmapAssert.VerifyAsync(output, filename, tolerance);
+                Assert.AreEqual(new Size(100, 200), adjustment.GetOutputSize());
             }
+        }
+
+        /// <summary>
+        /// Rotation is only supported in 90-degree increments. Other values are invalid
+        /// and we just fall back to zero rotation (we don't want to blow up because of
+        /// one bad setting in an adjustment file - that would be a poor user experience).
+        /// </summary>
+        [TestMethod]
+        public void IgnoresInvalidRotationValues()
+        {
+            adjustment.Rotation = 15;
+
+            Assert.AreEqual(0, adjustment.Rotation);
+        }
+
+        [TestMethod]
+        public void ResetsCropWhenRotationIsChanged()
+        {
+            adjustment.Crop = new CropRect(10, 20, 30, 40);
+            adjustment.Rotation = 90;
+
+            Assert.IsNull(adjustment.Crop);
         }
     }
 }

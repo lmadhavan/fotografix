@@ -121,6 +121,7 @@
   <ItemGroup>
     <Compile Include="BitmapAssert.cs" />
     <Compile Include="PhotoAdjustmentSerializationTest.cs" />
+    <Compile Include="PhotoAdjustmentAcceptanceTest.cs" />
     <Compile Include="PhotoAdjustmentTest.cs" />
     <Compile Include="PhotoEditorTest.cs" />
     <Compile Include="PhotoFolderTest.cs" />

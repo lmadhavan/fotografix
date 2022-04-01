@@ -80,6 +80,7 @@ namespace Fotografix
             {
                 this.source = value;
                 rotationEffect.Source = value;
+                UpdateRotation();
                 UpdateTransform();
             }
         }
@@ -430,9 +431,19 @@ namespace Fotografix
 
             set
             {
+                if (value != 0 && value != 90 && value != 180 && value != 270)
+                {
+                    value = 0;
+                }
+
                 if (SetProperty(ref rotation, value))
                 {
-                    UpdateRotation();
+                    this.Crop = null;
+
+                    if (source != null)
+                    {
+                        UpdateRotation();
+                    }
                 }
             }
         }
