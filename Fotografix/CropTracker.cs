@@ -122,6 +122,11 @@ namespace Fotografix
             return true;
         }
 
+        public void Flip()
+        {
+            Rect = new Rect(maxBounds.Width - rect.Width - rect.X, rect.Y, rect.Width, rect.Height);
+        }
+
         public static Rect RectFromLTRB(double l, double t, double r, double b, Size minSize = default)
         {
             return new Rect(l, t, Math.Max(r - l, minSize.Width), Math.Max(b - t, minSize.Height));

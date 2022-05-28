@@ -30,6 +30,7 @@ namespace Fotografix
         #region Transform
         CropRect? Crop { get; set; }
         int Rotation { get; set; }
+        bool Flip { get; set; }
         #endregion
     }
 }

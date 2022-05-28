@@ -287,6 +287,18 @@ namespace Fotografix
         }
 
         [TestMethod]
+        public void FlippingPhotoFlipsCropRectangle()
+        {
+            vm.TransformMode = true;
+            cropTracker.Rect = new Rect(10, 20, 30, 40);
+
+            vm.FlipPhoto = true;
+
+            Assert.IsTrue(editor.Adjustment.Flip);
+            Assert.AreEqual(new Rect(PhotoSize.Width - 40, 20, 30, 40), cropTracker.Rect);
+        }
+
+        [TestMethod]
         public void OriginalAspectRatioRespectsPhotoOrientation()
         {
             vm.TransformMode = true;

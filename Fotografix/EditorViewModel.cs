@@ -232,6 +232,20 @@ namespace Fotografix
             }
         }
 
+        public bool FlipPhoto
+        {
+            get => Adjustment.Flip;
+
+            set
+            {
+                if (Adjustment.Flip != value)
+                {
+                    Adjustment.Flip = value;
+                    cropTracker.Flip();
+                }
+            }
+        }
+
         public void ResetCrop()
         {
             AspectRatio = DefaultAspectRatio;

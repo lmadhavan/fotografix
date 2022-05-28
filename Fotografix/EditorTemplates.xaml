@@ -245,7 +245,7 @@
 
                         <ComboBox HorizontalAlignment="Stretch" ItemsSource="{x:Bind AvailableAspectRatios, Mode=OneWay}" DisplayMemberPath="DisplayName" SelectedItem="{x:Bind AspectRatio}" />
                         <ToggleButton Grid.Column="1" Margin="8,0,0,0" IsChecked="{x:Bind FlipAspectRatio}" ToolTipService.ToolTip="Flip aspect ratio">
-                            <FontIcon Glyph="&#xE8AB;" />
+                            <FontIcon Glyph="&#xE8E6;" />
                         </ToggleButton>
                         <Button Grid.Column="2" Margin="8,0,0,0" Click="{x:Bind ResetCrop}" ToolTipService.ToolTip="Reset crop">
                             <FontIcon Glyph="&#xE81C;" />
@@ -254,18 +254,24 @@
 
                     <Grid Margin="0,12,0,0">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
 
-                        <Button Click="{x:Bind Rotate}">
+                        <Button HorizontalAlignment="Stretch" Margin="0,0,4,0" Click="{x:Bind Rotate}">
                             <StackPanel Orientation="Horizontal">
                                 <FontIcon Glyph="&#xE7AD;" />
                                 <TextBlock Margin="8,0,0,0" Text="Rotate" />
                             </StackPanel>
                         </Button>
-                    </Grid>
 
+                        <ToggleButton Grid.Column="1" HorizontalAlignment="Stretch" Margin="4,0,0,0" IsChecked="{x:Bind FlipPhoto}">
+                            <StackPanel Orientation="Horizontal">
+                                <FontIcon Glyph="&#xE746;" />
+                                <TextBlock Margin="8,0,0,0" Text="Flip" />
+                            </StackPanel>
+                        </ToggleButton>
+                    </Grid>
                 </StackPanel>
             </winui:Expander>
         </StackPanel>

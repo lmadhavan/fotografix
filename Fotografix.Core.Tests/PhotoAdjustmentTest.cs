@@ -52,15 +52,6 @@ namespace Fotografix
         }
 
         [TestMethod]
-        public void ResetsCropWhenRotationIsChanged()
-        {
-            adjustment.Crop = new CropRect(10, 20, 30, 40);
-            adjustment.Rotation = 90;
-
-            Assert.IsNull(adjustment.Crop);
-        }
-
-        [TestMethod]
         public void ComputesAdjustedSizes()
         {
             using (var bitmap = new CanvasRenderTarget(CanvasDevice.GetSharedDevice(), 200, 100, 96))

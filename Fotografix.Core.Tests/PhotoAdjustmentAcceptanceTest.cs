@@ -211,6 +211,13 @@ namespace Fotografix
             await VerifyOutputAsync("Barn_rotate_270.jpg");
         }
 
+        [TestMethod]
+        public async Task Flip()
+        {
+            adjustment.Flip = true;
+            await VerifyOutputAsync("Barn_flip.jpg");
+        }
+
         private async Task VerifyOutputAsync(string filename, float tolerance = BitmapAssert.DefaultTolerance)
         {
             using (var output = new CanvasRenderTarget(bitmap, adjustment.GetOutputSize()))

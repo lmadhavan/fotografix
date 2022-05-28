@@ -12,9 +12,9 @@ namespace Fotografix
 {
     public sealed class PhotoAdjustment : NotifyPropertyChangedBase, IDisposable, IPhotoAdjustment
     {
-        private readonly Transform2DEffect rotationEffect;
+        private readonly Transform2DEffect rotateFlipEffect;
         private readonly CropEffect cropEffect;
-        private readonly Transform2DEffect transformEffect;
+        private readonly Transform2DEffect scaleEffect;
         private readonly GammaTransferEffect transferEffect;
         private readonly HighlightsAndShadowsEffect highlightsAndShadowsEffect;
         private readonly ContrastEffect contrastEffect;
@@ -28,10 +28,10 @@ namespace Fotografix
 
         public PhotoAdjustment()
         {
-            this.rotationEffect = new Transform2DEffect();
-            this.cropEffect = new CropEffect { Source = rotationEffect, BorderMode = EffectBorderMode.Hard };
-            this.transformEffect = new Transform2DEffect();
-            this.transferEffect = new GammaTransferEffect { Source = transformEffect };
+            this.rotateFlipEffect = new Transform2DEffect();
+            this.cropEffect = new CropEffect { Source = rotateFlipEffect, BorderMode = EffectBorderMode.Hard };
+            this.scaleEffect = new Transform2DEffect();
+            this.transferEffect = new GammaTransferEffect { Source = scaleEffect };
             this.highlightsAndShadowsEffect = new HighlightsAndShadowsEffect { Source = transferEffect };
             this.contrastEffect = new ContrastEffect { Source = highlightsAndShadowsEffect };
             this.temperatureAndTintEffect = new TemperatureAndTintEffect { Source = contrastEffect };
@@ -60,7 +60,7 @@ namespace Fotografix
             contrastEffect.Dispose();
             highlightsAndShadowsEffect.Dispose();
             transferEffect.Dispose();
-            transformEffect.Dispose();
+            scaleEffect.Dispose();
             cropEffect.Dispose();
         }
 
@@ -79,14 +79,14 @@ namespace Fotografix
             set
             {
                 this.source = value;
-                rotationEffect.Source = value;
-                UpdateRotation();
-                UpdateTransform();
+                rotateFlipEffect.Source = value;
+                UpdateRotateFlip();
+                UpdateScale();
             }
         }
 
         [JsonIgnore]
-        public ICanvasImage Output => enabled ? sharpnessAdjustment.Output : transformEffect;
+        public ICanvasImage Output => enabled ? sharpnessAdjustment.Output : scaleEffect;
 
         [JsonIgnore]
         public bool Enabled
@@ -106,7 +106,7 @@ namespace Fotografix
 
                 if (SetProperty(ref renderScale, value))
                 {
-                    UpdateTransform();
+                    UpdateScale();
                     sharpnessAdjustment.RenderScale = value;
 
                     // scale radius-based adjustments to match the input scale
@@ -115,25 +115,30 @@ namespace Fotografix
             }
         }
 
-        private void UpdateTransform()
+        private void UpdateScale()
         {
             var matrix = Matrix3x2.CreateScale(renderScale);
 
             if (crop.HasValue)
             {
                 matrix = Matrix3x2.CreateTranslation(-crop.Value.X, -crop.Value.Y) * matrix;
-                transformEffect.Source = cropEffect;
+                scaleEffect.Source = cropEffect;
             }
             else
             {
-                transformEffect.Source = cropEffect.Source;
+                scaleEffect.Source = cropEffect.Source;
             }
 
-            transformEffect.TransformMatrix = matrix;
+            scaleEffect.TransformMatrix = matrix;
         }
 
-        private void UpdateRotation()
+        private void UpdateRotateFlip()
         {
+            if (source == null)
+            {
+                return;
+            }
+
             double tx = 0, ty = 0;
 
             switch (rotation)
@@ -152,11 +157,20 @@ namespace Fotografix
                     break;
             }
 
-            rotationEffect.TransformMatrix = Matrix3x2.CreateRotation((float)(rotation * Math.PI / 180)) * Matrix3x2.CreateTranslation((float)tx, (float)ty);
+            if (flip)
+            {
+                rotateFlipEffect.TransformMatrix = Matrix3x2.CreateScale(-1, 1) * Matrix3x2.CreateTranslation((float)source.Size.Width, 0);
+            }
+            else
+            {
+                rotateFlipEffect.TransformMatrix = Matrix3x2.Identity;
+            }
+
+            rotateFlipEffect.TransformMatrix *= Matrix3x2.CreateRotation((float)(rotation * Math.PI / 180)) * Matrix3x2.CreateTranslation((float)tx, (float)ty);
         }
 
-        public Size GetOrientedSize() => GetSize(rotationEffect);
-        public Size GetOutputSize() => GetSize(transformEffect);
+        public Size GetOrientedSize() => GetSize(rotateFlipEffect);
+        public Size GetOutputSize() => GetSize(scaleEffect);
 
         private Size GetSize(Transform2DEffect effect)
         {
@@ -409,6 +423,7 @@ namespace Fotografix
 
         private CropRect? crop;
         private int rotation;
+        private bool flip;
 
         public CropRect? Crop
         {
@@ -423,7 +438,7 @@ namespace Fotografix
                         cropEffect.SourceRectangle = crop.Value;
                     }
 
-                    UpdateTransform();
+                    UpdateScale();
                 }
             }
         }
@@ -441,12 +456,20 @@ namespace Fotografix
 
                 if (SetProperty(ref rotation, value))
                 {
-                    this.Crop = null;
+                    UpdateRotateFlip();
+                }
+            }
+        }
 
-                    if (source != null)
-                    {
-                        UpdateRotation();
-                    }
+        public bool Flip
+        {
+            get => flip;
+
+            set
+            {
+                if (SetProperty(ref flip, value))
+                {
+                    UpdateRotateFlip();
                 }
             }
         }
