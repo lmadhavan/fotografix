@@ -99,10 +99,10 @@ namespace Fotografix
         }
 
         [TestMethod]
-        public void EnteringCropModeLocksZoom()
+        public void EnteringTransformModeLocksZoom()
         {
             vm.ZoomToActualPixels();
-            vm.CropMode = true;
+            vm.TransformMode = true;
 
             Assert.IsTrue(vm.IsZoomedToFit, nameof(vm.IsZoomedToFit));
             Assert.IsFalse(vm.CanZoomToActualPixels, nameof(vm.CanZoomToActualPixels));
@@ -111,7 +111,7 @@ namespace Fotografix
         [TestMethod]
         public void CropRectangleDefaultsToPhotoSize()
         {
-            vm.CropMode = true;
+            vm.TransformMode = true;
 
             Assert.AreEqual(new Rect(new Point(), PhotoSize), cropTracker.Rect);
         }
@@ -125,7 +125,7 @@ namespace Fotografix
             editor.Adjustment.Crop = existingCropRect;
             SetupRenderScale(1f, existingCropSize);
 
-            vm.CropMode = true;
+            vm.TransformMode = true;
 
             Assert.AreEqual(existingCropRect, cropTracker.Rect, "tracker rectangle should be initialized to existing crop rectangle");
             Assert.AreEqual(new Rect(new Point(), PhotoSize), cropTracker.MaxBounds, "tracker max bounds should be initialized to photo size");
@@ -139,7 +139,7 @@ namespace Fotografix
             editor.Adjustment.Crop = new Rect(0, 0, 100, 100);
             SetupRenderScale(0.5f);
 
-            vm.CropMode = true;
+            vm.TransformMode = true;
             vm.PointerPressed(new Point(0, 0));
             vm.PointerMoved(new Point(10, 10));
 
@@ -148,13 +148,13 @@ namespace Fotografix
         }
 
         [TestMethod]
-        public void ExitingCropModeUpdatesEditor()
+        public void ExitingTransformModeUpdatesEditor()
         {
             SetupRenderScale(0.5f);
 
-            vm.CropMode = true;
+            vm.TransformMode = true;
             cropTracker.Rect = new Rect(10, 20, 30, 40);
-            vm.CropMode = false;
+            vm.TransformMode = false;
 
             Assert.AreEqual(new Rect(10, 20, 30, 40), editor.Adjustment.Crop, "adjustment should contain updated crop rectangle");
             Assert.AreEqual(1f, editor.RenderScale, "cropped photo should fully fit within existing viewport");
@@ -163,24 +163,24 @@ namespace Fotografix
         [TestMethod]
         public void DefaultCropResultsInNullCropAdjustment()
         {
-            vm.CropMode = true;
-            vm.CropMode = false;
+            vm.TransformMode = true;
+            vm.TransformMode = false;
 
             Assert.IsNull(editor.Adjustment.Crop);
         }
 
         [TestMethod]
-        public void ExitingCropModeReenablesZoom()
+        public void ExitingTransformModeReenablesZoom()
         {
-            vm.CropMode = true;
-            vm.CropMode = false;
+            vm.TransformMode = true;
+            vm.TransformMode = false;
 
             Assert.IsTrue(vm.CanZoomToActualPixels, nameof(vm.CanZoomToActualPixels));
         }
 
         [DataTestMethod]
         [DynamicData(nameof(FileManagementActions), DynamicDataSourceType.Method)]
-        public void FileManagementActionExitsCropMode(string name, Action<EditorViewModel> action, bool shouldResetAdjustment)
+        public void FileManagementActionExitsTransformMode(string name, Action<EditorViewModel> action, bool shouldResetAdjustment)
         {
             Size existingCropSize = new Size(250, 250);
             Rect existingCropRect = new Rect(new Point(), existingCropSize);
@@ -188,10 +188,10 @@ namespace Fotografix
             editor.Adjustment.Crop = existingCropRect;
             SetupRenderScale(1f, existingCropSize);
 
-            vm.CropMode = true;
+            vm.TransformMode = true;
             action(vm);
 
-            Assert.IsFalse(vm.CropMode, $"{name} should exit crop mode");
+            Assert.IsFalse(vm.TransformMode, $"{name} should exit transform mode");
 
             if (shouldResetAdjustment)
             {
@@ -219,7 +219,7 @@ namespace Fotografix
         [TestMethod]
         public void DefaultsToUnconstrainedAspectRatio()
         {
-            vm.CropMode = true;
+            vm.TransformMode = true;
 
             Assert.IsNull(cropTracker.AspectRatio);
         }
@@ -233,7 +233,7 @@ namespace Fotografix
         [TestMethod]
         public void ConstrainsCropToSelectedAspectRatio()
         {
-            vm.CropMode = true;
+            vm.TransformMode = true;
             vm.AspectRatio = new AspectRatio(5, 2);
 
             Assert.AreEqual(2.5, cropTracker.AspectRatio, "normal aspect ratio");
@@ -246,12 +246,54 @@ namespace Fotografix
         [TestMethod]
         public void ResetsCropRectangleToOriginalSize()
         {
-            vm.CropMode = true;
+            vm.TransformMode = true;
             cropTracker.Rect = new Rect(10, 20, 30, 40);
 
             vm.ResetCrop();
 
             Assert.AreEqual(new Rect(new Point(), PhotoSize), cropTracker.Rect);
+        }
+
+        [TestMethod]
+        public void RotatesPhotoIn90DegreeIncrements()
+        {
+            vm.TransformMode = true;
+            
+            vm.Rotate();
+
+            Assert.AreEqual(90, editor.Adjustment.Rotation);
+        }
+
+        [TestMethod]
+        public void RotatingPhotoResetsCropRectangle()
+        {
+            vm.TransformMode = true;
+            
+            vm.Rotate();
+
+            Size rotatedPhotoSize = new Size(PhotoSize.Height, PhotoSize.Width);
+            Assert.AreEqual(new Rect(new Point(), rotatedPhotoSize), cropTracker.Rect);
+        }
+
+        [TestMethod]
+        public void RotatingPhotoResetsRenderScale()
+        {
+            SetupRenderScale(0.5f); // 0.5x @ 1000x500 => 500x250 viewport
+            vm.TransformMode = true;
+            
+            vm.Rotate();
+
+            Assert.AreEqual(0.25f, editor.RenderScale); // 500x250 viewport => 0.25x @ 500x1000
+        }
+
+        [TestMethod]
+        public void OriginalAspectRatioRespectsPhotoOrientation()
+        {
+            vm.TransformMode = true;
+
+            vm.Rotate();
+
+            Assert.AreEqual(PhotoSize.Height / PhotoSize.Width, vm.AvailableAspectRatios.First().Value);
         }
 
         [TestMethod]

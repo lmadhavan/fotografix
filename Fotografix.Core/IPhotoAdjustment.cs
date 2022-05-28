@@ -27,6 +27,9 @@ namespace Fotografix
         ISharpnessAdjustment Sharpness { get; }
         #endregion
 
+        #region Transform
         CropRect? Crop { get; set; }
+        int Rotation { get; set; }
+        #endregion
     }
 }

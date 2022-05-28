@@ -42,7 +42,7 @@ namespace Fotografix
             cropTracker.RectChanged += (s, e) => Invalidate();
             this.cropOverlay = new CropOverlay(resourceCreator, scalingHelper) { HandleSize = CropHandleSize * 3 };
 
-            InitializeAspectRatios();
+            ResetAspectRatios();
             UpdateRenderSize();
             this.activeInputHandler = new NullPointerInputHandler();
 
@@ -86,7 +86,7 @@ namespace Fotografix
                 ds.Units = CanvasUnits.Pixels;
                 editor.Draw(ds);
 
-                if (cropMode)
+                if (transformMode)
                 {
                     ds.Units = CanvasUnits.Dips;
                     cropOverlay.Draw(ds, cropTracker);
@@ -128,7 +128,7 @@ namespace Fotografix
         public bool IsPreviewAccuracyWarningVisible => editor.RenderScale != 1;
 
         public bool CanZoomToFit => !zoomToFit;
-        public bool CanZoomToActualPixels => zoomToFit && !cropMode;
+        public bool CanZoomToActualPixels => zoomToFit && !transformMode;
 
         public void SetViewportSize(Size size)
         {
@@ -171,29 +171,29 @@ namespace Fotografix
 
         #endregion
 
-        #region Crop
+        #region Transform
 
-        private bool cropMode;
+        private bool transformMode;
         private AspectRatio aspectRatio;
         private bool flipAspectRatio;
 
-        public bool CropMode
+        public bool TransformMode
         {
-            get => cropMode;
+            get => transformMode;
 
             set
             {
-                if (SetProperty(ref cropMode, value))
+                if (SetProperty(ref transformMode, value))
                 {
                     ZoomToFit();
 
-                    if (cropMode)
+                    if (transformMode)
                     {
-                        BeginCrop();
+                        BeginTransform();
                     }
                     else
                     {
-                        EndCrop();
+                        EndTransform();
                     }
 
                     RaisePropertyChanged(nameof(CanZoomToActualPixels));
@@ -202,7 +202,7 @@ namespace Fotografix
             }
         }
 
-        public List<AspectRatio> AvailableAspectRatios { get; } = new List<AspectRatio>();
+        public List<AspectRatio> AvailableAspectRatios { get; set; }
         private AspectRatio DefaultAspectRatio => AspectRatio.Unconstrained;
 
         public AspectRatio AspectRatio
@@ -235,15 +235,28 @@ namespace Fotografix
         public void ResetCrop()
         {
             AspectRatio = DefaultAspectRatio;
-            cropTracker.Rect = DefaultCropRectangle;
+            cropTracker.Rect = cropTracker.MaxBounds = DefaultCropRectangle;
         }
 
-        private void InitializeAspectRatios()
+        public void Rotate()
         {
-            AvailableAspectRatios.Add(new AspectRatio(editor.OriginalSize.Width, editor.OriginalSize.Height, "Original"));
+            Adjustment.Rotation += 90;
+            ResetAspectRatios();
+            ResetCrop();
+            ScaleToFit();
+        }
+
+        private void ResetAspectRatios()
+        {
+            Size orientedSize = editor.OrientedSize;
+            AvailableAspectRatios = new List<AspectRatio>();
+            AvailableAspectRatios.Add(new AspectRatio(orientedSize.Width, orientedSize.Height, "Original"));
             AvailableAspectRatios.Add(AspectRatio.Unconstrained);
             AvailableAspectRatios.AddRange(AspectRatio.StandardRatios);
             AspectRatio = DefaultAspectRatio;
+
+            RaisePropertyChanged(nameof(AvailableAspectRatios));
+            RaisePropertyChanged(nameof(AspectRatio));
         }
 
         private void UpdateAspectRatio()
@@ -251,7 +264,7 @@ namespace Fotografix
             cropTracker.AspectRatio = flipAspectRatio ? aspectRatio.InverseValue : aspectRatio.Value;
         }
 
-        private void BeginCrop()
+        private void BeginTransform()
         {
             var maxBounds = DefaultCropRectangle;
             cropTracker.MaxBounds = maxBounds;
@@ -260,7 +273,7 @@ namespace Fotografix
             this.activeInputHandler = cropTracker;
         }
 
-        private void EndCrop()
+        private void EndTransform()
         {
             if (cropTracker.Rect == DefaultCropRectangle)
             {
@@ -280,7 +293,7 @@ namespace Fotografix
             ScaleToFit();
         }
 
-        private Rect DefaultCropRectangle => new Rect(new Point(), editor.OriginalSize);
+        private Rect DefaultCropRectangle => new Rect(new Point(), editor.OrientedSize);
 
         #endregion
 
@@ -316,7 +329,7 @@ namespace Fotografix
 
         public async Task RevertAsync()
         {
-            this.CropMode = false;
+            this.TransformMode = false;
 
             await editor.RevertAsync();
 
@@ -326,7 +339,7 @@ namespace Fotografix
 
         public void Reset()
         {
-            this.CropMode = false;
+            this.TransformMode = false;
 
             editor.Reset();
 
@@ -336,7 +349,7 @@ namespace Fotografix
 
         public Task SaveAsync()
         {
-            this.CropMode = false;
+            this.TransformMode = false;
             return editor.SaveAsync();
         }
 
@@ -352,7 +365,7 @@ namespace Fotografix
 
         private async Task ExportAsync(bool showDialog, string eventName)
         {
-            this.CropMode = false;
+            this.TransformMode = false;
             await exportHandler.ExportAsync(new[] { editor }, showDialog);
             Logger.LogEvent(eventName);
         }

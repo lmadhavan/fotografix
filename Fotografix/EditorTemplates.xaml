@@ -231,8 +231,8 @@
                 </StackPanel>
             </winui:Expander>
 
-            <!-- Crop -->
-            <winui:Expander Header="Crop" IsExpanded="{x:Bind CropMode}">
+            <!-- Transform -->
+            <winui:Expander Header="Crop / Rotate" IsExpanded="{x:Bind TransformMode}">
                 <StackPanel>
                     <TextBlock Margin="2,0,0,8" FontWeight="SemiBold" Text="Aspect ratio" />
 
@@ -251,6 +251,21 @@
                             <FontIcon Glyph="&#xE81C;" />
                         </Button>
                     </Grid>
+
+                    <Grid Margin="0,12,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <Button Click="{x:Bind Rotate}">
+                            <StackPanel Orientation="Horizontal">
+                                <FontIcon Glyph="&#xE7AD;" />
+                                <TextBlock Margin="8,0,0,0" Text="Rotate" />
+                            </StackPanel>
+                        </Button>
+                    </Grid>
+
                 </StackPanel>
             </winui:Expander>
         </StackPanel>

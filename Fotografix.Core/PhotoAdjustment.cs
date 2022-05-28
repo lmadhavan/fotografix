@@ -155,9 +155,12 @@ namespace Fotografix
             rotationEffect.TransformMatrix = Matrix3x2.CreateRotation((float)(rotation * Math.PI / 180)) * Matrix3x2.CreateTranslation((float)tx, (float)ty);
         }
 
-        public Size GetOutputSize()
+        public Size GetOrientedSize() => GetSize(rotationEffect);
+        public Size GetOutputSize() => GetSize(transformEffect);
+
+        private Size GetSize(Transform2DEffect effect)
         {
-            var bounds = transformEffect.GetBounds(source);
+            var bounds = effect.GetBounds(source);
             return new Size(bounds.Width, bounds.Height);
         }
 
@@ -402,7 +405,7 @@ namespace Fotografix
 
         #endregion
 
-        #region Crop / Rotate
+        #region Transform
 
         private CropRect? crop;
         private int rotation;

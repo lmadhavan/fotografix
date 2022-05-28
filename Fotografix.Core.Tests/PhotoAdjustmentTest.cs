@@ -59,5 +59,19 @@ namespace Fotografix
 
             Assert.IsNull(adjustment.Crop);
         }
+
+        [TestMethod]
+        public void ComputesAdjustedSizes()
+        {
+            using (var bitmap = new CanvasRenderTarget(CanvasDevice.GetSharedDevice(), 200, 100, 96))
+            {
+                adjustment.Source = bitmap;
+                adjustment.Rotation = 90;
+                adjustment.Crop = new CropRect(10, 20, 30, 40);
+
+                Assert.AreEqual(new Size(100, 200), adjustment.GetOrientedSize());
+                Assert.AreEqual(new Size(30, 40), adjustment.GetOutputSize());
+            }
+        }
     }
 }

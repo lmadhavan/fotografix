@@ -74,7 +74,7 @@ namespace Fotografix
 
         public event EventHandler Invalidated;
 
-        public Size OriginalSize => bitmap.Size;
+        public Size OrientedSize => adjustment.GetOrientedSize();
         public Size RenderSize => adjustment.GetOutputSize();
 
         public float RenderScale
@@ -92,14 +92,14 @@ namespace Fotografix
 
         public void ScaleToFit(Size size)
         {
-            Size photoSize = bitmap.Size;
+            Size contentSize = OrientedSize;
 
             if (adjustment.Crop.HasValue)
             {
-                photoSize = new Size(adjustment.Crop.Value.Width, adjustment.Crop.Value.Height);
+                contentSize = new Size(adjustment.Crop.Value.Width, adjustment.Crop.Value.Height);
             }
 
-            this.RenderScale = (float)Math.Min(size.Width / photoSize.Width, size.Height / photoSize.Height);
+            this.RenderScale = (float)Math.Min(size.Width / contentSize.Width, size.Height / contentSize.Height);
         }
 
         public bool CanRevert { get; private set; }
