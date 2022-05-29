@@ -169,6 +169,7 @@
     <Content Include="TestData\Barn_rotate_180.jpg" />
     <Content Include="TestData\Barn_rotate_270.jpg" />
     <Content Include="TestData\Barn_rotate_90.jpg" />
+    <Content Include="TestData\Barn_rotate_90_flip.jpg" />
     <Content Include="TestData\Barn_saturation.jpg" />
     <Content Include="TestData\Barn_saturation_yellow.jpg" />
     <Content Include="TestData\Barn_shadows.jpg" />

@@ -132,43 +132,6 @@ namespace Fotografix
             scaleEffect.TransformMatrix = matrix;
         }
 
-        private void UpdateRotateFlip()
-        {
-            if (source == null)
-            {
-                return;
-            }
-
-            double tx = 0, ty = 0;
-
-            switch (rotation)
-            {
-                case 90:
-                    tx = source.Size.Height;
-                    break;
-
-                case 180:
-                    tx = source.Size.Width;
-                    ty = source.Size.Height;
-                    break;
-
-                case 270:
-                    ty = source.Size.Width;
-                    break;
-            }
-
-            if (flip)
-            {
-                rotateFlipEffect.TransformMatrix = Matrix3x2.CreateScale(-1, 1) * Matrix3x2.CreateTranslation((float)source.Size.Width, 0);
-            }
-            else
-            {
-                rotateFlipEffect.TransformMatrix = Matrix3x2.Identity;
-            }
-
-            rotateFlipEffect.TransformMatrix *= Matrix3x2.CreateRotation((float)(rotation * Math.PI / 180)) * Matrix3x2.CreateTranslation((float)tx, (float)ty);
-        }
-
         public Size GetOrientedSize() => GetSize(rotateFlipEffect);
         public Size GetOutputSize() => GetSize(scaleEffect);
 
@@ -471,6 +434,45 @@ namespace Fotografix
                 {
                     UpdateRotateFlip();
                 }
+            }
+        }
+
+        private void UpdateRotateFlip()
+        {
+            if (source == null)
+            {
+                return;
+            }
+
+            double w = source.Size.Width, h = source.Size.Height;
+            double rtx = 0, rty = 0, ftx = 0;
+
+            switch (rotation)
+            {
+                case 0:
+                    ftx = w;
+                    break;
+
+                case 90:
+                    rtx = ftx = h;
+                    break;
+
+                case 180:
+                    rtx = ftx = w;
+                    rty = h;
+                    break;
+
+                case 270:
+                    ftx = h;
+                    rty = w;
+                    break;
+            }
+
+            rotateFlipEffect.TransformMatrix = Matrix3x2.CreateRotation((float)(rotation * Math.PI / 180)) * Matrix3x2.CreateTranslation((float)rtx, (float)rty);
+
+            if (flip)
+            {
+                rotateFlipEffect.TransformMatrix *= Matrix3x2.CreateScale(-1, 1) * Matrix3x2.CreateTranslation((float)ftx, 0);
             }
         }
 
