@@ -246,18 +246,19 @@ namespace Fotografix
             }
         }
 
-        public void ResetCrop()
+        public void ResetTransform()
         {
-            AspectRatio = DefaultAspectRatio;
-            cropTracker.Rect = cropTracker.MaxBounds = DefaultCropRectangle;
+            Adjustment.Rotation = 0;
+            Adjustment.Straighten = 0;
+            this.FlipPhoto = false;
+
+            ResetCrop();
         }
 
         public void Rotate()
         {
             Adjustment.Rotation += 90;
-            ResetAspectRatios();
             ResetCrop();
-            ScaleToFit();
         }
 
         private void ResetAspectRatios()
@@ -271,6 +272,13 @@ namespace Fotografix
 
             RaisePropertyChanged(nameof(AvailableAspectRatios));
             RaisePropertyChanged(nameof(AspectRatio));
+        }
+
+        private void ResetCrop()
+        {
+            ResetAspectRatios();
+            cropTracker.Rect = cropTracker.MaxBounds = DefaultCropRectangle;
+            ScaleToFit();
         }
 
         private void UpdateAspectRatio()

@@ -13,6 +13,7 @@ namespace Fotografix
     public sealed class PhotoAdjustment : NotifyPropertyChangedBase, IDisposable, IPhotoAdjustment
     {
         private readonly Transform2DEffect rotateFlipEffect;
+        private readonly StraightenEffect straightenEffect;
         private readonly CropEffect cropEffect;
         private readonly Transform2DEffect scaleEffect;
         private readonly GammaTransferEffect transferEffect;
@@ -29,7 +30,8 @@ namespace Fotografix
         public PhotoAdjustment()
         {
             this.rotateFlipEffect = new Transform2DEffect();
-            this.cropEffect = new CropEffect { Source = rotateFlipEffect, BorderMode = EffectBorderMode.Hard };
+            this.straightenEffect = new StraightenEffect { Source = rotateFlipEffect, MaintainSize = true };
+            this.cropEffect = new CropEffect { Source = straightenEffect, BorderMode = EffectBorderMode.Hard };
             this.scaleEffect = new Transform2DEffect();
             this.transferEffect = new GammaTransferEffect { Source = scaleEffect };
             this.highlightsAndShadowsEffect = new HighlightsAndShadowsEffect { Source = transferEffect };
@@ -62,6 +64,8 @@ namespace Fotografix
             transferEffect.Dispose();
             scaleEffect.Dispose();
             cropEffect.Dispose();
+            straightenEffect.Dispose();
+            rotateFlipEffect.Dispose();
         }
 
         public event EventHandler Changed;
@@ -387,6 +391,7 @@ namespace Fotografix
         private CropRect? crop;
         private int rotation;
         private bool flip;
+        private float straighten;
 
         public CropRect? Crop
         {
@@ -433,6 +438,19 @@ namespace Fotografix
                 if (SetProperty(ref flip, value))
                 {
                     UpdateRotateFlip();
+                }
+            }
+        }
+
+        public float Straighten
+        {
+            get => straighten;
+
+            set
+            {
+                if (SetProperty(ref straighten, value))
+                {
+                    straightenEffect.Angle = (float)(straighten * Math.PI / 180);
                 }
             }
         }

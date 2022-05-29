@@ -244,14 +244,18 @@ namespace Fotografix
         }
 
         [TestMethod]
-        public void ResetsCropRectangleToOriginalSize()
+        public void ResetsTransform()
         {
             vm.TransformMode = true;
             cropTracker.Rect = new Rect(10, 20, 30, 40);
+            vm.Rotate();
+            vm.FlipPhoto = true;
 
-            vm.ResetCrop();
+            vm.ResetTransform();
 
             Assert.AreEqual(new Rect(new Point(), PhotoSize), cropTracker.Rect);
+            Assert.AreEqual(0, editor.Adjustment.Rotation);
+            Assert.IsFalse(editor.Adjustment.Flip);
         }
 
         [TestMethod]

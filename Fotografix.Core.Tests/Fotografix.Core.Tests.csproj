@@ -175,6 +175,7 @@
     <Content Include="TestData\Barn_shadows.jpg" />
     <Content Include="TestData\Barn_sharpness.jpg" />
     <Content Include="TestData\Barn_sharpness_scaled.jpg" />
+    <Content Include="TestData\Barn_straighten.jpg" />
     <Content Include="TestData\Barn_temperature.jpg" />
     <Content Include="TestData\Barn_thumbnail.jpg" />
     <Content Include="TestData\Barn_tint.jpg" />

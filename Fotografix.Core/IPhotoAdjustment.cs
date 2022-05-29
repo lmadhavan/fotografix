@@ -31,6 +31,7 @@ namespace Fotografix
         CropRect? Crop { get; set; }
         int Rotation { get; set; }
         bool Flip { get; set; }
+        float Straighten { get; set; }
         #endregion
     }
 }

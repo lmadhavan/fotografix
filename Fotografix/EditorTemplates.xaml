@@ -234,28 +234,11 @@
             <!-- Transform -->
             <winui:Expander Header="Crop / Rotate" IsExpanded="{x:Bind TransformMode}">
                 <StackPanel>
-                    <TextBlock Margin="2,0,0,8" FontWeight="SemiBold" Text="Aspect ratio" />
-
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-
-                        <ComboBox HorizontalAlignment="Stretch" ItemsSource="{x:Bind AvailableAspectRatios, Mode=OneWay}" DisplayMemberPath="DisplayName" SelectedItem="{x:Bind AspectRatio}" />
-                        <ToggleButton Grid.Column="1" Margin="8,0,0,0" IsChecked="{x:Bind FlipAspectRatio}" ToolTipService.ToolTip="Flip aspect ratio">
-                            <FontIcon Glyph="&#xE8E6;" />
-                        </ToggleButton>
-                        <Button Grid.Column="2" Margin="8,0,0,0" Click="{x:Bind ResetCrop}" ToolTipService.ToolTip="Reset crop">
-                            <FontIcon Glyph="&#xE81C;" />
-                        </Button>
-                    </Grid>
-
-                    <Grid Margin="0,12,0,0">
-                        <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
 
                         <Button HorizontalAlignment="Stretch" Margin="0,0,4,0" Click="{x:Bind Rotate}">
@@ -271,7 +254,27 @@
                                 <TextBlock Margin="8,0,0,0" Text="Flip" />
                             </StackPanel>
                         </ToggleButton>
+
+                        <Button Grid.Column="2" Margin="4,-6,-6,-4" Click="{x:Bind ResetTransform}" ToolTipService.ToolTip="Reset" Style="{ThemeResource CommandBarFlyoutEllipsisButtonStyle}">
+                            <FontIcon FontSize="14" Glyph="&#xE81C;" />
+                        </Button>
                     </Grid>
+
+                    <TextBlock Margin="0,12,0,8" Text="Crop" />
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <ComboBox HorizontalAlignment="Stretch" ItemsSource="{x:Bind AvailableAspectRatios, Mode=OneWay}" DisplayMemberPath="DisplayName" SelectedItem="{x:Bind AspectRatio}" />
+                        <ToggleButton Grid.Column="1" Margin="8,0,0,0" Padding="6" BorderBrush="Transparent" Background="Transparent" IsChecked="{x:Bind FlipAspectRatio}" ToolTipService.ToolTip="Flip aspect ratio">
+                            <FontIcon FontSize="18" Glyph="&#xE8E6;" />
+                        </ToggleButton>
+                    </Grid>
+
+                    <Slider Margin="0,12,0,0" Header="Straighten" Value="{x:Bind Adjustment.Straighten}" Minimum="-5" Maximum="5" StepFrequency="0.1" SmallChange="0.1" />
                 </StackPanel>
             </winui:Expander>
         </StackPanel>
