@@ -125,6 +125,7 @@
     <Compile Include="PhotoAdjustmentTest.cs" />
     <Compile Include="PhotoEditorTest.cs" />
     <Compile Include="PhotoFolderTest.cs" />
+    <Compile Include="PhotoMetadataTest.cs" />
     <Compile Include="PhotoTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestData.cs" />

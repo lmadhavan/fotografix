@@ -277,6 +277,42 @@
                     <Slider Margin="0,12,0,0" Header="Straighten" Value="{x:Bind Adjustment.Straighten}" Minimum="-5" Maximum="5" StepFrequency="0.1" SmallChange="0.1" />
                 </StackPanel>
             </winui:Expander>
+            
+            <!-- Metadata -->
+            <winui:Expander Header="Info">
+                <StackPanel x:DefaultBindMode="OneTime">
+                    <StackPanel Padding="8" Background="{ThemeResource SystemAltHighColor}" CornerRadius="4">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="2*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock Grid.Column="0" TextTrimming="CharacterEllipsis" HorizontalAlignment="Left" Text="{x:Bind Metadata.Camera}" ToolTipService.ToolTip="{x:Bind Metadata.Camera}" />
+                            <TextBlock Grid.Column="1" HorizontalAlignment="Right" Text="{x:Bind Metadata.Dimensions}" />
+                        </Grid>
+
+                        <Border Margin="0,12" BorderThickness="0,1,0,0" BorderBrush="{ThemeResource ButtonBorderThemeBrush}" />
+
+                        <Grid Margin="0,-1,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock Grid.Column="0" FontSize="12" HorizontalAlignment="Left" Text="{x:Bind Metadata.ISOSpeed}" />
+                            <TextBlock Grid.Column="1" FontSize="12" HorizontalAlignment="Center" Text="{x:Bind Metadata.FocalLength}" />
+                            <TextBlock Grid.Column="2" FontSize="12" HorizontalAlignment="Center" Text="{x:Bind Metadata.FNumber}" />
+                            <TextBlock Grid.Column="3" FontSize="12" HorizontalAlignment="Right" Text="{x:Bind Metadata.ExposureTime}" />
+                        </Grid>
+                    </StackPanel>
+
+                    <TextBox Margin="0,16,0,0" Header="Filename" IsReadOnly="True" BorderThickness="0" Text="{x:Bind Metadata.FileName}" />
+                    <TextBox Margin="0,16,0,0" Header="Date taken" IsReadOnly="True" BorderThickness="0" Text="{x:Bind Metadata.CaptureDate}" />
+                </StackPanel>
+            </winui:Expander>
         </StackPanel>
     </DataTemplate>
 </ResourceDictionary>

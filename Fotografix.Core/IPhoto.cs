@@ -12,5 +12,7 @@ namespace Fotografix
         Task<bool> HasAdjustmentAsync();
         Task<PhotoAdjustment> LoadAdjustmentAsync();
         Task SaveAdjustmentAsync(PhotoAdjustment adjustment, SoftwareBitmap thumbnail);
+
+        Task<PhotoMetadata> GetMetadataAsync();
     }
 }

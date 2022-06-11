@@ -142,6 +142,7 @@
     </Compile>
     <Compile Include="Export\ExportViewModel.cs" />
     <Compile Include="FileTypeVisibilityConverter.cs" />
+    <Compile Include="PhotoMetadataViewModel.cs" />
     <Compile Include="ScalingHelper.cs" />
     <Compile Include="Input\PointerEventAdapter.cs" />
     <Compile Include="Input\PointerEventHandlerChain.cs" />

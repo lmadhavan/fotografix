@@ -125,6 +125,7 @@
     <Compile Include="Export\ExportViewModelTest.cs" />
     <Compile Include="FakePhoto.cs" />
     <Compile Include="FileTypeVisibilityConverterTest.cs" />
+    <Compile Include="PhotoMetadataViewModelTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ApplicationViewModelTest.cs" />
     <Compile Include="StubCanvasResourceCreator.cs" />

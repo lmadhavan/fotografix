@@ -46,6 +46,7 @@ namespace Fotografix
             UpdateRenderSize();
             this.activeInputHandler = new NullPointerInputHandler();
 
+            this.Metadata = new PhotoMetadataViewModel(editor.Metadata);
             this.RevertCommand = new DelegateCommand(() => CanRevert, RevertAsync);
             this.ResetCommand = new DelegateCommand(Reset);
             this.ExportCommand = new DelegateCommand(ExportAsync);
@@ -67,6 +68,7 @@ namespace Fotografix
         }
 
         public IPhotoAdjustment Adjustment => editor.Adjustment;
+        public PhotoMetadataViewModel Metadata { get; }
 
         public bool ShowOriginal
         {

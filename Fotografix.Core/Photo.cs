@@ -49,6 +49,11 @@ namespace Fotografix
             return await content.GetThumbnailAsync(ThumbnailMode.SingleItem);
         }
 
+        public Task<PhotoMetadata> GetMetadataAsync()
+        {
+            return PhotoMetadata.CreateFromStorageItemAsync(content.Properties);
+        }
+
         public event EventHandler Changed;
 
         public async Task<bool> HasAdjustmentAsync()

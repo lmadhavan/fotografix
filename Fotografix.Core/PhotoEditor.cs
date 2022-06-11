@@ -20,10 +20,11 @@ namespace Fotografix
         private PhotoAdjustment adjustment;
         private bool dirty;
 
-        private PhotoEditor(IPhoto photo, CanvasBitmap bitmap)
+        private PhotoEditor(IPhoto photo, CanvasBitmap bitmap, PhotoMetadata metadata)
         {
             this.photo = photo;
             this.bitmap = bitmap;
+            this.Metadata = metadata;
             this.histogramTransform = new Transform2DEffect { CacheOutput = true };
         }
 
@@ -43,8 +44,9 @@ namespace Fotografix
         {
             var bitmap = await photo.LoadBitmapAsync(canvasResourceCreator);
             var adjustment = await photo.LoadAdjustmentAsync();
+            var metadata = await photo.GetMetadataAsync();
 
-            var editor = new PhotoEditor(photo, bitmap);
+            var editor = new PhotoEditor(photo, bitmap, metadata);
             editor.CanRevert = adjustment != null;
             editor.SetAdjustment(adjustment);
             return editor;
@@ -53,6 +55,7 @@ namespace Fotografix
         public int ThumbnailSize { get; set; } = 512;
 
         public IPhotoAdjustment Adjustment => adjustment;
+        public PhotoMetadata Metadata { get; }
 
         public bool AdjustmentEnabled
         {

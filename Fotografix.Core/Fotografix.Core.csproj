@@ -126,6 +126,7 @@
     <Compile Include="Export\IExportable.cs" />
     <Compile Include="IPhoto.cs" />
     <Compile Include="IRenderScaleProvider.cs" />
+    <Compile Include="PhotoMetadata.cs" />
     <Compile Include="Xmp\BitmapPropertiesXmpExtensions.cs" />
     <Compile Include="ColorRange.cs" />
     <Compile Include="ColorRangeAdjustment.cs" />

@@ -29,5 +29,10 @@ namespace Fotografix
         {
             return Task.CompletedTask;
         }
+
+        public Task<PhotoMetadata> GetMetadataAsync()
+        {
+            return Task.FromResult(PhotoMetadata.Empty);
+        }
     }
 }
