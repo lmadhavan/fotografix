@@ -26,7 +26,7 @@ namespace Fotografix
             settings[settingKey] = true;
         }
 
-        private int NumberOfPages => 4;
+        private int NumberOfPages => 3;
 
         private void Next_Click(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
