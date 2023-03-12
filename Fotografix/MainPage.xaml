@@ -85,16 +85,15 @@
                 <FontIcon FontSize="16" Glyph="&#xE939;" />
 
                 <Button.Flyout>
-                    <Flyout x:Name="helpFlyout">
-                        <StackPanel x:DefaultBindMode="OneTime">
-                            <TextBlock Margin="12" FontWeight="SemiBold" Text="{x:Bind About.AppTitleWithVersion}" />
-                            <HyperlinkButton Content="Welcome tour" Click="WelcomeTour_Click" />
-                            <HyperlinkButton Content="What's new" NavigateUri="{x:Bind About.WhatsNewUri}" />
-                            <HyperlinkButton Content="Send feedback" NavigateUri="{x:Bind About.SendFeedbackUri}" />
-                            <HyperlinkButton Content="Rate and review" NavigateUri="{x:Bind About.RateAndReviewUri}" />
-                            <HyperlinkButton Content="License information" NavigateUri="{x:Bind About.LicenseUri}" />
-                        </StackPanel>
-                    </Flyout>
+                    <MenuFlyout>
+                        <MenuFlyoutItem Text="{x:Bind About.AppTitleWithVersion}" IsEnabled="False" />
+                        <MenuFlyoutSeparator />
+                        <MenuFlyoutItem Text="Welcome tour" Click="WelcomeTour_Click" />
+                        <MenuFlyoutItem Text="What's new" Click="HelpFlyout_LaunchUri" Tag="{x:Bind About.WhatsNewUri}" />
+                        <MenuFlyoutItem Text="Send feedback" Click="HelpFlyout_LaunchUri" Tag="{x:Bind About.SendFeedbackUri}" />
+                        <MenuFlyoutItem Text="Rate and review" Click="HelpFlyout_LaunchUri" Tag="{x:Bind About.RateAndReviewUri}" />
+                        <MenuFlyoutItem Text="License information" Click="HelpFlyout_LaunchUri" Tag="{x:Bind About.LicenseUri}" />
+                    </MenuFlyout>
                 </Button.Flyout>
             </Button>
         </StackPanel>

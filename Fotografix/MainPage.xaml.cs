@@ -5,6 +5,7 @@ using System.Linq;
 using Windows.Foundation;
 using Windows.Storage;
 using Windows.Storage.Pickers;
+using Windows.System;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -175,8 +176,13 @@ namespace Fotografix
 
         private async void WelcomeTour_Click(object sender, RoutedEventArgs e)
         {
-            helpFlyout.Hide();
             await new WelcomeDialog().ShowAsync();
+        }
+
+        private async void HelpFlyout_LaunchUri(object sender, RoutedEventArgs e)
+        {
+            Uri uri = new Uri((string)((MenuFlyoutItem)sender).Tag);
+            await Launcher.LaunchUriAsync(uri);
         }
     }
 }
