@@ -150,6 +150,7 @@ namespace Fotografix
         #region Light
 
         private float exposure;
+        private float brightness;
         private float whites;
         private float blacks;
 
@@ -160,6 +161,19 @@ namespace Fotografix
             set
             {
                 if (SetProperty(ref exposure, value))
+                {
+                    UpdateTransferEffect();
+                }
+            }
+        }
+
+        public float Brightness
+        {
+            get => brightness;
+
+            set
+            {
+                if (SetProperty(ref brightness, value))
                 {
                     UpdateTransferEffect();
                 }
@@ -208,17 +222,20 @@ namespace Fotografix
 
         private void UpdateTransferEffect()
         {
-            // Scale white/black point adjustments so they are at a similar level as highlights/shadows adjustments
+            // Scale white/black/gray points so they are at a similar level as highlights/shadows adjustments
             var wp = 1 - whites / 4;
             var bp = 0 - blacks / 4;
+            var gp = brightness / 4 + 0.5;
 
             /*
              * Gamma transfer effect does pow(input, exponent) * amplitude + offset
              * We want ((input * 2^exposure) - bp) / (wp - bp)
              */
+            var exponent = Math.Log(gp) / Math.Log(0.5);
             var amplitude = Math.Pow(2, exposure) / (wp - bp);
             var offset = -bp / (wp - bp);
 
+            transferEffect.RedExponent = transferEffect.GreenExponent = transferEffect.BlueExponent = (float)exponent;
             transferEffect.RedAmplitude = transferEffect.GreenAmplitude = transferEffect.BlueAmplitude = (float)amplitude;
             transferEffect.RedOffset = transferEffect.GreenOffset = transferEffect.BlueOffset = offset;
         }

@@ -6,6 +6,7 @@ namespace Fotografix
     {
         #region Light
         float Exposure { get; set; }
+        float Brightness { get; set; }
         float Contrast { get; set; }
         float Highlights { get; set; }
         float Shadows { get; set; }
