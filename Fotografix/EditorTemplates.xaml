@@ -131,7 +131,7 @@
             <!-- Light -->
             <winui:Expander IsExpanded="True" Header="Light">
                 <StackPanel>
-                    <Slider Header="Exposure" Value="{x:Bind Adjustment.Exposure}" />
+                    <Slider Header="Exposure" Value="{x:Bind Adjustment.Exposure}" Minimum="-3" Maximum="3" />
                     <Slider Header="Brightness" Value="{x:Bind Adjustment.Brightness}" />
                     <Slider Header="Contrast" Value="{x:Bind Adjustment.Contrast}" />
                     <Slider Header="Highlights" Value="{x:Bind Adjustment.Highlights}" />
