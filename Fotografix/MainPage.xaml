@@ -89,8 +89,8 @@
                         <MenuFlyoutItem Text="{x:Bind About.AppTitleWithVersion}" IsEnabled="False" />
                         <MenuFlyoutSeparator />
                         <MenuFlyoutItem Text="Welcome tour" Click="WelcomeTour_Click" />
-                        <MenuFlyoutItem Text="What's new" Click="HelpFlyout_LaunchUri" Tag="{x:Bind About.WhatsNewUri}" />
-                        <MenuFlyoutItem Text="Send feedback" Click="HelpFlyout_LaunchUri" Tag="{x:Bind About.SendFeedbackUri}" />
+                        <MenuFlyoutItem Text="Get help" Click="HelpFlyout_LaunchUri" Tag="{x:Bind About.SupportUri}" />
+                        <MenuFlyoutItem Text="What's new" Click="HelpFlyout_LaunchUri" Tag="{x:Bind About.ReleaseNotesUri}" />
                         <MenuFlyoutItem Text="Rate and review" Click="HelpFlyout_LaunchUri" Tag="{x:Bind About.RateAndReviewUri}" />
                         <MenuFlyoutItem Text="License information" Click="HelpFlyout_LaunchUri" Tag="{x:Bind About.LicenseUri}" />
                     </MenuFlyout>

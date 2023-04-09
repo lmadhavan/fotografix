@@ -22,8 +22,8 @@ namespace Fotografix
             }
         }
 
-        public string WhatsNewUri => "https://github.com/lmadhavan/fotografix/releases";
-        public string SendFeedbackUri => "https://github.com/lmadhavan/fotografix/issues";
+        public string ReleaseNotesUri => "https://github.com/lmadhavan/fotografix/releases";
+        public string SupportUri => "https://github.com/lmadhavan/fotografix/discussions";
         public string RateAndReviewUri => "ms-windows-store://review/?ProductId=9NBZQK3WVN38";
         public string LicenseUri => "https://raw.githubusercontent.com/lmadhavan/fotografix/master/LICENSE.txt";
     }
