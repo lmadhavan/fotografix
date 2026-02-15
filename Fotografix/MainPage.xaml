@@ -17,7 +17,7 @@
             <ResourceDictionary.MergedDictionaries>
                 <local:EditorTemplates />
             </ResourceDictionary.MergedDictionaries>
-            
+
             <local:ShowIfNullConverter x:Key="ShowIfNull" />
             <local:HideIfNullConverter x:Key="HideIfNull" />
             <local:ExceptionMessageConverter x:Key="ExceptionMessageConverter" />
@@ -63,10 +63,21 @@
             </Grid>
 
             <winui:DropDownButton.Flyout>
-                <local:RecentFolderMenuFlyout x:Name="recentFolderFlyout" FolderActivated="RecentFolderFlyout_FolderActivated">
+                <local:RecentFolderMenuFlyout x:Name="recentFolderFlyout" Opening="RecentFolderFlyout_Opening" Closed="RecentFolderFlyout_Closed" FolderActivated="RecentFolderFlyout_FolderActivated">
                     <MenuFlyoutItem Text="Browse..." Click="{x:Bind PickFolder}">
+                        <MenuFlyoutItem.Icon>
+                            <FontIcon Glyph="&#xE838;" />
+                        </MenuFlyoutItem.Icon>
                         <MenuFlyoutItem.KeyboardAccelerators>
                             <KeyboardAccelerator Modifiers="Control" Key="O" />
+                        </MenuFlyoutItem.KeyboardAccelerators>
+                    </MenuFlyoutItem>
+                    <MenuFlyoutItem x:Name="clipboardMenuItem" Text="Open from clipboard" Click="{x:Bind OpenFromClipboard}">
+                        <MenuFlyoutItem.Icon>
+                            <FontIcon Glyph="&#xE77F;" />
+                        </MenuFlyoutItem.Icon>
+                        <MenuFlyoutItem.KeyboardAccelerators>
+                            <KeyboardAccelerator Modifiers="Control" Key="V" />
                         </MenuFlyoutItem.KeyboardAccelerators>
                     </MenuFlyoutItem>
                     <MenuFlyoutSeparator />
@@ -187,7 +198,7 @@
             <!-- Empty state: no folder selected -->
             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="{x:Bind vm.Folder, Converter={StaticResource ShowIfNull}}">
                 <FontIcon FontSize="96" Glyph="&#xED25;" Foreground="{ThemeResource ButtonDisabledForegroundThemeBrush}" />
-                <TextBlock FontSize="24" Text="Select a folder to view photos" Foreground="{ThemeResource ButtonDisabledForegroundThemeBrush}" />
+                <TextBlock FontSize="24" Text="Select a folder or drop photos" Foreground="{ThemeResource ButtonDisabledForegroundThemeBrush}" />
             </StackPanel>
 
             <!-- Empty state: no active editor -->

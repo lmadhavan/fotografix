@@ -1,12 +1,14 @@
 ﻿using Fotografix.Input;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.Storage;
 using Windows.Storage.Pickers;
+using Windows.Storage.Streams;
 using Windows.System;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
@@ -148,6 +150,18 @@ namespace Fotografix
 
         #endregion
 
+        #region Recent folder flyout
+
+        private void RecentFolderFlyout_Opening(object sender, object e)
+        {
+            clipboardMenuItem.IsEnabled = Clipboard.GetContent().Contains(StandardDataFormats.Bitmap);
+        }
+
+        private void RecentFolderFlyout_Closed(object sender, object e)
+        {
+            clipboardMenuItem.IsEnabled = true;
+        }
+
         private void RecentFolderFlyout_FolderActivated(object sender, StorageFolder folder)
         {
             vm.Folder = folder;
@@ -165,6 +179,30 @@ namespace Fotografix
                 vm.Folder = folder;
             }
         }
+
+        private async void OpenFromClipboard()
+        {
+            var data = Clipboard.GetContent();
+
+            if (!data.Contains(StandardDataFormats.Bitmap))
+            {
+                return;
+            }
+
+            var bitmap = await data.GetBitmapAsync();
+            var tempFolder = await CreateTempFolderAsync("Clipboard");
+            var tempFile = await tempFolder.CreateFileAsync("paste.jpg");
+
+            using (var input = await bitmap.OpenReadAsync())
+            using (var output = await tempFile.OpenAsync(FileAccessMode.ReadWrite))
+            {
+                await RandomAccessStream.CopyAsync(input, output);
+            }
+
+            vm.Folder = tempFolder;
+        }
+
+        #endregion
 
         private string FormatTotalPhotoCount(int count)
         {
@@ -213,20 +251,26 @@ namespace Fotografix
 
         private async void Grid_Drop(object sender, DragEventArgs e)
         {
-            if (e.DataView.Contains(StandardDataFormats.StorageItems))
+            if (!e.DataView.Contains(StandardDataFormats.StorageItems))
             {
-                var items = await e.DataView.GetStorageItemsAsync();
-
-                StorageFolder tempFolder = ApplicationData.Current.TemporaryFolder;
-                tempFolder = await tempFolder.CreateFolderAsync(Guid.NewGuid().ToString());
-                tempFolder = await tempFolder.CreateFolderAsync("Dropped files");
-
-                await Task.WhenAll(items.OfType<StorageFile>().Select(
-                        f => f.CopyAsync(tempFolder, f.Name, NameCollisionOption.GenerateUniqueName).AsTask()
-                ));
-
-                vm.Folder = tempFolder;
+                return;
             }
+
+            var items = await e.DataView.GetStorageItemsAsync();
+            var tempFolder = await CreateTempFolderAsync("Dropped files");
+
+            await Task.WhenAll(items.OfType<StorageFile>().Select(
+                    f => f.CopyAsync(tempFolder, f.Name, NameCollisionOption.GenerateUniqueName).AsTask()
+            ));
+
+            vm.Folder = tempFolder;
+        }
+
+        private async Task<StorageFolder> CreateTempFolderAsync(string source)
+        {
+            StorageFolder tempFolder = ApplicationData.Current.TemporaryFolder;
+            tempFolder = await tempFolder.CreateFolderAsync(Guid.NewGuid().ToString());
+            return await tempFolder.CreateFolderAsync(source);
         }
     }
 }
