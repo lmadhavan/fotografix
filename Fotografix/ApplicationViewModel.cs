@@ -123,7 +123,9 @@ namespace Fotografix
 
             Debug.WriteLine($"Loaded {photos.Count} photos from {folder.Name}");
 
-            return photos.Select(p => new PhotoViewModel(p)).ToList();
+            var result = photos.Select(p => new PhotoViewModel(p)).ToList();
+            this.ActivePhoto = result.FirstOrDefault();
+            return result;
         }
 
         private async Task<EditorViewModel> LoadEditorAsync(CancellationToken token)

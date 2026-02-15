@@ -2,6 +2,8 @@
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using System;
 using System.Linq;
+using System.Threading.Tasks;
+using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.Storage;
 using Windows.Storage.Pickers;
@@ -183,6 +185,48 @@ namespace Fotografix
         {
             Uri uri = new Uri((string)((MenuFlyoutItem)sender).Tag);
             await Launcher.LaunchUriAsync(uri);
+        }
+
+        private async void Grid_DragOver(object sender, DragEventArgs e)
+        {
+            var deferral = e.GetDeferral();
+
+            try
+            {
+                e.AcceptedOperation = DataPackageOperation.None;
+
+                if (e.DataView.Contains(StandardDataFormats.StorageItems))
+                {
+                    var items = await e.DataView.GetStorageItemsAsync();
+
+                    if (items.All(item => item is StorageFile))
+                    {
+                        e.AcceptedOperation = DataPackageOperation.Copy;
+                    }
+                }
+            }
+            finally
+            {
+                deferral.Complete();
+            }
+        }
+
+        private async void Grid_Drop(object sender, DragEventArgs e)
+        {
+            if (e.DataView.Contains(StandardDataFormats.StorageItems))
+            {
+                var items = await e.DataView.GetStorageItemsAsync();
+
+                StorageFolder tempFolder = ApplicationData.Current.TemporaryFolder;
+                tempFolder = await tempFolder.CreateFolderAsync(Guid.NewGuid().ToString());
+                tempFolder = await tempFolder.CreateFolderAsync("Dropped files");
+
+                await Task.WhenAll(items.OfType<StorageFile>().Select(
+                        f => f.CopyAsync(tempFolder, f.Name, NameCollisionOption.GenerateUniqueName).AsTask()
+                ));
+
+                vm.Folder = tempFolder;
+            }
         }
     }
 }

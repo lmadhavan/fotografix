@@ -25,7 +25,7 @@
         </ResourceDictionary>
     </Page.Resources>
 
-    <Grid>
+    <Grid AllowDrop="True" DragOver="Grid_DragOver" Drop="Grid_Drop">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />

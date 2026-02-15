@@ -30,7 +30,7 @@
             <StackPanel>
                 <TextBlock Text="Destination folder" />
                 <Button HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" Margin="0,4,0,0" Click="DestinationFolder_Click">
-                    <TextBlock TextWrapping="Wrap" Text="{x:Bind vm.DestinationFolder.Path}" />
+                    <TextBlock TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" TextAlignment="Right" Text="{x:Bind vm.DestinationFolder.Path}" ToolTipService.ToolTip="{x:Bind vm.DestinationFolder.Path}" />
                 </Button>
 
                 <CheckBox Margin="0,16,0,0" Content="Put in subfolder" IsChecked="{x:Bind vm.PutInSubfolder, Mode=TwoWay}" />
