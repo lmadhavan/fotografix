@@ -14,7 +14,6 @@ namespace Fotografix
     public sealed class ApplicationViewModel : NotifyPropertyChangedBase
     {
         private readonly ISidecarStrategy sidecarStrategy;
-        private readonly ExportHandler exportHandler;
 
         private StorageFolder folder;
         private NotifyTaskCompletion<IList<PhotoViewModel>> photos;
@@ -24,8 +23,6 @@ namespace Fotografix
         public ApplicationViewModel(ISidecarStrategy sidecarStrategy)
         {
             this.sidecarStrategy = sidecarStrategy;
-            this.exportHandler = new ExportHandler();
-
             this.selectedPhotos = new List<PhotoViewModel>();
             this.BatchExportCommand = new DelegateCommand(BatchExportAsync);
         }
@@ -46,7 +43,6 @@ namespace Fotografix
             {
                 if (SetProperty(ref folder, value))
                 {
-                    exportHandler.DefaultDestinationFolder = folder;
                     this.Photos = new NotifyTaskCompletion<IList<PhotoViewModel>>(LoadPhotosAsync(folder));
                     Logger.LogEvent("OpenFolder");
                 }
@@ -140,7 +136,7 @@ namespace Fotografix
             }
 
             var editor = await activePhoto.CreateEditorAsync(CanvasResourceCreator);
-            var vm = new EditorViewModel(editor, CanvasResourceCreator, exportHandler);
+            var vm = new EditorViewModel(editor, CanvasResourceCreator, folder);
             EditorLoaded?.Invoke(this, vm);
             return vm;
         }
@@ -204,7 +200,13 @@ namespace Fotografix
                 this.BatchExportProgress = new ExportProgressViewModel(cts);
 
                 var items = selectedPhotos.Select(p => new ExportWrapper(p, CanvasResourceCreator)).ToList();
-                await exportHandler.ExportAsync(items, showDialog: true, cts.Token, batchExportProgress);
+                var exportHandler = new FileExportHandler(folder)
+                {
+                    ShowDialog = true,
+                    CancellationToken = cts.Token,
+                    Progress = batchExportProgress
+                };
+                await exportHandler.ExportAsync(items);
                 Logger.LogEvent("BatchExport");
             }
             finally

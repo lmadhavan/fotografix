@@ -65,7 +65,7 @@
 
             <winui:DropDownButton Grid.Column="0">
                 <StackPanel Orientation="Horizontal">
-                    <FontIcon Glyph="&#xE72D;" />
+                    <FontIcon Glyph="&#xEE71;" />
                     <TextBlock Margin="8,0,0,0" Text="Export" />
                 </StackPanel>
 
@@ -73,6 +73,17 @@
                     <MenuFlyout>
                         <MenuFlyoutItem Text="Export..." Command="{x:Bind ExportCommand}" />
                         <MenuFlyoutItem Text="Quick export" Command="{x:Bind QuickExportCommand}" />
+                        <MenuFlyoutSeparator/>
+                        <MenuFlyoutItem Text="Copy to clipboard" Command="{x:Bind CopyToClipboardCommand}">
+                            <MenuFlyoutItem.Icon>
+                                <FontIcon Glyph="&#xE8C8;" />
+                            </MenuFlyoutItem.Icon>
+                        </MenuFlyoutItem>
+                        <MenuFlyoutItem Text="Share..." Command="{x:Bind ShareCommand}">
+                            <MenuFlyoutItem.Icon>
+                                <FontIcon Glyph="&#xE72D;" />
+                            </MenuFlyoutItem.Icon>
+                        </MenuFlyoutItem>
                     </MenuFlyout>
                 </winui:DropDownButton.Flyout>
             </winui:DropDownButton>

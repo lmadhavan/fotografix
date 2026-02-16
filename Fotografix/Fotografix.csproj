@@ -60,11 +60,13 @@
       <DependentUpon>EditorTemplates.xaml</DependentUpon>
     </Compile>
     <Compile Include="EditorViewModel.cs" />
-    <Compile Include="Export\ExportHandler.cs" />
+    <Compile Include="Export\ClipboardExportHandler.cs" />
+    <Compile Include="Export\FileExportHandler.cs" />
     <Compile Include="Export\ExportProgress.cs" />
     <Compile Include="Export\ExportProgressViewModel.cs" />
     <Compile Include="Export\IExportHandler.cs" />
     <Compile Include="Export\NullExportHandler.cs" />
+    <Compile Include="Export\ShareExportHandler.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="ExceptionMessageConverter.cs" />
     <Compile Include="Export\ExportDialog.xaml.cs">

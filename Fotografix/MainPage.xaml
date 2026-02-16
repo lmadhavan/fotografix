@@ -210,7 +210,7 @@
                     <!-- Batch export -->
                     <Button Style="{ThemeResource AccentButtonStyle}" Margin="0,16" HorizontalAlignment="Center" Visibility="{x:Bind vm.CanBatchExport}" Command="{x:Bind vm.BatchExportCommand}">
                         <StackPanel Orientation="Horizontal">
-                            <FontIcon Glyph="&#xE72D;" />
+                            <FontIcon Glyph="&#xEE71;" />
                             <TextBlock Margin="8,0,0,0" Text="Export" />
                         </StackPanel>
                     </Button>

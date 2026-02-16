@@ -8,15 +8,23 @@ using Windows.UI.Xaml.Controls;
 
 namespace Fotografix.Export
 {
-    public sealed class ExportHandler : IExportHandler
+    public sealed class FileExportHandler : IExportHandler
     {
-        public StorageFolder DefaultDestinationFolder { get; set; }
-
-        public async Task ExportAsync(IReadOnlyCollection<IExportable> items, bool showDialog, CancellationToken token = default, IProgress<ExportProgress> progress = null)
+        public FileExportHandler(StorageFolder destinationFolder)
         {
-            var vm = new ExportViewModel(DefaultDestinationFolder, items.Count);
+            this.DestinationFolder = destinationFolder;
+        }
 
-            if (showDialog)
+        public StorageFolder DestinationFolder { get; set; }
+        public bool ShowDialog { get; set; }
+        public CancellationToken CancellationToken { get; set; }
+        public IProgress<ExportProgress> Progress { get; set; }
+
+        public async Task ExportAsync(IReadOnlyCollection<IExportable> items)
+        {
+            var vm = new ExportViewModel(DestinationFolder, items.Count);
+
+            if (ShowDialog)
             {
                 var dialog = new ExportDialog(vm);
                 if (await dialog.ShowAsync() != ContentDialogResult.Primary)
@@ -32,13 +40,13 @@ namespace Fotografix.Export
 
             foreach (var item in items)
             {
-                progress?.Report(new ExportProgress { TotalItems = items.Count, CompletedItems = completed });
+                Progress?.Report(new ExportProgress { TotalItems = items.Count, CompletedItems = completed });
 
                 var file = await Task.Run(async () => await item.ExportAsync(exportOptions));
                 launcherOptions.ItemsToSelect.Add(file);
                 completed++;
 
-                if (token.IsCancellationRequested)
+                if (CancellationToken.IsCancellationRequested)
                 {
                     break;
                 }

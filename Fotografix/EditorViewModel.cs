@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Windows.Foundation;
+using Windows.Storage;
 using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.Xaml.Media;
@@ -19,24 +20,24 @@ namespace Fotografix
 
         private readonly PhotoEditor editor;
         private readonly ICanvasResourceCreatorWithDpi resourceCreator;
-        private readonly IExportHandler exportHandler;
+        private readonly StorageFolder defaultExportFolder;
         private readonly ScalingHelper scalingHelper;
         private readonly CropTracker cropTracker;
         private readonly CropOverlay cropOverlay;
         private IPointerInputHandler activeInputHandler;
         private bool loaded;
 
-        public EditorViewModel(PhotoEditor editor, ICanvasResourceCreatorWithDpi resourceCreator, IExportHandler exportHandler) : this(editor, resourceCreator, exportHandler, new CropTracker())
+        public EditorViewModel(PhotoEditor editor, ICanvasResourceCreatorWithDpi resourceCreator, StorageFolder defaultExportFolder) : this(editor, resourceCreator, defaultExportFolder, new CropTracker())
         {
         }
 
-        public EditorViewModel(PhotoEditor editor, ICanvasResourceCreatorWithDpi resourceCreator, IExportHandler exportHandler, CropTracker cropTracker)
+        public EditorViewModel(PhotoEditor editor, ICanvasResourceCreatorWithDpi resourceCreator, StorageFolder defaultExportFolder, CropTracker cropTracker)
         {
             this.editor = editor;
             editor.Invalidated += (s, e) => Invalidate();
 
             this.resourceCreator = resourceCreator;
-            this.exportHandler = exportHandler;
+            this.defaultExportFolder = defaultExportFolder;
             this.scalingHelper = new ScalingHelper(resourceCreator, editor);
             this.cropTracker = cropTracker;
             cropTracker.RectChanged += (s, e) => Invalidate();
@@ -51,6 +52,8 @@ namespace Fotografix
             this.ResetCommand = new DelegateCommand(Reset);
             this.ExportCommand = new DelegateCommand(ExportAsync);
             this.QuickExportCommand = new DelegateCommand(QuickExportAsync);
+            this.CopyToClipboardCommand = new DelegateCommand(CopyToClipboardAsync);
+            this.ShareCommand = new DelegateCommand(ShareAsync);
 
             this.loaded = true;
         }
@@ -348,7 +351,9 @@ namespace Fotografix
         public ICommand ResetCommand { get; }
         public ICommand ExportCommand { get; }
         public ICommand QuickExportCommand { get; }
-        
+        public ICommand CopyToClipboardCommand { get; }
+        public ICommand ShareCommand { get; }
+
         public bool CanRevert => editor.CanRevert;
 
         public async Task RevertAsync()
@@ -377,21 +382,31 @@ namespace Fotografix
             return editor.SaveAsync();
         }
 
-        public Task ExportAsync()
+        private Task ExportAsync()
         {
-            return ExportAsync(showDialog: true, "Export");
+            return ExportAsync(new FileExportHandler(defaultExportFolder) { ShowDialog = true }, "Export");
         }
 
-        public Task QuickExportAsync()
+        private Task QuickExportAsync()
         {
-            return ExportAsync(showDialog: false, "QuickExport");
+            return ExportAsync(new FileExportHandler(defaultExportFolder), "QuickExport");
         }
 
-        private async Task ExportAsync(bool showDialog, string eventName)
+        private Task CopyToClipboardAsync()
+        {
+            return ExportAsync(new ClipboardExportHandler(), "CopyToClipboard");
+        }
+
+        private Task ShareAsync()
+        {
+            return ExportAsync(new ShareExportHandler(), "Share");
+        }
+
+        public Task ExportAsync(IExportHandler exportHandler, string eventName)
         {
             this.TransformMode = false;
-            await exportHandler.ExportAsync(new[] { editor }, showDialog);
             Logger.LogEvent(eventName);
+            return exportHandler.ExportAsync(new[] { editor });
         }
 
         #endregion
