@@ -13,8 +13,8 @@ Older releases are available in source form on the [GitHub releases page](https:
 ## How to build Fotografix
 
 **Prerequisites**
-* Visual Studio Community 2019 with UWP and desktop C++ workloads
-* Windows 10 SDK build 19041
+* Visual Studio 2026 with UWP and desktop C++ workloads
+* Windows 11 SDK build 26100
 
 **Building the source code**
 * Open `Fotografix.sln` in Visual Studio.
