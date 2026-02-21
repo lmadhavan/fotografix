@@ -56,12 +56,25 @@ namespace Fotografix
         private async void OnRecentFolderClicked(object sender, RoutedEventArgs e)
         {
             string token = (string)((MenuFlyoutItem)sender).Tag;
-            var folder = await mruList.GetFolderAsync(token);
 
-            if (folder != null)
+            try
             {
+                var folder = await mruList.GetFolderAsync(token);
                 Logger.LogEvent("OpenRecentFolder");
                 FolderActivated?.Invoke(this, folder);
+            }
+            catch (Exception)
+            {
+                mruList.Remove(token);
+
+                var dialog = new ContentDialog
+                {
+                    Title = "Unable to open folder",
+                    Content = "The selected folder is no longer available.",
+                    CloseButtonText = "OK"
+                };
+
+                await dialog.ShowAsync();
             }
         }
     }
