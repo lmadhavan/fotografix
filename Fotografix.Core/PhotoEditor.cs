@@ -54,6 +54,7 @@ namespace Fotografix
 
         public int ThumbnailSize { get; set; } = 512;
 
+        public string Name => photo.Name;
         public IPhotoAdjustment Adjustment => adjustment;
         public PhotoMetadata Metadata { get; }
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.Storage;
@@ -36,15 +37,28 @@ namespace Fotografix.Export
 
             var exportOptions = await vm.CreateExportOptionsAsync();
             var launcherOptions = new FolderLauncherOptions();
-            int completed = 0;
+            int processed = 0;
+            int failed = 0;
 
             foreach (var item in items)
             {
-                Progress?.Report(new ExportProgress { TotalItems = items.Count, CompletedItems = completed });
+                Progress?.Report(new ExportProgress { TotalItems = items.Count, ProcessedItems = processed, FailedItems = failed });
 
-                var file = await Task.Run(async () => await item.ExportAsync(exportOptions));
-                launcherOptions.ItemsToSelect.Add(file);
-                completed++;
+                try
+                {
+                    var file = await Task.Run(async () => await item.ExportAsync(exportOptions));
+                    launcherOptions.ItemsToSelect.Add(file);
+                }
+                catch (Exception e)
+                {
+                    failed++;
+                    Debug.WriteLine($"Error exporting {item.Name}: {e.Message}");
+                    Logger.LogEvent("ExportError");
+                }
+                finally
+                {
+                    processed++;
+                }
 
                 if (CancellationToken.IsCancellationRequested)
                 {
@@ -52,6 +66,7 @@ namespace Fotografix.Export
                 }
             }
 
+            Progress?.Report(new ExportProgress { TotalItems = items.Count, ProcessedItems = processed, FailedItems = failed });
             await Launcher.LaunchFolderAsync(exportOptions.DestinationFolder, launcherOptions);
         }
     }

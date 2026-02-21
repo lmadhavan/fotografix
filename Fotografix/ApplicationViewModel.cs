@@ -95,6 +95,7 @@ namespace Fotografix
 
         private NotifyTaskCompletion<EditorViewModel> editor;
         private CancellationTokenSource editorLoadCts;
+        private string saveError;
 
         public NotifyTaskCompletion<EditorViewModel> Editor
         {
@@ -103,6 +104,22 @@ namespace Fotografix
         }
 
         public event EventHandler<EditorViewModel> EditorLoaded;
+        public event EventHandler<EditorViewModel> EditorSaving;
+
+        public bool HasSaveError => SaveError != null;
+
+        public string SaveError
+        {
+            get => saveError;
+
+            private set
+            {
+                if (SetProperty(ref saveError, value))
+                {
+                    RaisePropertyChanged(nameof(HasSaveError));
+                }
+            }
+        }
 
         public Task SaveAsync()
         {
@@ -152,26 +169,41 @@ namespace Fotografix
 
         private async Task SaveAsync(bool dispose)
         {
-            if (editor != null)
+            if (editor == null)
+            {
+                return;
+            }
+
+            EditorViewModel vm = null;
+
+            try
+            {
+                vm = await editor.Task;
+            }
+            catch
+            {
+                // if the editor fails to load, there is nothing to save
+                // actual error notification happens through the UI
+            }
+
+            if (vm != null)
             {
                 try
                 {
-                    var vm = await editor.Task;
-
-                    if (vm != null)
-                    {
-                        await vm.SaveAsync();
-
-                        if (dispose)
-                        {
-                            vm.Dispose();
-                        }
-                    }
+                    this.SaveError = null;
+                    EditorSaving?.Invoke(this, vm);
+                    await vm.SaveAsync();
                 }
-                catch
+                catch (Exception e)
                 {
-                    // if the editor fails to load, there is nothing to save
-                    // actual error notification happens through the UI
+                    Debug.WriteLine($"Error saving changes: {e.Message}");
+                    Logger.LogEvent("SaveError");
+                    this.SaveError = e.Message;
+                }
+
+                if (dispose)
+                {
+                    vm.Dispose();
                 }
             }
         }
@@ -211,7 +243,6 @@ namespace Fotografix
             }
             finally
             {
-                this.BatchExportProgress = null;
                 cts.Dispose();
             }
         }
@@ -226,6 +257,8 @@ namespace Fotografix
                 this.photo = photo;
                 this.canvasResourceCreator = canvasResourceCreator;
             }
+
+            public string Name => photo.Name;
 
             public async Task<StorageFile> ExportAsync(ExportOptions options)
             {

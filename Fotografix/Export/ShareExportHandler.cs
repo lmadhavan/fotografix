@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.DataTransfer;
@@ -18,8 +20,18 @@ namespace Fotografix.Export
 
         public async Task ExportAsync(IReadOnlyCollection<IExportable> items)
         {
-            this.file = await items.First().ExportAsync(new ExportOptions(ApplicationData.Current.TemporaryFolder));
-            DataTransferManager.ShowShareUI();
+            var item = items.First();
+
+            try
+            {
+                this.file = await item.ExportAsync(new ExportOptions(ApplicationData.Current.TemporaryFolder));
+                DataTransferManager.ShowShareUI();
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine($"Error sharing {item.Name}: {e.Message}");
+                Logger.LogEvent("ShareError");
+            }
         }
 
         private void OnDataRequested(DataTransferManager sender, DataRequestedEventArgs args)

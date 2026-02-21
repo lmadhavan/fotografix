@@ -52,6 +52,7 @@
     <Compile Include="CropTrackerTest.cs" />
     <Compile Include="EditorViewModelTest.cs" />
     <Compile Include="ExceptionMessageConverterTest.cs" />
+    <Compile Include="Export\ExportProgressViewModelTest.cs" />
     <Compile Include="Export\ExportViewModelTest.cs" />
     <Compile Include="FakePhoto.cs" />
     <Compile Include="FileTypeVisibilityConverterTest.cs" />

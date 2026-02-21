@@ -175,6 +175,7 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             
             <!-- Editor canvas -->
@@ -246,20 +247,24 @@
             
             <!-- Batch export progress -->
             <winui:InfoBar Grid.Row="1"
-                           IsClosable="False"
-                           IsOpen="{x:Bind vm.BatchExportProgress.IsActive, FallbackValue=False}"
+                           IsClosable="{x:Bind vm.BatchExportProgress.CanClose}"
+                           IsOpen="{x:Bind vm.BatchExportProgress.IsOpen, FallbackValue=False}"
                            Title="Exporting photos"
+                           Severity="{x:Bind vm.BatchExportProgress.Severity}"
                            Message="{x:Bind vm.BatchExportProgress.Status}">
-                <winui:InfoBar.IconSource>
-                    <winui:FontIconSource Glyph="&#xE72D;" />
-                </winui:InfoBar.IconSource>
-
-                <winui:ProgressBar Margin="0,0,8,8" Maximum="{x:Bind vm.BatchExportProgress.TotalItems}" Value="{x:Bind vm.BatchExportProgress.CompletedItems}" />
+                <winui:ProgressBar Margin="0,0,8,8" Maximum="{x:Bind vm.BatchExportProgress.TotalItems}" Value="{x:Bind vm.BatchExportProgress.ProcessedItems}" />
 
                 <winui:InfoBar.ActionButton>
-                    <Button Content="Cancel" Click="{x:Bind vm.BatchExportProgress.Cancel}" />
+                    <Button Visibility="{x:Bind vm.BatchExportProgress.CancelButtonVisibility}" Content="Cancel" Click="{x:Bind vm.BatchExportProgress.Cancel}" />
                 </winui:InfoBar.ActionButton>
             </winui:InfoBar>
+
+            <!-- Save error -->
+            <winui:InfoBar Grid.Row="2"
+                           IsOpen="{x:Bind vm.HasSaveError}"
+                           Title="Unable to save changes"
+                           Severity="Error"
+                           Message="{x:Bind vm.SaveError}" />
         </Grid>
 
         <!-- Editor controls -->

@@ -29,18 +29,35 @@ namespace Fotografix
         }
 
         [TestMethod]
-        public async Task NoPhotoSelected()
+        public async Task SavesAndClosesEditorWhenNoPhotoIsSelected()
         {
-            var photos = await app.Photos.Task;
+            EditorViewModel savedEditor = null;
+            app.EditorSaving += (s, e) => savedEditor = e;
 
+            var photos = await app.Photos.Task;
             SelectPhoto(photos[0]);
-            Assert.IsNotNull(await app.Editor.Task);
+            var originalEditor = await app.Editor.Task;
 
             ClearSelection();
-            Assert.IsNull(await app.Editor.Task);
+            var newEditor = await app.Editor.Task;
 
-            SelectPhoto(photos[1]);
-            Assert.IsNotNull(await app.Editor.Task);
+            Assert.IsNotNull(originalEditor);
+            Assert.IsNull(newEditor);
+            Assert.AreEqual(originalEditor, savedEditor);
+        }
+
+        [TestMethod]
+        public async Task HandlesErrorWhenSaving()
+        {
+            var message = "save failed";
+            app.EditorSaving += (s, e) => throw new Exception(message);
+
+            var photos = await app.Photos.Task;
+            SelectPhoto(photos[0]);
+            await app.Editor.Task;
+            ClearSelection();
+
+            Assert.AreEqual(app.SaveError, message);
         }
 
         [TestMethod]
